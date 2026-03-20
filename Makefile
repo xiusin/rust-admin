@@ -1,4 +1,5 @@
 .PHONY: help build build-release check clean test lint fmt fmt-check run dev release migrate db-reset docker-build docker-run clean-all info
+.PHONY: cross cross-list build-linux build-macos build-win build-arm64 build-x86_64 build-linux-musl
 
 # 项目名称和版本
 PROJECT_NAME := qiluo
@@ -36,6 +37,17 @@ help: info
 	@echo "    make build-release    - Release 模式编译（优化）"
 	@echo "    make release          - Release 模式编译（优化）"
 	@echo ""
+	@echo "  跨平台编译:"
+	@echo "    make cross-list       - 查看支持的平台列表"
+	@echo "    make cross TARGET=xxx - 交叉编译指定平台"
+	@echo "    make build-linux      - 编译 Linux x86_64"
+	@echo "    make build-linux-arm64- 编译 Linux ARM64"
+	@echo "    make build-linux-musl - 编译 Alpine Linux"
+	@echo "    make build-macos      - 编译 macOS Intel"
+	@echo "    make build-macos-arm64- 编译 macOS Apple Silicon"
+	@echo "    make build-win        - 编译 Windows x86_64"
+	@echo "    make build-all        - 一键编译所有平台"
+	@echo ""
 	@echo "  代码质量:"
 	@echo "    make check            - 代码检查（cargo check）"
 	@echo "    make lint             - 代码检查和修复（cargo clippy）"
@@ -54,6 +66,7 @@ help: info
 	@echo "  清理:"
 	@echo "    make clean            - 清理编译产物"
 	@echo "    make clean-all        - 清理所有（包括 cargo cache）"
+	@echo "    make clean-cross      - 清理跨平台编译产物"
 	@echo ""
 	@echo "  Docker:"
 	@echo "    make docker-build     - 构建 Docker 镜像"
@@ -327,3 +340,171 @@ uninstall:
 	@echo "🗑️  卸载二进制文件..."
 	cargo uninstall $(PROJECT_NAME)
 	@echo "✅ 卸载完成"
+
+## ========== 跨平台编译 ==========
+
+### 交叉编译目标列表
+cross-list:
+	@echo "=========================================="
+	@echo "  支持的交叉编译目标"
+	@echo "=========================================="
+	@echo ""
+	@echo "  Linux (GNU):"
+	@echo "    x86_64-unknown-linux-gnu     - Linux x86_64 (GLIBC)"
+	@echo "    aarch64-unknown-linux-gnu    - Linux ARM64 (GLIBC)"
+	@echo "    armv7-unknown-linux-gnueabihf - Linux ARMv7 (Hard Float)"
+	@echo ""
+	@echo "  Linux (MusL):"
+	@echo "    x86_64-unknown-linux-musl    - Alpine Linux x86_64"
+	@echo "    aarch64-unknown-linux-musl   - Alpine Linux ARM64"
+	@echo ""
+	@echo "  macOS:"
+	@echo "    x86_64-apple-darwin          - macOS Intel"
+	@echo "    aarch64-apple-darwin         - macOS Apple Silicon"
+	@echo ""
+	@echo "  Windows:"
+	@echo "    x86_64-pc-windows-gnu        - Windows x86_64 (MinGW)"
+	@echo "    i686-pc-windows-gnu          - Windows x86 (MinGW)"
+	@echo ""
+	@echo "  示例命令:"
+	@echo "    make cross TARGET=x86_64-unknown-linux-gnu"
+	@echo "    make build-linux"
+	@echo "    make build-macos"
+	@echo "    make build-win"
+	@echo "=========================================="
+
+### 通用交叉编译命令
+cross:
+	@echo "🌍 开始交叉编译: $(TARGET)"
+	@if [ -z "$(TARGET)" ]; then \
+		echo "❌ 请指定目标平台: make cross TARGET=x86_64-unknown-linux-gnu"; \
+		echo "   使用 make cross-list 查看所有支持的平台"; \
+		exit 1; \
+	fi
+	@echo "📦 安装交叉编译工具链 (如果需要)..."
+	@case "$(TARGET)" in \
+		*aarch64*|*arm*) rustup target add $(TARGET) 2>/dev/null || true;; \
+		*x86_64*|*i686*) rustup target add $(TARGET) 2>/dev/null || true;; \
+	esac
+	@echo "🔨 开始编译: $(TARGET)"
+	cargo build --release --target $(TARGET)
+	@echo "✅ 编译完成: $(TARGET_DIR)/$(TARGET)/release/$(BINARY_NAME)"
+
+### Linux x86_64 (GLIBC)
+build-linux: export TARGET = x86_64-unknown-linux-gnu
+build-linux:
+	@echo "🐧 开始编译 Linux x86_64 (GLIBC)..."
+	@if ! rustup target list | grep -q "$(TARGET) (installed)"; then \
+		echo "📦 安装目标工具链..."; \
+		rustup target add $(TARGET); \
+	fi
+	cargo build --release --target $(TARGET)
+	@mkdir -p dist/linux-x86_64
+	@cp $(TARGET_DIR)/$(TARGET)/release/$(BINARY_NAME) dist/linux-x86_64/
+	@echo "✅ 编译完成: dist/linux-x86_64/$(BINARY_NAME)"
+
+### Linux ARM64 (GLIBC)
+build-linux-arm64: export TARGET = aarch64-unknown-linux-gnu
+build-linux-arm64:
+	@echo "🐧 开始编译 Linux ARM64 (GLIBC)..."
+	@if ! rustup target list | grep -q "$(TARGET) (installed)"; then \
+		echo "📦 安装目标工具链..."; \
+		rustup target add $(TARGET); \
+	fi
+	cargo build --release --target $(TARGET)
+	@mkdir -p dist/linux-arm64
+	@cp $(TARGET_DIR)/$(TARGET)/release/$(BINARY_NAME) dist/linux-arm64/
+	@echo "✅ 编译完成: dist/linux-arm64/$(BINARY_NAME)"
+
+### Linux x86_64 (MusL - Alpine)
+build-linux-musl: export TARGET = x86_64-unknown-linux-musl
+build-linux-musl:
+	@echo "🐧 开始编译 Linux x86_64 (MusL)..."
+	@if ! rustup target list | grep -q "$(TARGET) (installed)"; then \
+		echo "📦 安装目标工具链..."; \
+		rustup target add $(TARGET); \
+	fi
+	cargo build --release --target $(TARGET)
+	@mkdir -p dist/linux-x86_64-musl
+	@cp $(TARGET_DIR)/$(TARGET)/release/$(BINARY_NAME) dist/linux-x86_64-musl/
+	@echo "✅ 编译完成: dist/linux-x86_64-musl/$(BINARY_NAME)"
+
+### macOS Intel
+build-macos: export TARGET = x86_64-apple-darwin
+build-macos:
+	@echo "🍎 开始编译 macOS Intel..."
+	@if ! rustup target list | grep -q "$(TARGET) (installed)"; then \
+		echo "📦 安装目标工具链..."; \
+		rustup target add $(TARGET); \
+	fi
+	cargo build --release --target $(TARGET)
+	@mkdir -p dist/macos-intel
+	@cp $(TARGET_DIR)/$(TARGET)/release/$(BINARY_NAME) dist/macos-intel/
+	@echo "✅ 编译完成: dist/macos-intel/$(BINARY_NAME)"
+
+### macOS Apple Silicon
+build-macos-arm64: export TARGET = aarch64-apple-darwin
+build-macos-arm64:
+	@echo "🍎 开始编译 macOS Apple Silicon..."
+	@if ! rustup target list | grep -q "$(TARGET) (installed)"; then \
+		echo "📦 安装目标工具链..."; \
+		rustup target add $(TARGET); \
+	fi
+	cargo build --release --target $(TARGET)
+	@mkdir -p dist/macos-arm64
+	@cp $(TARGET_DIR)/$(TARGET)/release/$(BINARY_NAME) dist/macos-arm64/
+	@echo "✅ 编译完成: dist/macos-arm64/$(BINARY_NAME)"
+
+### Windows x86_64 (MinGW)
+build-win: export TARGET = x86_64-pc-windows-gnu
+build-win:
+	@echo "🪟 开始编译 Windows x86_64 (MinGW)..."
+	@if ! rustup target list | grep -q "$(TARGET) (installed)"; then \
+		echo "📦 安装目标工具链..."; \
+		rustup target add $(TARGET); \
+	fi
+	cargo build --release --target $(TARGET)
+	@mkdir -p dist/win-x86_64
+	@cp $(TARGET_DIR)/$(TARGET)/release/$(BINARY_NAME).exe dist/win-x86_64/
+	@echo "✅ 编译完成: dist/win-x86_64/$(BINARY_NAME).exe"
+
+### Windows x86 (MinGW)
+build-win32: export TARGET = i686-pc-windows-gnu
+build-win32:
+	@echo "🪟 开始编译 Windows x86 (MinGW)..."
+	@if ! rustup target list | grep -q "$(TARGET) (installed)"; then \
+		echo "📦 安装目标工具链..."; \
+		rustup target add $(TARGET); \
+	fi
+	cargo build --release --target $(TARGET)
+	@mkdir -p dist/win-x86
+	@cp $(TARGET_DIR)/$(TARGET)/release/$(BINARY_NAME).exe dist/win-x86/
+	@echo "✅ 编译完成: dist/win-x86/$(BINARY_NAME).exe"
+
+### 一键编译所有平台
+build-all:
+	@echo "🌍 开始全平台编译..."
+	@make build-linux
+	@make build-linux-musl
+	@make build-macos
+	@make build-macos-arm64
+	@make build-win
+	@echo "=========================================="
+	@echo "✅ 所有平台编译完成！"
+	@echo "=========================================="
+	@echo ""
+	@echo "  输出目录: dist/"
+	@ls -la dist/
+
+### 清理跨平台编译产物
+clean-cross:
+	@echo "🧹 清理跨平台编译产物..."
+	rm -rf dist/
+	rm -rf $(TARGET_DIR)/x86_64-unknown-linux-gnu
+	rm -rf $(TARGET_DIR)/aarch64-unknown-linux-gnu
+	rm -rf $(TARGET_DIR)/x86_64-unknown-linux-musl
+	rm -rf $(TARGET_DIR)/x86_64-apple-darwin
+	rm -rf $(TARGET_DIR)/aarch64-apple-darwin
+	rm -rf $(TARGET_DIR)/x86_64-pc-windows-gnu
+	rm -rf $(TARGET_DIR)/i686-pc-windows-gnu
+	@echo "✅ 清理完成"
