@@ -1,5 +1,5 @@
 .PHONY: help build build-release check clean test lint fmt fmt-check run dev release migrate db-reset docker-build docker-run clean-all info
-.PHONY: cross cross-list build-linux build-macos build-win build-arm64 build-x86_64 build-linux-musl build-all build-linux-arm64 build-macos-arm64 build-win32 clean-cross
+.PHONY: cross cross-list build-linux build-macos build-win build-arm64 build-x86_64 build-linux-musl build-all build-linux-arm64 build-macos-arm64 build-win-x86 clean-cross
 
 # 项目名称和版本
 PROJECT_NAME := qiluo
@@ -46,6 +46,7 @@ help: info
 	@echo "    make build-macos      - 编译 macOS Intel"
 	@echo "    make build-macos-arm64- 编译 macOS Apple Silicon"
 	@echo "    make build-win        - 编译 Windows x86_64"
+	@echo "    make build-win-x86    - 编译 Windows x86"
 	@echo "    make build-all        - 一键编译所有平台"
 	@echo ""
 	@echo "  代码质量:"
@@ -469,8 +470,8 @@ build-win:
 	@echo "✅ 编译完成: dist/win-x86_64/$(BINARY_NAME).exe"
 
 ### Windows x86 (MinGW)
-build-win32: export TARGET = i686-pc-windows-gnu
-build-win32:
+build-win-x86: export TARGET = i686-pc-windows-gnu
+build-win-x86:
 	@echo "🪟 开始编译 Windows x86 (MinGW)..."
 	@if ! rustup target list | grep -q "$(TARGET) (installed)"; then \
 		echo "📦 安装目标工具链..."; \
@@ -489,6 +490,7 @@ build-all:
 	@make build-macos
 	@make build-macos-arm64
 	@make build-win
+	@make build-win-x86
 	@echo "=========================================="
 	@echo "✅ 所有平台编译完成！"
 	@echo "=========================================="
