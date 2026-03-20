@@ -2,6 +2,8 @@ use crate::model::sys::args::acaptch::*;
 use crate::service::prelude::*;
 use captcha_rust::Captcha;
 use image::{DynamicImage, ImageBuffer};
+use std::io::Cursor;
+
 pub async fn get_captcha(VQuery(arg): VQuery<ClientInfo>) -> impl IntoResponse {
     let res: CaptchaImage = gen_captcha(arg).await;
     ApiResponse::ok(res)
@@ -38,20 +40,18 @@ pub async fn gen_wx_captcha() -> String {
     captchtxt
 }
 
-//滑动验证码生成
+#[allow(dead_code)]
 async fn solid_captcha() {
-    let width = 520;
-    let height = 320;
+    let _width = 520;
+    let _height = 320;
     let mut img = image::open("original_captcha.png").unwrap().into_rgba8();
 
     let mut mask_img = ImageBuffer::new(50, 50);
     let mask_image = image::open("mask.png").unwrap().into_luma8();
-    // 确定缺口的位置和大小
-    let gap_x = 300; // rng.gen_range(50..450);
-    let gap_y = 200; //rng.gen_range(50..250);
+    let gap_x = 300;
+    let gap_y = 200;
     let gap_width = 50;
     let gap_height = 50;
-    // 绘制缺口（将缺口区域的像素设置为白色）
     for x in gap_x..(gap_x + gap_width) {
         for y in gap_y..(gap_y + gap_height) {
             if mask_image.get_pixel(x - gap_x, y - gap_y)[0] == 255 {
@@ -62,7 +62,12 @@ async fn solid_captcha() {
             }
         }
     }
-    let mask = DynamicImage::ImageRgba8(mask_img).as_bytes();
+    let _mask = DynamicImage::ImageRgba8(mask_img);
+    let _result = DynamicImage::ImageRgba8(img);
 
-    DynamicImage::ImageRgba8(img).as_bytes();
+    let _png_data = {
+        let mut buffer = Cursor::new(Vec::new());
+        let _ = _mask.write_to(&mut buffer, image::ImageFormat::Png);
+        buffer.into_inner()
+    };
 }

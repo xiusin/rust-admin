@@ -1,8 +1,7 @@
 use crate::common::result::ApiResponse;
-use async_trait::async_trait;
 use axum::{
     extract::{FromRequestParts, Query},
-    http::request::Parts, 
+    http::request::Parts,
     response::{IntoResponse, Response},
 };
 use serde::de::DeserializeOwned;

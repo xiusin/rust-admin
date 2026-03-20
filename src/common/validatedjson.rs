@@ -1,5 +1,4 @@
 use crate::common::result::ApiResponse;
-use async_trait::async_trait;
 use axum::{
     extract::{FromRequest, Request},
     response::{IntoResponse, Response},

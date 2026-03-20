@@ -1,9 +1,8 @@
 use crate::common::ser::i64_to_string;
 use crate::{common::ApiResponse, model::prelude::VJson};
 use axum::response::IntoResponse;
-use serde::{Deserialize, Deserializer, Serialize};
+use serde::{Deserialize, Serialize};
 use validator::Validate;
-//use crate::service::prelude::*;
 
 #[derive(Clone, Deserialize, Debug, Validate)]
 pub struct UserId {
@@ -17,12 +16,20 @@ pub struct UserRId {
     pub ruid: i64,
 }
 
-pub async fn test(VJson(arg): VJson<UserId>) -> impl IntoResponse { 
+#[allow(dead_code)]
+pub async fn test(VJson(_arg): VJson<UserId>) -> impl IntoResponse {
     let st = UserRId { ruid: 1555 };
     ApiResponse::ok(st)
 }
 
+#[allow(dead_code)]
 pub async fn list() -> impl IntoResponse {}
+
+#[allow(dead_code)]
 pub async fn edit() -> impl IntoResponse {}
+
+#[allow(dead_code)]
 pub async fn add() -> impl IntoResponse {}
+
+#[allow(dead_code)]
 pub async fn delete() -> impl IntoResponse {}

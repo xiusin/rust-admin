@@ -334,6 +334,7 @@ impl DbRegistry {
         }
     }
 
+    #[allow(dead_code)]
     pub(super) fn is_healthy(&self, idx: usize) -> bool {
         let now = Instant::now();
         let mut h = self.health.lock();
