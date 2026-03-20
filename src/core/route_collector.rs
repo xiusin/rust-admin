@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use crate::core::route::{RouteInfo, AuthConfig, LogConfig, RateLimitConfig};
 
 pub struct RouteCollector {
@@ -19,27 +18,19 @@ impl RouteCollector {
         }
     }
 
-    pub fn register<H: crate::core::route::RouteMeta>(&mut self) -> &mut Self {
-        let info = H::route_meta();
-        let auth = None;
-        let log = None;
-        let rate_limit = None;
-
-        if std::any::type_name::<H>().contains("list") {
-            self.routes.push(RouteRegistration {
-                info,
-                auth: Some(crate::core::route::AuthConfig {
-                    required: true,
-                    roles: vec!["admin".to_string()],
-                    permissions: vec![],
-                }),
-                log: Some(crate::core::route::LogConfig {
-                    operation: "查询用户列表".to_string(),
-                }),
-                rate_limit: None,
-            });
-        }
-
+    pub fn register_with_meta(
+        &mut self,
+        info: RouteInfo,
+        auth: Option<AuthConfig>,
+        log: Option<LogConfig>,
+        rate_limit: Option<RateLimitConfig>,
+    ) -> &mut Self {
+        self.routes.push(RouteRegistration {
+            info,
+            auth,
+            log,
+            rate_limit,
+        });
         self
     }
 

@@ -9,7 +9,7 @@ use axum::extract::Path;
 use axum::Json;
 
 #[route(method = "GET", path = "/api/sys/user/list", tag = "sys_user", summary = "获取用户列表")]
-#[auth(required = true, roles = "admin")]
+#[auth(required = true, roles = ["admin"])]
 #[log(operation = "查询用户列表")]
 pub async fn list(
     VQuery(_page): VQuery<PageParams>,
@@ -19,7 +19,7 @@ pub async fn list(
 }
 
 #[route(method = "GET", path = "/api/sys/user/{id}", tag = "sys_user", summary = "获取用户详情")]
-#[auth(required = true, permissions = "user:read")]
+#[auth(required = true, permissions = ["user:read"])]
 #[log(operation = "查看用户详情")]
 pub async fn get_user(
     Path(_id): Path<i64>,
@@ -28,7 +28,7 @@ pub async fn get_user(
 }
 
 #[route(method = "POST", path = "/api/sys/user/add", tag = "sys_user", summary = "创建用户")]
-#[auth(required = true, roles = "admin")]
+#[auth(required = true, roles = ["admin"])]
 #[log(operation = "创建用户")]
 pub async fn create(
     Json(_body): Json<SysUserAdd>,
@@ -37,7 +37,7 @@ pub async fn create(
 }
 
 #[route(method = "PUT", path = "/api/sys/user/edit", tag = "sys_user", summary = "更新用户")]
-#[auth(required = true, roles = "admin")]
+#[auth(required = true, roles = ["admin"])]
 #[log(operation = "更新用户")]
 pub async fn update(
     Json(_body): Json<SysUserEdit>,
@@ -46,7 +46,7 @@ pub async fn update(
 }
 
 #[route(method = "DELETE", path = "/api/sys/user/del", tag = "sys_user", summary = "删除用户")]
-#[auth(required = true, roles = "admin")]
+#[auth(required = true, roles = ["admin"])]
 #[log(operation = "删除用户")]
 #[rate_limit(requests = 10, period = "1m")]
 pub async fn delete(

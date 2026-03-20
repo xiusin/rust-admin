@@ -38,7 +38,8 @@ pub fn route(attr: TokenStream, item: TokenStream) -> TokenStream {
         pub fn #helper_name() -> crate::core::route::RouteInfo {
             crate::core::route::RouteInfo::new(
                 #path,
-                crate::core::route::HttpMethod::from_str(#method).unwrap(),
+                crate::core::route::HttpMethod::from_str(#method)
+                    .expect(concat!("Invalid HTTP method: ", #method)),
                 #fn_name_str,
             )
             .with_tag(#tag)
@@ -47,6 +48,19 @@ pub fn route(attr: TokenStream, item: TokenStream) -> TokenStream {
     };
 
     TokenStream::from(expanded)
+}
+
+fn parse_array(value: &str) -> Vec<String> {
+    let value = value.trim();
+    if value.starts_with('[') && value.ends_with(']') {
+        let inner = &value[1..value.len()-1];
+        inner.split(',')
+            .map(|s| s.trim().trim_matches('"').trim().to_string())
+            .filter(|s| !s.is_empty())
+            .collect()
+    } else {
+        vec![value.trim_matches('"').to_string()]
+    }
 }
 
 #[proc_macro_attribute]
@@ -65,15 +79,11 @@ pub fn auth(attr: TokenStream, item: TokenStream) -> TokenStream {
         let part = part.trim();
         if let Some(pos) = part.find('=') {
             let key = part[..pos].trim().to_string();
-            let value = part[pos + 1..].trim().trim_matches(&['"', ' ', '[', ']'][..]).to_string();
+            let value = part[pos + 1..].trim().to_string();
             match key.as_str() {
                 "required" => required = value == "true",
-                "roles" => {
-                    roles = value.split(',').map(|s| s.trim().trim_matches('"').to_string()).collect();
-                }
-                "permissions" => {
-                    permissions = value.split(',').map(|s| s.trim().trim_matches('"').to_string()).collect();
-                }
+                "roles" => roles = parse_array(&value),
+                "permissions" => permissions = parse_array(&value),
                 _ => {}
             }
         }
@@ -149,14 +159,14 @@ pub fn rate_limit(attr: TokenStream, item: TokenStream) -> TokenStream {
             let key = part[..pos].trim().to_string();
             let value = part[pos + 1..].trim().trim_matches('"').to_string();
             match key.as_str() {
-                "requests" => requests = value.parse().ok(),
+                "requests" => requests = Some(value.parse().expect("Invalid requests value: must be a number")),
                 "period" => period = Some(value),
                 _ => {}
             }
         }
     }
 
-    let requests_val = requests.unwrap_or(100);
+    let requests_val = requests.expect("requests field is required");
     let period_val = period.unwrap_or_else(|| "1m".to_string());
 
     let helper_name = syn::Ident::new(&format!("__rate_limit_meta_{}", fn_name), fn_name.span());
