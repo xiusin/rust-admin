@@ -25,22 +25,37 @@ pub struct AppConfig {
 
 impl AppConfig {
     pub fn init() -> Self {
-        let env = env::var("environment").unwrap_or_else(|_| "development".to_string());
-        AppConfig::load(env).unwrap()
+        let env_name = env::var("environment").unwrap_or_else(|_| "development".to_string());
+        AppConfig::load(env_name).unwrap()
     }
 
-    pub fn load(env: String) -> Result<Self> {
+    pub fn load(env_name: String) -> Result<Self> {
         let path = env::current_dir().unwrap();
 
         let path = path.join("config");
-        let files = path.join(format!("{env}.yaml"));
+        let files = path.join(format!("{env_name}.yaml"));
 
         let content = fs::read_to_string(files).expect("msg");
         let rendered = tera::render_string(&content, &json!({}))?;
-        let s = serde_yaml::from_str(&rendered);
-        let appconfi: AppConfig = s.unwrap();
-        Ok(appconfi)
+        let mut cfg: AppConfig = serde_yaml::from_str(&rendered).unwrap();
+
+        for db in &mut cfg.databases {
+            db.uri = expand_env_vars(&db.uri);
+        }
+
+        Ok(cfg)
     }
+}
+
+fn expand_env_vars(s: &str) -> String {
+    let mut result = s.to_string();
+    for (key, value) in env::vars() {
+        let placeholder = format!("${{{}}}", key);
+        result = result.replace(&placeholder, &value);
+        let upper_placeholder = format!("${{{}!}}", key);
+        result = result.replace(&upper_placeholder, &value);
+    }
+    result
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]

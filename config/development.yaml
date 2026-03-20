@@ -65,28 +65,28 @@ workers:
 # Database Configuration
 databases:
   - name: primary
-    uri: "mysql://qiluo:Qiluo123@127.0.0.1:3306/qiluoopen"
+    uri: "mysql://qiluo:${DB_PASSWORD}@127.0.0.1:3306/qiluoopen"
     max_connections: 16
     min_connections: 2
     connect_timeout: 3000
     idle_timeout: 300000
     enable_logging: false
 
-  - name: replica1
-    uri: "mysql://qiluo:Qiluo123@127.0.0.1:3306/qiluoopen"
-    max_connections: 8
-    min_connections: 1
-    connect_timeout: 3000
-    idle_timeout: 300000
-    enable_logging: false
+  # - name: replica1
+  #   uri: "mysql://qiluo:${DB_PASSWORD}@127.0.0.1:3306/qiluoopen"
+  #   max_connections: 8
+  #   min_connections: 1
+  #   connect_timeout: 3000
+  #   idle_timeout: 300000
+  #   enable_logging: false
 
-  - name: replica2
-    uri: "mysql://qiluo:Qiluo123@127.0.0.1:3306/qiluoopen"
-    max_connections: 8
-    min_connections: 1
-    connect_timeout: 3000
-    idle_timeout: 300000
-    enable_logging: false
+  # - name: replica2
+  #   uri: "mysql://qiluo:${DB_PASSWORD}@127.0.0.1:3306/qiluoopen"
+  #   max_connections: 8
+  #   min_connections: 1
+  #   connect_timeout: 3000
+  #   idle_timeout: 300000
+  #   enable_logging: false
 db_routing:
   default: "primary"         # 不配则用第一个
   write:   "primary"         # 不配则用 default
