@@ -1,4 +1,4 @@
-# 齐罗（QiLuo）项目开发范式宪法
+# 项目开发范式宪法
 
 **版本**: v1.0.0
 **制定日期**: 2026-03-19
@@ -8,7 +8,7 @@
 
 ## 前言
 
-本文档作为齐罗（QiLuo）项目开发的最高指导纲领，定义了项目开发过程中的核心范式规范、角色职责及质量保障机制。所有开发人员必须严格遵守本文档的规定，确保项目开发过程的一致性、可维护性和高质量。
+本文档作为项目开发的最高指导纲领，定义了项目开发过程中的核心范式规范、角色职责及质量保障机制。所有开发人员必须严格遵守本文档的规定，确保项目开发过程的一致性、可维护性和高质量。
 
 ---
 
@@ -1004,7 +1004,434 @@ docs/
 
 ---
 
-## 第四部分：实施与执行
+## 第五部分：多代理/多子代理Agent调用规范
+
+### 10. Agent 系统架构
+
+#### 10.1 Agent 定义与分类
+
+本项目采用 **多代理（Multi-Agent）** 系统架构，定义以下 Agent 类型：
+
+| Agent类型 | 代号 | 职责描述 | 并发数限制 |
+|-----------|------|----------|-----------|
+| **主代理（Master Agent）** | `master` | 任务分解、子代理调度、结果聚合 | 1 |
+| **搜索代理（Search Agent）** | `search` | 代码库搜索、信息检索、知识查询 | 3 |
+| **代码审查代理（Review Agent）** | `review` | 代码质量检查、规范验证 | 2 |
+| **开发代理（Code Agent）** | `code` | 代码编写、重构、修复 | 2 |
+| **测试代理（Test Agent）** | `test` | 测试用例生成、测试执行 | 2 |
+| **文档代理（Doc Agent）** | `doc` | 文档生成、注释检查 | 1 |
+
+#### 10.2 Agent 层级结构
+
+```
+┌─────────────────────────────────────────────────────┐
+│                  Master Agent                       │
+│              (任务分解与调度中心)                     │
+│  ┌─────────────────────────────────────────────┐   │
+│  │  任务队列管理                                 │   │
+│  │  - 任务分解策略                               │   │
+│  │  - 子代理调度                                 │   │
+│  │  - 结果聚合与验证                             │   │
+│  └─────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────┘
+                         │
+         ┌───────────────┼───────────────┐
+         ▼               ▼               ▼
+   ┌──────────┐    ┌──────────┐    ┌──────────┐
+   │ Search   │    │  Review  │    │   Code   │
+   │  Agent   │    │  Agent   │    │  Agent   │
+   └──────────┘    └──────────┘    └──────────┘
+         │               │               │
+         └───────────────┼───────────────┘
+                         ▼
+                   ┌──────────┐
+                   │  Test    │
+                   │  Agent   │
+                   └──────────┘
+```
+
+### 11. Agent 通信协议
+
+#### 11.1 消息格式定义
+
+所有 Agent 间通信必须遵循以下消息格式：
+
+```json
+{
+  "message_id": "uuid-v4",
+  "timestamp": "ISO8601",
+  "sender": "agent-name",
+  "receiver": "agent-name | broadcast",
+  "message_type": "request | response | notification | error",
+  "content": {
+    "task_id": "task-uuid",
+    "action": "action-name",
+    "payload": {},
+    "metadata": {}
+  },
+  "status": {
+    "code": 0,
+    "message": "success"
+  }
+}
+```
+
+#### 11.2 消息类型规范
+
+| 消息类型 | 用途 | 必须包含字段 |
+|----------|------|--------------|
+| `request` | 请求执行任务 | `task_id`, `action`, `payload` |
+| `response` | 任务响应 | `task_id`, `result`, `status` |
+| `notification` | 状态通知 | `task_id`, `event`, `data` |
+| `error` | 错误报告 | `task_id`, `error_code`, `error_message` |
+
+#### 11.3 响应状态码
+
+| 状态码 | 含义 | 处理建议 |
+|--------|------|----------|
+| 0 | 成功 | 返回结果 |
+| 1000 | 参数错误 | 检查输入 |
+| 2000 | 执行超时 | 重试或跳过 |
+| 3000 | 资源不足 | 等待或降级 |
+| 4000 | 权限错误 | 检查权限配置 |
+| 5000 | 系统错误 | 记录日志并告警 |
+
+### 12. Agent 调用规范
+
+#### 12.1 主代理调度流程
+
+```
+任务输入 → 任务分析 → 子任务分解 → 并发调度 → 结果验证 → 结果聚合 → 任务完成
+```
+
+**调度决策规则**：
+
+1. **串行执行**：存在依赖关系的子任务
+2. **并发执行**：独立的子任务（最多 4 个并发）
+3. **降级策略**：子代理不可用时，使用备选代理
+
+#### 12.2 子代理调用约束
+
+**必须遵守的约束**：
+
+```yaml
+调用约束:
+  超时限制:
+    搜索代理: 30s
+    代码审查: 60s
+    开发代理: 300s
+    测试代理: 180s
+    文档代理: 60s
+
+  重试策略:
+    最大重试次数: 3
+    重试间隔: 5s (指数退避)
+    重试条件: 超时、网络错误
+
+  熔断机制:
+    失败阈值: 5次/分钟
+    熔断恢复: 60s
+```
+
+#### 12.3 代理调用示例
+
+**正确调用模式**：
+
+```rust
+// ✅ 正确的 Agent 调用方式
+let result = agent_dispatch(AgentRequest {
+    agent_type: AgentType::Search,
+    task: SearchTask {
+        query: "user authentication".to_string(),
+        scope: SearchScope::Codebase,
+        max_results: 10,
+    },
+    timeout: Duration::from_secs(30),
+    retry_policy: RetryPolicy::default(),
+}).await?;
+
+// ✅ 结果验证
+if !result.is_valid() {
+    return Err(AgentError::InvalidResult);
+}
+```
+
+**错误调用模式**：
+
+```rust
+// ❌ 禁止：直接忽略超时设置
+agent_dispatch(request); // 缺少 timeout
+
+// ❌ 禁止：无限重试
+agent_dispatch(request.with_retry(999)); // 危险
+
+// ❌ 禁止：缺少结果验证
+let result = agent_dispatch(request)?;
+process(result); // 未验证结果有效性
+```
+
+### 13. 防止 Agent 幻觉规范
+
+#### 13.1 信息核实机制
+
+**三级核实制度**：
+
+| 级别 | 核实内容 | 执行者 | 时机 |
+|------|----------|--------|------|
+| L1 | 任务参数核实 | Master Agent | 任务分发前 |
+| L2 | 执行结果核实 | 子代理 | 结果返回前 |
+| L3 | 聚合结果核实 | Master Agent | 结果聚合后 |
+
+**核实检查清单**：
+
+- [ ] 任务参数与原始需求一致性
+- [ ] 返回数据结构完整性
+- [ ] 返回内容与代码库实际状态一致性
+- [ ] 多个子代理结果交叉验证
+- [ ] 不确定信息的置信度标记
+
+#### 13.2 置信度评分
+
+每个 Agent 返回结果必须包含置信度评分：
+
+```json
+{
+  "result": {},
+  "confidence": {
+    "score": 0.85,
+    "verified": true,
+    "uncertainty": ["unverified_field_1"],
+    "sources": ["file:///path/to/source"]
+  }
+}
+```
+
+**置信度等级**：
+
+| 评分范围 | 等级 | 处理方式 |
+|----------|------|----------|
+| 0.9-1.0 | 高 | 可直接使用 |
+| 0.7-0.9 | 中 | 建议复核 |
+| 0.5-0.7 | 低 | 必须复核 |
+| < 0.5 | 不可信 | 重新执行或标记失败 |
+
+#### 13.3 知识库同步
+
+**同步机制**：
+
+```yaml
+知识同步:
+  触发条件:
+    - 代码库变更后
+    - 文档更新后
+    - 规范变更后
+
+  同步内容:
+    - 实体定义（Entity、Model）
+    - API 接口定义
+    - 代码规范变更
+    - 依赖版本信息
+
+  同步验证:
+    - 完整性检查
+    - 一致性验证
+    - 版本兼容性检查
+```
+
+### 14. Agent 协作流程规范
+
+#### 14.1 典型工作流程
+
+**代码审查工作流**：
+
+```
+Master Agent
+    │
+    ├─→ [Search Agent] 搜索相关代码
+    │       │
+    │       └─→ [Review Agent] 代码审查
+    │               │
+    │               ├─→ [Code Agent] 修复建议
+    │               │       │
+    │               └─→ [Test Agent] 验证修复
+    │                       │
+    └───────────────────────┴─→ 结果聚合 → 用户输出
+```
+
+**代码开发工作流**：
+
+```
+Master Agent
+    │
+    ├─→ [Search Agent] 搜索现有实现参考
+    │       │
+    ├─→ [Doc Agent] 检查相关文档
+    │       │
+    └─→ [Code Agent] 代码实现
+            │
+            ├─→ [Review Agent] 代码审查
+            │       │
+            └─→ [Test Agent] 测试生成
+                    │
+                    └─→ 结果验证 → 代码提交
+```
+
+#### 14.2 并发控制规范
+
+**并发任务数限制**：
+
+```rust
+// 任务调度器配置
+pub struct SchedulerConfig {
+    // 最大并发任务数
+    pub max_concurrent_tasks: usize = 4,
+
+    // 单个 Agent 最大并发
+    pub max_concurrent_per_agent: usize = 2,
+
+    // 任务队列大小
+    pub task_queue_size: usize = 100,
+
+    // 任务超时默认时间
+    pub default_timeout: Duration = Duration::from_secs(300),
+}
+```
+
+**资源隔离策略**：
+
+- 每个子代理独立内存空间
+- 共享状态通过消息传递
+- 禁止跨代理直接调用
+
+### 15. Agent 监控与日志
+
+#### 15.1 日志规范
+
+**必须记录的日志**：
+
+| 事件类型 | 记录内容 | 日志级别 |
+|----------|----------|----------|
+| Agent 启动/停止 | 启动时间、版本 | INFO |
+| 任务分配 | 任务ID、子代理类型、参数 | DEBUG |
+| 任务完成 | 任务ID、执行时长、结果摘要 | INFO |
+| 任务失败 | 任务ID、错误类型、错误信息 | ERROR |
+| 重试 | 任务ID、重试次数、原因 | WARN |
+| 熔断触发 | Agent类型、失败次数、时间 | WARN |
+
+**日志格式**：
+
+```json
+{
+  "timestamp": "ISO8601",
+  "level": "INFO",
+  "agent": "agent-name",
+  "task_id": "task-uuid",
+  "event": "event-type",
+  "duration_ms": 123,
+  "metadata": {}
+}
+```
+
+#### 15.2 监控指标
+
+**关键性能指标**：
+
+```yaml
+监控指标:
+  响应时间:
+    - P50: < 5s
+    - P90: < 30s
+    - P99: < 60s
+
+  成功率:
+    - 整体成功率: > 95%
+    - 单 Agent 成功率: > 90%
+
+  资源使用:
+    - CPU 使用率: < 80%
+    - 内存使用率: < 70%
+    - 并发任务数: 实时监控
+```
+
+### 16. Agent 安全管理
+
+#### 16.1 权限控制
+
+```rust
+// Agent 权限级别
+pub enum AgentPermission {
+    ReadOnly,      // 只读（搜索、文档）
+    ReadWrite,     // 读写（代码、测试）
+    Admin,         // 管理（配置、调度）
+}
+
+// Agent 权限矩阵
+pub struct PermissionMatrix {
+    // Agent -> 允许的操作
+    pub search: vec![ReadOnly],
+    pub review: vec![ReadOnly],
+    pub code: vec![ReadWrite],
+    pub test: vec![ReadWrite],
+    pub doc: vec![ReadOnly],
+    pub master: vec![Admin],
+}
+```
+
+#### 16.2 敏感操作审计
+
+**必须审计的操作**：
+
+- 文件写入操作
+- 代码修改操作
+- 配置变更操作
+- 外部网络请求
+- 数据库修改操作
+
+### 17. Agent 配置文件
+
+#### 17.1 配置文件位置
+
+```
+config/
+├── agents/
+│   ├── master.yaml          # 主代理配置
+│   ├── search.yaml           # 搜索代理配置
+│   ├── review.yaml           # 审查代理配置
+│   ├── code.yaml             # 代码代理配置
+│   ├── test.yaml             # 测试代理配置
+│   └── doc.yaml              # 文档代理配置
+└── agent_config.yaml         # 全局代理配置
+```
+
+#### 17.2 配置文件格式
+
+```yaml
+# config/agents/master.yaml
+agent:
+  name: "master"
+  version: "1.0.0"
+  max_child_agents: 6
+  timeout: 600s
+
+scheduler:
+  strategy: "priority_fifo"
+  max_concurrent: 4
+  queue_size: 100
+
+retry:
+  max_attempts: 3
+  base_delay: 5s
+  max_delay: 60s
+  exponential_base: 2
+
+circuit_breaker:
+  failure_threshold: 5
+  recovery_timeout: 60s
+```
+
+---
+
+## 第六部分：实施与执行
 
 ### 9. 规范执行
 
