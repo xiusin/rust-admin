@@ -1,6 +1,6 @@
 use super::Result;
 use super::{periodic::PeriodicJob, Job, Scheduled, UnitOfWork, Worker, WorkerRef};
-use crate::cache::CacheManager;
+use crate::infrastructure::cache::CacheManager;
 use std::collections::BTreeMap;
 use std::sync::Arc;
 use tokio::select;

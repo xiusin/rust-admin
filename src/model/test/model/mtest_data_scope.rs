@@ -1,7 +1,7 @@
 pub use super::args::atest_data_scope::*;
 pub use super::entity::test_data_scope::{self, ActiveModel, Model as TestDataScopeModel};
 use crate::model::prelude::*;
-use crate::model::sys::entity::sys_dept;
+use crate::domain::entity::sys_dept;
 use crate::service::data_scope::{check_record_scope, DataScopeContext, RecordOp, RecordScope};
 impl TestDataScopeModel {
     pub async fn list(

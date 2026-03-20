@@ -1,3 +1,3 @@
-pub mod entity;
-pub mod model;
-pub mod args;
+pub use crate::domain::args;
+pub use crate::domain::entity;
+pub use crate::domain::model;

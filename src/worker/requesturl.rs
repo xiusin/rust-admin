@@ -1,7 +1,7 @@
 use crate::common::error::Result;
-use crate::model::sys::model::{
-    msys_job::SysJobModel,
-    msys_job_log::{JobLogAdd, SysJobLogModel},
+use crate::domain::model::{
+    m_job::SysJobModel,
+    m_job_log::{JobLogAdd, SysJobLogModel},
 };
 use crate::worker::common::{Worker, WorkerOpts};
 use crate::worker::AppWorker;

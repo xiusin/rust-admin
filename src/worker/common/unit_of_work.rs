@@ -1,4 +1,4 @@
-use crate::cache::CacheManager;
+use crate::infrastructure::cache::CacheManager;
 use crate::common::error::Result;
 use rand::Rng;
 use sha2::{Digest, Sha256};

@@ -1,7 +1,7 @@
 use crate::api::WebApi;
 use crate::config::appconfig::LogLevel;
 use crate::config::APPCOFIG;
-use crate::midle_ware::jwt::UserInfo;
+use crate::middleware::jwt::UserInfo;
 
 use axum::middleware;
 use axum::response::IntoResponse;
@@ -26,10 +26,10 @@ use tracing_subscriber::{
     EnvFilter, Registry,
 };
 
-use crate::cache::CacheManager;
-use crate::midle_ware::{ApiMid, AuthMid, OperateLogMid, RequestLogMid};
+use crate::infrastructure::cache::CacheManager;
+use crate::middleware::{ApiMid, AuthMid, OperateLogMid, RequestLogMid};
 use crate::worker::processor_job;
-use crate::db::DB;
+use crate::infrastructure::db::DB;
 
 use crate::service::sys::s_sys_job;
 

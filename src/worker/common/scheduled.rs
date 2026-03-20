@@ -1,6 +1,6 @@
 use super::Result;
 use super::{periodic::PeriodicJob, UnitOfWork};
-use crate::cache::CacheManager;
+use crate::infrastructure::cache::CacheManager;
 use tracing::info;
 #[derive(Default)]
 pub struct Scheduled {}

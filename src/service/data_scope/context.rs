@@ -1,7 +1,7 @@
 use sea_orm::{ColumnTrait, Condition, DatabaseConnection, DbErr, EntityTrait, QueryFilter};
 
 use super::DataScope;
-use crate::model::sys::entity::{sys_dept, sys_role, sys_role_dept, sys_user};
+use crate::domain::entity::{sys_dept, sys_role, sys_role_dept, sys_user};
 /// 某个登录用户在「当前激活角色」下的数据范围
 #[derive(Debug, Clone)]
 pub struct DataScopeContext {

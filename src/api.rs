@@ -1,4 +1,4 @@
-pub mod sys_controll;
+pub mod sys;
 pub mod test;
 pub mod web_path;
 use crate::worker::invokefunction::{InvokeFunctionMsg, InvokeFunctionWorker};
@@ -11,7 +11,7 @@ impl WebApi {
     pub fn routers() -> Router {
         let mut webpath = WebPath::new();
 
-        webpath = webpath.merge(sys_controll::router_sys());
+        webpath = webpath.merge(sys::router_sys());
         webpath = webpath.merge(test::router_test());
 
         webpath = webpath.final_to_path();
@@ -36,7 +36,7 @@ impl WebApi {
     }
     pub fn white_routers() -> Router {
         Router::new()
-            .merge(sys_controll::white_sys())
+            .merge(sys::white_sys())
             .merge(test::white_test())
     }
 }

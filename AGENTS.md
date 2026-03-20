@@ -64,7 +64,7 @@
 | 枚举名 | PascalCase | `Error`, `Relation` |
 | 枚举成员 | PascalCase | `Message`, `WithStatus` |
 | 常量名 | SCREAMING_SNAKE_CASE | `MAX_RETRY_COUNT`, `TOKEN_EXPIRY` |
-| 文件名 | snake_case | `s_sys_user.rs`, `sys_controll.rs` |
+| 文件名 | snake_case | `user_service.rs`, `sys_user.rs` |
 
 ##### 2.1.2 函数设计规范
 
@@ -242,16 +242,22 @@ export default {
 ```
 ┌─────────────────────────────────────────┐
 │              API Layer                  │  路由与控制器层
-│         (src/api/*.rs)                  │  请求接收与响应
+│         (src/api/**/*.rs)              │  请求接收与响应
 ├─────────────────────────────────────────┤
-│            Service Layer                │  业务逻辑层
-│       (src/service/**/*.rs)             │  业务规则处理
+│         Application Layer               │  应用服务层
+│       (src/application/**/*.rs)        │  业务用例编排
 ├─────────────────────────────────────────┤
-│            Model Layer                  │  数据模型层
-│   (src/model/**/{entity,model,args})   │  数据结构定义
+│            Domain Layer                 │  领域实体层
+│   (src/domain/{entity,model,args}/**/*.rs) │  领域模型与业务规则
 ├─────────────────────────────────────────┤
-│            DB / Cache                   │  数据访问层
-│      (src/db/*.rs, src/cache/*.rs)     │  数据库与缓存
+│         Infrastructure Layer            │  基础设施层
+│  (src/infrastructure/{db,cache}/**)    │  数据库、缓存、外部服务
+├─────────────────────────────────────────┤
+│           Middleware Layer              │  中间件层
+│          (src/middleware/**/*.rs)      │  认证、授权、日志
+├─────────────────────────────────────────┤
+│            Worker Layer                 │  后台任务层
+│          (src/worker/**/*.rs)          │  异步任务、定时任务
 └─────────────────────────────────────────┘
 ```
 
@@ -262,14 +268,13 @@ export default {
 | 模块 | 职责 | 目录 |
 |------|------|------|
 | api | API路由与控制器 | `src/api/` |
-| service | 业务逻辑服务 | `src/service/` |
-| model | 数据模型定义 | `src/model/` |
-| db | 数据库连接管理 | `src/db/` |
-| cache | 缓存抽象层 | `src/cache/` |
+| application | 应用服务层 | `src/application/` |
+| domain | 领域实体与模型 | `src/domain/` |
+| infrastructure | 基础设施层 | `src/infrastructure/` |
+| middleware | 中间件 | `src/middleware/` |
+| worker | 后台任务处理 | `src/worker/` |
 | config | 配置管理 | `src/config/` |
 | common | 公共工具 | `src/common/` |
-| midle_ware | 中间件 | `src/midle_ware/` |
-| worker | 后台任务处理 | `src/worker/` |
 
 **前端模块划分**：
 
@@ -409,23 +414,13 @@ pub struct ListData<T> {
 #### 4.2 API 路由定义规范
 
 ```rust
-// src/api/sys_controll.rs
-pub fn router_sys() -> WebPath {
-    WebPath::new().nest(
-        "/sys",
-        WebPath::new()
-            .nest("/user", sys_user())
-            .nest("/menu", menu())
-            .nest("/dept", sys_dept())
-    )
-}
-
-fn sys_user() -> WebPath {
+// src/api/sys/user.rs
+pub fn sys_user() -> WebPath {
     WebPath::new()
-        .route("/list", WebPathType::Get, Some("获取用户列表"), get(s_sys_user::list))
-        .route("/add", WebPathType::Post, Some("添加用户"), post(s_sys_user::add))
-        .route("/edit", WebPathType::Put, Some("编辑用户"), put(s_sys_user::edit))
-        .route("/del", WebPathType::Delete, Some("删除用户"), delete(s_sys_user::delete_users))
+        .route("/list", WebPathType::Get, Some("获取用户列表"), get(user_service::list))
+        .route("/add", WebPathType::Post, Some("添加用户"), post(user_service::add))
+        .route("/edit", WebPathType::Put, Some("编辑用户"), put(user_service::edit))
+        .route("/del", WebPathType::Delete, Some("删除用户"), delete(user_service::delete_users))
 }
 ```
 
@@ -481,25 +476,41 @@ impl Related<super::sys_dept::Entity> for Entity {
 impl ActiveModelBehavior for ActiveModel {}
 ```
 
-#### 5.2 Model 层结构规范
+#### 5.2 Domain 层结构规范
 
-每个业务模块的 Model 层必须包含三个子模块：
+每个业务模块的 Domain 层必须包含三个子模块：
 
 ```
-src/model/sys/
+src/domain/
 ├── entity/          # Sea-ORM Entity 定义
 │   ├── mod.rs
 │   └── sys_user.rs
-├── model/           # 业务 Model（查询、列表等）
+├── model/           # 领域模型（查询、列表等）
 │   ├── mod.rs
-│   └── msys_user.rs
-├── args/            # 请求参数结构体
-│   ├── mod.rs
-│   └── asys_user.rs
-└── mod.rs
+│   └── m_user.rs    # 原 msys_user.rs
+└── args/            # 请求参数结构体
+    ├── mod.rs
+    └── a_user.rs    # 原 asys_user.rs
 ```
 
-#### 5.3 数据库迁移规范
+#### 5.3 Application 层结构规范
+
+每个业务模块的 Application 层按领域划分：
+
+```
+src/application/
+├── sys/              # 系统管理（用户、角色、菜单等）
+│   ├── mod.rs
+│   └── user_service.rs
+├── monitor/          # 监控模块（定时任务、操作日志）
+│   ├── mod.rs
+│   └── job_service.rs
+└── system/          # 系统配置（字典、API权限）
+    ├── mod.rs
+    └── dict_service.rs
+```
+
+#### 5.4 数据库迁移规范
 
 ```rust
 // migration/src/m20220101_000001_create_table.rs

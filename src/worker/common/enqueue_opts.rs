@@ -1,5 +1,5 @@
 use crate::common::error::Result;
-use crate::db::GID;
+use crate::infrastructure::db::GID;
 use serde::Serialize;
 use serde_json::Value as JsonValue;
 
