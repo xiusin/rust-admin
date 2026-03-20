@@ -10,3 +10,4 @@ pub mod middleware;
 pub mod worker;
 pub mod banner;
 pub mod domain;
+pub mod core;

@@ -2,8 +2,17 @@
 name = "qiluo"
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.85.0"
+
+[package.metadata.rust-analyzer]
+rustc_private = true
 
 [dependencies]
+qiluo-macros = { path = "macros" }
+proc-macro2 = "1.0"
+quote = "1.0"
+syn = { version = "2.0", features = ["full", "extra-traits"] }
+
 migration = { path = "migration" }
 axum = { version = "0.8.7", default-features = true, features = ["http1", "http2", "json", "macros", "matched-path", "original-uri", "multipart", "tokio", "ws", "form", "query"] }
 fs-err = "3.2.0"

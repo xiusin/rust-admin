@@ -10,6 +10,7 @@ pub mod role;
 pub mod server;
 pub mod setting;
 pub mod user;
+pub mod user_handler;
 
 pub use auth::white_sys;
 pub use dashboard::sys_dashboard;
@@ -25,6 +26,10 @@ pub use setting::sys_setting;
 pub use user::sys_user;
 
 use super::web_path::WebPath;
+
+pub fn init_annotated_routes() {
+    user_handler::register_routes();
+}
 
 pub fn router_sys() -> WebPath {
     WebPath::new().nest(

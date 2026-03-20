@@ -65,7 +65,7 @@ workers:
 # Database Configuration
 databases:
   - name: primary
-    uri: "mysql://qiluo:${DB_PASSWORD}@127.0.0.1:3306/qiluoopen"
+    uri: "mysql://rust_admin:rust_admin@150.158.132.171:3306/rust_admin"
     max_connections: 16
     min_connections: 2
     connect_timeout: 3000
