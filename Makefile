@@ -1,5 +1,5 @@
 .PHONY: help build build-release check clean test lint fmt fmt-check run dev release migrate db-reset docker-build docker-run clean-all info
-.PHONY: cross cross-list build-linux build-macos build-win build-arm64 build-x86_64 build-linux-musl
+.PHONY: cross cross-list build-linux build-macos build-win build-arm64 build-x86_64 build-linux-musl build-all build-linux-arm64 build-macos-arm64 build-win32 clean-cross
 
 # 项目名称和版本
 PROJECT_NAME := qiluo
