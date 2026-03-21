@@ -7,6 +7,7 @@ pub fn handler(attr: TokenStream, item: TokenStream) -> TokenStream {
     let fn_name = &input.sig.ident;
     let fn_sig = &input.sig;
     let fn_body = &input.block;
+    let fn_vis = &input.vis;
 
     let attr_input = attr.to_string();
 
@@ -53,13 +54,14 @@ pub fn handler(attr: TokenStream, item: TokenStream) -> TokenStream {
     let rl_requests = rate_limit_requests.unwrap_or(100);
     let rl_period = rate_limit_period.unwrap_or_else(|| "1m".to_string());
 
-    let registration_fn_name = syn::Ident::new(&format!("__register_route_{}", fn_name), fn_name.span());
-    let registration_static_name = syn::Ident::new(&format!("__REG_INIT_{}", fn_name), fn_name.span());
+    let reg_fn_name = syn::Ident::new(&format!("__reg_{}", fn_name), fn_name.span());
+    let ctor_fn_name = syn::Ident::new(&format!("__ctor_{}", fn_name), fn_name.span());
 
-    let registration_fn = if has_rate_limit {
+    let registration_code = if has_rate_limit {
         quote! {
-            fn #registration_fn_name() {
-                use crate::core::{RouteInfo, HttpMethod, AuthConfig, LogConfig, RateLimitConfig, AnnotatedHandler};
+            fn #reg_fn_name() {
+                tracing::trace!("[reg] {} called for path {}", stringify!(#fn_name), #path);
+                use crate::core::{RouteInfo, HttpMethod, AuthConfig, LogConfig, RateLimitConfig, AnnotatedHandler, ROUTE_REGISTRY};
 
                 let route_info = RouteInfo::new(
                     #path.to_string(),
@@ -86,13 +88,14 @@ pub fn handler(attr: TokenStream, item: TokenStream) -> TokenStream {
                     period: #rl_period.to_string(),
                 });
 
-                crate::core::ROUTE_REGISTRY.register(stringify!(#fn_name), handler);
+                ROUTE_REGISTRY.register(stringify!(#fn_name), handler);
             }
         }
     } else if has_log {
         quote! {
-            fn #registration_fn_name() {
-                use crate::core::{RouteInfo, HttpMethod, AuthConfig, LogConfig, AnnotatedHandler};
+            fn #reg_fn_name() {
+                tracing::trace!("[reg] {} called for path {}", stringify!(#fn_name), #path);
+                use crate::core::{RouteInfo, HttpMethod, AuthConfig, LogConfig, AnnotatedHandler, ROUTE_REGISTRY};
 
                 let route_info = RouteInfo::new(
                     #path.to_string(),
@@ -114,13 +117,14 @@ pub fn handler(attr: TokenStream, item: TokenStream) -> TokenStream {
                     operation: #log_op_val.to_string(),
                 });
 
-                crate::core::ROUTE_REGISTRY.register(stringify!(#fn_name), handler);
+                ROUTE_REGISTRY.register(stringify!(#fn_name), handler);
             }
         }
     } else {
         quote! {
-            fn #registration_fn_name() {
-                use crate::core::{RouteInfo, HttpMethod, AuthConfig, AnnotatedHandler};
+            fn #reg_fn_name() {
+                tracing::trace!("[reg] {} called for path {}", stringify!(#fn_name), #path);
+                use crate::core::{RouteInfo, HttpMethod, AuthConfig, AnnotatedHandler, ROUTE_REGISTRY};
 
                 let route_info = RouteInfo::new(
                     #path.to_string(),
@@ -138,17 +142,22 @@ pub fn handler(attr: TokenStream, item: TokenStream) -> TokenStream {
                     permissions: vec![#(#auth_permissions_val.to_string()),*],
                 });
 
-                crate::core::ROUTE_REGISTRY.register(stringify!(#fn_name), handler);
+                ROUTE_REGISTRY.register(stringify!(#fn_name), handler);
             }
         }
     };
 
     let expanded = quote! {
-        #registration_fn
+        #fn_vis #fn_sig #fn_body
 
-        #fn_sig #fn_body
+        #registration_code
 
-        static #registration_static_name: std::sync::LazyLock<()> = std::sync::LazyLock::new(#registration_fn_name);
+        #[ctor::ctor]
+        fn #ctor_fn_name() {
+            eprintln!("[ctor] {} running for path {}", stringify!(#fn_name), #path);
+            #reg_fn_name();
+            eprintln!("[ctor] {} registration complete", stringify!(#fn_name));
+        }
     };
 
     TokenStream::from(expanded)

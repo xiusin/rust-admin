@@ -4,14 +4,6 @@ use once_cell::sync::Lazy;
 use crate::core::route::{RouteInfo, AuthConfig, LogConfig, RateLimitConfig};
 
 #[derive(Debug, Clone)]
-pub struct RouteEntry {
-    pub info: RouteInfo,
-    pub auth: Option<AuthConfig>,
-    pub log: Option<LogConfig>,
-    pub rate_limit: Option<RateLimitConfig>,
-}
-
-#[derive(Debug, Clone)]
 pub struct AnnotatedHandler {
     pub info: RouteInfo,
     pub auth: Option<AuthConfig>,
@@ -107,6 +99,20 @@ impl Default for RouteRegistry {
 }
 
 pub static ROUTE_REGISTRY: Lazy<RouteRegistry> = Lazy::new(|| RouteRegistry::new());
+
+pub struct RegTrigger {
+    _priv: (),
+}
+
+impl RegTrigger {
+    pub fn new() -> Self {
+        Self { _priv: () }
+    }
+}
+
+pub static __REG_LIST: Lazy<RegTrigger> = Lazy::new(|| {
+    RegTrigger::new()
+});
 
 #[macro_export]
 macro_rules! collect_route {

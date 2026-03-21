@@ -84,11 +84,3 @@ pub async fn delete(
 ) -> Result<ApiResponse<String>> {
     todo!()
 }
-
-pub fn init_user_handlers() {
-    std::sync::LazyLock::force(&__REG_INIT_list);
-    std::sync::LazyLock::force(&__REG_INIT_get_user);
-    std::sync::LazyLock::force(&__REG_INIT_create);
-    std::sync::LazyLock::force(&__REG_INIT_update);
-    std::sync::LazyLock::force(&__REG_INIT_delete);
-}
