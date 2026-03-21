@@ -59,6 +59,7 @@ impl App {
         self
     }
     pub async fn run() {
+        eprintln!("[DEBUG] App::run() started");
         let lconfig = APPCOFIG.logger.clone();
 
         let file_appender = tracing_appender::rolling::hourly(lconfig.log_dir, lconfig.file_name);
@@ -99,7 +100,7 @@ impl App {
         tracing::subscriber::set_global_default(logger).expect("Unable to set global subscriber");
         let mut app = App;
         app = app.db_init().await;
-        let _ = app.start().await;
+        app.start().await;
     }
 
     fn routes(&self) -> Router {

@@ -1,7 +1,7 @@
 pub mod sys;
 pub mod test;
 pub mod web_path;
-use crate::core::ROUTE_REGISTRY;
+use crate::core::{ROUTE_REGISTRY};
 use crate::worker::invokefunction::{InvokeFunctionMsg, InvokeFunctionWorker};
 use crate::worker::AppWorker;
 use axum::Router;
@@ -10,8 +10,6 @@ pub struct WebApi;
 
 impl WebApi {
     pub fn routers() -> Router {
-        sys::init_annotated_routes();
-
         ROUTE_REGISTRY.print_routes();
 
         let mut webpath = WebPath::new();

@@ -27,11 +27,9 @@ pub use user::sys_user;
 
 use super::web_path::WebPath;
 
-pub fn init_annotated_routes() {
-    user_handler::register_routes();
-}
-
 pub fn router_sys() -> WebPath {
+    user_handler::init_user_handlers();
+
     WebPath::new().nest(
         "/sys",
         WebPath::new()
