@@ -19,7 +19,7 @@ pub fn parse(cron: &str) -> Result<Cron> {
 /// 销毁所有定期任务
 pub async fn destroy_all() -> Result<()> {
     let cache = CacheManager::instance().await;
-    let _ = cache.remove(PERIODIC_KEY).await;
+    cache.remove(PERIODIC_KEY).await?;
     Ok(())
 }
 

@@ -55,7 +55,10 @@ impl App {
         tokio::spawn(async move {
             p.run().await;
         });
-        s_sys_job::update_job().await;
+        if let Err(e) = s_sys_job::update_job().await {
+            tracing::error!("❌ update_job failed: {:?}", e);
+            panic!("Worker initialization failed: {:?}", e);
+        }
         self
     }
     pub async fn run() {
@@ -100,7 +103,10 @@ impl App {
         tracing::subscriber::set_global_default(logger).expect("Unable to set global subscriber");
         let mut app = App;
         app = app.db_init().await;
-        let _ = app.start().await;
+        if let Err(e) = app.start().await {
+            tracing::error!("Server exited with error: {:?}", e);
+            return;
+        }
     }
 
     fn routes(&self) -> Router {
@@ -128,7 +134,7 @@ impl App {
         let addr = format!("{}:{}", serverconfig.binding, serverconfig.port);
 
         tracing::info!(
-            "Server is running on {}:{}",
+            "➜ Server is running on ➜ {}:{}",
             serverconfig.host,
             serverconfig.port
         );
@@ -165,7 +171,7 @@ impl App {
             }
         });
 
-        tracing::info!("Starting HTTPS server on {}", addr);
+        tracing::info!("➜ HTTPS server listening on ➜ {}", addr);
         axum_server::bind_rustls(socket_addr, config)
             .handle(handle)
             .serve(app.into_make_service())
@@ -184,7 +190,7 @@ impl App {
             .await
             .map_err(|e| format!("Failed to bind to address: {}", e))?;
 
-        tracing::info!("Starting HTTP server on {}", addr);
+        tracing::info!("➜ HTTP server listening on ➜ {}", addr);
         axum::serve(listener, app.into_make_service())
             .with_graceful_shutdown(App::shutdown_signal())
             .await

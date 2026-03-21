@@ -63,13 +63,14 @@ pub async fn validate_cron(VJson(arg): VJson<ValidateCronReq>) -> impl IntoRespo
     ApiResponse::ok(v)
 }
 
-pub async fn update_job() {
-    clear_periodic_worker().await;
-    let jobs = SysJobModel::all_job().await.unwrap_or_default();
+pub async fn update_job() -> crate::common::error::Result<()> {
+    clear_periodic_worker().await?;
+    let jobs = SysJobModel::all_job().await?;
     info!("update_job jobs: {}", jobs.len());
     for job in jobs {
         worker_execute_job(job).await;
     }
+    Ok(())
 }
 
 pub async fn worker_execute_job(job: JobRes) {

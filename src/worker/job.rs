@@ -24,7 +24,7 @@ impl Worker<JobMsg> for JobWorker {
     }
 
     async fn perform(&self, _: JobMsg) -> Result<()> {
-        s_sys_job::update_job().await;
+        let _ = s_sys_job::update_job().await?;
 
         Ok(())
     }

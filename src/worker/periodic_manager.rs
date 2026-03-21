@@ -1,7 +1,8 @@
 use super::common::periodic;
+use crate::common::error::Result;
 
-pub async fn clear_periodic_worker() {
-    let _ = periodic::destroy_all().await;
+pub async fn clear_periodic_worker() -> Result<()> {
+    periodic::destroy_all().await
 }
  
 
