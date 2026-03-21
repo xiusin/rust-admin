@@ -100,7 +100,7 @@ impl App {
         tracing::subscriber::set_global_default(logger).expect("Unable to set global subscriber");
         let mut app = App;
         app = app.db_init().await;
-        app.start().await;
+        let _ = app.start().await;
     }
 
     fn routes(&self) -> Router {

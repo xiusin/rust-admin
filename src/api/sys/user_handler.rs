@@ -84,3 +84,15 @@ pub async fn delete(
 ) -> Result<ApiResponse<String>> {
     todo!()
 }
+
+#[handler(
+    method = "GET",
+    path = "/api/sys/user/ping",
+    tag = "sys_user",
+    summary = "ping接口测试",
+    required = false,
+    operation = "ping"
+)]
+pub async fn ping() -> Result<ApiResponse<String>> {
+    Ok(ApiResponse { message: "success".to_string(), data: "pong".to_string() })
+}
