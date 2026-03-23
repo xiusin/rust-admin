@@ -56,8 +56,9 @@ impl App {
             p.run().await;
         });
         if let Err(e) = s_sys_job::update_job().await {
-            tracing::error!("❌ update_job failed: {:?}", e);
-            panic!("Worker initialization failed: {:?}", e);
+            tracing::warn!("⚠️ update_job failed (定时任务初始化失败): {:?} - 服务将继续运行", e);
+        } else {
+            tracing::info!("✅ 定时任务初始化成功");
         }
         self
     }
