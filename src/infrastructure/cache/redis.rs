@@ -16,9 +16,26 @@ pub struct RedisCache {
 }
 
 impl RedisCache {
-    pub async fn new(redis_url: &str, namespace: String) -> Result<Self> {
+    pub async fn new(redis_url: &str, namespace: String, pool_size: Option<u32>) -> Result<Self> {
         let manager = RedisConnectionManager::new(redis_url)?;
-        let pool = Pool::builder().build(manager).await?;
+        
+        let max_size = pool_size.unwrap_or(10);
+        
+        let pool = Pool::builder()
+            .max_size(max_size)
+            // 设置连接获取超时时间（避免无限等待）
+            .connection_timeout(std::time::Duration::from_secs(5))
+            // 设置连接空闲超时
+            .idle_timeout(Some(std::time::Duration::from_secs(300)))
+            // 设置最大生命周期，定期重建连接避免长时间占用
+            .max_lifetime(Some(std::time::Duration::from_secs(1800)))
+            .build(manager)
+            .await?;
+
+        tracing::info!(
+            "Redis connection pool initialized: max_size={}, timeout=5s", 
+            max_size
+        );
 
         Ok(Self {
             pool,

@@ -140,7 +140,7 @@
           <a-table :data="form.attributes" :pagination="false" :bordered="true" style="margin-top: 16px">
             <template #columns>
               <a-table-column title="属性名称" :width="150">
-                <template #cell="{ record, rowIndex }">
+                <template #cell="{ record }">
                   <a-input v-model="record.name" placeholder="属性名" />
                 </template>
               </a-table-column>
@@ -211,7 +211,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
 import { Message } from '@arco-design/web-vue';
-import { attributeTemplateApi, AttributeTemplateListItem, AttributeItem } from '@/api/modules/product/attributeTemplate';
+import { attributeTemplateApi, AttributeTemplateListItem } from '@/api/modules/product/attributeTemplate';
 import { categoryApi } from '@/api/modules/product/category';
 
 interface AttributeFormItem {

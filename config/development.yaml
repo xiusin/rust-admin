@@ -58,9 +58,9 @@ server:
 
 # Worker Configuration
 workers:
-  qeueu:
+  queues:
     - default
-  num_workers: 1 
+  num_workers: 2 
 
 # Database Configuration
 databases:
@@ -128,11 +128,17 @@ logger:
 
 cache:
   # Cache type, options: redis, memory
+  # 注意：如果 Redis 连接有问题，可以临时切换到 memory 模式
+  # 但 memory 模式不支持分布式部署和后台任务队列
   cache_type: redis
-  namespace: qiluo  
-  pool_size: 12
-  # Queue Configuration
-  url: {{ get_env(name="REDIS_URL", default="redis://127.0.0.1") }}
+  namespace: qiluo
+  # 连接池大小：需要大于 (worker数量 + 后台任务线程 + API请求并发)
+  # brpop 会阻塞占用连接，需要额外连接
+  pool_size: 20
+  # Redis 连接地址，确保 Redis 服务已启动
+  # 本地开发: redis://127.0.0.1
+  # 带密码: redis://:password@127.0.0.1:6379
+  url: {{ get_env(name="REDIS_URL", default="redis://:redis_RHxDeG@150.158.132.171:6379") }}
 # Mailer Configuration.
 mailer:
   # SMTP mailer configuration.

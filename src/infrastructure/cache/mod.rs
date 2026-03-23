@@ -31,15 +31,34 @@ impl Cache {
                 }
                 let url = config.url.unwrap();
 
-                let redis_cache = RedisCache::new(&url, namespace).await?;
-                Ok(Cache::Redis(redis_cache))
+                tracing::info!("Connecting to Redis: {}", url);
+                
+                match RedisCache::new(&url, namespace.clone(), config.pool_size).await {
+                    Ok(redis_cache) => {
+                        // 测试连接是否正常
+                        match redis_cache.set_string_ex("__test_connection__", "ok", 10).await {
+                            Ok(_) => {
+                                tracing::info!("✅ Redis connection test successful");
+                                let _ = redis_cache.remove("__test_connection__").await;
+                            }
+                            Err(e) => {
+                                tracing::error!("❌ Redis connection test failed: {:?}", e);
+                                tracing::error!("Please ensure Redis is running at: {}", url);
+                                tracing::error!("Start Redis with: redis-server or docker run -d -p 6379:6379 redis");
+                            }
+                        }
+                        Ok(Cache::Redis(redis_cache))
+                    }
+                    Err(e) => {
+                        tracing::error!("❌ Failed to create Redis connection pool: {:?}", e);
+                        tracing::error!("Redis URL: {}", url);
+                        tracing::error!("Please ensure Redis is running. Start with: redis-server");
+                        Err(e)
+                    }
+                }
             }
             "memory" => {
-                if config.pool_size.is_none() {
-                    return Err(Error::Message(
-                        "Memory cache max size must be specified".to_string(),
-                    ));
-                }
+                tracing::info!("Using in-memory cache (not recommended for production)");
                 let memory_cache = MemoryCache::new(namespace);
                 Ok(Cache::Memory(memory_cache))
             }
