@@ -32,13 +32,21 @@ impl Worker<RequestUrlMsg> for RequestUrlWorker {
     }
 
     async fn perform(&self, arg: RequestUrlMsg) -> Result<()> {
+        use chrono::Local;
         info!("request url: {}", arg.url);
+        let start_time = Local::now().naive_local();
         let url = arg.url;
         let resp = reqwest::get(url.as_str()).await;
+        let end_time = Local::now().naive_local();
+        let elapsed = end_time.signed_duration_since(start_time).num_milliseconds() as i32;
+
         let runcount = SysJobModel::updata_run_count(arg.job_id).await.unwrap_or(0);
         let mut jog_add = JobLogAdd {
             job_id: arg.job_id,
+            job_name: arg.job_name,
+            job_group: arg.job_group,
             run_count: runcount,
+            elapsed_time: elapsed,
             ..Default::default()
         };
         match resp {
@@ -50,7 +58,7 @@ impl Worker<RequestUrlMsg> for RequestUrlWorker {
                 } else {
                     txt
                 });
-                jog_add.status.clone_from(&"Sucess".to_owned());
+                jog_add.status = "0".to_string(); // 0-成功
             }
             Err(e) => {
                 let txt = e.to_string();
@@ -60,7 +68,7 @@ impl Worker<RequestUrlMsg> for RequestUrlWorker {
                 } else {
                     txt
                 });
-                jog_add.status.clone_from(&"Failed".to_owned());
+                jog_add.status = "1".to_string(); // 1-失败
             }
         };
         let _ = SysJobLogModel::add(jog_add).await;

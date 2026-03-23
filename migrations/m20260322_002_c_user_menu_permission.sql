@@ -1,0 +1,50 @@
+-- m20260322_002_c_user_menu_permission.sql
+-- 描述：C端用户管理系统菜单和权限
+-- 作者：tuoke
+-- 日期：2026-03-22
+
+-- 菜单类型说明：
+-- M = 目录
+-- C = 菜单
+-- F = 按钮
+
+-- C端用户管理菜单 (父菜单ID: 0, 排序: 99)
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (99, 'consumer', 'C端用户', NULL, 0, 99, '/consumer', NULL, '/consumer/finance', '', '0', 'M', '0', '', '1', '1', '1', '0', '1', '1', NULL, 'user', NOW(), NULL, NULL, 'C端用户管理目录', NULL, NULL);
+
+-- C端财务管理
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (9901, 'consumer-finance', '财务管理', NULL, 99, 1, '/consumer/finance', 'consumer/finance', '', '', '1', 'C', '0', '', '1', '1', '1', '0', '1', '1', 'consumer:finance:list', 'money', NOW(), NULL, NULL, 'C端用户财务管理', NULL, NULL);
+
+-- C端用户列表
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (9902, 'consumer-user', '用户管理', NULL, 99, 2, '/consumer/user', 'consumer/profile', '', '', '1', 'C', '0', '', '1', '1', '1', '0', '1', '1', 'consumer:user:list', 'peoples', NOW(), NULL, NULL, 'C端用户管理', NULL, NULL);
+
+-- C端登录日志
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (9903, 'consumer-login-logs', '登录日志', NULL, 99, 3, '/consumer/login-logs', 'consumer/login-logs', '', '', '1', 'C', '0', '', '1', '1', '1', '0', '1', '1', 'consumer:loginLog:list', 'log', NOW(), NULL, NULL, 'C端用户登录日志', NULL, NULL);
+
+-- C端媒体文件管理
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (9904, 'consumer-media', '媒体文件', NULL, 99, 4, '/consumer/media', 'consumer/media', '', '', '1', 'C', '0', '', '1', '1', '1', '0', '1', '1', 'consumer:media:list', 'video', NOW(), NULL, NULL, 'C端媒体文件管理', NULL, NULL);
+
+-- C端运费模板
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (9905, 'consumer-freight', '运费模板', NULL, 99, 5, '/consumer/freight', 'consumer/freight', '', '', '1', 'C', '0', '', '1', '1', '1', '0', '1', '1', 'consumer:freight:list', 'truck', NOW(), NULL, NULL, 'C端运费模板管理', NULL, NULL);
+
+-- 按钮权限 - 用户管理
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (990201, 'consumer-user-query', '用户查询', NULL, 9902, 1, '', '', '', '', '1', 'F', '0', '', '1', '1', '1', '0', '1', '1', 'consumer:user:query', '', NOW(), NULL, NULL, '', NULL, NULL);
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (990202, 'consumer-user-export', '用户导出', NULL, 9902, 2, '', '', '', '', '1', 'F', '0', '', '1', '1', '1', '0', '1', '1', 'consumer:user:export', '', NOW(), NULL, NULL, '', NULL, NULL);
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (990203, 'consumer-user-resetPwd', '重置密码', NULL, 9902, 3, '', '', '', '', '1', 'F', '0', '', '1', '1', '1', '0', '1', '1', 'consumer:user:resetPwd', '', NOW(), NULL, NULL, '', NULL, NULL);
+
+-- 按钮权限 - 财务管理
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (990101, 'consumer-finance-query', '账户查询', NULL, 9901, 1, '', '', '', '', '1', 'F', '0', '', '1', '1', '1', '0', '1', '1', 'consumer:finance:query', '', NOW(), NULL, NULL, '', NULL, NULL);
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (990102, 'consumer-finance-recharge', '用户充值', NULL, 9901, 2, '', '', '', '', '1', 'F', '0', '', '1', '1', '1', '0', '1', '1', 'consumer:finance:recharge', '', NOW(), NULL, NULL, '', NULL, NULL);
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (990103, 'consumer-finance-withdraw', '提现处理', NULL, 9901, 3, '', '', '', '', '1', 'F', '0', '', '1', '1', '1', '0', '1', '1', 'consumer:finance:withdraw', '', NOW(), NULL, NULL, '', NULL, NULL);
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (990104, 'consumer-finance-transactions', '交易流水', NULL, 9901, 4, '', '', '', '', '1', 'F', '0', '', '1', '1', '1', '0', '1', '1', 'consumer:finance:transactions', '', NOW(), NULL, NULL, '', NULL, NULL);
+
+-- 按钮权限 - 媒体文件
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (990401, 'consumer-media-upload', '文件上传', NULL, 9904, 1, '', '', '', '', '1', 'F', '0', '', '1', '1', '1', '0', '1', '1', 'consumer:media:upload', '', NOW(), NULL, NULL, '', NULL, NULL);
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (990402, 'consumer-media-delete', '文件删除', NULL, 9904, 2, '', '', '', '', '1', 'F', '0', '', '1', '1', '1', '0', '1', '1', 'consumer:media:delete', '', NOW(), NULL, NULL, '', NULL, NULL);
+
+-- 按钮权限 - 运费模板
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (990501, 'consumer-freight-create', '创建模板', NULL, 9905, 1, '', '', '', '', '1', 'F', '0', '', '1', '1', '1', '0', '1', '1', 'consumer:freight:create', '', NOW(), NULL, NULL, '', NULL, NULL);
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (990502, 'consumer-freight-edit', '编辑模板', NULL, 9905, 2, '', '', '', '', '1', 'F', '0', '', '1', '1', '1', '0', '1', '1', 'consumer:freight:edit', '', NOW(), NULL, NULL, '', NULL, NULL);
+INSERT INTO `sys_menu` (`id`, `name`, `title`, `i18nkey`, `pid`, `order`, `path`, `component`, `redirect`, `href`, `no_cache`, `menu_type`, `hidden`, `active_menu`, `always_show`, `breadcrumb`, `affix`, `no_tags_view`, `can_to`, `status`, `perms`, `icon`, `created_at`, `updated_by`, `updated_at`, `remark`, `created_by`, `deleted_at`) VALUES (990503, 'consumer-freight-delete', '删除模板', NULL, 9905, 3, '', '', '', '', '1', 'F', '0', '', '1', '1', '1', '0', '1', '1', 'consumer:freight:delete', '', NOW(), NULL, NULL, '', NULL, NULL);
+
+-- ROLLBACK:
+-- DELETE FROM sys_menu WHERE id >= 99 AND id < 10000;

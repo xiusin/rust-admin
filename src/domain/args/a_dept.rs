@@ -2,35 +2,58 @@ use crate::model::prelude::*;
 
 #[derive(Debug, Deserialize, Serialize, FromQueryResult, Clone, Default)]
 pub struct DeptResp {
-    #[serde(with = "i64_to_string")]
+    #[serde(with = "crate::common::ser::i64_to_string")]
     pub dept_id: i64,
-    #[serde(with = "i64_to_string")]
+    #[serde(with = "crate::common::ser::i64_to_string")]
     pub parent_id: i64,
     pub dept_name: Option<String>,
     pub dept_category: Option<String>,
     pub order: i32,
+    #[serde(with = "crate::common::ser::option_string_or_i64")]
     pub leader: Option<i64>,
     pub phone: Option<String>,
     pub email: Option<String>,
-    pub status: String, 
+    pub status: String,
     pub remark: Option<String>,
+    pub created_by: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub created_at: Option<DateTime>,
+    pub updated_by: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub updated_at: Option<DateTime>,
 }
 #[derive(Serialize, Clone, Debug, Default, Deserialize)]
 pub struct DeptTree {
-    #[serde(flatten)]
-    pub dept: DeptResp,
+    #[serde(with = "crate::common::ser::i64_to_string")]
+    pub dept_id: i64,
+    #[serde(with = "crate::common::ser::i64_to_string")]
+    pub parent_id: i64,
+    pub dept_name: Option<String>,
+    pub dept_category: Option<String>,
+    pub order: i32,
+    #[serde(with = "crate::common::ser::option_string_or_i64")]
+    pub leader: Option<i64>,
+    pub phone: Option<String>,
+    pub email: Option<String>,
+    pub status: String,
+    pub remark: Option<String>,
+    pub created_by: Option<String>,
+    pub created_at: Option<DateTime>,
+    pub updated_by: Option<String>,
+    pub updated_at: Option<DateTime>,
     pub children: Option<Vec<DeptTree>>,
 }
 
 #[derive(Serialize, Clone, Validate, Default, Deserialize)]
 pub struct SysDeptEdit {
-    #[serde(with = "i64_to_string")]
+    #[serde(with = "crate::common::ser::i64_to_string")]
     pub dept_id: i64,
-    #[serde(with = "i64_to_string")]
+    #[serde(with = "crate::common::ser::i64_to_string")]
     pub parent_id: i64,
     pub dept_name: Option<String>,
     pub dept_category: Option<String>,
     pub order: i32,
+    #[serde(with = "crate::common::ser::option_string_or_i64")]
     pub leader: Option<i64>,
     pub phone: Option<String>,
     pub email: Option<String>,
@@ -40,11 +63,12 @@ pub struct SysDeptEdit {
 
 #[derive(Serialize, Clone, Validate, Default, Deserialize)]
 pub struct SysDeptAdd {
-    #[serde(with = "i64_to_string")]
+    #[serde(with = "crate::common::ser::i64_to_string")]
     pub parent_id: i64,
     pub dept_name: Option<String>,
     pub dept_category: Option<String>,
     pub order: i32,
+    #[serde(with = "crate::common::ser::option_string_or_i64")]
     pub leader: Option<i64>,
     pub phone: Option<String>,
     pub email: Option<String>,
@@ -53,14 +77,15 @@ pub struct SysDeptAdd {
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, Validate)]
-pub struct SysDeptDel {    
-    #[serde(with = "i64_to_string")]
+pub struct SysDeptDel {
+    #[serde(with = "crate::common::ser::i64_to_string")]
     pub dept_id: i64,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, Validate)]
 pub struct SysDeptSearch { 
     pub dept_name: Option<String>,
+    pub status: Option<String>,
 }
 
 #[derive(Serialize, Clone, Debug, Default, Deserialize)]
@@ -81,5 +106,3 @@ pub struct DeptData {
     pub rgt: i32,
     pub depth: i32,
 }
-
-

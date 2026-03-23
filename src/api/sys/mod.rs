@@ -10,7 +10,6 @@ pub mod role;
 pub mod server;
 pub mod setting;
 pub mod user;
-pub mod user_handler;
 
 pub use auth::white_sys;
 pub use dashboard::sys_dashboard;

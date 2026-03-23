@@ -1,5 +1,14 @@
 pub use super::args::*;
 pub use crate::domain::entity::*;
+pub mod m_consumer;
+pub mod m_finance;
+pub mod m_freight;
+pub mod m_login_log;
+pub mod m_logistics;
+pub mod m_media;
+pub mod m_payment;
+pub mod m_pay_channel;
+pub mod m_sms_log;
 pub mod m_api_permission;
 pub mod m_dept;
 pub mod m_dict_data;
@@ -18,3 +27,16 @@ pub mod m_user;
 pub mod m_user_dept;
 pub mod m_user_role;
 pub mod m_white_jwt;
+
+pub mod m_user_extension;
+pub mod m_after_sale;
+
+pub mod m_product_category;
+pub mod m_product_brand;
+pub mod m_product;
+pub mod m_product_group;
+pub mod m_shipping_template;
+pub mod m_stock;
+pub mod m_store;
+pub mod m_verification;
+pub mod m_attribute_template;

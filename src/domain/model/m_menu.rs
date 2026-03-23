@@ -31,16 +31,21 @@ impl SysMenuModel {
 
     pub async fn add(arg: MenuAdd) -> Result<String> {
         let db = DB().await;
-        let rmodel = sys_menu::Entity::find()
-            .filter(
-                Condition::all()
-                    .add(sys_menu::Column::Pid.eq(arg.pid))
-                    .add(sys_menu::Column::Path.eq(arg.path.clone())),
-            )
-            .one(db)
-            .await?;
-        if rmodel.is_some() {
-            return Err("Add Failed".into());
+        
+        if let Some(ref path) = arg.path {
+            if !path.is_empty() {
+                let rmodel = sys_menu::Entity::find()
+                    .filter(
+                        Condition::all()
+                            .add(sys_menu::Column::Pid.eq(arg.pid))
+                            .add(sys_menu::Column::Path.eq(path.clone())),
+                    )
+                    .one(db)
+                    .await?;
+                if rmodel.is_some() {
+                    return Err(format!("菜单路径 '{}' 在同一层级已存在", path).into());
+                }
+            }
         }
 
         let id = GID().await;
@@ -142,7 +147,7 @@ impl SysMenuModel {
             rmodel = rmodel.filter(sys_menu::Column::MenuType.eq("F"));
         };
         if is_only_enabled {
-            rmodel = rmodel.filter(sys_menu::Column::Status.eq(0));
+            rmodel = rmodel.filter(sys_menu::Column::Status.eq("0"));
         };
         if !APPCOFIG.system.super_role.contains(&role_id) {
             rmodel = rmodel.join_rev(

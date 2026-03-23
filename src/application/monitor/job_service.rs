@@ -25,7 +25,7 @@ pub async fn add(VJson(arg): VJson<JobAdd>) -> impl IntoResponse {
     let r = SysJobModel::add(arg).await;
     ApiResponse::from_result(r)
 }
-pub async fn delete(VJson(arg): VJson<JobDel>) -> impl IntoResponse {
+pub async fn delete(VQuery(arg): VQuery<JobDel>) -> impl IntoResponse {
     let r = SysJobModel::del(arg).await;
     ApiResponse::from_result(r)
 }
@@ -84,14 +84,20 @@ pub async fn worker_execute_job(job: JobRes) {
                 job_name: job.job_name.clone(),
                 job_group: job.job_group.clone(),
             };
-            periodic_worker(
+            if let Err(e) = periodic_worker(
                 &cron_expression,
                 &job.job_name,
                 &job.job_group,
                 reqarg,
                 RequestUrlWorker::class_name(),
             )
-            .await;
+            .await
+            {
+                error!(
+                    "Failed to register periodic worker for job '{}': {}",
+                    job.job_name, e
+                );
+            }
         }
     } else if job.task_type == "invokefunction" {
         let cron_expression = job.cron_expression;
@@ -104,14 +110,20 @@ pub async fn worker_execute_job(job: JobRes) {
                     callfun: v["callfun"].as_str().unwrap_or_default().to_string(),
                     parmets: v["parmets"].as_str().unwrap_or_default().to_string(),
                 };
-                periodic_worker(
+                if let Err(e) = periodic_worker(
                     &cron_expression,
                     &job.job_name,
                     &job.job_group,
                     invokemsg,
                     InvokeFunctionWorker::class_name(),
                 )
-                .await;
+                .await
+                {
+                    error!(
+                        "Failed to register periodic worker for job '{}': {}",
+                        job.job_name, e
+                    );
+                }
             }
         }
     }

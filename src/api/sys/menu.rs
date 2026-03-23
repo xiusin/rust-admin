@@ -40,4 +40,22 @@ pub fn menu() -> WebPath {
             Some("删除菜单"),
             delete(s_sys_menu::delete),
         )
+        .route(
+            "/getRouters",
+            WebPathType::Get,
+            Some("获取路由"),
+            get(s_sys_menu::get_routers),
+        )
+        .route(
+            "/getMenuList",
+            WebPathType::Get,
+            Some("获取菜单列表"),
+            get(s_sys_menu::get_menu_list),
+        )
+        .route(
+            "/getUserPermission",
+            WebPathType::Get,
+            Some("获取用户权限"),
+            get(s_sys_menu::get_user_permission),
+        )
 }

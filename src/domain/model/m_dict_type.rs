@@ -10,6 +10,9 @@ impl SysDictTypeModel {
         let db = DB().await;
         let mut rmodel = sys_dict_type::Entity::find();
 
+        // 过滤已删除的数据
+        rmodel = rmodel.filter(sys_dict_type::Column::DeletedAt.is_null());
+
         if let Some(dict_type) = search.dict_type {
             rmodel = rmodel.filter(sys_dict_type::Column::DictType.eq(dict_type));
         }
@@ -41,9 +44,11 @@ impl SysDictTypeModel {
             dict_name: Set(arg.dict_name),
             dict_type: Set(arg.dict_type),
             order: Set(arg.order),
+            status: Set(arg.status.unwrap_or_else(|| "1".to_string())),
             remark: Set(arg.remark),
             created_at: Set(now),
             updated_at: Set(now),
+            deleted_at: Set(None),
         };
         amodel.insert(db).await?;
         Ok("Success".to_string())
@@ -63,6 +68,7 @@ impl SysDictTypeModel {
         amodel.dict_name = Set(arg.dict_name);
         amodel.dict_type = Set(arg.dict_type);
         amodel.order = Set(arg.order);
+        amodel.status = Set(arg.status);
         amodel.updated_at = Set(now);
         amodel.remark = Set(arg.remark);
         amodel.update(db).await?;
@@ -79,10 +85,13 @@ impl SysDictTypeModel {
             return Err("dict_type not found".into());
         };
         let txn = db.begin().await?;
-        SysDictDataModel::delete_by_dict_type(model.dict_id, &txn).await?;
-        sys_dict_type::Entity::delete_by_id(model.dict_id)
-            .exec(&txn)
-            .await?;
+        // 软删除字典数据
+        SysDictDataModel::soft_delete_by_dict_type(model.dict_id, &txn).await?;
+        // 软删除字典类型
+        let now = Local::now().naive_local();
+        let mut amodel: sys_dict_type::ActiveModel = model.into();
+        amodel.deleted_at = Set(Some(now));
+        amodel.update(&txn).await?;
         txn.commit().await?;
         Ok("Success".to_string())
     }

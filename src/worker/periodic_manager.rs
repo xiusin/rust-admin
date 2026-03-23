@@ -12,18 +12,18 @@ pub async fn periodic_worker<Args>(
     queue: &str,
     args: Args,
     class_name: String,
-) where
+) -> Result<()>
+where
     Args: Sync + Send + for<'de> serde::Deserialize<'de> + serde::Serialize + 'static,
 {
-    let d = periodic::builder(cron_str)
-        .unwrap()
+    let d = periodic::builder(cron_str)?
         .name(name)
         .queue(queue)
-        .args(args)
-        .unwrap()
-        .into_periodic_job(class_name)
-        .unwrap();
+        .args(args)?
+        .into_periodic_job(class_name)?;
 
-    let payload = serde_json::to_string(&d).unwrap();
-    let _ = d.update(&payload).await;
+    let payload = serde_json::to_string(&d)?;
+    d.update(&payload).await?;
+    
+    Ok(())
 }

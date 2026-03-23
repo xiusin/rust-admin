@@ -105,7 +105,7 @@ where
             Ok(user) => user,
             Err(err) => {
                 tracing::info!("AuthError:{:?}", err);
-                return Err(AuthError::NoneRole);
+                return Err(AuthError::UserNotFound);
             }
         };
         tracing::info!(" userinfo.rid:{:?}", userinfo.rid);
@@ -167,6 +167,7 @@ pub enum AuthError {
     ExpiredToken,
     CheckOutToken,
     NoneRole,
+    UserNotFound,
     DatabaseError,
     TokenParseError,
 }
@@ -184,6 +185,10 @@ impl IntoResponse for AuthError {
             AuthError::NoneRole => (
                 StatusCode::FORBIDDEN,
                 "This account does not have permission",
+            ),
+            AuthError::UserNotFound => (
+                StatusCode::UNAUTHORIZED,
+                "User does not exist or has been deleted",
             ),
             AuthError::DatabaseError => (StatusCode::INTERNAL_SERVER_ERROR, "Database error"),
             AuthError::TokenParseError => (StatusCode::UNAUTHORIZED, "Token parse error"),

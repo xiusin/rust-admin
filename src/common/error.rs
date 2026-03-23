@@ -211,3 +211,9 @@ impl From<Box<dyn std::error::Error + Send + Sync>> for Error {
         Error::Message(arg.to_string())
     }
 }
+
+impl From<validator::ValidationErrors> for Error {
+    fn from(err: validator::ValidationErrors) -> Self {
+        Error::validation_error(err.to_string())
+    }
+}

@@ -12,9 +12,12 @@ pub struct Model {
     pub dict_label: String,
     pub dict_value: String,
     pub dict_type_id: i64,
+    pub status: String,
     pub created_at: Option<DateTime>,
     pub updated_at: Option<DateTime>,
     pub remark: Option<String>,
+    #[sea_orm(nullable)]
+    pub deleted_at: Option<DateTime>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

@@ -70,7 +70,7 @@ databases:
     min_connections: 2
     connect_timeout: 3000
     idle_timeout: 300000
-    enable_logging: false
+    enable_logging: true
 
   # - name: replica1
   #   uri: "mysql://qiluo:${DB_PASSWORD}@127.0.0.1:3306/qiluoopen"
@@ -90,7 +90,7 @@ databases:
 db_routing:
   default: "primary"         # 不配则用第一个
   write:   "primary"         # 不配则用 default
-  reads:   ["replica1", "replica2"]
+  # reads:   ["replica1", "replica2"]
 
   # 读库选择策略：round_robin | random | weighted
   read_strategy: "weighted"

@@ -2,6 +2,7 @@ pub use crate::domain::args::a_dict_data::*;
 pub use crate::domain::entity::sys_dict_data::{self, ActiveModel, Model as SysDictDataModel};
 use crate::domain::entity::sys_dict_type;
 use crate::model::prelude::*;
+use sea_orm::prelude::Expr;
 
 impl SysDictDataModel {
     pub async fn list(arg: PageParams, search: DictDataSearch) -> Result<ListData<DictDataRes>> {
@@ -10,6 +11,8 @@ impl SysDictDataModel {
         let db = DB().await;
         let mut rmodel = sys_dict_data::Entity::find();
 
+        // 过滤已删除的数据
+        rmodel = rmodel.filter(sys_dict_data::Column::DeletedAt.is_null());
         rmodel = rmodel.filter(sys_dict_data::Column::DictTypeId.eq(search.dict_type_id));
         if let Some(dict_label) = search.dict_label {
             rmodel = rmodel.filter(sys_dict_data::Column::DictLabel.eq(dict_label));
@@ -44,6 +47,7 @@ impl SysDictDataModel {
             dict_label: Set(arg.dict_label),
             dict_value: Set(arg.dict_value),
             dict_sort: Set(arg.dict_sort),
+            status: Set(arg.status.unwrap_or_else(|| "1".to_string())),
             remark: Set(arg.remark),
             ..Default::default()
         };
@@ -65,15 +69,25 @@ impl SysDictDataModel {
         amodel.dict_label = Set(arg.dict_label);
         amodel.dict_value = Set(arg.dict_value);
         amodel.dict_sort = Set(arg.dict_sort);
+        amodel.status = Set(arg.status);
         amodel.remark = Set(arg.remark);
         amodel.update(db).await?;
         Ok("Success".to_string())
     }
     pub async fn del(arg: DictDataDel) -> Result<String> {
         let db = DB().await;
-        sys_dict_data::Entity::delete_by_id(arg.dict_code)
-            .exec(db)
+        let rmodel = sys_dict_data::Entity::find_by_id(arg.dict_code)
+            .one(db)
             .await?;
+        let model = if let Some(r) = rmodel {
+            r
+        } else {
+            return Err("dict data not found".into());
+        };
+        let now = Local::now().naive_local();
+        let mut amodel: sys_dict_data::ActiveModel = model.into();
+        amodel.deleted_at = Set(Some(now));
+        amodel.update(db).await?;
         Ok("Success".to_string())
     }
 
@@ -96,9 +110,12 @@ impl SysDictDataModel {
         Ok(rmodels)
     }
 
-    pub async fn delete_by_dict_type(dict_id: i64, db: &DatabaseTransaction) -> Result<String> {
-        sys_dict_data::Entity::delete_many()
+    pub async fn soft_delete_by_dict_type(dict_id: i64, db: &DatabaseTransaction) -> Result<String> {
+        let now = Local::now().naive_local();
+        sys_dict_data::Entity::update_many()
+            .col_expr(sys_dict_data::Column::DeletedAt, Expr::value(Some(now)))
             .filter(sys_dict_data::Column::DictTypeId.eq(dict_id))
+            .filter(sys_dict_data::Column::DeletedAt.is_null())
             .exec(db)
             .await?;
         Ok("Success".to_string())

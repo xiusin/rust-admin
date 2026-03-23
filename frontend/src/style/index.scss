@@ -1,0 +1,361 @@
+@use "@/style/var/index" as *;
+@use "@/style/model";
+@use "@/style/media";
+* {
+  padding: 0;
+  margin: 0;
+}
+html,
+body,
+#app {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+html {
+  font-size: 13px; // 全局字体大小改为小尺寸
+}
+#app {
+  overflow: hidden;
+}
+
+// 设置全局颜色-关联黑暗模式
+// 全局取一级容器背景色$color-bg-2，main窗口取边框色浅色$color-border-1
+body {
+  color: $color-text-1; // 整体文字的颜色
+  background: $color-bg-2; // body背景颜色
+  font-size: 13px; // 全局字体大小
+}
+
+// 设置nprogress进度条样式
+#nprogress .bar {
+  background: $color-primary !important;
+}
+
+// 全局mini尺寸样式覆盖
+html {
+  font-size: 12px; // 全局字体大小改为mini尺寸
+}
+
+body {
+  font-size: 12px;
+}
+
+.arco-table-cell {
+  font-size: 12px;
+  padding: 6px 10px !important;
+}
+
+.arco-btn {
+  font-size: 12px;
+  padding: 0 8px;
+  height: 24px;
+}
+
+.arco-btn-size-mini {
+  padding: 0 6px;
+  height: 22px;
+  font-size: 11px;
+}
+
+.arco-input-wrapper,
+.arco-select-view,
+.arco-picker {
+  font-size: 12px;
+}
+
+.arco-input-size-mini,
+.arco-select-size-mini .arco-select-view,
+.arco-picker-size-mini {
+  font-size: 11px;
+}
+
+.arco-form-item-label {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.arco-form-item {
+  margin-bottom: 12px;
+}
+
+.arco-tag {
+  font-size: 11px;
+  padding: 0 4px;
+  height: 20px;
+  line-height: 18px;
+}
+
+.arco-tag-size-mini {
+  font-size: 10px;
+  padding: 0 3px;
+  height: 18px;
+  line-height: 16px;
+}
+
+.arco-modal-title {
+  font-size: 14px;
+}
+
+.arco-drawer-title {
+  font-size: 14px;
+}
+
+.arco-pagination {
+  font-size: 12px;
+}
+
+.arco-tree-node-title {
+  font-size: 12px;
+}
+
+.arco-menu-item,
+.arco-menu-pop-header,
+.arco-menu-inline-header {
+  font-size: 12px;
+}
+
+.arco-breadcrumb-item {
+  font-size: 12px;
+}
+
+.arco-tabs-tab {
+  font-size: 12px;
+  padding: 6px 12px;
+}
+
+.arco-card-title {
+  font-size: 13px;
+}
+
+.arco-descriptions-item-label,
+.arco-descriptions-item-value {
+  font-size: 12px;
+}
+
+.arco-list-item {
+  font-size: 12px;
+}
+
+.arco-typography {
+  font-size: 12px;
+}
+
+.arco-radio,
+.arco-checkbox {
+  font-size: 12px;
+}
+
+.arco-switch {
+  width: 32px;
+  height: 18px;
+}
+
+.arco-switch-dot {
+  width: 14px;
+  height: 14px;
+}
+
+// 减小间距
+.arco-space-item {
+  margin-right: 6px !important;
+}
+
+.arco-row {
+  margin-bottom: 6px;
+}
+
+.arco-table-th {
+  padding: 6px 10px !important;
+}
+
+.arco-modal-header {
+  padding: 12px 16px;
+}
+
+.arco-modal-body {
+  padding: 12px 16px;
+}
+
+.arco-drawer-header {
+  padding: 12px 16px;
+}
+
+.arco-drawer-body {
+  padding: 12px 16px;
+}
+
+.arco-select-option {
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+.arco-picker-cell {
+  font-size: 12px;
+}
+
+.arco-avatar {
+  width: 24px;
+  height: 24px;
+}
+
+.arco-avatar-size-mini {
+  width: 20px;
+  height: 20px;
+}
+
+.arco-badge {
+  font-size: 10px;
+}
+
+.arco-collapse-item-header {
+  font-size: 12px;
+  padding: 8px 12px;
+}
+
+.arco-collapse-item-content {
+  font-size: 12px;
+}
+
+.arco-steps-item-title {
+  font-size: 12px;
+}
+
+.arco-steps-item-description {
+  font-size: 11px;
+}
+
+.arco-timeline-item-title {
+  font-size: 12px;
+}
+
+.arco-timeline-item-content {
+  font-size: 11px;
+}
+
+.arco-comment-content {
+  font-size: 12px;
+}
+
+.arco-comment-author {
+  font-size: 12px;
+}
+
+.arco-comment-datetime {
+  font-size: 11px;
+}
+
+.arco-statistic-title {
+  font-size: 12px;
+}
+
+.arco-statistic-value {
+  font-size: 18px;
+}
+
+.arco-result-title {
+  font-size: 16px;
+}
+
+.arco-result-subtitle {
+  font-size: 12px;
+}
+
+.arco-empty-description {
+  font-size: 12px;
+}
+
+.arco-alert-title {
+  font-size: 12px;
+}
+
+.arco-alert-content {
+  font-size: 11px;
+}
+
+.arco-message-content {
+  font-size: 12px;
+}
+
+.arco-notification-title {
+  font-size: 13px;
+}
+
+.arco-notification-content {
+  font-size: 12px;
+}
+
+.arco-popover-title {
+  font-size: 12px;
+}
+
+.arco-popover-content {
+  font-size: 11px;
+}
+
+.arco-tooltip-content {
+  font-size: 11px;
+}
+
+.arco-progress-text {
+  font-size: 11px;
+}
+
+.arco-slider-marks-text {
+  font-size: 10px;
+}
+
+.arco-input-tag-size-mini .arco-input-tag-tag {
+  font-size: 10px;
+  height: 18px;
+}
+
+.arco-cascader-option {
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+.arco-mention-option {
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+.arco-auto-complete-option {
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+.arco-transfer-list-item {
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+.arco-upload-list-item {
+  font-size: 12px;
+}
+
+.arco-rate-text {
+  font-size: 12px;
+}
+
+.arco-slider-input {
+  font-size: 11px;
+}
+
+.arco-color-picker-preview {
+  width: 20px;
+  height: 20px;
+}
+
+.arco-anchor-link-title {
+  font-size: 12px;
+}
+
+.arco-back-top {
+  width: 32px;
+  height: 32px;
+}
+
+.arco-divider-text {
+  font-size: 12px;
+}

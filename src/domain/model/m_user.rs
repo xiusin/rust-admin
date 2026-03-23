@@ -7,6 +7,7 @@ pub use crate::domain::entity::{
 use crate::domain::entity::sys_dept;
 use crate::model::prelude::*;
 use crate::service::data_scope::DataScopeContext;
+use chrono::NaiveDateTime;
 
 impl SysUserModel {
     pub async fn list(
@@ -17,12 +18,6 @@ impl SysUserModel {
         let page_num = arg.page_num.unwrap_or(1);
         let page_size = arg.page_size.unwrap_or(10);
         let db = DB().await;
-
-        let dept = sys_dept::Entity::find()
-            .filter(sys_dept::Column::DeptId.eq(search.dept_id))
-            .one(db)
-            .await?
-            .ok_or_else(|| Error::not_found("Department not found"))?;
 
         let mut rmodel = sys_user::Entity::find();
 
@@ -42,6 +37,16 @@ impl SysUserModel {
         if let Some(sa) = search.status {
             cond = cond.add(sys_user::Column::Status.eq(sa));
         }
+        if let Some(start_time) = search.start_time {
+            if let Ok(dt) = NaiveDateTime::parse_from_str(&start_time, "%Y-%m-%d %H:%M:%S") {
+                cond = cond.add(sys_user::Column::CreatedAt.gte(dt));
+            }
+        }
+        if let Some(end_time) = search.end_time {
+            if let Ok(dt) = NaiveDateTime::parse_from_str(&end_time, "%Y-%m-%d %H:%M:%S") {
+                cond = cond.add(sys_user::Column::CreatedAt.lte(dt));
+            }
+        }
         rmodel = rmodel.filter(cond);
         rmodel = rmodel.join_rev(
             JoinType::LeftJoin,
@@ -55,13 +60,21 @@ impl SysUserModel {
             rmodel = rmodel.filter(cond);
         }
 
-        let dept_lft = dept.lft;
-        let dept_rgt = dept.rgt;
-        rmodel = rmodel.filter(
-            Condition::all()
-                .add(sys_dept::Column::Lft.gte(dept_lft))
-                .add(sys_dept::Column::Rgt.lte(dept_rgt)),
-        );
+        if search.dept_id != 0 {
+            let dept = sys_dept::Entity::find()
+                .filter(sys_dept::Column::DeptId.eq(search.dept_id))
+                .one(db)
+                .await?
+                .ok_or_else(|| Error::not_found("Department not found"))?;
+
+            let dept_lft = dept.lft;
+            let dept_rgt = dept.rgt;
+            rmodel = rmodel.filter(
+                Condition::all()
+                    .add(sys_dept::Column::Lft.gte(dept_lft))
+                    .add(sys_dept::Column::Rgt.lte(dept_rgt)),
+            );
+        }
         rmodel = rmodel.join_rev(
             JoinType::LeftJoin,
             sys_role::Entity::belongs_to(sys_user::Entity)
@@ -75,12 +88,67 @@ impl SysUserModel {
         rmodel = rmodel.column_as(sys_role::Column::RoleId, "ARoleId");
 
         let total = rmodel.clone().count(db).await?;
+
+        #[derive(Debug, FromQueryResult)]
+        struct TempUserRes {
+            pub id: i64,
+            pub dept_id: i64,
+            pub user_name: String,
+            pub nick_name: String,
+            pub user_type: Option<String>,
+            pub email: Option<String>,
+            pub phonenumber: Option<String>,
+            pub sex: Option<String>,
+            pub avatar: Option<String>,
+            pub status: Option<String>,
+            pub remark: Option<String>,
+            pub created_by: Option<String>,
+            pub created_at: Option<DateTime>,
+            pub dept_name: Option<String>,
+            pub role_name: Option<String>,
+            pub a_role_id: Option<i64>,
+        }
+
         let paginator = rmodel
             .order_by_asc(sys_user::Column::CreatedAt)
-            .into_model::<SysUserRes>()
+            .into_model::<TempUserRes>()
             .paginate(db, page_size);
         let total_pages = paginator.num_pages().await?;
-        let list = paginator.fetch_page(page_num - 1).await?;
+        let temp_list = paginator.fetch_page(page_num - 1).await?;
+
+        let list: Vec<SysUserRes> = temp_list
+            .into_iter()
+            .map(|u| {
+                let is_admin = u.a_role_id
+                    .map(|rid| APPCOFIG.system.super_role.contains(&rid))
+                    .unwrap_or(false);
+                SysUserRes {
+                    id: u.id,
+                    dept_id: u.dept_id,
+                    dept_name: u.dept_name,
+                    role_id: u.a_role_id,
+                    role_name: u.role_name,
+                    user_name: u.user_name,
+                    nick_name: u.nick_name,
+                    user_type: u.user_type,
+                    email: u.email,
+                    phonenumber: u.phonenumber,
+                    sex: u.sex.unwrap_or_default().parse().unwrap_or(1),
+                    avatar: u.avatar,
+                    status: u.status.unwrap_or_default().parse().unwrap_or(1),
+                    remark: u.remark,
+                    roles: vec![],
+                    login_ip: None,
+                    login_date: None,
+                    created_by: u.created_by,
+                    created_at: u.created_at,
+                    updated_by: None,
+                    updated_at: None,
+                    admin: is_admin,
+                }
+            })
+            .collect();
+
         let res = ListData {
             list,
             total,

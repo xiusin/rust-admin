@@ -17,6 +17,12 @@ pub fn sys_dept() -> WebPath {
             get(s_sys_dept::dept_tree),
         )
         .route(
+            "/tree",
+            WebPathType::Get,
+            Some("获取部门树"),
+            get(s_sys_dept::dept_tree),
+        )
+        .route(
             "/edit",
             WebPathType::Put,
             Some("编辑部门"),

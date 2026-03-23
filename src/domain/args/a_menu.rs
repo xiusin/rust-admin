@@ -4,9 +4,7 @@ use crate::model::prelude::*;
 
 #[derive(Serialize, Clone, Debug, Default, Deserialize)]
 pub struct SysMenuListTree {
-    #[serde(with = "i64_to_string")]
     pub id: i64,
-    #[serde(with = "i64_to_string")]
     pub pid: i64,
     pub path: Option<String>,
     pub order: i32,
@@ -48,23 +46,15 @@ pub struct ListMeta {
 
 #[derive(Deserialize, Clone, Debug, Default, Validate)]
 pub struct MenuSearch {
-    #[serde(with = "i64_to_string")]
-    pub id: i64,
-    pub path: Option<String>,
-    pub redirect: Option<String>,
-    pub name:  Option<String>,
-    pub title: String,
-    pub menu_type: String,
-    pub component: Option<String>,
-    pub status: String
+    pub title: Option<String>,
+    pub hidden: Option<String>,
+    pub status: Option<String>
 }
 
 //编辑
 #[derive(Deserialize, Clone, Debug, Default, Validate)]
 pub struct MenuEdit {
-    #[serde(with = "i64_to_string")]
     pub id: i64,
-    #[serde(with = "i64_to_string")]
     pub pid: i64,
     pub path: Option<String>,
     pub redirect: Option<String>,
@@ -80,12 +70,10 @@ pub struct MenuEdit {
 
 #[derive(Debug, Deserialize, Serialize, FromQueryResult, Clone)]
 pub struct MenuResp {
-    #[serde(with = "i64_to_string")]
     pub id: i64,
     pub name:  Option<String>,
     pub title: String,
     pub i18nkey: Option<String>,
-    #[serde(with = "i64_to_string")]
     pub pid: i64,
     pub order: i32,
     pub path: Option<String>,
@@ -109,9 +97,7 @@ pub struct MenuResp {
 
 #[derive(Serialize, Clone, Debug, Default, Deserialize)]
 pub struct UserMenu {
-    #[serde(with = "i64_to_string")]
     pub id: i64,
-    #[serde(with = "i64_to_string")]
     pub pid: i64,
     pub path: Option<String>,
     pub order: i32,
@@ -155,7 +141,6 @@ pub struct RouteMeta {
 
 #[derive(Deserialize, Clone, Debug, Default, Validate)]
 pub struct MenuAdd {
-    #[serde(with = "i64_to_string")]
     pub pid: i64,
     pub path: Option<String>,
     pub redirect: Option<String>,
@@ -172,6 +157,10 @@ pub struct MenuAdd {
 }
 #[derive(Deserialize, Clone, Debug, Default, Validate)]
 pub struct MenuDel {
-    #[serde(with = "i64_to_string")]
     pub id: i64
+}
+
+#[derive(Deserialize, Clone, Debug, Default, Validate)]
+pub struct RoleKeyReq {
+    pub role: String,
 }

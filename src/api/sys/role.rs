@@ -17,6 +17,12 @@ pub fn sys_role() -> WebPath {
             get(s_sys_role::menu),
         )
         .route(
+            "/menu",
+            WebPathType::Post,
+            Some("分配角色菜单"),
+            post(s_sys_role::assign_menu),
+        )
+        .route(
             "/get_role_menus",
             WebPathType::Get,
             Some("获取角色菜单"),

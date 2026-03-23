@@ -11,6 +11,12 @@ pub fn sys_user() -> WebPath {
             get(s_sys_user::list),
         )
         .route(
+            "/getUserInfo",
+            WebPathType::Get,
+            Some("获取用户信息"),
+            get(s_sys_user::get_user_info_handler),
+        )
+        .route(
             "/add",
             WebPathType::Post,
             Some("添加用户"),

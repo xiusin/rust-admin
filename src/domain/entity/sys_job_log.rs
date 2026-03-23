@@ -6,14 +6,16 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "sys_job_log")]
 pub struct Model {
-    pub created_at: DateTime,
     #[sea_orm(primary_key, auto_increment = false, unique)]
-    pub id: i64,
+    pub log_id: i64,
     pub job_id: i64,
+    pub job_name: String,
+    pub job_group: String,
     pub run_count: i32,
     pub job_message: Option<String>,
     pub status: String,
-    pub elapsed_time: Option<DateTime>,
+    pub elapsed_time: i32,
+    pub created_at: DateTime,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

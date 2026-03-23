@@ -1,11 +1,5 @@
 # 项目开发范式宪法
 
-**版本**: v1.0.0
-**制定日期**: 2026-03-19
-**状态**: 正式生效
-
----
-
 ## 前言
 
 本文档作为项目开发的最高指导纲领，定义了项目开发过程中的核心范式规范、角色职责及质量保障机制。所有开发人员必须严格遵守本文档的规定，确保项目开发过程的一致性、可维护性和高质量。
@@ -47,6 +41,10 @@
 - 禁止使用 `npm` 或 `yarn` 混入项目
 - 依赖版本锁定到精确版本
 
+**AI AGENT任务依赖**：
+- 数据库链接方式使用 `config/development.yaml` 里读取配置
+- 禁止盲目菜单数据库结构，必须根据项目需求设计数据库表结构，执行命令查询已存在的表结构
+- 查询相关字段时，必须根据项目需求设计查询字段，避免查询所有字段，设计查询索引，提高查询效率
 ---
 
 ### 2. 代码风格规范
@@ -537,6 +535,150 @@ enum SysUser {
 }
 ```
 
+#### 5.5 新模块开发与数据库变更规范
+
+##### 5.5.1 新模块开发流程
+
+新增业务模块必须遵循以下流程：
+
+```
+需求分析 → 数据库设计 → 编写迁移文件 → Domain层实现 → Application层实现 → API层实现 → 前端页面实现 → 前端对接
+```
+
+**关键原则**：数据库迁移文件是新模块开发的必要组成部分，必须在编码前或编码过程中同步完成，菜单，按钮，权限等也必须同步更新（要保证事务一致性）,生成迁移文件如果带有ID字段时，必须使用命令查询已存在的ID字段值，避免重复创建。
+
+##### 5.5.2 数据库迁移文件规范
+
+**迁移文件命名格式**：
+```
+m{YYYYMMDD}_{序号}_{模块}_{操作类型}.sql
+```
+
+**命名规则说明**：
+| 组成部分 | 格式要求 | 示例 |
+|----------|----------|------|
+| 日期 | YYYYMMDD | 20260321 |
+| 序号 | 3位数字 | 001, 002, 003 |
+| 模块 | 业务模块名 | sys_user, monitor_job |
+| 操作类型 | 操作描述 | create_table, add_column, modify_column |
+
+**示例**：
+```
+m20260321_001_sys_user_create_table.sql          -- 创建用户表
+m20260321_002_sys_user_add_column_phone.sql      -- 用户表添加手机号字段
+m20260321_003_monitor_job_create_table.sql      -- 创建定时任务表
+```
+
+**迁移文件存储位置**：
+```
+migrations/
+├── m20260321_001_sys_user_create_table.sql
+├── m20260321_002_sys_user_add_column_phone.sql
+└── ...
+```
+
+##### 5.5.3 迁移文件编写规范
+
+**创建表迁移**：
+```sql
+-- m{YYYYMMDD}_{序号}_{模块}_create_table.sql
+-- 描述：创建{模块}表
+-- 作者：{开发者姓名/xiusin}
+-- 日期：{YYYY-MM-DD}
+
+-- 创建表
+CREATE TABLE `{table_name}` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    `name` varchar(50) NOT NULL COMMENT '名称',
+    `status` char(1) NOT NULL DEFAULT '0' COMMENT '状态（0正常 1停用）',
+    `created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='{表描述}';
+```
+
+**添加字段迁移**：
+```sql
+-- m{YYYYMMDD}_{序号}_{模块}_add_column_{field_name}.sql
+-- 描述：{模块}表添加{字段名}字段
+-- 作者：{开发者姓名}
+-- 日期：{YYYY-MM-DD}
+
+ALTER TABLE `{table_name}` ADD COLUMN `{column_name}` {column_type} NOT NULL DEFAULT {default_value} COMMENT '{字段描述}' AFTER {after_column};
+```
+
+**修改字段迁移**：
+```sql
+-- m{YYYYMMDD}_{序号}_{模块}_modify_column_{field_name}.sql
+-- 描述：{模块}表修改{字段名}字段
+-- 作者：{开发者姓名}
+-- 日期：{YYYY-MM-DD}
+
+ALTER TABLE `{table_name}` MODIFY COLUMN `{column_name}` {new_type} NOT NULL DEFAULT {default_value} COMMENT '{字段描述}';
+```
+
+**删除字段迁移**：
+```sql
+-- m{YYYYMMDd}_{序号}_{模块}_drop_column_{field_name}.sql
+-- 描述：{模块}表删除{字段名}字段
+-- 作者：{开发者姓名}
+-- 日期：{YYYY-MM-DD}
+
+ALTER TABLE `{table_name}` DROP COLUMN `{column_name}`;
+```
+
+##### 5.5.4 字段设计规范
+
+| 字段类型 | 适用场景 | 规范要求 |
+|----------|----------|----------|
+| id | 主键 | bigint(20), 自增 |
+| name/title | 名称/标题 | varchar(50)~varchar(200) |
+| code | 编码 | varchar(50)~varchar(100) |
+| status | 状态 | char(1), 默认'0' |
+| sort | 排序 | int(11), 默认0 |
+| remark | 备注 | varchar(500) |
+| created_at | 创建时间 | datetime |
+| updated_at | 更新时间 | datetime |
+| deleted_at | 删除时间 | datetime, nullable |
+| created_by | 创建者 | bigint(20), nullable |
+| updated_by | 更新者 | bigint(20), nullable |
+
+##### 5.5.5 迁移文件执行与回滚
+
+**执行迁移**：
+```bash
+# 按文件名顺序执行
+mysql -u{username} -p{password} {database} < migrations/m20260321_001_xxx.sql
+```
+
+**回滚操作**：
+- 迁移文件生成时，必须包含被事务包裹的操作
+- 每个迁移文件必须保留对应的回滚语句（以 -- ROLLBACK 注释标记）
+- 回滚语句放在文件末尾
+- 高风险操作（删除表、删除字段）必须提供回滚脚本
+- 多次任务执行是变更的字段必须同时同步到迁移文件中
+
+**回滚示例**：
+```sql
+-- ROLLBACK:
+-- ALTER TABLE `sys_user` DROP COLUMN `phone`;
+```
+
+##### 5.5.6 开发检查清单
+
+新增模块或修改数据库字段时，必须完成以下检查项：
+
+| 检查项 | 要求 | 验证方式 |
+|--------|------|----------|
+| 迁移文件存在 | 必须提供SQL迁移文件 | 检查migrations目录 |
+| 文件命名规范 | 符合命名格式 | 检查文件名 |
+| 字段注释完整 | 所有字段必须有COMMENT | 代码审查 |
+| 字段类型合适 | 符合数据类型规范 | 代码审查 |
+| 索引设计合理 | 频繁查询字段有索引 | DBA评审 |
+| 回滚脚本完整 | 高风险操作有回滚 | 代码审查 |
+| Entity同步更新 | Sea-ORM Entity与数据库一致 | CI检查 |
+
 ---
 
 ### 6. 版本控制策略
@@ -788,6 +930,7 @@ Closes #123
 ## 第三部分：防止幻觉专项规范
 
 ### 8. 信息准确性保障机制
+参考 `qiluo_admin` 前端代码来确认业务逻辑和功能实现（不对此目录做任何修改）；
 
 #### 8.1 验证机制
 
@@ -981,20 +1124,6 @@ docs/
 ├── deployment/      # 部署文档
 └── faq/            # 常见问题
 ```
-
-##### 8.3.2 代码知识共享
-
-**Code Review 要点**：
-1. 功能实现是否正确
-2. 是否存在安全风险
-3. 是否有性能问题
-4. 代码是否遵循规范
-5. 文档是否同步更新
-
-**知识分享机制**：
-- 每周技术分享会
-- 技术方案评审
-- 最佳实践沉淀
 
 ##### 8.3.3 信息核实准则
 

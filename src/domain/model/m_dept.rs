@@ -18,6 +18,9 @@ impl SysDeptModel {
         if let Some(dept_name) = search.dept_name {
             rmodel = rmodel.filter(sys_dept::Column::DeptName.contains(dept_name));
         }
+        if let Some(status) = search.status {
+            rmodel = rmodel.filter(sys_dept::Column::Status.eq(status));
+        }
 
         let scope = DataScopeContext::from_user_id(db, userinfo.uid).await?;
 

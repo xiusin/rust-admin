@@ -2,6 +2,40 @@
 
 pub mod prelude;
 
+pub mod c_consumer;
+pub mod c_login_log;
+pub mod c_sms_log;
+pub mod c_payment_order;
+pub mod c_finance_account;
+pub mod c_finance_transaction;
+pub mod c_media_file;
+pub mod c_logistics_tracking;
+pub mod c_freight_template;
+pub mod c_user_oauth;
+pub mod c_user_level_config;
+pub mod c_user_level;
+pub mod c_user_level_record;
+pub mod c_user_tag;
+pub mod c_user_tag_relation;
+pub mod c_user_ban;
+pub mod c_consumer_statistics;
+
+pub mod c_after_sale;
+pub mod c_after_sale_item;
+pub mod c_after_sale_refund;
+pub mod c_after_sale_logistics;
+pub mod c_after_sale_status_log;
+pub mod c_after_sale_timeout_config;
+
+pub mod c_wechat_mp_config;
+pub mod c_wechat_mini_config;
+pub mod c_sms_config;
+pub mod c_sms_template;
+pub mod c_oss_config;
+pub mod c_logistics_company;
+
+pub mod pay_channel;
+
 pub mod sys_api_permission;
 pub mod sys_dept;
 pub mod sys_dict_data;
@@ -22,3 +56,25 @@ pub mod sys_user_dept;
 pub mod sys_user_post;
 pub mod sys_user_role;
 pub mod sys_white_jwt;
+
+pub mod p_category;
+pub mod p_brand;
+pub mod p_product;
+pub mod p_product_group;
+pub mod p_product_group_relation;
+pub mod p_product_category;
+pub mod p_spec;
+pub mod p_spec_value;
+pub mod p_sku;
+pub mod p_stock_log;
+pub mod p_stock_alert;
+pub mod p_shipping_template;
+pub mod p_shipping_template_region;
+pub mod p_store;
+pub mod p_store_stock;
+pub mod p_verification_code;
+pub mod p_verification_log;
+pub mod p_attribute_template;
+pub mod p_attribute;
+pub mod p_attribute_value;
+pub mod p_product_attribute;

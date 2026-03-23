@@ -12,37 +12,37 @@ pub struct EmptyData {}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ApiResponse<T> {
-    pub message: String, // 必填
-    pub data: T,         // 必填，但可以是 EmptyData
+    pub code: u16,
+    pub message: String,
+    pub data: T,
 }
 
 impl<T> ApiResponse<T>
 where
     T: Serialize,
 {
-    // 基础构造方法
-    pub fn new(message: String, data: T) -> Self {
-        Self { message, data }
+    pub fn new(code: u16, message: String, data: T) -> Self {
+        Self { code, message, data }
     }
 
-    // 成功响应 (200) - 使用默认消息
+    pub fn success(data: T) -> Self {
+        Self::new(200, "success".to_string(), data)
+    }
+
     pub fn ok(data: T) -> Response {
-        (StatusCode::OK, Self::new("操作成功".to_string(), data)).into_response()
+        (StatusCode::OK, Self::new(200, "操作成功".to_string(), data)).into_response()
     }
 
-    // 成功响应带消息 (200)
     pub fn ok_with_msg(data: T, message: impl Into<String>) -> Response {
-        (StatusCode::OK, Self::new(message.into(), data)).into_response()
+        (StatusCode::OK, Self::new(200, message.into(), data)).into_response()
     }
 
-    // 创建成功 (201)
     pub fn created(data: T) -> Response {
-        (StatusCode::CREATED, Self::new("创建成功".to_string(), data)).into_response()
+        (StatusCode::CREATED, Self::new(201, "创建成功".to_string(), data)).into_response()
     }
 
-    // 创建成功带消息 (201)
     pub fn created_with_msg(data: T, message: impl Into<String>) -> Response {
-        (StatusCode::CREATED, Self::new(message.into(), data)).into_response()
+        (StatusCode::CREATED, Self::new(201, message.into(), data)).into_response()
     }
 
     // 从 Result 转换
@@ -71,15 +71,15 @@ where
                     Error::WithStatus(status, msg) => (*status, msg.clone()),
                 };
 
-                // 注意：这里直接使用泛型方法，不需要特殊的 impl ApiResponse<()>
-                Self::error_response(status, message)
+                let code = status.as_u16();
+                Self::error_response(status, message, code)
             }
         }
     }
 
-    // 统一的错误响应方法 - 返回 ApiResponse<EmptyData>
-    fn error_response(status: StatusCode, message: String) -> Response {
+    fn error_response(status: StatusCode, message: String, code: u16) -> Response {
         let api_response = ApiResponse::<EmptyData> {
+            code,
             message,
             data: EmptyData {},
         };
@@ -87,69 +87,63 @@ where
     }
 }
 impl ApiResponse<EmptyData> {
-    // 自定义状态码
     pub fn custom(status: StatusCode, message: String) -> Response {
         let api_response = ApiResponse::<EmptyData> {
+            code: status.as_u16(),
             message,
             data: EmptyData {},
         };
         (status, api_response).into_response()
     }
 
-
-    // 未授权 (401)
     pub fn unauthorized(message: impl Into<String>) -> Response {
-        Self::error_response(StatusCode::UNAUTHORIZED, message.into())
+        Self::error_response(StatusCode::UNAUTHORIZED, message.into(), 401)
     }
 
-    // 禁止访问 (403)
     pub fn forbidden(message: impl Into<String>) -> Response {
-        Self::error_response(StatusCode::FORBIDDEN, message.into())
+        Self::error_response(StatusCode::FORBIDDEN, message.into(), 403)
     }
 
-    // 未找到 (404)
     pub fn not_found(message: impl Into<String>) -> Response {
-        Self::error_response(StatusCode::NOT_FOUND, message.into())
+        Self::error_response(StatusCode::NOT_FOUND, message.into(), 404)
     }
 
-    // 冲突 (409)
     pub fn conflict(message: impl Into<String>) -> Response {
-        Self::error_response(StatusCode::CONFLICT, message.into())
+        Self::error_response(StatusCode::CONFLICT, message.into(), 409)
     }
 
-    // 参数验证失败 (422)
     pub fn unprocessable_entity(message: impl Into<String>) -> Response {
-        Self::error_response(StatusCode::UNPROCESSABLE_ENTITY, message.into())
+        Self::error_response(StatusCode::UNPROCESSABLE_ENTITY, message.into(), 422)
     }
 
-    // 服务器错误 (500)
     pub fn internal_server_error(message: impl Into<String>) -> Response {
-        Self::error_response(StatusCode::INTERNAL_SERVER_ERROR, message.into())
+        Self::error_response(StatusCode::INTERNAL_SERVER_ERROR, message.into(), 500)
     }
 
-    // 服务不可用 (503)
     pub fn service_unavailable(message: impl Into<String>) -> Response {
-        Self::error_response(StatusCode::SERVICE_UNAVAILABLE, message.into())
+        Self::error_response(StatusCode::SERVICE_UNAVAILABLE, message.into(), 503)
     }
-    // 操作成功但无数据返回
+
     pub fn success_no_data(message: impl Into<String>) -> Response {
         let api_response = ApiResponse::<EmptyData> {
+            code: 200,
             message: message.into(),
             data: EmptyData {},
         };
         (StatusCode::OK, api_response).into_response()
     }
-    // 删除成功 - 返回确认消息
+
     pub fn deleted(message: impl Into<String>) -> Response {
         let api_response = ApiResponse::<EmptyData> {
+            code: 200,
             message: message.into(),
             data: EmptyData {},
         };
         (StatusCode::OK, api_response).into_response()
     }
-    // 客户端错误 (400)
+
     pub fn bad_request(message: impl Into<String>) -> Response {
-        Self::error_response(StatusCode::BAD_REQUEST, message.into())
+        Self::error_response(StatusCode::BAD_REQUEST, message.into(), 400)
     }
 }
 impl<T> IntoResponse for ApiResponse<T>
@@ -170,7 +164,7 @@ where
             Err(_) => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 [("Content-Type", "application/json;charset=UTF-8")],
-                r#"{"message":"序列化响应失败","data":{}}"#,
+                r#"{"code":500,"message":"序列化响应失败","data":{}}"#,
             )
                 .into_response(),
         }

@@ -9,6 +9,7 @@ pub struct DictDataRes {
     pub dict_value: String,
     #[serde(with = "i64_to_string")]
     pub dict_type_id: i64, 
+    pub status: String,
     pub created_at: Option<DateTime>, 
     pub remark: Option<String>,
 }
@@ -27,6 +28,7 @@ pub struct DictDataAdd {
     pub dict_value: String,
     #[serde(with = "i64_to_string")]
     pub dict_type_id: i64, 
+    pub status: Option<String>,
     pub remark: Option<String>,
 }
 
@@ -39,6 +41,7 @@ pub struct DictDataEdit {
     pub dict_value: String,
     #[serde(with = "i64_to_string")]
     pub dict_type_id: i64, 
+    pub status: String,
     pub remark: Option<String>,
 }
 

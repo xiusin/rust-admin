@@ -2,7 +2,6 @@ use crate::{service::prelude::*, worker::AppWorker};
 
 use crate::application::monitor::login_info_service::login_info_function;
 use crate::application::sys::upload_service;
-use crate::domain::args::acaptch::CaptchaCacheInfo;
 use crate::worker::logininfo::LoginInfoWorker;
 
 use axum::http::HeaderMap;
@@ -33,22 +32,14 @@ pub async fn get_user_info(uid: i64) -> Result<UserInfoDetail> {
     Ok(userinfo)
 }
 
-pub async fn login(header: HeaderMap, VJson(arg): VJson<LoginParams>) -> impl IntoResponse {
-    let capid = arg.captchaid;
-    let cache = CacheManager::instance().await;
-    let captcha_info = if let Ok(info) = cache
-        .get_oneuse_value::<CaptchaCacheInfo>(&format!("capcha:{}", capid))
-        .await
-    {
-        info
-    } else {
-        return ApiResponse::bad_request("Invalid or expired verification code");
-    };
-    info!("captcha:{}  {}", captcha_info.client_id, arg.client_id);
-    if arg.client_id != captcha_info.client_id {
-        return ApiResponse::bad_request("Verification code error");
+pub async fn get_user_info_handler(userinfo: crate::middleware::jwt::UserInfo) -> impl IntoResponse {
+    match get_user_info(userinfo.uid).await {
+        Ok(info) => ApiResponse::ok(info),
+        Err(e) => ApiResponse::bad_request(e.to_string()),
     }
+}
 
+pub async fn login(header: HeaderMap, VJson(arg): VJson<LoginParams>) -> impl IntoResponse {
     info!("header:{:?}", header.clone());
     let ipaddr = get_remote_ip(header.clone());
     info!("ip:{}", ipaddr);
@@ -69,23 +60,6 @@ pub async fn login(header: HeaderMap, VJson(arg): VJson<LoginParams>) -> impl In
         device_type: Some(useragent.device),
         ..Default::default()
     };
-    if arg.captcha.to_lowercase() != captcha_info.cache_text.to_lowercase() {
-        login_add.status = Some("1".into());
-        login_add.msg = Some(format!(
-            "Entered code: {}, verification code incorrect",
-            arg.captcha
-        ));
-        let rlogin_info_add = SysLoginInfoModel::add(login_add).await;
-        if let Ok(login_info_add) = rlogin_info_add {
-            let info_msg = LoginInfoMsg {
-                ipaddr,
-                info_id: login_info_add.info_id,
-            };
-            let _ = LoginInfoWorker::execute_async(info_msg).await;
-        }
-
-        return ApiResponse::bad_request("Verification code error");
-    }
 
     let ouser = if let Some(email) = arg.email {
         match SysUserModel::find_by_email(email.as_str()).await {

@@ -42,6 +42,23 @@ pub mod option_string_or_i64 {
     }
 }
 
+pub mod veci64 {
+    use serde::{self, Deserialize, Deserializer, Serializer, Serialize};
+    pub fn serialize<S>(values: &Vec<i64>, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        values.serialize(serializer)
+    }
+
+    pub fn deserialize<'de, D>(deserializer: D) -> Result<Vec<i64>, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        Vec::<i64>::deserialize(deserializer)
+    }
+}
+
 pub mod veci64_to_vecstring {
     use serde::{self, Deserialize, Deserializer, Serializer};
     #[warn(clippy::ptr_arg)]
@@ -104,6 +121,7 @@ pub mod option_veci64_to_vecstring {
 
 pub mod string_to_bool {
     use serde::{self, Deserialize, Deserializer, Serializer};
+    
     pub fn serialize<S>(value: &str, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -113,15 +131,37 @@ pub mod string_to_bool {
             _ => serializer.serialize_bool(true),
         }
     }
+    
     pub fn deserialize<'de, D>(deserializer: D) -> Result<String, D::Error>
     where
         D: Deserializer<'de>,
     {
-        let s = bool::deserialize(deserializer)?;
-        if s {
-            Ok("1".to_string())
-        } else {
-            Ok("0".to_string())
-        }
+        // 支持多种输入类型：bool, string, number
+        let value = serde_json::Value::deserialize(deserializer)?;
+        
+        let result = match value {
+            // 布尔值
+            serde_json::Value::Bool(true) => "1",
+            serde_json::Value::Bool(false) => "0",
+            // 字符串
+            serde_json::Value::String(s) => match s.as_str() {
+                "0" | "false" | "False" | "FALSE" => "0",
+                _ => "1",
+            },
+            // 数字
+            serde_json::Value::Number(n) => {
+                if n.as_i64() == Some(0) {
+                    "0"
+                } else {
+                    "1"
+                }
+            },
+            // null 默认为 "0"
+            serde_json::Value::Null => "0",
+            // 其他类型
+            _ => "0",
+        };
+        
+        Ok(result.to_string())
     }
 }

@@ -17,8 +17,21 @@ pub async fn list_tree(
     let mut list = Vec::new();
     for dept in data.list {
         let dept_tree = DeptTree {
-            dept,
-            ..Default::default()
+            dept_id: dept.dept_id,
+            parent_id: dept.parent_id,
+            dept_name: dept.dept_name,
+            dept_category: dept.dept_category,
+            order: dept.order,
+            leader: dept.leader,
+            phone: dept.phone,
+            email: dept.email,
+            status: dept.status,
+            remark: dept.remark,
+            created_by: dept.created_by,
+            created_at: dept.created_at,
+            updated_by: dept.updated_by,
+            updated_at: dept.updated_at,
+            children: None,
         };
         list.push(dept_tree)
     }
@@ -32,7 +45,7 @@ pub async fn list_tree(
     ApiResponse::ok(res)
 }
 
-pub async fn dept_tree(userinfo: UserInfo) -> impl IntoResponse {
+pub async fn dept_tree(VQuery(search): VQuery<SysDeptSearch>, userinfo: UserInfo) -> impl IntoResponse {
     let rlist = SysDeptModel::get_all(userinfo).await;
     let depts = match rlist {
         Ok(depts) => depts,
@@ -40,9 +53,32 @@ pub async fn dept_tree(userinfo: UserInfo) -> impl IntoResponse {
     };
     let mut list = Vec::new();
     for dept in depts {
+        if let Some(ref dept_name) = search.dept_name {
+            if !dept.dept_name.as_ref().map(|n| n.contains(&*dept_name)).unwrap_or(false) {
+                continue;
+            }
+        }
+        if let Some(ref status) = search.status {
+            if dept.status != *status {
+                continue;
+            }
+        }
         let dept_tree = DeptTree {
-            dept,
-            ..Default::default()
+            dept_id: dept.dept_id,
+            parent_id: dept.parent_id,
+            dept_name: dept.dept_name,
+            dept_category: dept.dept_category,
+            order: dept.order,
+            leader: dept.leader,
+            phone: dept.phone,
+            email: dept.email,
+            status: dept.status,
+            remark: dept.remark,
+            created_by: dept.created_by,
+            created_at: dept.created_at,
+            updated_by: dept.updated_by,
+            updated_at: dept.updated_at,
+            children: None,
         };
         list.push(dept_tree)
     }
@@ -96,21 +132,20 @@ pub fn dept_to_tree(mut depts: Vec<DeptTree>) -> Vec<DeptTree> {
     let mut all_ids: HashSet<i64> = HashSet::new();
 
     for dept in depts.drain(..) {
-        let id = dept.dept.dept_id;
-        let pid = dept.dept.parent_id;
+        let id = dept.dept_id;
+        let pid = dept.parent_id;
         all_ids.insert(id);
         by_parent.entry(pid).or_default().push(dept);
     }
 
-    // 2. 递归构建：从某个 parent_id 开始，取出它的所有子部门，
-    //    对每个子部门再递归构建其 children
+    // 2. 递归构建
     fn build_subtree(
         parent_id: i64,
         by_parent: &mut HashMap<i64, Vec<DeptTree>>,
     ) -> Vec<DeptTree> {
         if let Some(mut children) = by_parent.remove(&parent_id) {
             for child in &mut children {
-                let cid = child.dept.dept_id;
+                let cid = child.dept_id;
                 let grand_children = build_subtree(cid, by_parent);
                 if !grand_children.is_empty() {
                     child.children = Some(grand_children);

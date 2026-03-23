@@ -2,21 +2,19 @@ use crate::model::prelude::*;
 
 #[derive(Debug, Deserialize, Serialize, Clone, Validate)]
 pub struct UserSearch {
-    #[serde(with = "i64_to_string")]
+    #[serde(default)]
     pub dept_id: i64,
     pub user_name: Option<String>,
     pub phonenumber: Option<String>,
     pub email: Option<String>,
     pub status: Option<String>,
+    pub start_time: Option<String>,
+    pub end_time: Option<String>,
 }
 #[derive(Debug, Deserialize, Serialize, Clone, Validate)]
 pub struct LoginParams {
     pub username: String,
     pub password: String,
-    #[serde(with = "i64_to_string")]
-    pub captchaid: i64,
-    pub client_id: String,
-    pub captcha: String,
     pub email: Option<String>,
     pub phone: Option<String>,
 }
@@ -29,34 +27,50 @@ pub struct ResetPasswordParams {
 
 #[derive(Serialize, Clone, Deserialize, Validate, Debug)]
 pub struct ChangePasswordParams {
-    #[serde(with = "i64_to_string")]
     pub uid: i64,
     pub new_password: String,
 }
-#[derive(Serialize, Clone, Deserialize, Debug, FromQueryResult)]
+#[derive(Serialize, Clone, Deserialize, Debug)]
 pub struct SysUserRes {
-    #[serde(with = "i64_to_string")]
     pub id: i64,
-    #[serde(with = "i64_to_string")]
     pub dept_id: i64,
-    #[serde(with = "i64_to_string")]
-    pub role_id: i64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub dept_name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub role_id: Option<i64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub role_name: Option<String>,
     pub user_name: String,
     pub nick_name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub user_type: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub email: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub phonenumber: Option<String>,
-    pub sex: Option<String>,
+    pub sex: i32,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub avatar: Option<String>,
-    pub status: Option<String>,
+    pub status: i32,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub remark: Option<String>,
+    pub roles: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub login_ip: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub login_date: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub created_by: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub created_at: Option<DateTime>,
-    pub role_name: String,
-    pub dept_name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub updated_by: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub updated_at: Option<DateTime>,
+    pub admin: bool,
 }
 #[derive(Serialize, Clone, Deserialize, Debug, FromQueryResult)]
 pub struct SysUserAndRole {
-    #[serde(with = "i64_to_string")]
     pub dept_id: i64,
     pub user_name: String,
     pub nick_name: String,
@@ -67,7 +81,6 @@ pub struct SysUserAndRole {
     pub avatar: Option<String>,
     pub status: Option<String>,
     pub remark: Option<String>,
-    #[serde(with = "i64_to_string")]
     pub role_id: i64,
     pub role_name: String,
     pub role_key: String,
@@ -79,15 +92,10 @@ pub struct SysUserAndRole {
 
 #[derive(Serialize, Clone, Deserialize, Debug, Validate)]
 pub struct SysUserEdit {
-    #[serde(with = "i64_to_string")]
     pub id: i64,
-    #[serde(with = "veci64_to_vecstring")]
     pub dept_ids: Vec<i64>,
-    #[serde(with = "i64_to_string")]
     pub dept_id: i64,
-    #[serde(with = "veci64_to_vecstring")]
     pub role_ids: Vec<i64>,
-    #[serde(with = "i64_to_string")]
     pub role_id: i64,
     pub user_name: String,
     pub nick_name: String,
@@ -102,13 +110,9 @@ pub struct SysUserEdit {
 
 #[derive(Serialize, Clone, Deserialize, Debug, Validate)]
 pub struct SysUserAdd {
-    #[serde(with = "veci64_to_vecstring")]
     pub dept_ids: Vec<i64>,
-    #[serde(with = "i64_to_string")]
     pub dept_id: i64,
-    #[serde(with = "veci64_to_vecstring")]
     pub role_ids: Vec<i64>,
-    #[serde(with = "i64_to_string")]
     pub role_id: i64,
     pub user_name: String,
     pub nick_name: String,
@@ -129,9 +133,7 @@ pub struct UserInfoDetail {
     pub nickname: String,
     pub email: Option<String>,
     pub phone: Option<String>,
-    #[serde(with = "i64_to_string")]
     pub did: i64,
-    #[serde(with = "i64_to_string")]
     pub rid: i64,
 }
 
@@ -142,29 +144,23 @@ pub struct UserInfoRes {
     pub email: Option<String>,
     pub phone: Option<String>,
     pub avatar: Option<String>,
-    #[serde(with = "i64_to_string")]
     pub did: i64,
-    #[serde(with = "i64_to_string")]
     pub rid: i64,
 }
 
 #[derive(Serialize, Clone, Deserialize)]
 pub struct DeptsAndRoles {
-    #[serde(with = "veci64_to_vecstring")]
     pub depts: Vec<i64>,
-    #[serde(with = "veci64_to_vecstring")]
     pub roles: Vec<i64>,
 }
 
 #[derive(Serialize, Clone, Deserialize, Debug, Validate)]
 pub struct UserId {
-    #[serde(with = "i64_to_string")]
     pub uid: i64,
 }
 
 #[derive(Serialize, Clone, Deserialize, Debug, Validate)]
 pub struct UserIds {
-    #[serde(with = "veci64_to_vecstring")]
     pub uids: Vec<i64>,
 }
 
@@ -175,8 +171,6 @@ pub struct UserAvatarEdit {
 
 #[derive(Serialize, Clone, Deserialize, Validate)]
 pub struct DeptAndRole {
-    #[serde(with = "i64_to_string")]
     pub rid: i64,
-    #[serde(with = "i64_to_string")]
     pub did: i64,
 }

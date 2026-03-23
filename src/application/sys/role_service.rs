@@ -1,5 +1,5 @@
 use crate::domain::model::m_role::{
-    RoleAddReq, RoleEditReq, RoleReq, RoleSearch, SysRoleModel,
+    RoleAddReq, RoleEditReq, RoleMenuAssignReq, RoleReq, RoleSearch, SysRoleModel,
 };
 use crate::service::prelude::*;
 
@@ -16,6 +16,11 @@ pub async fn tree() -> impl IntoResponse {
 }
 pub async fn menu() -> impl IntoResponse {
     let r = SysRoleModel::menu().await;
+    ApiResponse::from_result(r)
+}
+
+pub async fn assign_menu(VJson(arg): VJson<RoleMenuAssignReq>) -> impl IntoResponse {
+    let r = SysRoleModel::assign_menu(arg.role_id, arg.menu_ids).await;
     ApiResponse::from_result(r)
 }
 

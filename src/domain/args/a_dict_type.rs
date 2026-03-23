@@ -7,6 +7,7 @@ pub struct DictTypeRes {
     pub dict_name: Option<String>, 
     pub dict_type: Option<String>,
     pub order: i32,
+    pub status: String,
     pub created_at: DateTime, 
     pub remark: Option<String>,
 }
@@ -23,6 +24,7 @@ pub struct DictTypeAdd {
     pub dict_name: String, 
     pub dict_type: String,
     pub order: i32,
+    pub status: Option<String>,
     pub created_at: Option<DateTime>, 
     pub remark: Option<String>,
 }
@@ -35,6 +37,7 @@ pub struct DictTypeEdit {
     pub dict_name: String, 
     pub dict_type: String,
     pub order: i32,
+    pub status: String,
     pub remark: Option<String>,
 }
 

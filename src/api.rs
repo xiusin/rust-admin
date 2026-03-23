@@ -1,3 +1,5 @@
+pub mod consumer;
+pub mod payment;
 pub mod sys;
 pub mod test;
 pub mod web_path;
@@ -15,6 +17,8 @@ impl WebApi {
         let mut webpath = WebPath::new();
 
         webpath = webpath.merge(sys::router_sys());
+        webpath = webpath.merge(consumer::router_consumer());
+        webpath = webpath.merge(payment::router_payment());
         webpath = webpath.merge(test::router_test());
 
         webpath = webpath.final_to_path();
@@ -35,7 +39,8 @@ impl WebApi {
             }
         }
 
-        Router::new().merge(router)
+        Router::new()
+            .merge(router)
     }
     pub fn white_routers() -> Router {
         Router::new()

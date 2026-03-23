@@ -13,7 +13,6 @@ proc-macro2 = "1.0"
 quote = "1.0"
 syn = { version = "2.0", features = ["full", "extra-traits"] }
 
-migration = { path = "migration" }
 axum = { version = "0.8.7", default-features = true, features = ["http1", "http2", "json", "macros", "matched-path", "original-uri", "multipart", "tokio", "ws", "form", "query"] }
 fs-err = "3.2.0"
 jsonwebtoken ={ version = "10.2.0", features = ["aws_lc_rs"] }
@@ -93,6 +92,9 @@ dashmap = "6.1.0"
 bb8-redis = "0.24.0"
 tokio-rustls = "0.26.4"
 tracing-appender = "0.2.3"
+rust_decimal = "1.37"
+urlencoding = "2.1.3"
+uuid = { version = "1.11", features = ["v4"] }
 axum-server = {version="0.7.3",features=["tls-rustls"]}
 parking_lot = "0.12.5"
 [target.x86_64-unknown-linux-musl.dependencies]

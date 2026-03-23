@@ -30,8 +30,10 @@ impl SysJobLogModel {
         let id = GID().await;
         let db = DB().await;
         let imodel = sys_job_log::ActiveModel {
-            id: Set(id),
+            log_id: Set(id),
             job_id: Set(arg.job_id),
+            job_name: Set(arg.job_name),
+            job_group: Set(arg.job_group),
             job_message: Set(arg.job_message),
             status: Set(arg.status),
             run_count: Set(arg.run_count),
