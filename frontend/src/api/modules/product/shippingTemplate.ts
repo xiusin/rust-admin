@@ -62,20 +62,40 @@ export interface ShippingFeeResult {
   calculationDetail: string;
 }
 
+interface ApiResponse<T = any> {
+  code: number;
+  message: string;
+  data: T;
+}
+
+interface ListResponse<T> {
+  list: T[];
+  total: number;
+  total_pages: number;
+  page_num: number;
+}
+
+const getData = <T>(res: ApiResponse<T>): T => {
+  if (res.code !== 200) {
+    throw new Error(res.message || '请求失败');
+  }
+  return res.data;
+};
+
 export const shippingTemplateApi = {
   list: async (params?: {
     pageNum?: number;
     pageSize?: number;
     name?: string;
     status?: string;
-  }) => {
-    const res = await axios.get("/api/product/shipping/list", { params });
-    return res.data;
+  }): Promise<ListResponse<ShippingTemplateListItem>> => {
+    const res = await axios.get("/product/shipping/list", { params });
+    return getData(res);
   },
 
-  detail: async (id: number) => {
-    const res = await axios.get(`/api/product/shipping/${id}`);
-    return res.data;
+  detail: async (id: number): Promise<ShippingTemplateDetail> => {
+    const res = await axios.get(`/product/shipping/${id}`);
+    return getData(res);
   },
 
   add: async (data: {
@@ -96,28 +116,28 @@ export const shippingTemplateApi = {
       isFree?: number;
       freeConditionValue?: number;
     }[];
-  }) => {
-    const res = await axios.post("/api/product/shipping/add", data);
-    return res.data;
+  }): Promise<void> => {
+    const res = await axios.post("/product/shipping/add", data);
+    getData(res);
   },
 
-  edit: async (data: any) => {
-    const res = await axios.put("/api/product/shipping/edit", data);
-    return res.data;
+  edit: async (data: any): Promise<void> => {
+    const res = await axios.put("/product/shipping/edit", data);
+    getData(res);
   },
 
-  delete: async (ids: number[]) => {
-    const res = await axios.delete("/api/product/shipping/delete", { data: { ids } });
-    return res.data;
+  delete: async (ids: number[]): Promise<void> => {
+    const res = await axios.delete("/product/shipping/delete", { data: { ids } });
+    getData(res);
   },
 
-  calculate: async (params: ShippingCalculateParams) => {
-    const res = await axios.post("/api/product/shipping/calculate", params);
-    return res.data;
+  calculate: async (params: ShippingCalculateParams): Promise<ShippingFeeResult> => {
+    const res = await axios.post("/product/shipping/calculate", params);
+    return getData(res);
   },
 
-  simpleList: async () => {
-    const res = await axios.get("/api/product/shipping/simpleList");
-    return res.data;
+  simpleList: async (): Promise<ShippingTemplateSimple[]> => {
+    const res = await axios.get("/product/shipping/simpleList");
+    return getData(res);
   },
 };

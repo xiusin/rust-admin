@@ -60,12 +60,23 @@ impl WebPath {
 
     fn concat_sub_paths_final_paths(&mut self, parent_path: &str) {
         for (sub_key, sub_path) in &mut self.sub_paths {
-            let f_path = format!("{}{}", parent_path, sub_key);
+            let converted_key = Self::convert_path_params(sub_key);
+            let f_path = format!("{}{}", parent_path, converted_key);
             sub_path.concat_sub_paths_final_paths(&f_path);
             if sub_path.is_last_level() {
                 sub_path.final_path = f_path;
             }
         }
+    }
+
+    fn convert_path_params(path: &str) -> String {
+        let mut result = path.to_string();
+        let params = ["id", "product_id", "categoryId", "storeId", "brand_id", "group_id", "template_id", "sku_id"];
+        for param in &params {
+            result = result.replace(&format!(":{{{}}}", param), &format!("{{{}}}", param));
+            result = result.replace(&format!("/:{}", param), &format!("/{{{}}}", param));
+        }
+        result
     }
     pub fn final_to_path(mut self) -> Self {
         self.concat_sub_paths_final_paths("");

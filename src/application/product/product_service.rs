@@ -643,3 +643,258 @@ fn get_sale_status_name(sale_status: i32) -> String {
         _ => "未知".to_string(),
     }
 }
+
+pub async fn batch_delete(args: ProductBatchDeleteArgs) -> Result<()> {
+    let db = DB().await;
+    let now = Local::now().naive_local();
+
+    for id in &args.ids {
+        let item = p_product::Entity::find_by_id(*id)
+            .filter(p_product::Column::DeletedAt.is_null())
+            .one(db)
+            .await?;
+        if let Some(item) = item {
+            let mut model: p_product::ActiveModel = item.into();
+            model.deleted_at = Set(Some(now));
+            model.update(db).await?;
+        }
+    }
+
+    Ok(())
+}
+
+pub async fn simple_list(args: Option<ProductSimpleListArgs>) -> Result<Vec<ProductSimple>> {
+    let db = DB().await;
+
+    let mut conditions = Condition::all();
+    conditions = conditions.add(p_product::Column::DeletedAt.is_null());
+
+    if let Some(ref a) = args {
+        if let Some(ref name) = a.name {
+            conditions = conditions.add(p_product::Column::Name.contains(name));
+        }
+        if let Some(status) = a.status {
+            conditions = conditions.add(p_product::Column::Status.eq(status));
+        }
+    }
+
+    let items = p_product::Entity::find()
+        .filter(conditions)
+        .order_by_asc(p_product::Column::Sort)
+        .all(db)
+        .await?;
+
+    Ok(items.into_iter().map(|p| ProductSimple {
+        id: p.id,
+        name: p.name,
+        cover_image: p.cover_image,
+        sale_price: p.sale_price.to_string().parse().unwrap_or(0.0),
+        stock: p.stock,
+        status: p.status,
+    }).collect())
+}
+
+pub async fn sku_list(product_id: i64) -> Result<Vec<SkuItem>> {
+    let db = DB().await;
+
+    let skus = p_sku::Entity::find()
+        .filter(p_sku::Column::ProductId.eq(product_id))
+        .filter(p_sku::Column::DeletedAt.is_null())
+        .all(db)
+        .await?;
+
+    Ok(skus.into_iter().map(|s| SkuItem {
+        id: s.id,
+        sku_code: s.sku_code,
+        spec_value_ids: s.spec_value_ids,
+        spec_text: s.spec_text,
+        image: s.image,
+        sale_price: s.sale_price.to_string().parse().unwrap_or(0.0),
+        line_price: s.line_price.to_string().parse().unwrap_or(0.0),
+        cost_price: s.cost_price.to_string().parse().unwrap_or(0.0),
+        stock: s.stock,
+        sales: s.sales,
+        weight: s.weight.to_string().parse().unwrap_or(0.0),
+        volume: s.volume.to_string().parse().unwrap_or(0.0),
+        status: s.status,
+    }).collect())
+}
+
+pub async fn sku_detail(id: i64) -> Result<SkuItem> {
+    let db = DB().await;
+
+    let sku = p_sku::Entity::find_by_id(id)
+        .filter(p_sku::Column::DeletedAt.is_null())
+        .one(db)
+        .await?
+        .ok_or_else(|| Error::not_found("SKU不存在"))?;
+
+    Ok(SkuItem {
+        id: sku.id,
+        sku_code: sku.sku_code,
+        spec_value_ids: sku.spec_value_ids,
+        spec_text: sku.spec_text,
+        image: sku.image,
+        sale_price: sku.sale_price.to_string().parse().unwrap_or(0.0),
+        line_price: sku.line_price.to_string().parse().unwrap_or(0.0),
+        cost_price: sku.cost_price.to_string().parse().unwrap_or(0.0),
+        stock: sku.stock,
+        sales: sku.sales,
+        weight: sku.weight.to_string().parse().unwrap_or(0.0),
+        volume: sku.volume.to_string().parse().unwrap_or(0.0),
+        status: sku.status,
+    })
+}
+
+pub async fn sku_add(args: SkuAddArgs) -> Result<i64> {
+    let db = DB().await;
+    let now = Local::now().naive_local();
+    let id = GID().await;
+
+    let model = p_sku::ActiveModel {
+        id: Set(id),
+        product_id: Set(args.product_id),
+        sku_code: Set(args.sku_code.unwrap_or_else(|| format!("SKU{}", id))),
+        spec_value_ids: Set(args.spec_value_ids.unwrap_or_default()),
+        spec_text: Set(args.spec_text.unwrap_or_default()),
+        image: Set(args.image),
+        sale_price: Set(rust_decimal::Decimal::try_from(args.sale_price).unwrap_or(rust_decimal::Decimal::ZERO)),
+        line_price: Set(args.line_price.map(|v| rust_decimal::Decimal::try_from(v).unwrap_or(rust_decimal::Decimal::ZERO)).unwrap_or(rust_decimal::Decimal::ZERO)),
+        cost_price: Set(args.cost_price.map(|v| rust_decimal::Decimal::try_from(v).unwrap_or(rust_decimal::Decimal::ZERO)).unwrap_or(rust_decimal::Decimal::ZERO)),
+        stock: Set(args.stock.unwrap_or(0)),
+        sales: Set(0),
+        weight: Set(args.weight.map(|v| rust_decimal::Decimal::try_from(v).unwrap_or(rust_decimal::Decimal::ZERO)).unwrap_or(rust_decimal::Decimal::ZERO)),
+        volume: Set(args.volume.map(|v| rust_decimal::Decimal::try_from(v).unwrap_or(rust_decimal::Decimal::ZERO)).unwrap_or(rust_decimal::Decimal::ZERO)),
+        status: Set(args.status.unwrap_or(0)),
+        created_at: Set(Some(now)),
+        updated_at: Set(Some(now)),
+        deleted_at: Set(None),
+    };
+
+    model.insert(db).await?;
+    Ok(id)
+}
+
+pub async fn sku_edit(args: SkuEditArgs) -> Result<()> {
+    let db = DB().await;
+    let now = Local::now().naive_local();
+
+    let sku = p_sku::Entity::find_by_id(args.id)
+        .filter(p_sku::Column::DeletedAt.is_null())
+        .one(db)
+        .await?
+        .ok_or_else(|| Error::not_found("SKU不存在"))?;
+
+    let mut model: p_sku::ActiveModel = sku.into();
+    if let Some(sku_code) = args.sku_code {
+        model.sku_code = Set(sku_code);
+    }
+    if let Some(spec_value_ids) = args.spec_value_ids {
+        model.spec_value_ids = Set(spec_value_ids);
+    }
+    if let Some(spec_text) = args.spec_text {
+        model.spec_text = Set(spec_text);
+    }
+    if let Some(image) = args.image {
+        model.image = Set(Some(image));
+    }
+    if let Some(sale_price) = args.sale_price {
+        model.sale_price = Set(rust_decimal::Decimal::try_from(sale_price).unwrap_or(rust_decimal::Decimal::ZERO));
+    }
+    if let Some(line_price) = args.line_price {
+        model.line_price = Set(rust_decimal::Decimal::try_from(line_price).unwrap_or(rust_decimal::Decimal::ZERO));
+    }
+    if let Some(cost_price) = args.cost_price {
+        model.cost_price = Set(rust_decimal::Decimal::try_from(cost_price).unwrap_or(rust_decimal::Decimal::ZERO));
+    }
+    if let Some(stock) = args.stock {
+        model.stock = Set(stock);
+    }
+    if let Some(weight) = args.weight {
+        model.weight = Set(rust_decimal::Decimal::try_from(weight).unwrap_or(rust_decimal::Decimal::ZERO));
+    }
+    if let Some(volume) = args.volume {
+        model.volume = Set(rust_decimal::Decimal::try_from(volume).unwrap_or(rust_decimal::Decimal::ZERO));
+    }
+    if let Some(status) = args.status {
+        model.status = Set(status);
+    }
+    model.updated_at = Set(Some(now));
+
+    model.update(db).await?;
+    Ok(())
+}
+
+pub async fn sku_delete(args: SkuDeleteArgs) -> Result<()> {
+    let db = DB().await;
+    let now = Local::now().naive_local();
+
+    for id in &args.ids {
+        let sku = p_sku::Entity::find_by_id(*id)
+            .filter(p_sku::Column::DeletedAt.is_null())
+            .one(db)
+            .await?;
+        if let Some(sku) = sku {
+            let mut model: p_sku::ActiveModel = sku.into();
+            model.deleted_at = Set(Some(now));
+            model.update(db).await?;
+        }
+    }
+
+    Ok(())
+}
+
+pub async fn sku_generate(args: SkuGenerateArgs) -> Result<Vec<SkuItem>> {
+    let db = DB().await;
+    let now = Local::now().naive_local();
+
+    let product = p_product::Entity::find_by_id(args.product_id)
+        .filter(p_product::Column::DeletedAt.is_null())
+        .one(db)
+        .await?
+        .ok_or_else(|| Error::not_found("商品不存在"))?;
+
+    let sku_id = GID().await;
+    let spec_text = args.specs.iter().map(|s| {
+        let values = s.values.iter().map(|v| v.value.clone()).collect::<Vec<_>>().join(",");
+        format!("{}:{}", s.name, values)
+    }).collect::<Vec<_>>().join(";");
+
+    let sku_model = p_sku::ActiveModel {
+        id: Set(sku_id),
+        product_id: Set(args.product_id),
+        sku_code: Set(format!("SKU{}", sku_id)),
+        spec_value_ids: Set(String::new()),
+        spec_text: Set(spec_text.clone()),
+        image: Set(None),
+        sale_price: Set(product.sale_price),
+        line_price: Set(product.line_price),
+        cost_price: Set(product.cost_price),
+        stock: Set(args.stock.unwrap_or(0)),
+        sales: Set(0),
+        weight: Set(product.weight),
+        volume: Set(product.volume),
+        status: Set(0),
+        created_at: Set(Some(now)),
+        updated_at: Set(Some(now)),
+        deleted_at: Set(None),
+    };
+
+    sku_model.insert(db).await?;
+
+    Ok(vec![SkuItem {
+        id: sku_id,
+        sku_code: format!("SKU{}", sku_id),
+        spec_value_ids: String::new(),
+        spec_text,
+        image: None,
+        sale_price: product.sale_price.to_string().parse().unwrap_or(0.0),
+        line_price: product.line_price.to_string().parse().unwrap_or(0.0),
+        cost_price: product.cost_price.to_string().parse().unwrap_or(0.0),
+        stock: args.stock.unwrap_or(0),
+        sales: 0,
+        weight: product.weight.to_string().parse().unwrap_or(0.0),
+        volume: product.volume.to_string().parse().unwrap_or(0.0),
+        status: 0,
+    }])
+}

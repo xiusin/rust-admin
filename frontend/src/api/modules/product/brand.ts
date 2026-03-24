@@ -45,46 +45,66 @@ export interface BrandEditParams {
   status?: string;
 }
 
+interface ApiResponse<T = any> {
+  code: number;
+  message: string;
+  data: T;
+}
+
+interface ListResponse<T> {
+  list: T[];
+  total: number;
+  total_pages: number;
+  page_num: number;
+}
+
+const getData = <T>(res: ApiResponse<T>): T => {
+  if (res.code !== 200) {
+    throw new Error(res.message || '请求失败');
+  }
+  return res.data;
+};
+
 export const brandApi = {
   list: async (params?: {
     pageNum?: number;
     pageSize?: number;
     name?: string;
     status?: string;
-  }) => {
-    const res = await axios.get("/api/product/brand/list", { params });
-    return res.data;
+  }): Promise<ListResponse<BrandListItem>> => {
+    const res = await axios.get("/product/brand/list", { params });
+    return getData(res);
   },
 
-  detail: async (id: number) => {
-    const res = await axios.get(`/api/product/brand/${id}`);
-    return res.data;
+  detail: async (id: number): Promise<BrandDetail> => {
+    const res = await axios.get(`/product/brand/${id}`);
+    return getData(res);
   },
 
-  add: async (data: BrandAddParams) => {
-    const res = await axios.post("/api/product/brand/add", data);
-    return res.data;
+  add: async (data: BrandAddParams): Promise<void> => {
+    const res = await axios.post("/product/brand/add", data);
+    getData(res);
   },
 
-  edit: async (data: BrandEditParams) => {
-    const res = await axios.put("/api/product/brand/edit", data);
-    return res.data;
+  edit: async (data: BrandEditParams): Promise<void> => {
+    const res = await axios.put("/product/brand/edit", data);
+    getData(res);
   },
 
-  delete: async (ids: number[]) => {
-    const res = await axios.delete("/api/product/brand/delete", { data: { ids } });
-    return res.data;
+  delete: async (ids: number[]): Promise<void> => {
+    const res = await axios.delete("/product/brand/delete", { data: { ids } });
+    getData(res);
   },
 
-  updateStatus: async (id: number, status: string) => {
-    const res = await axios.put("/api/product/brand/updateStatus", null, {
+  updateStatus: async (id: number, status: string): Promise<void> => {
+    const res = await axios.put("/product/brand/updateStatus", null, {
       params: { id, status },
     });
-    return res.data;
+    getData(res);
   },
 
-  simpleList: async () => {
-    const res = await axios.get("/api/product/brand/simpleList");
-    return res.data;
+  simpleList: async (): Promise<BrandSimple[]> => {
+    const res = await axios.get("/product/brand/simpleList");
+    return getData(res);
   },
 };

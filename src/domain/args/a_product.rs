@@ -106,6 +106,12 @@ pub struct ProductStatusArgs {
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct ProductBatchStatusArgs {
+    pub ids: Vec<i64>,
+    pub status: i32,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct ProductAuditArgs {
     pub id: i64,
     pub audit_status: i32,
@@ -137,6 +143,7 @@ pub struct SpecValueArgs {
 
 #[derive(Debug, Deserialize, Serialize, Clone, Validate)]
 pub struct SkuAddArgs {
+    pub product_id: i64,
     pub sku_code: Option<String>,
     pub spec_value_ids: Option<String>,
     pub spec_text: Option<String>,
@@ -153,13 +160,13 @@ pub struct SkuAddArgs {
 
 #[derive(Debug, Deserialize, Serialize, Clone, Validate)]
 pub struct SkuEditArgs {
-    pub id: Option<i64>,
+    pub id: i64,
     pub sku_code: Option<String>,
     pub spec_value_ids: Option<String>,
     pub spec_text: Option<String>,
     pub image: Option<String>,
     #[validate(range(min = 0.01, message = "售价必须大于0"))]
-    pub sale_price: f64,
+    pub sale_price: Option<f64>,
     pub line_price: Option<f64>,
     pub cost_price: Option<f64>,
     pub stock: Option<i32>,
@@ -173,4 +180,27 @@ pub struct ProductAttributeArgs {
     pub attribute_id: Option<i64>,
     pub attribute_name: String,
     pub attribute_value: String,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct ProductBatchDeleteArgs {
+    pub ids: Vec<i64>,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct ProductSimpleListArgs {
+    pub name: Option<String>,
+    pub status: Option<i32>,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct SkuDeleteArgs {
+    pub ids: Vec<i64>,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, Validate)]
+pub struct SkuGenerateArgs {
+    pub product_id: i64,
+    pub specs: Vec<SpecArgs>,
+    pub stock: Option<i32>,
 }

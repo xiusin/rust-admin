@@ -68,6 +68,26 @@ export interface StoreStatistics {
   inactiveStores: number;
 }
 
+interface ApiResponse<T = any> {
+  code: number;
+  message: string;
+  data: T;
+}
+
+interface ListResponse<T> {
+  list: T[];
+  total: number;
+  total_pages: number;
+  page_num: number;
+}
+
+const getData = <T>(res: ApiResponse<T>): T => {
+  if (res.code !== 200) {
+    throw new Error(res.message || '请求失败');
+  }
+  return res.data;
+};
+
 export const storeApi = {
   list: async (params?: {
     pageNum?: number;
@@ -75,14 +95,14 @@ export const storeApi = {
     name?: string;
     city?: string;
     status?: string;
-  }) => {
-    const res = await axios.get("/api/product/store/list", { params });
-    return res.data;
+  }): Promise<ListResponse<StoreListItem>> => {
+    const res = await axios.get("/product/store/list", { params });
+    return getData(res);
   },
 
-  detail: async (id: number) => {
-    const res = await axios.get(`/api/product/store/${id}`);
-    return res.data;
+  detail: async (id: number): Promise<StoreDetail> => {
+    const res = await axios.get(`/product/store/${id}`);
+    return getData(res);
   },
 
   add: async (data: {
@@ -101,9 +121,9 @@ export const storeApi = {
     description?: string;
     sort?: number;
     status?: string;
-  }) => {
-    const res = await axios.post("/api/product/store/add", data);
-    return res.data;
+  }): Promise<void> => {
+    const res = await axios.post("/product/store/add", data);
+    getData(res);
   },
 
   edit: async (data: {
@@ -123,23 +143,23 @@ export const storeApi = {
     description?: string;
     sort?: number;
     status?: string;
-  }) => {
-    const res = await axios.put("/api/product/store/edit", data);
-    return res.data;
+  }): Promise<void> => {
+    const res = await axios.put("/product/store/edit", data);
+    getData(res);
   },
 
-  delete: async (ids: number[]) => {
-    const res = await axios.delete("/api/product/store/delete", { data: { ids } });
-    return res.data;
+  delete: async (ids: number[]): Promise<void> => {
+    const res = await axios.delete("/product/store/delete", { data: { ids } });
+    getData(res);
   },
 
   stockList: async (storeId: number, params?: {
     pageNum?: number;
     pageSize?: number;
     productName?: string;
-  }) => {
-    const res = await axios.get(`/api/product/store/stock/${storeId}`, { params });
-    return res.data;
+  }): Promise<ListResponse<StoreStockItem>> => {
+    const res = await axios.get(`/product/store/stock/${storeId}`, { params });
+    return getData(res);
   },
 
   stockAdjust: async (data: {
@@ -148,18 +168,18 @@ export const storeApi = {
     skuId?: number;
     changeNum: number;
     remark?: string;
-  }) => {
-    const res = await axios.post("/api/product/store/stock/adjust", data);
-    return res.data;
+  }): Promise<void> => {
+    const res = await axios.post("/product/store/stock/adjust", data);
+    getData(res);
   },
 
-  simpleList: async () => {
-    const res = await axios.get("/api/product/store/simpleList");
-    return res.data;
+  simpleList: async (): Promise<StoreSimple[]> => {
+    const res = await axios.get("/product/store/simpleList");
+    return getData(res);
   },
 
-  statistics: async () => {
-    const res = await axios.get("/api/product/store/statistics");
-    return res.data;
+  statistics: async (): Promise<StoreStatistics> => {
+    const res = await axios.get("/product/store/statistics");
+    return getData(res);
   },
 };

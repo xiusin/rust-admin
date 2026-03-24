@@ -34,3 +34,9 @@ pub struct BrandListArgs {
 pub struct BrandDeleteArgs {
     pub ids: Vec<i64>,
 }
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct BrandStatusArgs {
+    pub id: i64,
+    pub status: String,
+}

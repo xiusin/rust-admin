@@ -68,7 +68,6 @@ export interface ProductDetail {
   volume: number;
   unit: string;
   sort: number;
-  isMultiSpec: number;
   isHot: number;
   isNew: number;
   isRecommend: number;
@@ -144,7 +143,6 @@ export interface ProductAddParams {
   volume?: number;
   unit?: string;
   sort?: number;
-  isMultiSpec?: number;
   isHot?: number;
   isNew?: number;
   isRecommend?: number;
@@ -190,6 +188,34 @@ export interface ProductAttributeParams {
   attributeValue: string;
 }
 
+export interface ProductStatistics {
+  totalProducts: number;
+  onShelfCount: number;
+  offShelfCount: number;
+  pendingAuditCount: number;
+  lowStockCount: number;
+}
+
+interface ApiResponse<T = any> {
+  code: number;
+  message: string;
+  data: T;
+}
+
+interface ListResponse<T> {
+  list: T[];
+  total: number;
+  total_pages: number;
+  page_num: number;
+}
+
+const getData = <T>(res: ApiResponse<T>): T => {
+  if (res.code !== 200) {
+    throw new Error(res.message || '请求失败');
+  }
+  return res.data;
+};
+
 export const productApi = {
   list: async (params?: {
     pageNum?: number;
@@ -203,87 +229,87 @@ export const productApi = {
     isHot?: number;
     isNew?: number;
     isRecommend?: number;
-  }) => {
-    const res = await axios.get("/api/product/list/list", { params });
-    return res.data;
+  }): Promise<ListResponse<ProductListItem>> => {
+    const res = await axios.get("/product/list", { params });
+    return getData(res);
   },
 
-  detail: async (id: number) => {
-    const res = await axios.get(`/api/product/list/${id}`);
-    return res.data;
+  detail: async (id: number): Promise<ProductDetail> => {
+    const res = await axios.get(`/product/${id}`);
+    return getData(res);
   },
 
-  add: async (data: ProductAddParams) => {
-    const res = await axios.post("/api/product/list/add", data);
-    return res.data;
+  add: async (data: ProductAddParams): Promise<void> => {
+    const res = await axios.post("/product/add", data);
+    getData(res);
   },
 
-  edit: async (data: any) => {
-    const res = await axios.put("/api/product/list/edit", data);
-    return res.data;
+  edit: async (data: any): Promise<void> => {
+    const res = await axios.put("/product/edit", data);
+    getData(res);
   },
 
-  delete: async (ids: number[]) => {
-    const res = await axios.delete("/api/product/list/delete", { data: { ids } });
-    return res.data;
+  delete: async (ids: number[]): Promise<void> => {
+    const res = await axios.delete("/product/delete", { data: { ids } });
+    getData(res);
   },
 
-  updateStatus: async (id: number, status: number) => {
-    const res = await axios.put("/api/product/list/updateStatus", null, {
+  updateStatus: async (id: number, status: number): Promise<void> => {
+    const res = await axios.put("/product/updateStatus", null, {
       params: { id, status },
     });
-    return res.data;
+    getData(res);
   },
 
-  audit: async (data: { id: number; auditStatus: number; auditRemark?: string }) => {
-    const res = await axios.put("/api/product/list/audit", data);
-    return res.data;
+  audit: async (data: { id: number; auditStatus: number; auditRemark?: string }): Promise<void> => {
+    const res = await axios.put("/product/audit", data);
+    getData(res);
   },
 
-  batchUpdateStatus: async (ids: number[], status: number) => {
-    const res = await axios.put("/api/product/list/batchUpdateStatus", { ids, status });
-    return res.data;
+  batchUpdateStatus: async (ids: number[], status: number): Promise<void> => {
+    const res = await axios.put("/product/batchUpdateStatus", { ids, status });
+    getData(res);
   },
 
-  statistics: async () => {
-    const res = await axios.get("/api/product/list/statistics");
-    return res.data;
+  statistics: async (): Promise<ProductStatistics> => {
+    const res = await axios.get("/product/statistics");
+    return getData(res);
   },
 
-  simpleList: async (params?: { name?: string; status?: number }) => {
-    const res = await axios.get("/api/product/list/simpleList", { params });
-    return res.data;
+  simpleList: async (params?: { name?: string; status?: number }): Promise<ProductListItem[]> => {
+    const res = await axios.get("/product/simpleList", { params });
+    return getData(res);
   },
 };
 
 export const skuApi = {
-  list: async (productId: number) => {
-    const res = await axios.get(`/api/product/sku/list/${productId}`);
-    return res.data;
+  list: async (productId: number): Promise<SkuItem[]> => {
+    const res = await axios.get(`/product/sku/list/${productId}`);
+    return getData(res);
   },
 
-  detail: async (id: number) => {
-    const res = await axios.get(`/api/product/sku/${id}`);
-    return res.data;
+  detail: async (id: number): Promise<SkuItem> => {
+    const res = await axios.get(`/product/sku/${id}`);
+    return getData(res);
   },
 
-  add: async (data: any) => {
-    const res = await axios.post("/api/product/sku/add", data);
-    return res.data;
+  add: async (data: any): Promise<void> => {
+    const res = await axios.post("/product/sku/add", data);
+    getData(res);
   },
 
-  edit: async (data: any) => {
-    const res = await axios.put("/api/product/sku/edit", data);
-    return res.data;
+  edit: async (data: any): Promise<void> => {
+    const res = await axios.put("/product/sku/edit", data);
+    getData(res);
   },
 
-  delete: async (ids: number[]) => {
-    const res = await axios.delete("/api/product/sku/delete", { data: { ids } });
-    return res.data;
+  delete: async (ids: number[]): Promise<void> => {
+    const res = await axios.delete("/product/sku/delete", { data: { ids } });
+    getData(res);
   },
 
-  generate: async (productId: number, specs: any[]) => {
-    const res = await axios.post("/api/product/sku/generate", { productId, specs });
-    return res.data;
+  generate: async (productId: number, specs: any[]): Promise<SkuItem[]> => {
+    const res = await axios.post("/product/sku/generate", { productId, specs });
+    return getData(res);
   },
 };

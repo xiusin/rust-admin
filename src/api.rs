@@ -1,5 +1,6 @@
 pub mod consumer;
 pub mod payment;
+pub mod product;
 pub mod sys;
 pub mod test;
 pub mod web_path;
@@ -20,6 +21,7 @@ impl WebApi {
         webpath = webpath.merge(consumer::router_consumer());
         webpath = webpath.merge(payment::router_payment());
         webpath = webpath.merge(test::router_test());
+        webpath = webpath.merge(product::router_product());
 
         webpath = webpath.final_to_path();
         let expand_path = webpath.get_last_level_paths();

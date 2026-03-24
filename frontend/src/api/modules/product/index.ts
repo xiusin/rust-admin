@@ -6,3 +6,4 @@ export * from "./shippingTemplate";
 export * from "./stock";
 export * from "./store";
 export * from "./verification";
+export * from "./attributeTemplate";

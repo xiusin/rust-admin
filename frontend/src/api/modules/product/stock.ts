@@ -54,6 +54,26 @@ export interface StockStatistics {
   lowStockCount: number;
 }
 
+interface ApiResponse<T = any> {
+  code: number;
+  message: string;
+  data: T;
+}
+
+interface ListResponse<T> {
+  list: T[];
+  total: number;
+  total_pages: number;
+  page_num: number;
+}
+
+const getData = <T>(res: ApiResponse<T>): T => {
+  if (res.code !== 200) {
+    throw new Error(res.message || '请求失败');
+  }
+  return res.data;
+};
+
 export const stockApi = {
   list: async (params?: {
     pageNum?: number;
@@ -61,9 +81,9 @@ export const stockApi = {
     productName?: string;
     categoryId?: number;
     stockStatus?: string;
-  }) => {
-    const res = await axios.get("/api/product/stock/list", { params });
-    return res.data;
+  }): Promise<ListResponse<StockListItem>> => {
+    const res = await axios.get("/product/stock/list", { params });
+    return getData(res);
   },
 
   logList: async (params?: {
@@ -75,9 +95,9 @@ export const stockApi = {
     orderNo?: string;
     startTime?: string;
     endTime?: string;
-  }) => {
-    const res = await axios.get("/api/product/stock/log", { params });
-    return res.data;
+  }): Promise<ListResponse<StockLogItem>> => {
+    const res = await axios.get("/product/stock/log", { params });
+    return getData(res);
   },
 
   adjust: async (data: {
@@ -86,9 +106,9 @@ export const stockApi = {
     changeType: number;
     changeNum: number;
     remark?: string;
-  }) => {
-    const res = await axios.post("/api/product/stock/adjust", data);
-    return res.data;
+  }): Promise<void> => {
+    const res = await axios.post("/product/stock/adjust", data);
+    getData(res);
   },
 
   alertList: async (params?: {
@@ -96,22 +116,22 @@ export const stockApi = {
     pageSize?: number;
     productName?: string;
     isAlert?: number;
-  }) => {
-    const res = await axios.get("/api/product/stock/alertList", { params });
-    return res.data;
+  }): Promise<ListResponse<StockAlertItem>> => {
+    const res = await axios.get("/product/stock/alertList", { params });
+    return getData(res);
   },
 
   alertConfig: async (data: {
     productId: number;
     skuId?: number;
     alertStock: number;
-  }) => {
-    const res = await axios.post("/api/product/stock/alertConfig", data);
-    return res.data;
+  }): Promise<void> => {
+    const res = await axios.post("/product/stock/alertConfig", data);
+    getData(res);
   },
 
-  statistics: async () => {
-    const res = await axios.get("/api/product/stock/statistics");
-    return res.data;
+  statistics: async (): Promise<StockStatistics> => {
+    const res = await axios.get("/product/stock/statistics");
+    return getData(res);
   },
 };

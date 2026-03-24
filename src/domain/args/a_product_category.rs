@@ -34,7 +34,7 @@ pub struct CategoryListArgs {
     pub parent_id: Option<i64>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Validate)]
 pub struct CategoryTreeArgs {
     pub status: Option<String>,
 }
@@ -42,4 +42,10 @@ pub struct CategoryTreeArgs {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct CategoryDeleteArgs {
     pub ids: Vec<i64>,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct CategoryStatusArgs {
+    pub id: i64,
+    pub status: String,
 }

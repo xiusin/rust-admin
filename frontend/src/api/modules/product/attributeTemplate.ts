@@ -45,6 +45,26 @@ export interface AttributeTemplateSimple {
   name: string;
 }
 
+interface ApiResponse<T = any> {
+  code: number;
+  message: string;
+  data: T;
+}
+
+interface ListResponse<T> {
+  list: T[];
+  total: number;
+  total_pages: number;
+  page_num: number;
+}
+
+const getData = <T>(res: ApiResponse<T>): T => {
+  if (res.code !== 200) {
+    throw new Error(res.message || '请求失败');
+  }
+  return res.data;
+};
+
 export const attributeTemplateApi = {
   list: async (params?: {
     pageNum?: number;
@@ -52,14 +72,14 @@ export const attributeTemplateApi = {
     name?: string;
     categoryId?: number;
     status?: string;
-  }) => {
-    const res = await axios.get("/api/product/attributeTemplate/list", { params });
-    return res.data;
+  }): Promise<ListResponse<AttributeTemplateListItem>> => {
+    const res = await axios.get("/product/attribute/list", { params });
+    return getData(res);
   },
 
-  detail: async (id: number) => {
-    const res = await axios.get(`/api/product/attributeTemplate/${id}`);
-    return res.data;
+  detail: async (id: number): Promise<AttributeTemplateDetail> => {
+    const res = await axios.get(`/product/attribute/${id}`);
+    return getData(res);
   },
 
   add: async (data: {
@@ -79,9 +99,9 @@ export const attributeTemplateApi = {
         sort?: number;
       }[];
     }[];
-  }) => {
-    const res = await axios.post("/api/product/attributeTemplate/add", data);
-    return res.data;
+  }): Promise<void> => {
+    const res = await axios.post("/product/attribute/add", data);
+    getData(res);
   },
 
   edit: async (data: {
@@ -102,18 +122,18 @@ export const attributeTemplateApi = {
         sort?: number;
       }[];
     }[];
-  }) => {
-    const res = await axios.put("/api/product/attributeTemplate/edit", data);
-    return res.data;
+  }): Promise<void> => {
+    const res = await axios.put("/product/attribute/edit", data);
+    getData(res);
   },
 
-  delete: async (ids: number[]) => {
-    const res = await axios.delete("/api/product/attributeTemplate/delete", { data: { ids } });
-    return res.data;
+  delete: async (ids: number[]): Promise<void> => {
+    const res = await axios.delete("/product/attribute/delete", { data: { ids } });
+    getData(res);
   },
 
-  simpleList: async (categoryId?: number) => {
-    const res = await axios.get("/api/product/attributeTemplate/simpleList", { params: { categoryId } });
-    return res.data;
+  byCategory: async (categoryId: number): Promise<AttributeTemplateSimple[]> => {
+    const res = await axios.get(`/product/attribute/byCategory/${categoryId}`);
+    return getData(res);
   },
 };

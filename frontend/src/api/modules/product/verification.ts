@@ -102,6 +102,26 @@ export interface VerificationStatistics {
   todayVerifiedCount: number;
 }
 
+interface ApiResponse<T = any> {
+  code: number;
+  message: string;
+  data: T;
+}
+
+interface ListResponse<T> {
+  list: T[];
+  total: number;
+  total_pages: number;
+  page_num: number;
+}
+
+const getData = <T>(res: ApiResponse<T>): T => {
+  if (res.code !== 200) {
+    throw new Error(res.message || '请求失败');
+  }
+  return res.data;
+};
+
 export const verificationApi = {
   list: async (params?: {
     pageNum?: number;
@@ -112,23 +132,23 @@ export const verificationApi = {
     storeId?: number;
     startTime?: string;
     endTime?: string;
-  }) => {
-    const res = await axios.get("/api/product/verification/list", { params });
-    return res.data;
+  }): Promise<ListResponse<VerificationCodeListItem>> => {
+    const res = await axios.get("/product/verification/list", { params });
+    return getData(res);
   },
 
   verify: async (data: {
     code: string;
     storeId?: number;
     remark?: string;
-  }) => {
-    const res = await axios.post("/api/product/verification/verify", data);
-    return res.data;
+  }): Promise<VerificationResult> => {
+    const res = await axios.post("/product/verification/verify", data);
+    return getData(res);
   },
 
-  query: async (code: string) => {
-    const res = await axios.get("/api/product/verification/query", { params: { code } });
-    return res.data;
+  query: async (code: string): Promise<VerificationQueryResult> => {
+    const res = await axios.get("/product/verification/query", { params: { code } });
+    return getData(res);
   },
 
   logList: async (params?: {
@@ -139,13 +159,13 @@ export const verificationApi = {
     storeId?: number;
     startTime?: string;
     endTime?: string;
-  }) => {
-    const res = await axios.get("/api/product/verification/log", { params });
-    return res.data;
+  }): Promise<ListResponse<VerificationLogItem>> => {
+    const res = await axios.get("/product/verification/log", { params });
+    return getData(res);
   },
 
-  statistics: async () => {
-    const res = await axios.get("/api/product/verification/statistics");
-    return res.data;
+  statistics: async (): Promise<VerificationStatistics> => {
+    const res = await axios.get("/product/verification/statistics");
+    return getData(res);
   },
 };

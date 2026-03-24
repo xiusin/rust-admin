@@ -62,3 +62,10 @@ pub struct ShippingCalculateArgs {
     pub total_quantity: Option<i32>,
     pub total_amount: Option<f64>,
 }
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct ShippingTemplateCalculateArgs {
+    pub template_id: i64,
+    pub region_id: Option<i64>,
+    pub weight: f64,
+}

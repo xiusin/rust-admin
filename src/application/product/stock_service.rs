@@ -2,6 +2,7 @@ use crate::common::error::Error;
 use crate::domain::args::a_stock::*;
 use crate::domain::entity::{p_product, p_sku, p_stock_log, p_stock_alert};
 use crate::domain::model::m_stock::*;
+use crate::infrastructure::db::GID;
 use crate::model::prelude::*;
 use chrono::Local;
 use sea_orm::*;
@@ -109,6 +110,43 @@ pub async fn list(args: StockListArgs) -> Result<ListData<StockListItem>> {
         total_pages: (total + page_size as u64 - 1) / page_size as u64,
         page_num: page_num as u64,
     })
+}
+
+pub async fn alert_config(args: StockAlertConfigArgs, _user_id: i64, _user_name: &str) -> Result<()> {
+    let db = DB().await;
+    let now = Local::now().naive_local();
+
+    let alert = p_stock_alert::Entity::find()
+        .filter(p_stock_alert::Column::ProductId.eq(args.product_id))
+        .filter(match args.sku_id {
+            Some(id) => p_stock_alert::Column::SkuId.eq(id),
+            None => p_stock_alert::Column::SkuId.is_null(),
+        })
+        .one(db)
+        .await?;
+
+    if let Some(alert) = alert {
+        let mut model: p_stock_alert::ActiveModel = alert.into();
+        model.alert_stock = Set(args.alert_stock);
+        model.is_alert = Set(if args.alert_stock > 0 { 1 } else { 0 });
+        model.updated_at = Set(Some(now));
+        model.update(db).await?;
+    } else {
+        let id = GID().await;
+        let model = p_stock_alert::ActiveModel {
+            id: Set(id),
+            product_id: Set(args.product_id),
+            sku_id: Set(args.sku_id),
+            alert_stock: Set(args.alert_stock),
+            is_alert: Set(if args.alert_stock > 0 { 1 } else { 0 }),
+            last_alert_at: Set(None),
+            created_at: Set(Some(now)),
+            updated_at: Set(Some(now)),
+        };
+        model.insert(db).await?;
+    }
+
+    Ok(())
 }
 
 fn get_change_type_name(change_type: i32) -> String {
