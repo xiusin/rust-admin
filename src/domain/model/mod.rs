@@ -40,3 +40,15 @@ pub mod m_stock;
 pub mod m_store;
 pub mod m_verification;
 pub mod m_attribute_template;
+
+// Plugin Market Models
+pub mod m_plugin;
+pub mod m_plugin_category;
+pub mod m_plugin_review;
+pub mod m_order;
+pub mod m_cart;
+pub mod m_subscription;
+pub mod m_license;
+pub mod m_device;
+pub mod m_card;
+pub mod m_developer;

@@ -1998,5 +1998,559 @@ export const permissionData = [
       sort: 3,
       type: 3
     }
+  },
+  // =====================================================
+  // 插件市场路由
+  // =====================================================
+  {
+    id: "20",
+    parentId: "0",
+    path: "/plugin",
+    name: "plugin-market",
+    redirect: "/plugin/home",
+    meta: {
+      title: "plugin-market",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      svgIcon: "app",
+      sort: 20,
+      type: 1
+    },
+    children: null
+  },
+  // 插件市场首页
+  {
+    id: "2001",
+    parentId: "20",
+    path: "/plugin/home",
+    name: "plugin-home",
+    component: "plugin-market/index",
+    meta: {
+      title: "plugin-home",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "home",
+      sort: 1,
+      type: 2
+    },
+    children: null
+  },
+  // 插件列表
+  {
+    id: "2002",
+    parentId: "20",
+    path: "/plugin/list",
+    name: "plugin-list",
+    component: "plugin-market/list",
+    meta: {
+      title: "plugin-list-page",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "list",
+      sort: 2,
+      type: 2
+    },
+    children: null
+  },
+  // 插件搜索
+  {
+    id: "2003",
+    parentId: "20",
+    path: "/plugin/search",
+    name: "plugin-search",
+    component: "plugin-market/search",
+    meta: {
+      title: "plugin-search-page",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "search",
+      sort: 3,
+      type: 2
+    },
+    children: null
+  },
+  // 插件详情
+  {
+    id: "2004",
+    parentId: "20",
+    path: "/plugin/detail/:id",
+    name: "plugin-detail",
+    component: "plugin-market/detail",
+    meta: {
+      title: "plugin-detail-page",
+      hide: true,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "file-text",
+      sort: 4,
+      type: 2
+    },
+    children: null
+  },
+  // 我的插件目录
+  {
+    id: "2010",
+    parentId: "20",
+    path: "/plugin/my",
+    name: "plugin-my",
+    redirect: "/plugin/my/purchased",
+    meta: {
+      title: "my-plugins-page",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      svgIcon: "user",
+      sort: 4,
+      type: 1
+    },
+    children: null
+  },
+  // 已购插件
+  {
+    id: "2011",
+    parentId: "2010",
+    path: "/plugin/my/purchased",
+    name: "my-purchased",
+    component: "plugin-my/purchased",
+    meta: {
+      title: "my-purchased",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "shopping-bag",
+      sort: 1,
+      type: 2
+    },
+    children: null
+  },
+  // 订阅管理
+  {
+    id: "2012",
+    parentId: "2010",
+    path: "/plugin/my/subscription",
+    name: "my-subscription",
+    component: "plugin-my/subscription",
+    meta: {
+      title: "my-subscription",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "calendar",
+      sort: 2,
+      type: 2
+    },
+    children: null
+  },
+  // 许可证管理
+  {
+    id: "2013",
+    parentId: "2010",
+    path: "/plugin/my/license",
+    name: "my-license",
+    component: "plugin-my/license",
+    meta: {
+      title: "my-license",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "key",
+      sort: 3,
+      type: 2
+    },
+    children: null
+  },
+  // 开发者中心目录
+  {
+    id: "2020",
+    parentId: "20",
+    path: "/plugin/developer",
+    name: "plugin-developer",
+    redirect: "/plugin/developer/dashboard",
+    meta: {
+      title: "plugin-developer-page",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      svgIcon: "code",
+      sort: 5,
+      type: 1
+    },
+    children: null
+  },
+  // 开发者仪表板
+  {
+    id: "2021",
+    parentId: "2020",
+    path: "/plugin/developer/dashboard",
+    name: "developer-dashboard",
+    component: "plugin-developer/dashboard",
+    meta: {
+      title: "developer-dashboard",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "dashboard",
+      sort: 1,
+      type: 2
+    },
+    children: null
+  },
+  // 插件管理
+  {
+    id: "2022",
+    parentId: "2020",
+    path: "/plugin/developer/plugins",
+    name: "developer-plugins",
+    component: "plugin-developer/plugin-list",
+    meta: {
+      title: "developer-plugins",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "store",
+      sort: 2,
+      type: 2
+    },
+    children: null
+  },
+  // 插件编辑
+  {
+    id: "2023",
+    parentId: "2020",
+    path: "/plugin/developer/edit/:id?",
+    name: "developer-edit",
+    component: "plugin-developer/plugin-edit",
+    meta: {
+      title: "developer-edit",
+      hide: true,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "edit",
+      sort: 3,
+      type: 2
+    },
+    children: null
+  },
+  // 版本管理
+  {
+    id: "2024",
+    parentId: "2020",
+    path: "/plugin/developer/versions/:pluginId?",
+    name: "developer-versions",
+    component: "plugin-developer/version",
+    meta: {
+      title: "developer-versions",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "history",
+      sort: 4,
+      type: 2
+    },
+    children: null
+  },
+  // 销售统计
+  {
+    id: "2025",
+    parentId: "2020",
+    path: "/plugin/developer/sales",
+    name: "developer-sales",
+    component: "plugin-developer/sales",
+    meta: {
+      title: "developer-sales",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "chart",
+      sort: 5,
+      type: 2
+    },
+    children: null
+  },
+  // 订单中心目录
+  {
+    id: "2030",
+    parentId: "20",
+    path: "/plugin/order",
+    name: "plugin-order",
+    redirect: "/plugin/order/cart",
+    meta: {
+      title: "order-center-page",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      svgIcon: "order",
+      sort: 6,
+      type: 1
+    },
+    children: null
+  },
+  // 购物车
+  {
+    id: "2031",
+    parentId: "2030",
+    path: "/plugin/order/cart",
+    name: "order-cart",
+    component: "order/cart",
+    meta: {
+      title: "order-cart-page",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "cart",
+      sort: 1,
+      type: 2
+    },
+    children: null
+  },
+  // 结算页
+  {
+    id: "2032",
+    parentId: "2030",
+    path: "/plugin/order/checkout",
+    name: "order-checkout",
+    component: "order/checkout",
+    meta: {
+      title: "order-checkout-page",
+      hide: true,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "payment",
+      sort: 2,
+      type: 2
+    },
+    children: null
+  },
+  // 订单列表
+  {
+    id: "2033",
+    parentId: "2030",
+    path: "/plugin/order/list",
+    name: "order-list",
+    component: "order/list",
+    meta: {
+      title: "order-list-page",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "list",
+      sort: 3,
+      type: 2
+    },
+    children: null
+  },
+  // 订单详情
+  {
+    id: "2034",
+    parentId: "2030",
+    path: "/plugin/order/detail/:id",
+    name: "order-detail",
+    component: "order/detail",
+    meta: {
+      title: "order-detail-page",
+      hide: true,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "file-text",
+      sort: 4,
+      type: 2
+    },
+    children: null
+  },
+  // 验证中心目录
+  {
+    id: "2040",
+    parentId: "20",
+    path: "/plugin/verify",
+    name: "plugin-verify",
+    redirect: "/plugin/verify/activate",
+    meta: {
+      title: "verify-center-page",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      svgIcon: "shield",
+      sort: 7,
+      type: 1
+    },
+    children: null
+  },
+  // 插件激活
+  {
+    id: "2041",
+    parentId: "2040",
+    path: "/plugin/verify/activate",
+    name: "verify-activate",
+    component: "verify/activate",
+    meta: {
+      title: "verify-activate-page",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "check-circle",
+      sort: 1,
+      type: 2
+    },
+    children: null
+  },
+  // 设备管理
+  {
+    id: "2042",
+    parentId: "2040",
+    path: "/plugin/verify/device",
+    name: "verify-device",
+    component: "verify/device",
+    meta: {
+      title: "verify-device-page",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "mobile",
+      sort: 2,
+      type: 2
+    },
+    children: null
+  },
+  // 卡密兑换
+  {
+    id: "2043",
+    parentId: "2040",
+    path: "/plugin/verify/card",
+    name: "verify-card",
+    component: "verify/card-redeem",
+    meta: {
+      title: "verify-card-page",
+      hide: false,
+      disable: false,
+      keepAlive: true,
+      affix: false,
+      link: "",
+      iframe: false,
+      isFull: false,
+      roles: ["admin", "common"],
+      icon: "gift",
+      sort: 3,
+      type: 2
+    },
+    children: null
   }
 ];

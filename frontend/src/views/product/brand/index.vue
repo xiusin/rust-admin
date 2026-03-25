@@ -11,8 +11,8 @@
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="6" :xxl="6">
             <a-form-item field="status" label="品牌状态">
               <a-select v-model="searchForm.status" placeholder="请选择状态" allow-clear>
-                <a-option value="0">正常</a-option>
-                <a-option value="1">停用</a-option>
+                <a-option value="0">启用</a-option>
+                <a-option value="1">禁用</a-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -40,83 +40,93 @@
               <template #icon><icon-plus /></template>
               新增
             </a-button>
-            <a-button type="primary" size="small" status="danger" @click="onBatchDelete" :disabled="selectedIds.length === 0">
+            <a-button type="primary" status="danger" size="small" :disabled="selectedIds.length === 0" @click="onBatchDelete">
               <template #icon><icon-delete /></template>
-              批量删除
+              删除
             </a-button>
           </a-space>
         </a-col>
         <a-col :span="12" style="display: flex; align-items: center; justify-content: end">
           <a-space size="medium">
             <a-tooltip content="刷新">
-              <div class="action-icon" @click="getList"><icon-refresh size="18" /></div>
+              <div class="action-icon" @click="refresh"><icon-refresh size="18" /></div>
             </a-tooltip>
           </a-space>
         </a-col>
       </a-row>
 
       <a-table
-        ref="tableRef"
         row-key="id"
         :loading="loading"
         :bordered="{ cell: true }"
-        :scroll="{ x: '100%', y: '100%', minWidth: 800 }"
+        :scroll="{ x: '100%', y: '100%', minWidth: 1000 }"
         :columns="columns"
         :data="tableData"
+        :row-selection="{ type: 'checkbox', showCheckedAll: true }"
+        v-model:selectedKeys="selectedIds"
         :pagination="pagination"
         @page-change="handlePageChange"
         @page-size-change="handlePageSizeChange"
-        @selection-change="handleSelectionChange"
       >
         <template #logo="{ record }">
-          <a-avatar v-if="record.logo" :size="40" :image-url="record.logo" />
-          <a-avatar v-else :size="40"><icon-image /></a-avatar>
+          <a-image-preview>
+            <div class="brand-logo" v-if="record.logo">
+              <img :src="record.logo" :alt="record.name" />
+            </div>
+            <div class="brand-logo empty" v-else>
+              <icon-image />
+            </div>
+          </a-image-preview>
         </template>
         <template #status="{ record }">
-          <a-tag bordered size="small" color="arcoblue" v-if="record.status === '0'">正常</a-tag>
-          <a-tag bordered size="small" color="red" v-else>停用</a-tag>
+          <a-tag :color="record.status === '0' ? 'green' : 'red'" bordered size="small">
+            {{ record.status === '0' ? '启用' : '禁用' }}
+          </a-tag>
         </template>
         <template #optional="{ record }">
           <a-space>
             <a-button type="text" size="mini" @click="onEdit(record)">编辑</a-button>
-            <a-button type="text" size="mini" @click="onUpdateStatus(record)" v-if="record.status === '0'">禁用</a-button>
-            <a-button type="text" size="mini" @click="onUpdateStatus(record)" v-else>启用</a-button>
             <a-popconfirm type="warning" content="确定删除该品牌吗?" @ok="onDelete(record)">
-              <a-button type="text" size="mini" status="danger">删除</a-button>
+              <a-button type="text" status="danger" size="mini">删除</a-button>
             </a-popconfirm>
           </a-space>
         </template>
       </a-table>
     </div>
 
-    <a-modal v-model:visible="modalVisible" :title="modalTitle" :width="600" @ok="onSubmit" @cancel="onCancel">
-      <a-form ref="formRef" :model="form" auto-label-width>
-        <a-form-item field="name" label="品牌名称" :rules="[{ required: true, message: '请输入品牌名称' }]">
-          <a-input v-model="form.name" placeholder="请输入品牌名称" />
-        </a-form-item>
-        <a-form-item field="logo" label="品牌Logo">
-          <a-input v-model="form.logo" placeholder="请输入Logo URL" />
-        </a-form-item>
-        <a-form-item field="description" label="品牌描述">
-          <a-textarea v-model="form.description" placeholder="请输入品牌描述" :rows="3" />
-        </a-form-item>
-        <a-form-item field="sort" label="排序">
-          <a-input-number v-model="form.sort" placeholder="请输入排序" :min="0" />
-        </a-form-item>
-        <a-form-item field="status" label="状态">
-          <a-radio-group v-model="form.status">
-            <a-radio value="0">正常</a-radio>
-            <a-radio value="1">停用</a-radio>
-          </a-radio-group>
-        </a-form-item>
-      </a-form>
+    <a-modal v-model:visible="modalVisible" :width="600" @ok="onSubmit" @cancel="onCancel">
+      <template #title>{{ modalTitle }}</template>
+      <div>
+        <a-form ref="formRef" auto-label-width :rules="rules" :model="form">
+          <a-form-item field="name" label="品牌名称" validate-trigger="blur">
+            <a-input v-model="form.name" placeholder="请输入品牌名称" allow-clear />
+          </a-form-item>
+          <a-form-item field="logo" label="品牌Logo" validate-trigger="blur">
+            <a-input v-model="form.logo" placeholder="请输入Logo URL" allow-clear />
+          </a-form-item>
+          <a-form-item field="website" label="官方网站" validate-trigger="blur">
+            <a-input v-model="form.website" placeholder="请输入官方网站" allow-clear />
+          </a-form-item>
+          <a-form-item field="sort" label="排序" validate-trigger="blur">
+            <a-input-number v-model="form.sort" :min="0" :max="9999" :style="{ width: '150px' }" placeholder="请输入排序" mode="button" />
+          </a-form-item>
+          <a-form-item field="status" label="状态" validate-trigger="blur">
+            <a-switch type="round" :checked-value="'0'" :unchecked-value="'1'" v-model="form.status">
+              <template #checked> 启用 </template>
+              <template #unchecked> 禁用 </template>
+            </a-switch>
+          </a-form-item>
+          <a-form-item field="description" label="品牌描述" validate-trigger="blur">
+            <a-textarea v-model="form.description" placeholder="请输入品牌描述" allow-clear />
+          </a-form-item>
+        </a-form>
+      </div>
     </a-modal>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
-import { Message } from '@arco-design/web-vue';
 import { brandApi, BrandListItem } from '@/api/modules/product/brand';
 
 const loading = ref(false);
@@ -124,88 +134,58 @@ const tableData = ref<BrandListItem[]>([]);
 const modalVisible = ref(false);
 const modalTitle = ref('新增品牌');
 const formRef = ref();
-const selectedIds = ref<number[]>([]);
+const selectedIds = ref<string[]>([]);
+const searchFormRef = ref();
 
 const searchForm = reactive({
   name: '',
-  status: '',
+  status: null as string | null,
 });
 
 const form = reactive({
   id: 0,
   name: '',
   logo: '',
-  description: '',
+  website: '',
   sort: 0,
   status: '0',
+  description: '',
 });
+
+const rules = {
+  name: [{ required: true, message: '请输入品牌名称' }],
+};
 
 const pagination = reactive({
   current: 1,
   pageSize: 10,
+  showPageSize: true,
+  showTotal: true,
   total: 0,
 });
 
 const columns = [
-  { type: 'selection', width: 60 },
-  {
-    title: '品牌Logo',
-    dataIndex: 'logo',
-    slotName: 'logo',
-    width: 100,
-  },
-  {
-    title: '品牌名称',
-    dataIndex: 'name',
-    width: 200,
-  },
-  {
-    title: '品牌描述',
-    dataIndex: 'description',
-    ellipsis: true,
-  },
-  {
-    title: '商品数量',
-    dataIndex: 'productCount',
-    width: 100,
-  },
-  {
-    title: '排序',
-    dataIndex: 'sort',
-    width: 80,
-  },
-  {
-    title: '状态',
-    dataIndex: 'status',
-    slotName: 'status',
-    width: 100,
-  },
-  {
-    title: '创建时间',
-    dataIndex: 'createdAt',
-    width: 180,
-  },
-  {
-    title: '操作',
-    slotName: 'optional',
-    width: 200,
-    fixed: 'right',
-  },
+  { type: 'selection', width: 60, fixed: 'left' },
+  { title: '品牌Logo', dataIndex: 'logo', slotName: 'logo', width: 100 },
+  { title: '品牌名称', dataIndex: 'name', width: 150 },
+  { title: '官方网站', dataIndex: 'website', width: 180 },
+  { title: '排序', dataIndex: 'sort', width: 80, align: 'center' },
+  { title: '状态', dataIndex: 'status', slotName: 'status', width: 100, align: 'center' },
+  { title: '创建时间', dataIndex: 'createdAt', width: 180 },
+  { title: '操作', slotName: 'optional', width: 150, fixed: 'right', align: 'center' },
 ];
 
 const getList = async () => {
   loading.value = true;
   try {
-    const res = await brandApi.list({
+    const data = await brandApi.list({
       pageNum: pagination.current,
       pageSize: pagination.pageSize,
       name: searchForm.name || undefined,
       status: searchForm.status || undefined,
     });
-    if (res.code === 200) {
-      tableData.value = res.data?.list || [];
-      pagination.total = res.data?.total || 0;
-    }
+    tableData.value = data.list || [];
+    pagination.total = data.total || 0;
   } catch (error) {
     console.error(error);
   } finally {
@@ -219,9 +199,12 @@ const search = () => {
 };
 
 const reset = () => {
-  searchForm.name = '';
-  searchForm.status = '';
+  searchFormRef.value?.resetFields();
   pagination.current = 1;
+  getList();
+};
+
+const refresh = () => {
   getList();
 };
 
@@ -235,18 +218,15 @@ const handlePageSizeChange = (pageSize: number) => {
   getList();
 };
 
-const handleSelectionChange = (keys: (string | number)[]) => {
-  selectedIds.value = keys as number[];
-};
-
 const onAdd = () => {
   modalTitle.value = '新增品牌';
   form.id = 0;
   form.name = '';
   form.logo = '';
-  form.description = '';
+  form.website = '';
   form.sort = 0;
   form.status = '0';
+  form.description = '';
   modalVisible.value = true;
 };
 
@@ -255,21 +235,18 @@ const onEdit = (record: BrandListItem) => {
   form.id = record.id;
   form.name = record.name;
   form.logo = record.logo || '';
-  form.description = record.description || '';
+  form.website = record.website || '';
   form.sort = record.sort;
   form.status = record.status;
+  form.description = record.description || '';
   modalVisible.value = true;
 };
 
 const onDelete = async (record: BrandListItem) => {
   try {
-    const res = await brandApi.delete([record.id]);
-    if (res.code === 200) {
-      Message.success('删除成功');
-      getList();
-    } else {
-      Message.error(res.message || '删除失败');
-    }
+    await brandApi.delete([record.id]);
+    arcoMessage('success', '删除成功');
+    getList();
   } catch (error) {
     console.error(error);
   }
@@ -278,65 +255,28 @@ const onDelete = async (record: BrandListItem) => {
 const onBatchDelete = async () => {
   if (selectedIds.value.length === 0) return;
   try {
-    const res = await brandApi.delete(selectedIds.value);
-    if (res.code === 200) {
-      Message.success('批量删除成功');
-      getList();
-    } else {
-      Message.error(res.message || '删除失败');
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const onUpdateStatus = async (record: BrandListItem) => {
-  const newStatus = record.status === '0' ? '1' : '0';
-  try {
-    const res = await brandApi.updateStatus(record.id, newStatus);
-    if (res.code === 200) {
-      Message.success(newStatus === '0' ? '启用成功' : '禁用成功');
-      getList();
-    } else {
-      Message.error(res.message || '操作失败');
-    }
+    await brandApi.delete(selectedIds.value.map((id) => Number(id)));
+    arcoMessage('success', '批量删除成功');
+    selectedIds.value = [];
+    getList();
   } catch (error) {
     console.error(error);
   }
 };
 
 const onSubmit = async () => {
-  const valid = await formRef.value?.validate();
-  if (valid) return;
-
+  let state = await formRef.value.validate();
+  if (state) return;
   try {
-    let res;
     if (form.id) {
-      res = await brandApi.edit({
-        id: form.id,
-        name: form.name,
-        logo: form.logo || undefined,
-        description: form.description || undefined,
-        sort: form.sort,
-        status: form.status,
-      });
+      await brandApi.edit(form);
+      arcoMessage('success', '修改成功');
     } else {
-      res = await brandApi.add({
-        name: form.name,
-        logo: form.logo || undefined,
-        description: form.description || undefined,
-        sort: form.sort,
-        status: form.status,
-      });
+      await brandApi.add(form);
+      arcoMessage('success', '新增成功');
     }
-
-    if (res.code === 200) {
-      Message.success(form.id ? '编辑成功' : '新增成功');
-      modalVisible.value = false;
-      getList();
-    } else {
-      Message.error(res.message || '操作失败');
-    }
+    modalVisible.value = false;
+    getList();
   } catch (error) {
     console.error(error);
   }
@@ -352,33 +292,44 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang="less">
-.snow-page {
-  padding: 16px;
-  height: 100%;
-  box-sizing: border-box;
-}
-
-.snow-inner {
-  background: var(--color-bg-2);
-  padding: 16px;
-  border-radius: 4px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
+<style scoped lang="scss">
 .search-btn {
-  display: flex;
-  align-items: center;
+  margin-bottom: 20px;
 }
 
 .action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
+  transition: all 0.2s;
   &:hover {
-    background: var(--color-fill-2);
+    background-color: var(--color-fill-2);
+  }
+}
+
+.brand-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f2f3f5;
+    color: #86909c;
+    font-size: 20px;
   }
 }
 </style>

@@ -72,9 +72,24 @@ pub mod p_shipping_template;
 pub mod p_shipping_template_region;
 pub mod p_store;
 pub mod p_store_stock;
-pub mod p_verification_code;
 pub mod p_verification_log;
 pub mod p_attribute_template;
 pub mod p_attribute;
 pub mod p_attribute_value;
 pub mod p_product_attribute;
+
+// Plugin Market Entities
+pub mod p_plugin;
+pub mod p_plugin_version;
+pub mod p_plugin_category;
+pub mod p_plugin_review;
+pub mod p_plan;
+pub mod p_order;
+pub mod p_cart;
+pub mod p_subscription;
+pub mod p_license;
+pub mod p_device;
+pub mod p_verification_code;
+pub mod p_card;
+pub mod p_card_batch;
+pub mod p_developer;

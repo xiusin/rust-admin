@@ -36,3 +36,9 @@ pub mod a_stock;
 pub mod a_store;
 pub mod a_verification;
 pub mod a_attribute_template;
+
+// Plugin Market Args
+pub mod a_plugin;
+pub mod a_order;
+pub mod a_license;
+pub mod a_card;

@@ -9,11 +9,6 @@
             </a-form-item>
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="6" :xxl="6">
-            <a-form-item field="city" label="所在城市">
-              <a-input v-model="searchForm.city" placeholder="请输入城市" allow-clear />
-            </a-form-item>
-          </a-col>
-          <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="6" :xxl="6">
             <a-form-item field="status" label="门店状态">
               <a-select v-model="searchForm.status" placeholder="请选择状态" allow-clear>
                 <a-option value="0">营业中</a-option>
@@ -43,54 +38,57 @@
           <a-space size="medium">
             <a-button type="primary" size="small" @click="onAdd">
               <template #icon><icon-plus /></template>
-              新增门店
+              新增
             </a-button>
-            <a-button type="primary" size="small" status="danger" @click="onBatchDelete" :disabled="selectedIds.length === 0">
+            <a-button type="primary" status="danger" size="small" :disabled="selectedIds.length === 0" @click="onBatchDelete">
               <template #icon><icon-delete /></template>
-              批量删除
+              删除
             </a-button>
           </a-space>
         </a-col>
         <a-col :span="12" style="display: flex; align-items: center; justify-content: end">
           <a-space size="medium">
-            <a-statistic title="门店总数" :value="statistics.totalStores" />
-            <a-statistic title="营业中" :value="statistics.activeStores" status="success" />
-            <a-statistic title="已停业" :value="statistics.inactiveStores" status="error" />
+            <a-tooltip content="刷新">
+              <div class="action-icon" @click="refresh"><icon-refresh size="18" /></div>
+            </a-tooltip>
           </a-space>
         </a-col>
       </a-row>
 
       <a-table
-        ref="tableRef"
         row-key="id"
         :loading="loading"
         :bordered="{ cell: true }"
-        :scroll="{ x: '100%', y: '100%', minWidth: 1200 }"
+        :scroll="{ x: '100%', y: '100%', minWidth: 1400 }"
         :columns="columns"
         :data="tableData"
+        :row-selection="{ type: 'checkbox', showCheckedAll: true }"
+        v-model:selectedKeys="selectedIds"
         :pagination="pagination"
         @page-change="handlePageChange"
         @page-size-change="handlePageSizeChange"
-        @selection-change="handleSelectionChange"
       >
         <template #logo="{ record }">
-          <a-avatar v-if="record.logo" :size="40" :image-url="record.logo" />
-          <a-avatar v-else :size="40"><icon-shop /></a-avatar>
-        </template>
-        <template #address="{ record }">
-          <span>{{ record.province }}{{ record.city }}{{ record.district }}{{ record.address }}</span>
+          <a-image-preview>
+            <div class="store-logo" v-if="record.logo">
+              <img :src="record.logo" :alt="record.name" />
+            </div>
+            <div class="store-logo empty" v-else>
+              <icon-image />
+            </div>
+          </a-image-preview>
         </template>
         <template #status="{ record }">
-          <a-tag :color="record.status === '0' ? 'green' : 'red'">{{ record.status === '0' ? '营业中' : '已停业' }}</a-tag>
+          <a-tag :color="record.status === '0' ? 'green' : 'red'" bordered size="small">
+            {{ record.status === '0' ? '营业中' : '已停业' }}
+          </a-tag>
         </template>
         <template #optional="{ record }">
           <a-space>
             <a-button type="text" size="mini" @click="onEdit(record)">编辑</a-button>
             <a-button type="text" size="mini" @click="onViewStock(record)">库存</a-button>
-            <a-button type="text" size="mini" @click="onUpdateStatus(record)" v-if="record.status === '0'">停业</a-button>
-            <a-button type="text" size="mini" @click="onUpdateStatus(record)" v-else>营业</a-button>
             <a-popconfirm type="warning" content="确定删除该门店吗?" @ok="onDelete(record)">
-              <a-button type="text" size="mini" status="danger">删除</a-button>
+              <a-button type="text" status="danger" size="mini">删除</a-button>
             </a-popconfirm>
           </a-space>
         </template>
@@ -98,151 +96,102 @@
     </div>
 
     <a-modal v-model:visible="modalVisible" :title="modalTitle" :width="800" @ok="onSubmit" @cancel="onCancel">
-      <a-form ref="formRef" :model="form" auto-label-width>
-        <a-tabs v-model:active-key="activeTab">
-          <a-tab-pane key="basic" title="基本信息">
-            <a-row :gutter="16">
-              <a-col :span="12">
-                <a-form-item field="name" label="门店名称" :rules="[{ required: true, message: '请输入门店名称' }]">
-                  <a-input v-model="form.name" placeholder="请输入门店名称" />
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-form-item field="contactName" label="联系人">
-                  <a-input v-model="form.contactName" placeholder="请输入联系人" />
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-form-item field="contactPhone" label="联系电话">
-                  <a-input v-model="form.contactPhone" placeholder="请输入联系电话" />
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-form-item field="businessHours" label="营业时间">
-                  <a-input v-model="form.businessHours" placeholder="如: 09:00-21:00" />
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-form-item field="logo" label="门店Logo">
-                  <a-input v-model="form.logo" placeholder="请输入Logo URL" />
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-form-item field="coverImage" label="门店封面">
-                  <a-input v-model="form.coverImage" placeholder="请输入封面图片URL" />
-                </a-form-item>
-              </a-col>
-            </a-row>
-          </a-tab-pane>
-          <a-tab-pane key="address" title="地址信息">
-            <a-row :gutter="16">
-              <a-col :span="8">
-                <a-form-item field="province" label="省份">
-                  <a-input v-model="form.province" placeholder="请输入省份" />
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item field="city" label="城市">
-                  <a-input v-model="form.city" placeholder="请输入城市" />
-                </a-form-item>
-              </a-col>
-              <a-col :span="8">
-                <a-form-item field="district" label="区/县">
-                  <a-input v-model="form.district" placeholder="请输入区/县" />
-                </a-form-item>
-              </a-col>
-              <a-col :span="24">
-                <a-form-item field="address" label="详细地址">
-                  <a-input v-model="form.address" placeholder="请输入详细地址" />
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-form-item field="longitude" label="经度">
-                  <a-input-number v-model="form.longitude" placeholder="请输入经度" :precision="6" style="width: 100%" />
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-form-item field="latitude" label="纬度">
-                  <a-input-number v-model="form.latitude" placeholder="请输入纬度" :precision="6" style="width: 100%" />
-                </a-form-item>
-              </a-col>
-            </a-row>
-          </a-tab-pane>
-          <a-tab-pane key="other" title="其他设置">
-            <a-row :gutter="16">
-              <a-col :span="12">
-                <a-form-item field="sort" label="排序">
-                  <a-input-number v-model="form.sort" placeholder="请输入排序" :min="0" />
-                </a-form-item>
-              </a-col>
-              <a-col :span="12">
-                <a-form-item field="status" label="状态">
-                  <a-radio-group v-model="form.status">
-                    <a-radio value="0">营业中</a-radio>
-                    <a-radio value="1">已停业</a-radio>
-                  </a-radio-group>
-                </a-form-item>
-              </a-col>
-              <a-col :span="24">
-                <a-form-item field="description" label="门店描述">
-                  <a-textarea v-model="form.description" placeholder="请输入门店描述" :rows="4" />
-                </a-form-item>
-              </a-col>
-            </a-row>
-          </a-tab-pane>
-        </a-tabs>
+      <a-form ref="formRef" auto-label-width :rules="rules" :model="form">
+        <a-row :gutter="16">
+          <a-col :span="12">
+            <a-form-item field="name" label="门店名称" validate-trigger="blur">
+              <a-input v-model="form.name" placeholder="请输入门店名称" allow-clear />
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item field="contactName" label="联系人" validate-trigger="blur">
+              <a-input v-model="form.contactName" placeholder="请输入联系人" allow-clear />
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item field="contactPhone" label="联系电话" validate-trigger="blur">
+              <a-input v-model="form.contactPhone" placeholder="请输入联系电话" allow-clear />
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item field="businessHours" label="营业时间" validate-trigger="blur">
+              <a-input v-model="form.businessHours" placeholder="如: 09:00-21:00" allow-clear />
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item field="sort" label="排序" validate-trigger="blur">
+              <a-input-number v-model="form.sort" :min="0" :max="9999" :style="{ width: '150px' }" placeholder="请输入排序" mode="button" />
+            </a-form-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-item field="status" label="状态" validate-trigger="blur">
+              <a-switch type="round" :checked-value="'0'" :unchecked-value="'1'" v-model="form.status">
+                <template #checked> 营业中 </template>
+                <template #unchecked> 已停业 </template>
+              </a-switch>
+            </a-form-item>
+          </a-col>
+          <a-col :span="24">
+            <a-form-item field="logo" label="门店Logo" validate-trigger="blur">
+              <a-input v-model="form.logo" placeholder="请输入Logo URL" allow-clear />
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-item field="province" label="省份" validate-trigger="blur">
+              <a-input v-model="form.province" placeholder="请输入省份" allow-clear />
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-item field="city" label="城市" validate-trigger="blur">
+              <a-input v-model="form.city" placeholder="请输入城市" allow-clear />
+            </a-form-item>
+          </a-col>
+          <a-col :span="8">
+            <a-form-item field="district" label="区/县" validate-trigger="blur">
+              <a-input v-model="form.district" placeholder="请输入区/县" allow-clear />
+            </a-form-item>
+          </a-col>
+          <a-col :span="24">
+            <a-form-item field="address" label="详细地址" validate-trigger="blur">
+              <a-input v-model="form.address" placeholder="请输入详细地址" allow-clear />
+            </a-form-item>
+          </a-col>
+          <a-col :span="24">
+            <a-form-item field="description" label="门店描述" validate-trigger="blur">
+              <a-textarea v-model="form.description" placeholder="请输入门店描述" :rows="3" allow-clear />
+            </a-form-item>
+          </a-col>
+        </a-row>
       </a-form>
     </a-modal>
 
-    <a-modal v-model:visible="stockModalVisible" title="门店库存" :width="1000" :footer="false">
-      <div class="stock-header">
-        <a-form :model="stockSearchForm" auto-label-width>
-          <a-row :gutter="16">
-            <a-col :span="8">
-              <a-form-item field="productName" label="商品名称">
-                <a-input v-model="stockSearchForm.productName" placeholder="请输入商品名称" allow-clear />
-              </a-form-item>
-            </a-col>
-            <a-col :span="8">
-              <a-button type="primary" size="small" @click="getStoreStockList">查询</a-button>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div>
+    <a-modal v-model:visible="stockModalVisible" title="门店库存" :width="900" :footer="null">
       <a-table
+        :loading="stockLoading"
+        :bordered="{ cell: true }"
+        :scroll="{ x: '100%', y: 400 }"
+        :columns="stockColumns"
         :data="stockTableData"
         :pagination="stockPagination"
         @page-change="handleStockPageChange"
         @page-size-change="handleStockPageSizeChange"
       >
-        <template #columns>
-          <a-table-column title="商品图片" :width="80">
-            <template #cell="{ record }">
-              <a-avatar v-if="record.productImage" :size="40" :image-url="record.productImage" />
-              <a-avatar v-else :size="40"><icon-image /></a-avatar>
-            </template>
-          </a-table-column>
-          <a-table-column title="商品名称" data-index="productName" :width="150" />
-          <a-table-column title="SKU编码" data-index="skuCode" :width="120" />
-          <a-table-column title="规格" data-index="specText" :width="120" />
-          <a-table-column title="库存" data-index="stock" :width="80" />
-          <a-table-column title="预警值" data-index="alertStock" :width="80" />
-          <a-table-column title="状态" :width="80">
-            <template #cell="{ record }">
-              <a-tag :color="record.isAlert ? 'red' : 'green'">{{ record.isAlert ? '预警' : '正常' }}</a-tag>
-            </template>
-          </a-table-column>
-          <a-table-column title="操作" :width="100">
-            <template #cell="{ record }">
-              <a-button type="text" size="mini" @click="onAdjustStock(record)">调整</a-button>
-            </template>
-          </a-table-column>
+        <template #productImage="{ record }">
+          <div class="product-image" v-if="record.productImage">
+            <img :src="record.productImage" :alt="record.productName" />
+          </div>
+          <div class="product-image empty" v-else>
+            <icon-image />
+          </div>
+        </template>
+        <template #optional="{ record }">
+          <a-button type="text" size="mini" @click="onAdjustStock(record)">调整</a-button>
         </template>
       </a-table>
     </a-modal>
 
     <a-modal v-model:visible="adjustStockModalVisible" title="库存调整" :width="500" @ok="onSubmitAdjustStock" @cancel="adjustStockModalVisible = false">
-      <a-form :model="adjustStockForm" auto-label-width>
+      <a-form :model="adjustStockForm" auto-label-width layout="vertical">
         <a-form-item label="商品">
           <a-input :value="adjustStockForm.productName" disabled />
         </a-form-item>
@@ -252,7 +201,7 @@
         <a-form-item label="当前库存">
           <a-input-number v-model="adjustStockForm.currentStock" disabled :min="0" style="width: 100%" />
         </a-form-item>
-        <a-form-item field="changeNum" label="调整数量" :rules="[{ required: true, message: '请输入调整数量' }]">
+        <a-form-item field="changeNum" label="调整数量">
           <a-input-number v-model="adjustStockForm.changeNum" placeholder="正数增加，负数减少" style="width: 100%" />
         </a-form-item>
         <a-form-item field="remark" label="备注">
@@ -265,54 +214,40 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
-import { Message } from '@arco-design/web-vue';
-import { storeApi, StoreListItem, StoreDetail, StoreStockItem, StoreStatistics } from '@/api/modules/product/store';
+import { storeApi, StoreListItem, StoreStockItem } from '@/api/modules/product/store';
 
 const loading = ref(false);
+const stockLoading = ref(false);
 const tableData = ref<StoreListItem[]>([]);
 const stockTableData = ref<StoreStockItem[]>([]);
 const modalVisible = ref(false);
 const modalTitle = ref('新增门店');
+const formRef = ref();
+const selectedIds = ref<string[]>([]);
+const searchFormRef = ref();
 const stockModalVisible = ref(false);
 const adjustStockModalVisible = ref(false);
-const formRef = ref();
-const selectedIds = ref<number[]>([]);
-const activeTab = ref('basic');
 const currentStoreId = ref(0);
-
-const statistics = reactive<StoreStatistics>({
-  totalStores: 0,
-  activeStores: 0,
-  inactiveStores: 0,
-});
 
 const searchForm = reactive({
   name: '',
-  city: '',
-  status: '',
+  status: null as string | null,
 });
 
 const form = reactive({
   id: 0,
   name: '',
   logo: '',
-  coverImage: '',
   contactName: '',
   contactPhone: '',
   province: '',
   city: '',
   district: '',
   address: '',
-  longitude: undefined as number | undefined,
-  latitude: undefined as number | undefined,
   businessHours: '',
   description: '',
   sort: 0,
   status: '0',
-});
-
-const stockSearchForm = reactive({
-  productName: '',
 });
 
 const adjustStockForm = reactive({
@@ -326,90 +261,60 @@ const adjustStockForm = reactive({
   remark: '',
 });
 
+const rules = {
+  name: [{ required: true, message: '请输入门店名称' }],
+};
+
 const pagination = reactive({
   current: 1,
   pageSize: 10,
+  showPageSize: true,
+  showTotal: true,
   total: 0,
 });
 
 const stockPagination = reactive({
   current: 1,
   pageSize: 10,
+  showPageSize: true,
+  showTotal: true,
   total: 0,
 });
 
 const columns = [
-  { type: 'selection', width: 60 },
-  {
-    title: '门店Logo',
-    dataIndex: 'logo',
-    slotName: 'logo',
-    width: 80,
-  },
-  {
-    title: '门店名称',
-    dataIndex: 'name',
-    width: 150,
-  },
-  {
-    title: '联系人',
-    dataIndex: 'contactName',
-    width: 100,
-  },
-  {
-    title: '联系电话',
-    dataIndex: 'contactPhone',
-    width: 130,
-  },
-  {
-    title: '地址',
-    slotName: 'address',
-    width: 250,
-    ellipsis: true,
-  },
-  {
-    title: '营业时间',
-    dataIndex: 'businessHours',
-    width: 120,
-  },
-  {
-    title: '排序',
-    dataIndex: 'sort',
-    width: 80,
-  },
-  {
-    title: '状态',
-    dataIndex: 'status',
-    slotName: 'status',
-    width: 100,
-  },
-  {
-    title: '创建时间',
-    dataIndex: 'createdAt',
-    width: 180,
-  },
-  {
-    title: '操作',
-    slotName: 'optional',
-    width: 250,
-    fixed: 'right',
-  },
+  { type: 'selection', width: 60, fixed: 'left' },
+  { title: '门店Logo', dataIndex: 'logo', slotName: 'logo', width: 100 },
+  { title: '门店名称', dataIndex: 'name', width: 150 },
+  { title: '联系人', dataIndex: 'contactName', width: 100 },
+  { title: '联系电话', dataIndex: 'contactPhone', width: 130 },
+  { title: '地址', dataIndex: 'address', width: 250 },
+  { title: '排序', dataIndex: 'sort', width: 80, align: 'center' },
+  { title: '状态', dataIndex: 'status', slotName: 'status', width: 100, align: 'center' },
+  { title: '创建时间', dataIndex: 'createdAt', width: 180 },
+  { title: '操作', slotName: 'optional', width: 180, fixed: 'right' },
+];
+
+const stockColumns = [
+  { title: '商品图片', slotName: 'productImage', width: 100 },
+  { title: '商品名称', dataIndex: 'productName', width: 180 },
+  { title: 'SKU编码', dataIndex: 'skuCode', width: 130 },
+  { title: '规格', dataIndex: 'specText', width: 120 },
+  { title: '库存', dataIndex: 'stock', width: 80 },
+  { title: '预警值', dataIndex: 'alertStock', width: 80 },
+  { title: '操作', slotName: 'optional', width: 80 },
 ];
 
 const getList = async () => {
   loading.value = true;
   try {
-    const res = await storeApi.list({
+    const data = await storeApi.list({
       pageNum: pagination.current,
       pageSize: pagination.pageSize,
       name: searchForm.name || undefined,
-      city: searchForm.city || undefined,
       status: searchForm.status || undefined,
     });
-    if (res.code === 200) {
-      tableData.value = res.data?.list || [];
-      pagination.total = res.data?.total || 0;
-    }
+    tableData.value = data.list || [];
+    pagination.total = data.total || 0;
   } catch (error) {
     console.error(error);
   } finally {
@@ -417,32 +322,19 @@ const getList = async () => {
   }
 };
 
-const getStatistics = async () => {
-  try {
-    const res = await storeApi.statistics();
-    if (res.code === 200 && res.data) {
-      statistics.totalStores = res.data.totalStores;
-      statistics.activeStores = res.data.activeStores;
-      statistics.inactiveStores = res.data.inactiveStores;
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 const getStoreStockList = async () => {
+  stockLoading.value = true;
   try {
-    const res = await storeApi.stockList(currentStoreId.value, {
+    const data = await storeApi.stockList(currentStoreId.value, {
       pageNum: stockPagination.current,
       pageSize: stockPagination.pageSize,
-      productName: stockSearchForm.productName || undefined,
     });
-    if (res.code === 200) {
-      stockTableData.value = res.data?.list || [];
-      stockPagination.total = res.data?.total || 0;
-    }
+    stockTableData.value = data.list || [];
+    stockPagination.total = data.total || 0;
   } catch (error) {
     console.error(error);
+  } finally {
+    stockLoading.value = false;
   }
 };
 
@@ -452,10 +344,12 @@ const search = () => {
 };
 
 const reset = () => {
-  searchForm.name = '';
-  searchForm.city = '';
-  searchForm.status = '';
+  searchFormRef.value?.resetFields();
   pagination.current = 1;
+  getList();
+};
+
+const refresh = () => {
   getList();
 };
 
@@ -469,10 +363,6 @@ const handlePageSizeChange = (pageSize: number) => {
   getList();
 };
 
-const handleSelectionChange = (keys: (string | number)[]) => {
-  selectedIds.value = keys as number[];
-};
-
 const handleStockPageChange = (page: number) => {
   stockPagination.current = page;
   getStoreStockList();
@@ -483,64 +373,94 @@ const handleStockPageSizeChange = (pageSize: number) => {
   getStoreStockList();
 };
 
-const resetForm = () => {
+const onAdd = () => {
+  modalTitle.value = '新增门店';
   form.id = 0;
   form.name = '';
   form.logo = '';
-  form.coverImage = '';
   form.contactName = '';
   form.contactPhone = '';
   form.province = '';
   form.city = '';
   form.district = '';
   form.address = '';
-  form.longitude = undefined;
-  form.latitude = undefined;
   form.businessHours = '';
   form.description = '';
   form.sort = 0;
   form.status = '0';
-  activeTab.value = 'basic';
-};
-
-const onAdd = () => {
-  modalTitle.value = '新增门店';
-  resetForm();
   modalVisible.value = true;
 };
 
 const onEdit = async (record: StoreListItem) => {
   modalTitle.value = '编辑门店';
   try {
-    const res = await storeApi.detail(record.id);
-    if (res.code === 200 && res.data) {
-      const data = res.data;
-      form.id = data.id;
-      form.name = data.name;
-      form.logo = data.logo || '';
-      form.coverImage = data.coverImage || '';
-      form.contactName = data.contactName || '';
-      form.contactPhone = data.contactPhone || '';
-      form.province = data.province || '';
-      form.city = data.city || '';
-      form.district = data.district || '';
-      form.address = data.address || '';
-      form.longitude = data.longitude;
-      form.latitude = data.latitude;
-      form.businessHours = data.businessHours || '';
-      form.description = data.description || '';
-      form.sort = data.sort;
-      form.status = data.status;
-      modalVisible.value = true;
-    }
+    const data = await storeApi.detail(record.id);
+    form.id = data.id;
+    form.name = data.name;
+    form.logo = data.logo || '';
+    form.contactName = data.contactName || '';
+    form.contactPhone = data.contactPhone || '';
+    form.province = data.province || '';
+    form.city = data.city || '';
+    form.district = data.district || '';
+    form.address = data.address || '';
+    form.businessHours = data.businessHours || '';
+    form.description = data.description || '';
+    form.sort = data.sort;
+    form.status = data.status;
+    modalVisible.value = true;
   } catch (error) {
     console.error(error);
   }
 };
 
+const onDelete = async (record: StoreListItem) => {
+  try {
+    await storeApi.delete([record.id]);
+    arcoMessage('success', '删除成功');
+    getList();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const onBatchDelete = async () => {
+  if (selectedIds.value.length === 0) return;
+  try {
+    await storeApi.delete(selectedIds.value.map((id) => Number(id)));
+    arcoMessage('success', '批量删除成功');
+    selectedIds.value = [];
+    getList();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const onSubmit = async () => {
+  let state = await formRef.value.validate();
+  if (state) return;
+  try {
+    if (form.id) {
+      await storeApi.edit(form);
+      arcoMessage('success', '修改成功');
+    } else {
+      await storeApi.add(form);
+      arcoMessage('success', '新增成功');
+    }
+    modalVisible.value = false;
+    getList();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const onCancel = () => {
+  modalVisible.value = false;
+  formRef.value?.resetFields();
+};
+
 const onViewStock = (record: StoreListItem) => {
   currentStoreId.value = record.id;
-  stockSearchForm.productName = '';
   stockPagination.current = 1;
   getStoreStockList();
   stockModalVisible.value = true;
@@ -558,178 +478,88 @@ const onAdjustStock = (record: StoreStockItem) => {
   adjustStockModalVisible.value = true;
 };
 
-const onDelete = async (record: StoreListItem) => {
-  try {
-    const res = await storeApi.delete([record.id]);
-    if (res.code === 200) {
-      Message.success('删除成功');
-      getList();
-      getStatistics();
-    } else {
-      Message.error(res.message || '删除失败');
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const onBatchDelete = async () => {
-  if (selectedIds.value.length === 0) return;
-  try {
-    const res = await storeApi.delete(selectedIds.value);
-    if (res.code === 200) {
-      Message.success('批量删除成功');
-      getList();
-      getStatistics();
-    } else {
-      Message.error(res.message || '删除失败');
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const onUpdateStatus = async (record: StoreListItem) => {
-  const newStatus = record.status === '0' ? '1' : '0';
-  try {
-    const res = await storeApi.edit({
-      id: record.id,
-      name: record.name,
-      status: newStatus,
-    });
-    if (res.code === 200) {
-      Message.success(newStatus === '0' ? '营业成功' : '停业成功');
-      getList();
-      getStatistics();
-    } else {
-      Message.error(res.message || '操作失败');
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const onSubmit = async () => {
-  const valid = await formRef.value?.validate();
-  if (valid) return;
-
-  try {
-    let res;
-    if (form.id) {
-      res = await storeApi.edit({
-        id: form.id,
-        name: form.name,
-        logo: form.logo || undefined,
-        coverImage: form.coverImage || undefined,
-        contactName: form.contactName || undefined,
-        contactPhone: form.contactPhone || undefined,
-        province: form.province || undefined,
-        city: form.city || undefined,
-        district: form.district || undefined,
-        address: form.address || undefined,
-        longitude: form.longitude,
-        latitude: form.latitude,
-        businessHours: form.businessHours || undefined,
-        description: form.description || undefined,
-        sort: form.sort,
-        status: form.status,
-      });
-    } else {
-      res = await storeApi.add({
-        name: form.name,
-        logo: form.logo || undefined,
-        coverImage: form.coverImage || undefined,
-        contactName: form.contactName || undefined,
-        contactPhone: form.contactPhone || undefined,
-        province: form.province || undefined,
-        city: form.city || undefined,
-        district: form.district || undefined,
-        address: form.address || undefined,
-        longitude: form.longitude,
-        latitude: form.latitude,
-        businessHours: form.businessHours || undefined,
-        description: form.description || undefined,
-        sort: form.sort,
-        status: form.status,
-      });
-    }
-
-    if (res.code === 200) {
-      Message.success(form.id ? '编辑成功' : '新增成功');
-      modalVisible.value = false;
-      getList();
-      getStatistics();
-    } else {
-      Message.error(res.message || '操作失败');
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 const onSubmitAdjustStock = async () => {
-  if (adjustStockForm.changeNum === 0) {
-    Message.warning('请输入调整数量');
-    return;
-  }
-
   try {
-    const res = await storeApi.stockAdjust({
+    await storeApi.stockAdjust({
       storeId: adjustStockForm.storeId,
       productId: adjustStockForm.productId,
       skuId: adjustStockForm.skuId,
       changeNum: adjustStockForm.changeNum,
       remark: adjustStockForm.remark,
     });
-    if (res.code === 200) {
-      Message.success('库存调整成功');
-      adjustStockModalVisible.value = false;
-      getStoreStockList();
-    } else {
-      Message.error(res.message || '调整失败');
-    }
+    arcoMessage('success', '库存调整成功');
+    adjustStockModalVisible.value = false;
+    getStoreStockList();
   } catch (error) {
     console.error(error);
   }
 };
 
-const onCancel = () => {
-  modalVisible.value = false;
-  formRef.value?.resetFields();
-};
-
 onMounted(() => {
   getList();
-  getStatistics();
 });
 </script>
 
-<style scoped lang="less">
-.snow-page {
-  padding: 16px;
-  height: 100%;
-  box-sizing: border-box;
-}
-
-.snow-inner {
-  background: var(--color-bg-2);
-  padding: 16px;
-  border-radius: 4px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
+<style scoped lang="scss">
 .search-btn {
+  margin-bottom: 20px;
+}
+
+.action-icon {
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover {
+    background-color: var(--color-fill-2);
+  }
 }
 
-.stock-header {
-  margin-bottom: 16px;
+.store-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f2f3f5;
+    color: #86909c;
+    font-size: 24px;
+  }
 }
 
-:deep(.arco-statistic) {
-  margin-left: 24px;
+.product-image {
+  width: 48px;
+  height: 48px;
+  border-radius: 4px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &.empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f2f3f5;
+    color: #86909c;
+    font-size: 20px;
+  }
 }
 </style>
