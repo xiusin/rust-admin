@@ -158,8 +158,7 @@ export default {
     ["verify-activate-page"]: "Plugin Activation",
     ["verify-device-page"]: "Device Management",
     ["verify-card-page"]: "Card Redemption"
-  }
-};
+  },
   pluginMarket: {
     ["market"]: "Plugin Market",
     ["my-plugins"]: "My Plugins",
@@ -188,7 +187,6 @@ export default {
     ["downloads"]: "Downloads",
     ["rating"]: "Rating",
     ["reviews"]: "Reviews",
-    ["developer"]: "Developer",
     ["version"]: "Version",
     ["official"]: "Official",
     ["basic-info"]: "Basic Info",
