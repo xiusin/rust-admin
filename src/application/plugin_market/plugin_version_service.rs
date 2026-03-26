@@ -1,9 +1,11 @@
-use crate::domain::entity::p_plugin_version::*;
+use crate::domain::entity::p_plugin_version;
 use crate::domain::entity::p_plugin_version::Entity as VersionEntity;
+use crate::domain::entity::p_plugin;
 use crate::domain::entity::p_plugin::Entity as PluginEntity;
 use crate::common::error::Error;
 use crate::infrastructure::db::DB;
 use sea_orm::*;
+use sea_orm::prelude::Expr;
 use serde::{Deserialize, Serialize};
 use crate::domain::model::m_plugin::*;
 
@@ -43,13 +45,13 @@ pub async fn list(plugin_id: i64) -> Result<Vec<VersionListItem>, Error> {
     Ok(items)
 }
 
-pub async fn detail(id: i64) -> Result<Option<Version>, Error> {
+pub async fn detail(id: i64) -> Result<Option<p_plugin_version::Model>, Error> {
     let db = DB().await;
     let version = VersionEntity::find_by_id(id).one(db).await?;
     Ok(version)
 }
 
-pub async fn latest(plugin_id: i64) -> Result<Option<Version>, Error> {
+pub async fn latest(plugin_id: i64) -> Result<Option<p_plugin_version::Model>, Error> {
     let db = DB().await;
 
     let version = VersionEntity::find()
@@ -91,15 +93,15 @@ pub async fn publish(plugin_id: i64, params: PublishVersionParams) -> Result<i64
     version.insert(db).await?;
 
     VersionEntity::update_many()
-        .col_expr(p_plugin_version::Column::IsLatest, Value::Int(Some(0)))
+        .col_expr(p_plugin_version::Column::IsLatest, Expr::value(0))
         .filter(p_plugin_version::Column::PluginId.eq(plugin_id))
         .filter(p_plugin_version::Column::Version.ne(params.version.clone()))
         .exec(db)
         .await?;
 
     PluginEntity::update_many()
-        .col_expr(p_plugin::Column::Version, Value::String(Some(params.version.clone().into())))
-        .col_expr(p_plugin::Column::UpdatedAt, Value::Datetime(Some(chrono::Utc::now().naive_utc())))
+        .col_expr(p_plugin::Column::Version, Expr::value(params.version.clone()))
+        .col_expr(p_plugin::Column::UpdatedAt, Expr::value(chrono::Utc::now().naive_utc()))
         .filter(p_plugin::Column::Id.eq(plugin_id))
         .exec(db)
         .await?;

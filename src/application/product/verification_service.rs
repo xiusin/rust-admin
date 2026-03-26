@@ -49,7 +49,7 @@ pub async fn list(args: VerificationCodeListArgs) -> Result<ListData<Verificatio
         .fetch_page((page_num - 1) as u64)
         .await?;
 
-    let product_ids: Vec<i64> = items.iter().map(|i| i.product_id).collect();
+    let product_ids: Vec<i64> = items.iter().filter_map(|i| i.product_id).collect();
 
     let products = p_product::Entity::find()
         .filter(p_product::Column::Id.is_in(product_ids.clone()))
@@ -62,7 +62,7 @@ pub async fn list(args: VerificationCodeListArgs) -> Result<ListData<Verificatio
     let list: Vec<VerificationCodeListItem> = items
         .into_iter()
         .map(|item| {
-            let product = product_map.get(&item.product_id);
+            let product = product_map.get(&item.product_id.unwrap_or(0));
             VerificationCodeListItem {
                 id: item.id,
                 order_id: item.order_id,
@@ -81,7 +81,6 @@ pub async fn list(args: VerificationCodeListArgs) -> Result<ListData<Verificatio
                 status: item.status,
                 status_name: get_status_name(item.status),
                 expire_at: item.expire_at,
-                verified_at: item.verified_at,
                 store_name: item.store_name,
                 created_at: item.created_at,
             }
@@ -116,17 +115,18 @@ pub async fn verify(args: VerificationArgs, user_id: i64, user_name: &str) -> Re
         return Err(Error::bad_request("核销次数已用完"));
     }
 
-    let product = p_product::Entity::find_by_id(code.product_id)
-        .filter(p_product::Column::DeletedAt.is_null())
-        .one(db)
-        .await?;
+    let product = if let Some(pid) = code.product_id {
+        p_product::Entity::find_by_id(pid)
+            .filter(p_product::Column::DeletedAt.is_null())
+            .one(db)
+            .await?
+    } else {
+        None
+    };
 
     let mut model: p_verification_code::ActiveModel = code.clone().into();
     model.used_count = Set(code.used_count + 1);
     model.status = Set(2);
-    model.verified_at = Set(Some(now));
-    model.verified_by = Set(Some(user_id));
-    model.verified_by_name = Set(Some(user_name.to_string()));
     model.store_id = Set(args.store_id);
     model.update(db).await?;
 
@@ -145,7 +145,7 @@ pub async fn verify(args: VerificationArgs, user_id: i64, user_name: &str) -> Re
         id: Set(log_id),
         verification_code_id: Set(code.id),
         code: Set(code.code.clone()),
-        order_no: Set(code.order_no.clone()),
+        order_no: Set(code.order_no.clone().unwrap_or_default()),
         product_name: Set(product.as_ref().map(|p| p.name.clone()).unwrap_or_default()),
         store_id: Set(args.store_id),
         store_name: Set(store_name.clone()),
@@ -180,10 +180,14 @@ pub async fn query(args: VerificationQueryArgs) -> Result<VerificationQueryResul
 
     match code {
         Some(code) => {
-            let product = p_product::Entity::find_by_id(code.product_id)
-                .filter(p_product::Column::DeletedAt.is_null())
-                .one(db)
-                .await?;
+            let product = if let Some(pid) = code.product_id {
+                p_product::Entity::find_by_id(pid)
+                    .filter(p_product::Column::DeletedAt.is_null())
+                    .one(db)
+                    .await?
+            } else {
+                None
+            };
 
             let is_valid = code.status == 1 && code.used_count < code.total_count;
             let expire_valid = code.expire_at.map(|e| e > now).unwrap_or(true);
@@ -221,7 +225,7 @@ pub async fn query(args: VerificationQueryArgs) -> Result<VerificationQueryResul
             product_name: String::new(),
             product_image: String::new(),
             spec_text: None,
-            order_no: String::new(),
+            order_no: None,
             total_count: 0,
             used_count: 0,
             remain_count: 0,

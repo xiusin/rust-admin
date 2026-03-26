@@ -1,12 +1,13 @@
-use crate::domain::entity::p_card::*;
+use crate::domain::entity::p_card;
 use crate::domain::entity::p_card::Entity as CardEntity;
-use crate::domain::entity::p_card_batch::*;
+use crate::domain::entity::p_card_batch;
 use crate::domain::entity::p_card_batch::Entity as BatchEntity;
 use crate::domain::entity::p_plugin::Entity as PluginEntity;
 use crate::domain::entity::p_plan::Entity as PlanEntity;
 use crate::common::error::Error;
 use crate::infrastructure::db::DB;
 use sea_orm::*;
+use sea_orm::prelude::Expr;
 use chrono::{Duration, Utc};
 use uuid::Uuid;
 use md5;
@@ -157,7 +158,7 @@ pub async fn list_batches(plugin_id: Option<i64>, page_num: u32, page_size: u32)
         })
         .collect();
 
-    Ok((items, total))
+    Ok((items, total as i64))
 }
 
 #[derive(Debug, Serialize, Clone)]
@@ -243,7 +244,7 @@ pub async fn redeem(user_id: i64, card_no: String, card_pwd: String) -> Result<R
     active_model.update(db).await?;
 
     BatchEntity::update_many()
-        .col_expr(p_card_batch::Column::UsedCount, Value::Int(Some(card.batch_id)))
+        .col_expr(p_card_batch::Column::UsedCount, Expr::col(p_card_batch::Column::UsedCount).add(1))
         .filter(p_card_batch::Column::Id.eq(card.batch_id))
         .exec(db)
         .await?;

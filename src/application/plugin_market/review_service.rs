@@ -1,9 +1,11 @@
-use crate::domain::entity::p_plugin_review::*;
+use crate::domain::entity::p_plugin_review;
 use crate::domain::entity::p_plugin_review::Entity as ReviewEntity;
+use crate::domain::entity::p_plugin;
 use crate::domain::entity::p_plugin::Entity as PluginEntity;
 use crate::common::error::Error;
 use crate::infrastructure::db::DB;
 use sea_orm::*;
+use sea_orm::prelude::Expr;
 use serde::{Deserialize, Serialize};
 
 pub async fn create(user_id: i64, params: CreateReviewParams) -> Result<i64, Error> {
@@ -94,7 +96,7 @@ pub async fn list(plugin_id: i64, page_num: u32, page_size: u32) -> Result<(Vec<
         })
         .collect();
 
-    Ok((items, total))
+    Ok((items, total as i64))
 }
 
 #[derive(Debug, Serialize, Clone)]
@@ -171,7 +173,7 @@ pub async fn get_statistics(plugin_id: i64) -> Result<ReviewStatistics, Error> {
     };
 
     Ok(ReviewStatistics {
-        total,
+        total: total as i64,
         average_rating,
         rating_distribution: rating_dist,
     })
@@ -201,9 +203,9 @@ async fn update_plugin_rating(plugin_id: i64) -> Result<(), Error> {
     PluginEntity::update_many()
         .col_expr(
             p_plugin::Column::Rating,
-            sea_orm::Value::Decimal(Some(rust_decimal::Decimal::from_str_exact(
+            Expr::value(rust_decimal::Decimal::from_str_exact(
                 &format!("{:.2}", stats.average_rating)
-            ).unwrap_or_default()))
+            ).unwrap_or_default())
         )
         .filter(p_plugin::Column::Id.eq(plugin_id))
         .exec(db)

@@ -2,7 +2,7 @@ use crate::domain::model::m_verification::*;
 use crate::application::plugin_market::license_service;
 use crate::common::error::Error;
 
-pub async fn verify_license(license_key: String, device_id: String, device_info: DeviceInfo, timestamp: i64, sign: String) -> Result<LicenseVerifyResponse, Error> {
+pub async fn verify_license(license_key: String, device_id: String, _device_name: String, timestamp: i64, sign: String) -> Result<LicenseVerifyResponse, Error> {
     let nonce = "";
     if !license_service::validate_sign(&license_key, &device_id, timestamp, nonce, &sign) {
         return Err(Error::unauthorized("签名验证失败"));
@@ -23,7 +23,7 @@ pub async fn verify_license(license_key: String, device_id: String, device_info:
             plugin_name: String::new(),
             plan_id: 0,
             plan_name: String::new(),
-            expire_time: chrono::Utc::now().naiveUtc(),
+            expire_time: chrono::Utc::now().naive_utc(),
             max_devices: 0,
             features: vec![],
             message: result.message,
@@ -37,7 +37,7 @@ pub async fn verify_license(license_key: String, device_id: String, device_info:
         plugin_name: String::new(),
         plan_id: 0,
         plan_name: String::new(),
-        expire_time: chrono::Utc::now().naiveUtc(),
+        expire_time: chrono::Utc::now().naive_utc(),
         max_devices: 5,
         features: vec![],
         message: None,

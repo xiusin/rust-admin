@@ -1,4 +1,4 @@
-use crate::domain::entity::p_cart::*;
+use crate::domain::entity::p_cart;
 use crate::domain::entity::p_cart::Entity as CartEntity;
 use crate::domain::entity::p_plugin::Entity as PluginEntity;
 use crate::domain::entity::p_plan::Entity as PlanEntity;

@@ -1,9 +1,10 @@
 use crate::domain::model::m_order::*;
-use crate::domain::entity::p_order::*;
+use crate::domain::entity::p_order;
 use crate::domain::entity::p_order::Entity as OrderEntity;
 use crate::domain::entity::p_plugin::Entity as PluginEntity;
 use crate::domain::entity::p_plan::Entity as PlanEntity;
 use crate::domain::entity::p_license::Entity as LicenseEntity;
+use crate::domain::args::a_order::OrderSearchParams;
 use crate::common::error::Error;
 use crate::infrastructure::db::DB;
 use sea_orm::*;
@@ -103,14 +104,17 @@ pub async fn list(user_id: i64, params: OrderSearchParams) -> Result<(Vec<OrderL
         let plugin = PluginEntity::find_by_id(order.plugin_id).one(db).await?;
         let plan = PlanEntity::find_by_id(order.plan_id).one(db).await?;
 
+        let plugin_name = plugin.as_ref().map(|p| p.name.clone()).unwrap_or_default();
+        let plugin_cover = plugin.and_then(|p| p.cover_image);
+
         items.push(OrderListItem {
             id: order.id,
             order_no: order.order_no.clone(),
             user_id: order.user_id,
             user_name: None,
             plugin_id: order.plugin_id,
-            plugin_name: plugin.map(|p| p.name).unwrap_or_default(),
-            plugin_cover: plugin.and_then(|p| p.cover_image),
+            plugin_name,
+            plugin_cover,
             plan_id: order.plan_id,
             plan_name: plan.map(|p| p.name).unwrap_or_default(),
             amount: order.amount.to_string().parse().unwrap_or(0.0),
@@ -126,10 +130,10 @@ pub async fn list(user_id: i64, params: OrderSearchParams) -> Result<(Vec<OrderL
         });
     }
 
-    Ok((items, total))
+    Ok((items, total as i64))
 }
 
-pub async fn detail(id: i64) -> Result<Option<Order>, Error> {
+pub async fn detail(id: i64) -> Result<Option<p_order::Model>, Error> {
     let db = DB().await;
     let order = OrderEntity::find_by_id(id).one(db).await?;
     Ok(order)

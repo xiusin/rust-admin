@@ -1,7 +1,8 @@
 use crate::domain::model::m_plugin::*;
-use crate::domain::entity::p_plugin::*;
+use crate::domain::entity::p_plugin;
 use crate::domain::entity::p_plugin::Entity as PluginEntity;
 use crate::domain::entity::p_plugin_category::Entity as CategoryEntity;
+use crate::domain::entity::p_developer;
 use crate::domain::entity::p_developer::Entity as DeveloperEntity;
 use crate::common::error::Error;
 use crate::infrastructure::db::DB;
@@ -19,8 +20,8 @@ pub async fn market_list(params: PluginSearchParams) -> Result<(Vec<PluginListIt
 
     if let Some(keyword) = &params.keyword {
         query = query.filter(
-            Column::Name.like(format!("%{}%", keyword))
-                .or(Column::Summary.like(format!("%{}%", keyword)))
+            p_plugin::Column::Name.like(format!("%{}%", keyword))
+                .or(p_plugin::Column::Summary.like(format!("%{}%", keyword)))
         );
     }
 
@@ -41,31 +42,31 @@ pub async fn market_list(params: PluginSearchParams) -> Result<(Vec<PluginListIt
     }
 
     let sort = params.sort.unwrap_or_else(|| "created_at".to_string());
-    let order = if sort.starts_with('-') {
+    let (sort_col, sort_order): (p_plugin::Column, sea_orm::Order) = if sort.starts_with('-') {
         let s = sort.trim_start_matches('-');
         match s {
-            "rating" => Order::Desc(p_plugin::Column::Rating),
-            "download_count" => Order::Desc(p_plugin::Column::DownloadCount),
-            "created_at" => Order::Desc(p_plugin::Column::CreatedAt),
-            "name" => Order::Asc(p_plugin::Column::Name),
-            _ => Order::Desc(p_plugin::Column::CreatedAt),
+            "rating" => (p_plugin::Column::Rating, sea_orm::Order::Desc),
+            "download_count" => (p_plugin::Column::DownloadCount, sea_orm::Order::Desc),
+            "created_at" => (p_plugin::Column::CreatedAt, sea_orm::Order::Desc),
+            "name" => (p_plugin::Column::Name, sea_orm::Order::Asc),
+            _ => (p_plugin::Column::CreatedAt, sea_orm::Order::Desc),
         }
     } else {
         match sort.as_str() {
-            "rating" => Order::Asc(p_plugin::Column::Rating),
-            "download_count" => Order::Asc(p_plugin::Column::DownloadCount),
-            "created_at" => Order::Asc(p_plugin::Column::CreatedAt),
-            "name" => Order::Asc(p_plugin::Column::Name),
-            _ => Order::Desc(p_plugin::Column::CreatedAt),
+            "rating" => (p_plugin::Column::Rating, sea_orm::Order::Asc),
+            "download_count" => (p_plugin::Column::DownloadCount, sea_orm::Order::Asc),
+            "created_at" => (p_plugin::Column::CreatedAt, sea_orm::Order::Asc),
+            "name" => (p_plugin::Column::Name, sea_orm::Order::Asc),
+            _ => (p_plugin::Column::CreatedAt, sea_orm::Order::Desc),
         }
     };
-    query = query.order_by(order);
+    query = query.order_by(sort_col, sort_order);
 
     let page_num = params.page_num.unwrap_or(1);
     let page_size = params.page_size.unwrap_or(10);
     let offset = (page_num - 1) * page_size;
 
-    let total = query.count(db).await?;
+    let total = query.clone().count(db).await?;
     let plugins = query
         .offset(offset as u64)
         .limit(page_size as u64)
@@ -99,7 +100,7 @@ pub async fn market_list(params: PluginSearchParams) -> Result<(Vec<PluginListIt
         })
         .collect();
 
-    Ok((items, total))
+    Ok((items, total as i64))
 }
 
 pub async fn market_detail(id: i64) -> Result<Option<PluginDetail>, Error> {
@@ -157,7 +158,7 @@ pub async fn search(keyword: String, page_num: u32, page_size: u32) -> Result<(V
 }
 
 pub async fn recommend(limit: i32) -> Result<Vec<PluginListItem>, Error> {
-    let db = db();
+    let db = DB().await;
 
     let plugins = PluginEntity::find()
         .filter(p_plugin::Column::Status.eq(1))
@@ -198,7 +199,7 @@ pub async fn recommend(limit: i32) -> Result<Vec<PluginListItem>, Error> {
 }
 
 pub async fn hot(limit: i32) -> Result<Vec<PluginListItem>, Error> {
-    let db = db();
+    let db = DB().await;
 
     let plugins = PluginEntity::find()
         .filter(p_plugin::Column::Status.eq(1))
@@ -252,7 +253,7 @@ pub async fn developer_list(developer_id: i64, page_num: u32, page_size: u32) ->
 }
 
 pub async fn create(user_id: i64, params: CreatePluginParams) -> Result<i64, Error> {
-    let db = db();
+    let db = DB().await;
 
     let max_id: Option<i64> = PluginEntity::find()
         .select_only()
@@ -313,7 +314,7 @@ pub struct CreatePluginParams {
 }
 
 pub async fn update(id: i64, params: UpdatePluginParams) -> Result<(), Error> {
-    let db = db();
+    let db = DB().await;
 
     let plugin = PluginEntity::find_by_id(id)
         .one(db)
@@ -364,7 +365,7 @@ pub struct UpdatePluginParams {
 }
 
 pub async fn delete(id: i64) -> Result<(), Error> {
-    let db = db();
+    let db = DB().await;
 
     let plugin = PluginEntity::find_by_id(id)
         .one(db)
@@ -380,7 +381,7 @@ pub async fn delete(id: i64) -> Result<(), Error> {
 }
 
 pub async fn audit(id: i64, status: i32) -> Result<(), Error> {
-    let db = db();
+    let db = DB().await;
 
     if status != 1 && status != 2 {
         return Err(Error::bad_request("无效的审核状态"));
@@ -404,15 +405,16 @@ pub async fn audit(id: i64, status: i32) -> Result<(), Error> {
 }
 
 pub async fn increment_download_count(id: i64) -> Result<(), Error> {
-    let db = db();
+    let db = DB().await;
 
     let plugin = PluginEntity::find_by_id(id)
         .one(db)
         .await?
         .ok_or_else(|| Error::not_found("插件不存在"))?;
 
+    let new_count = plugin.download_count + 1;
     let mut active_model: p_plugin::ActiveModel = plugin.into();
-    active_model.download_count = Set(plugin.download_count + 1);
+    active_model.download_count = Set(new_count);
     active_model.update(db).await?;
 
     Ok(())

@@ -1,5 +1,6 @@
-use crate::domain::entity::p_license::*;
+use crate::domain::entity::p_license;
 use crate::domain::entity::p_license::Entity as LicenseEntity;
+use crate::domain::entity::p_device;
 use crate::domain::entity::p_device::Entity as DeviceEntity;
 use crate::domain::entity::p_plugin::Entity as PluginEntity;
 use crate::common::error::Error;
@@ -89,7 +90,7 @@ pub async fn list(user_id: i64, page_num: u32, page_size: u32) -> Result<(Vec<Li
         })
         .collect();
 
-    Ok((items, total))
+    Ok((items, total as i64))
 }
 
 #[derive(Debug, Serialize, Clone)]
@@ -108,7 +109,7 @@ pub struct LicenseItem {
     pub created_at: Option<chrono::NaiveDateTime>,
 }
 
-pub async fn detail(id: i64) -> Result<Option<License>, Error> {
+pub async fn detail(id: i64) -> Result<Option<p_license::Model>, Error> {
     let db = DB().await;
     let license = LicenseEntity::find_by_id(id).one(db).await?;
     Ok(license)
@@ -131,7 +132,7 @@ pub async fn bind_device(id: i64, params: BindDeviceParams) -> Result<(), Error>
         .count(db)
         .await?;
 
-    if device_count >= license.max_devices as i64 {
+    if device_count >= license.max_devices as u64 {
         return Err(Error::bad_request("设备数量已达上限"));
     }
 
@@ -154,6 +155,10 @@ pub async fn bind_device(id: i64, params: BindDeviceParams) -> Result<(), Error>
 
     let new_id = max_id.unwrap_or(0) + 1;
 
+    let device_name_clone = params.device_name.clone();
+    let device_type_clone = params.device_type.clone();
+    let device_id_clone = params.device_id.clone();
+
     let device = p_device::ActiveModel {
         id: Set(new_id),
         user_id: Set(license.user_id),
@@ -171,14 +176,15 @@ pub async fn bind_device(id: i64, params: BindDeviceParams) -> Result<(), Error>
 
     device.insert(db).await?;
 
+    let bind_count = license.bind_count;
     let mut active_model: p_license::ActiveModel = license.into();
-    active_model.bind_count = Set(license.bind_count + 1);
-    active_model.device_id = Set(params.device_id.clone());
-    if params.device_name.is_some() {
-        active_model.device_name = Set(params.device_name);
+    active_model.bind_count = Set(bind_count + 1);
+    active_model.device_id = Set(device_id_clone);
+    if device_name_clone.is_some() {
+        active_model.device_name = Set(device_name_clone);
     }
-    if params.device_type.is_some() {
-        active_model.device_type = Set(params.device_type);
+    if device_type_clone.is_some() {
+        active_model.device_type = Set(device_type_clone);
     }
     active_model.updated_at = Set(Some(Utc::now().naive_utc()));
     active_model.update(db).await?;
@@ -214,8 +220,9 @@ pub async fn unbind_device(id: i64, device_id: String) -> Result<(), Error> {
     let active_model: p_device::ActiveModel = device.into();
     active_model.delete(db).await?;
 
+    let bind_count = license.bind_count;
     let mut active_model: p_license::ActiveModel = license.into();
-    active_model.bind_count = Set((license.bind_count - 1).max(0));
+    active_model.bind_count = Set((bind_count - 1).max(0));
     active_model.updated_at = Set(Some(Utc::now().naive_utc()));
     active_model.update(db).await?;
 

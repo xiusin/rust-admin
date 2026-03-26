@@ -1,7 +1,6 @@
 use crate::common::error::Error;
-use crate::domain::model::m_plugin_category::*;
-use crate::domain::entity::p_plugin_category::Entity as PluginCategoryEntity;
-use crate::domain::entity::p_plugin_category::Model as PluginCategory;
+use crate::domain::entity::p_plugin_category;
+use crate::domain::entity::p_plugin_category::{Entity as PluginCategoryEntity, Model as PluginCategory, Column as PluginCategoryColumn};
 use crate::infrastructure::db::DB;
 use sea_orm::*;
 use serde::{Deserialize, Serialize};
@@ -20,7 +19,7 @@ pub struct CategoryTree {
 pub async fn list() -> Result<Vec<PluginCategory>, Error> {
     let db = DB().await;
     let categories = PluginCategoryEntity::find()
-        .order_by_asc(p_plugin_category::Column::Sort)
+        .order_by_asc(PluginCategoryColumn::Sort)
         .all(db)
         .await?;
     Ok(categories)
@@ -29,8 +28,8 @@ pub async fn list() -> Result<Vec<PluginCategory>, Error> {
 pub async fn tree() -> Result<Vec<CategoryTree>, Error> {
     let db = DB().await;
     let categories = PluginCategoryEntity::find()
-        .filter(p_plugin_category::Column::Status.eq(1))
-        .order_by_asc(p_plugin_category::Column::Sort)
+        .filter(PluginCategoryColumn::Status.eq(1))
+        .order_by_asc(PluginCategoryColumn::Sort)
         .all(db)
         .await?;
 
@@ -88,7 +87,7 @@ pub async fn create(params: CreateCategoryParams) -> Result<i64, Error> {
 
     let max_id: Option<i64> = PluginCategoryEntity::find()
         .select_only()
-        .column_as(p_plugin_category::Column::Id.max(), "max_id")
+        .column_as(PluginCategoryColumn::Id.max(), "max_id")
         .into_tuple()
         .one(db)
         .await?;
@@ -147,6 +146,7 @@ pub async fn update(id: i64, params: UpdateCategoryParams) -> Result<(), Error> 
 
 #[derive(Debug, Deserialize)]
 pub struct UpdateCategoryParams {
+    pub id: i64,
     pub name: Option<String>,
     pub icon: Option<String>,
     pub sort: Option<i32>,
@@ -157,7 +157,7 @@ pub async fn delete(id: i64) -> Result<(), Error> {
     let db = DB().await;
 
     let child_count = PluginCategoryEntity::find()
-        .filter(p_plugin_category::Column::ParentId.eq(id))
+        .filter(PluginCategoryColumn::ParentId.eq(id))
         .count(db)
         .await?;
 
@@ -184,8 +184,9 @@ pub async fn update_plugin_count(id: i64, delta: i32) -> Result<(), Error> {
         .await?
         .ok_or_else(|| Error::not_found("分类不存在"))?;
 
+    let count = category.plugin_count;
     let mut active_model: p_plugin_category::ActiveModel = category.into();
-    active_model.plugin_count = Set((category.plugin_count as i32 + delta) as i32);
+    active_model.plugin_count = Set((count as i32 + delta) as i32);
 
     active_model.update(db).await?;
     Ok(())

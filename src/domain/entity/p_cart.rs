@@ -12,4 +12,7 @@ pub struct Model {
     pub created_at: Option<DateTime>,
 }
 
+#[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
+pub enum Relation {}
+
 impl ActiveModelBehavior for ActiveModel {}

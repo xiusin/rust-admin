@@ -1,5 +1,6 @@
-use crate::domain::entity::p_device::*;
+use crate::domain::entity::p_device;
 use crate::domain::entity::p_device::Entity as DeviceEntity;
+use crate::domain::entity::p_license;
 use crate::domain::entity::p_license::Entity as LicenseEntity;
 use crate::common::error::Error;
 use crate::infrastructure::db::DB;
@@ -26,11 +27,12 @@ pub async fn register(license_id: i64, params: RegisterDeviceParams) -> Result<i
         .await?;
 
     if let Some(d) = existing {
+        let existing_id = d.id;
         let mut active_model: p_device::ActiveModel = d.into();
         active_model.last_active_time = Set(Some(Utc::now().naive_utc()));
         active_model.status = Set(1);
         active_model.update(db).await?;
-        return Ok(d.id);
+        return Ok(existing_id);
     }
 
     let device_count = DeviceEntity::find()
@@ -38,7 +40,7 @@ pub async fn register(license_id: i64, params: RegisterDeviceParams) -> Result<i
         .count(db)
         .await?;
 
-    if device_count >= license.max_devices as i64 {
+    if device_count as i32 >= license.max_devices {
         return Err(Error::bad_request("设备数量已达上限"));
     }
 
@@ -72,6 +74,7 @@ pub async fn register(license_id: i64, params: RegisterDeviceParams) -> Result<i
 
 #[derive(Debug, Deserialize)]
 pub struct RegisterDeviceParams {
+    pub license_id: i64,
     pub device_id: String,
     pub device_info: DeviceInfo,
     pub ip_address: Option<String>,

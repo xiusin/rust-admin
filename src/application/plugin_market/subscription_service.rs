@@ -1,10 +1,12 @@
-use crate::domain::entity::p_subscription::*;
+use crate::domain::entity::p_subscription;
 use crate::domain::entity::p_subscription::Entity as SubscriptionEntity;
 use crate::domain::entity::p_order::Entity as OrderEntity;
+use crate::domain::entity::p_license;
 use crate::domain::entity::p_license::Entity as LicenseEntity;
 use crate::common::error::Error;
 use crate::infrastructure::db::DB;
 use sea_orm::*;
+use sea_orm::prelude::Expr;
 use chrono::{Duration, Utc, NaiveDateTime};
 use uuid::Uuid;
 use serde::{Deserialize, Serialize};
@@ -87,7 +89,7 @@ pub async fn create_from_order(order_id: i64) -> Result<i64, Error> {
     license.insert(db).await?;
 
     SubscriptionEntity::update_many()
-        .col_expr(p_subscription::Column::LicenseId, Value::Int(Some(new_license_id)))
+        .col_expr(p_subscription::Column::LicenseId, Expr::value(new_license_id))
         .filter(p_subscription::Column::Id.eq(new_id))
         .exec(db)
         .await?;
@@ -130,7 +132,7 @@ pub async fn list(user_id: i64, page_num: u32, page_size: u32) -> Result<(Vec<Su
         })
         .collect();
 
-    Ok((items, total))
+    Ok((items, total as i64))
 }
 
 #[derive(Debug, Serialize, Clone)]
@@ -157,16 +159,17 @@ pub async fn renew(subscription_id: i64, extend_days: i32) -> Result<(), Error> 
         .ok_or_else(|| Error::not_found("订阅不存在"))?;
 
     let new_end_time = subscription.end_time + Duration::days(extend_days as i64);
+    let license_id = subscription.license_id;
 
     let mut active_model: p_subscription::ActiveModel = subscription.into();
     active_model.end_time = Set(new_end_time);
     active_model.updated_at = Set(Some(Utc::now().naive_utc()));
     active_model.update(db).await?;
 
-    if let Some(license_id) = subscription.license_id {
+    if let Some(license_id) = license_id {
         LicenseEntity::update_many()
-            .col_expr(p_license::Column::EndTime, Value::Datetime(Some(new_end_time)))
-            .col_expr(p_license::Column::UpdatedAt, Value::Datetime(Some(Utc::now().naive_utc())))
+            .col_expr(p_license::Column::EndTime, Expr::value(new_end_time))
+            .col_expr(p_license::Column::UpdatedAt, Expr::value(Utc::now().naive_utc()))
             .filter(p_license::Column::Id.eq(license_id))
             .exec(db)
             .await?;
@@ -196,7 +199,7 @@ pub async fn check_expired() -> Result<(), Error> {
     let now = Utc::now().naive_utc();
 
     SubscriptionEntity::update_many()
-        .col_expr(p_subscription::Column::Status, Value::Int(Some(2)))
+        .col_expr(p_subscription::Column::Status, Expr::value(2))
         .filter(p_subscription::Column::EndTime.lt(now))
         .filter(p_subscription::Column::Status.eq(1))
         .exec(db)

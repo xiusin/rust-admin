@@ -2,8 +2,11 @@ use axum::{extract::{Path, Query}, response::IntoResponse, Json};
 use serde::Deserialize;
 use crate::application::plugin_market::*;
 use crate::domain::model::m_plugin::*;
-use crate::domain::args::a_order::*;
+use crate::domain::args::a_order::OrderSearchParams;
+use crate::domain::args::a_card::RedeemCardParams;
 use crate::model::prelude::*;
+
+// ==================== Category ====================
 
 pub async fn category_list() -> impl IntoResponse {
     let result = plugin_category_service::list().await;
@@ -30,7 +33,14 @@ pub struct CategoryCreateParams {
 }
 
 pub async fn category_create(Json(params): Json<CategoryCreateParams>) -> impl IntoResponse {
-    let result = plugin_category_service::create(params.into()).await;
+    let svc_params = plugin_category_service::CreateCategoryParams {
+        name: params.name,
+        icon: params.icon,
+        parent_id: params.parent_id,
+        sort: params.sort,
+        status: params.status,
+    };
+    let result = plugin_category_service::create(svc_params).await;
     ApiResponse::from_result(result)
 }
 
@@ -45,7 +55,14 @@ pub struct CategoryUpdateParams {
 
 pub async fn category_update(Json(params): Json<CategoryUpdateParams>) -> impl IntoResponse {
     let id = params.id;
-    let result = plugin_category_service::update(id, params.into()).await;
+    let svc_params = plugin_category_service::UpdateCategoryParams {
+        id,
+        name: params.name,
+        icon: params.icon,
+        sort: params.sort,
+        status: params.status,
+    };
+    let result = plugin_category_service::update(id, svc_params).await;
     ApiResponse::from_result(result)
 }
 
@@ -54,13 +71,15 @@ pub async fn category_delete(Path(id): Path<i64>) -> impl IntoResponse {
     ApiResponse::from_result(result)
 }
 
+// ==================== Plugin ====================
+
 pub async fn market_list(Query(params): Query<PluginSearchParams>) -> impl IntoResponse {
     let result = plugin_service::market_list(params).await;
     ApiResponse::from_result(result.map(|(list, total)| ListData {
         list,
-        total,
+        total: total as u64,
+        total_pages: ((total as f64) / 10.0).ceil() as u64,
         page_num: 1,
-        page_size: 10,
     }))
 }
 
@@ -73,19 +92,19 @@ pub async fn search(Query(params): Query<PluginSearchParams>) -> impl IntoRespon
     let result = plugin_service::market_list(params).await;
     ApiResponse::from_result(result.map(|(list, total)| ListData {
         list,
-        total,
+        total: total as u64,
+        total_pages: ((total as f64) / 10.0).ceil() as u64,
         page_num: 1,
-        page_size: 10,
     }))
 }
 
 pub async fn recommend(Query(limit): Query<i32>) -> impl IntoResponse {
-    let result = plugin_service::recommend(limit.unwrap_or(10)).await;
+    let result = plugin_service::recommend(limit).await;
     ApiResponse::from_result(result)
 }
 
 pub async fn hot(Query(limit): Query<i32>) -> impl IntoResponse {
-    let result = plugin_service::hot(limit.unwrap_or(10)).await;
+    let result = plugin_service::hot(limit).await;
     ApiResponse::from_result(result)
 }
 
@@ -94,24 +113,82 @@ pub async fn categories() -> impl IntoResponse {
     ApiResponse::from_result(result)
 }
 
-pub async fn developer_list(Query(params): Query<PluginSearchParams>) -> impl IntoResponse {
-    let result = plugin_service::developer_list(0, params.page_num.unwrap_or(1), params.page_size.unwrap_or(10)).await;
+#[derive(Debug, Deserialize)]
+pub struct DeveloperListParams {
+    pub page_num: Option<u32>,
+    pub page_size: Option<u32>,
+}
+
+pub async fn developer_list(Query(params): Query<DeveloperListParams>) -> impl IntoResponse {
+    let page_num = params.page_num.unwrap_or(1);
+    let page_size = params.page_size.unwrap_or(10);
+    let result = plugin_service::developer_list(0, page_num, page_size).await;
     ApiResponse::from_result(result.map(|(list, total)| ListData {
         list,
-        total,
-        page_num: 1,
-        page_size: 10,
+        total: total as u64,
+        total_pages: ((total as f64) / page_size as f64).ceil() as u64,
+        page_num: page_num as u64,
     }))
 }
 
-pub async fn add(Json(params): Json<plugin_service::CreatePluginParams>) -> impl IntoResponse {
-    let result = plugin_service::create(0, params).await;
+#[derive(Debug, Deserialize)]
+pub struct CreatePluginParams {
+    pub name: String,
+    pub code: String,
+    pub category_id: i64,
+    pub summary: Option<String>,
+    pub description: Option<String>,
+    pub version: String,
+    pub price_type: i32,
+    pub verify_level: i32,
+}
+
+pub async fn add(Json(params): Json<CreatePluginParams>) -> impl IntoResponse {
+    let svc_params = plugin_service::CreatePluginParams {
+        name: params.name,
+        code: params.code,
+        category_id: params.category_id,
+        summary: params.summary,
+        description: params.description,
+        cover_image: None,
+        screenshots: None,
+        version: params.version,
+        price_type: params.price_type,
+        verify_level: params.verify_level,
+        tags: None,
+    };
+    let result = plugin_service::create(0, svc_params).await;
     ApiResponse::from_result(result)
 }
 
-pub async fn edit(Json(params): Json<plugin_service::UpdatePluginParams>) -> impl IntoResponse {
+#[derive(Debug, Deserialize)]
+pub struct EditPluginParams {
+    pub id: i64,
+    pub name: Option<String>,
+    pub category_id: Option<i64>,
+    pub summary: Option<String>,
+    pub description: Option<String>,
+    pub cover_image: Option<String>,
+    pub screenshots: Option<Vec<String>>,
+    pub tags: Option<Vec<String>>,
+    pub sort: Option<i32>,
+    pub status: Option<i32>,
+}
+
+pub async fn edit(Json(params): Json<EditPluginParams>) -> impl IntoResponse {
     let id = params.id;
-    let result = plugin_service::update(id, params).await;
+    let svc_params = plugin_service::UpdatePluginParams {
+        name: params.name,
+        category_id: params.category_id,
+        summary: params.summary,
+        description: params.description,
+        cover_image: params.cover_image,
+        screenshots: params.screenshots,
+        tags: params.tags,
+        sort: params.sort,
+        status: params.status,
+    };
+    let result = plugin_service::update(id, svc_params).await;
     ApiResponse::from_result(result)
 }
 
@@ -131,8 +208,30 @@ pub async fn audit(Json(params): Json<AuditParams>) -> impl IntoResponse {
     ApiResponse::from_result(result)
 }
 
-pub async fn publish_version(Json(params): Json<plugin_version_service::PublishVersionParams>) -> impl IntoResponse {
-    let result = plugin_version_service::publish(0, params).await;
+// ==================== Version ====================
+
+#[derive(Debug, Deserialize)]
+pub struct PublishVersionParams {
+    pub plugin_id: i64,
+    pub version: String,
+    pub changelog: Option<String>,
+    pub download_url: String,
+    pub file_hash: String,
+    pub file_size: Option<i64>,
+    pub min_app_version: Option<String>,
+}
+
+pub async fn publish_version(Json(params): Json<PublishVersionParams>) -> impl IntoResponse {
+    let plugin_id = params.plugin_id;
+    let svc_params = plugin_version_service::PublishVersionParams {
+        version: params.version,
+        changelog: params.changelog,
+        download_url: params.download_url,
+        file_hash: params.file_hash,
+        file_size: params.file_size.unwrap_or(0),
+        min_app_version: params.min_app_version,
+    };
+    let result = plugin_version_service::publish(plugin_id, svc_params).await;
     ApiResponse::from_result(result)
 }
 
@@ -156,6 +255,8 @@ pub async fn latest_version(Path(plugin_id): Path<i64>) -> impl IntoResponse {
     ApiResponse::from_result(result)
 }
 
+// ==================== Plan ====================
+
 pub async fn plan_list(Path(plugin_id): Path<i64>) -> impl IntoResponse {
     let result = plan_service::list(plugin_id).await;
     ApiResponse::from_result(result)
@@ -166,14 +267,81 @@ pub async fn plan_detail(Path(id): Path<i64>) -> impl IntoResponse {
     ApiResponse::from_result(result)
 }
 
-pub async fn plan_create(Json(params): Json<plan_service::CreatePlanParams>) -> impl IntoResponse {
-    let result = plan_service::create(0, params).await;
+#[derive(Debug, Deserialize)]
+pub struct PlanCreateParams {
+    pub plugin_id: i64,
+    pub name: String,
+    pub description: Option<String>,
+    pub period_type: i32,
+    pub period_days: i32,
+    pub price: f64,
+    pub original_price: Option<f64>,
+    pub features: Option<Vec<FeatureItem>>,
+    pub max_devices: Option<i32>,
+    pub max_users: Option<i32>,
+    pub storage_limit: Option<i64>,
+    pub api_calls_limit: Option<i64>,
+    pub support_level: Option<i32>,
+    pub sort: Option<i32>,
+}
+
+pub async fn plan_create(Json(params): Json<PlanCreateParams>) -> impl IntoResponse {
+    let plugin_id = params.plugin_id;
+    let svc_params = plan_service::CreatePlanParams {
+        name: params.name,
+        description: params.description,
+        period_type: params.period_type,
+        period_days: params.period_days,
+        price: params.price,
+        original_price: params.original_price.unwrap_or(params.price),
+        features: params.features,
+        max_devices: params.max_devices.unwrap_or(1),
+        max_users: params.max_users.unwrap_or(1),
+        storage_limit: params.storage_limit.unwrap_or(0),
+        api_calls_limit: params.api_calls_limit.unwrap_or(0),
+        support_level: params.support_level.unwrap_or(0),
+        sort: params.sort,
+    };
+    let result = plan_service::create(plugin_id, svc_params).await;
     ApiResponse::from_result(result)
 }
 
-pub async fn plan_update(Json(params): Json<plan_service::UpdatePlanParams>) -> impl IntoResponse {
+#[derive(Debug, Deserialize)]
+pub struct PlanUpdateParams {
+    pub id: i64,
+    pub name: Option<String>,
+    pub description: Option<String>,
+    pub period_type: Option<i32>,
+    pub period_days: Option<i32>,
+    pub price: Option<f64>,
+    pub features: Option<Vec<FeatureItem>>,
+    pub max_devices: Option<i32>,
+    pub max_users: Option<i32>,
+    pub storage_limit: Option<i64>,
+    pub api_calls_limit: Option<i64>,
+    pub support_level: Option<i32>,
+    pub sort: Option<i32>,
+    pub status: Option<i32>,
+}
+
+pub async fn plan_update(Json(params): Json<PlanUpdateParams>) -> impl IntoResponse {
     let id = params.id;
-    let result = plan_service::update(id, params).await;
+    let svc_params = plan_service::UpdatePlanParams {
+        name: params.name,
+        description: params.description,
+        period_type: params.period_type,
+        period_days: params.period_days,
+        price: params.price,
+        features: params.features,
+        max_devices: params.max_devices,
+        max_users: params.max_users,
+        storage_limit: params.storage_limit,
+        api_calls_limit: params.api_calls_limit,
+        support_level: params.support_level,
+        sort: params.sort,
+        status: params.status,
+    };
+    let result = plan_service::update(id, svc_params).await;
     ApiResponse::from_result(result)
 }
 
@@ -182,43 +350,86 @@ pub async fn plan_delete(Path(id): Path<i64>) -> impl IntoResponse {
     ApiResponse::from_result(result)
 }
 
-pub async fn cart_list(Query(user_id): Query<i64>) -> impl IntoResponse {
-    let result = cart_service::list(user_id.unwrap_or(0)).await;
+// ==================== Cart ====================
+
+#[derive(Debug, Deserialize)]
+pub struct CartListParams {
+    pub user_id: i64,
+}
+
+pub async fn cart_list(Query(params): Query<CartListParams>) -> impl IntoResponse {
+    let result = cart_service::list(params.user_id).await;
     ApiResponse::from_result(result)
 }
 
-pub async fn cart_add(Json(params): Json<cart_service::AddCartParams>) -> impl IntoResponse {
-    let result = cart_service::add(0, params).await;
+#[derive(Debug, Deserialize)]
+pub struct AddCartParams {
+    pub user_id: i64,
+    pub plugin_id: i64,
+    pub plan_id: i64,
+}
+
+pub async fn cart_add(Json(params): Json<AddCartParams>) -> impl IntoResponse {
+    let user_id = params.user_id;
+    let svc_params = crate::domain::model::m_cart::AddCartParams {
+        plugin_id: params.plugin_id,
+        plan_id: params.plan_id,
+    };
+    let result = cart_service::add(user_id, svc_params).await;
     ApiResponse::from_result(result)
 }
 
 #[derive(Debug, Deserialize)]
 pub struct RemoveCartParams {
+    pub user_id: i64,
     pub ids: Vec<i64>,
 }
 
 pub async fn cart_remove(Json(params): Json<RemoveCartParams>) -> impl IntoResponse {
-    let result = cart_service::remove(0, params.ids).await;
+    let result = cart_service::remove(params.user_id, params.ids).await;
     ApiResponse::from_result(result)
 }
 
-pub async fn cart_clear(Query(user_id): Query<i64>) -> impl IntoResponse {
-    let result = cart_service::clear(user_id.unwrap_or(0)).await;
+#[derive(Debug, Deserialize)]
+pub struct ClearCartParams {
+    pub user_id: i64,
+}
+
+pub async fn cart_clear(Query(params): Query<ClearCartParams>) -> impl IntoResponse {
+    let result = cart_service::clear(params.user_id).await;
     ApiResponse::from_result(result)
 }
 
-pub async fn create_order(Json(params): Json<order_service::CreateOrderParams>) -> impl IntoResponse {
-    let result = order_service::create(0, params).await;
+// ==================== Order ====================
+
+#[derive(Debug, Deserialize)]
+pub struct CreateOrderParams {
+    pub user_id: i64,
+    pub plugin_id: i64,
+    pub plan_id: i64,
+    pub payment_method: Option<i32>,
+    pub coupon_id: Option<i64>,
+}
+
+pub async fn create_order(Json(params): Json<CreateOrderParams>) -> impl IntoResponse {
+    let user_id = params.user_id;
+    let svc_params = order_service::CreateOrderParams {
+        plugin_id: params.plugin_id,
+        plan_id: params.plan_id,
+        coupon_id: params.coupon_id,
+        payment_method: params.payment_method.unwrap_or(0),
+    };
+    let result = order_service::create(user_id, svc_params).await;
     ApiResponse::from_result(result)
 }
 
-pub async fn order_list(Query(params): Query<order_service::OrderSearchParams>) -> impl IntoResponse {
+pub async fn order_list(Query(params): Query<OrderSearchParams>) -> impl IntoResponse {
     let result = order_service::list(0, params).await;
     ApiResponse::from_result(result.map(|(list, total)| ListData {
         list,
-        total,
+        total: total as u64,
+        total_pages: ((total as f64) / 10.0).ceil() as u64,
         page_num: 1,
-        page_size: 10,
     }))
 }
 
@@ -232,8 +443,16 @@ pub async fn cancel_order(Path(id): Path<i64>) -> impl IntoResponse {
     ApiResponse::from_result(result)
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PayResult {
+    pub order_no: String,
+    pub amount: f64,
+    pub qr_code: Option<String>,
+    pub pay_url: Option<String>,
+}
+
 pub async fn pay(Path(id): Path<i64>) -> impl IntoResponse {
-    ApiResponse::success(order_service::PayResult {
+    ApiResponse::success(PayResult {
         order_no: format!("PLM{}", id),
         amount: 0.0,
         qr_code: Some("weixin://qr".to_string()),
@@ -252,6 +471,8 @@ pub async fn pay_callback(Json(params): Json<PayCallbackParams>) -> impl IntoRes
     ApiResponse::from_result(result)
 }
 
+// ==================== License ====================
+
 #[derive(Debug, Deserialize)]
 pub struct LicenseListParams {
     pub page_num: Option<u32>,
@@ -259,12 +480,14 @@ pub struct LicenseListParams {
 }
 
 pub async fn license_list(Query(params): Query<LicenseListParams>) -> impl IntoResponse {
-    let result = license_service::list(0, params.page_num.unwrap_or(1), params.page_size.unwrap_or(10)).await;
+    let page_num = params.page_num.unwrap_or(1);
+    let page_size = params.page_size.unwrap_or(10);
+    let result = license_service::list(0, page_num, page_size).await;
     ApiResponse::from_result(result.map(|(list, total)| ListData {
         list,
-        total,
-        page_num: 1,
-        page_size: 10,
+        total: total as u64,
+        total_pages: ((total as f64) / page_size as f64).ceil() as u64,
+        page_num: page_num as u64,
     }))
 }
 
@@ -273,8 +496,28 @@ pub async fn license_detail(Path(id): Path<i64>) -> impl IntoResponse {
     ApiResponse::from_result(result)
 }
 
-pub async fn bind_device(Json(params): Json<license_service::BindDeviceParams>) -> impl IntoResponse {
-    let result = license_service::bind_device(params.license_id, params).await;
+#[derive(Debug, Deserialize)]
+pub struct BindDeviceParams {
+    pub license_id: i64,
+    pub device_id: String,
+    pub device_name: Option<String>,
+    pub device_type: Option<String>,
+    pub os_version: Option<String>,
+    pub mac_address: Option<String>,
+    pub ip_address: Option<String>,
+}
+
+pub async fn bind_device(Json(params): Json<BindDeviceParams>) -> impl IntoResponse {
+    let license_id = params.license_id;
+    let svc_params = license_service::BindDeviceParams {
+        device_id: params.device_id,
+        device_name: params.device_name,
+        device_type: params.device_type,
+        os_version: params.os_version,
+        mac_address: params.mac_address,
+        ip_address: params.ip_address,
+    };
+    let result = license_service::bind_device(license_id, svc_params).await;
     ApiResponse::from_result(result)
 }
 
@@ -310,17 +553,19 @@ pub async fn revoke_license(Json(params): Json<RevokeLicenseParams>) -> impl Int
     ApiResponse::from_result(result)
 }
 
+// ==================== Verification ====================
+
 #[derive(Debug, Deserialize)]
 pub struct VerifyLicenseParams {
     pub license_key: String,
     pub device_id: String,
-    pub device_info: DeviceInfo,
+    pub device_info: VerifyDeviceInfo,
     pub timestamp: i64,
     pub sign: String,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct DeviceInfo {
+pub struct VerifyDeviceInfo {
     pub device_name: String,
     pub device_type: String,
     pub os_version: String,
@@ -332,7 +577,7 @@ pub async fn verify_license(Json(params): Json<VerifyLicenseParams>) -> impl Int
     let result = verification_service::verify_license(
         params.license_key,
         params.device_id,
-        params.device_info,
+        params.device_info.device_name,
         params.timestamp,
         params.sign,
     ).await;
@@ -382,8 +627,33 @@ pub async fn check_code(Json(params): Json<CheckCodeParams>) -> impl IntoRespons
     ApiResponse::from_result(result)
 }
 
-pub async fn register_device(Json(params): Json<device_service::RegisterDeviceParams>) -> impl IntoResponse {
-    let result = device_service::register(params.license_id, params).await;
+// ==================== Device ====================
+
+#[derive(Debug, Deserialize)]
+pub struct RegisterDeviceParams {
+    pub license_id: i64,
+    pub device_id: String,
+    pub device_name: Option<String>,
+    pub device_type: Option<String>,
+    pub os_version: Option<String>,
+    pub mac_address: Option<String>,
+    pub ip_address: Option<String>,
+}
+
+pub async fn register_device(Json(params): Json<RegisterDeviceParams>) -> impl IntoResponse {
+    let license_id = params.license_id;
+    let svc_params = device_service::RegisterDeviceParams {
+        license_id,
+        device_id: params.device_id,
+        device_info: device_service::DeviceInfo {
+            device_name: params.device_name,
+            device_type: params.device_type,
+            os_version: params.os_version,
+            mac_address: params.mac_address,
+        },
+        ip_address: params.ip_address,
+    };
+    let result = device_service::register(license_id, svc_params).await;
     ApiResponse::from_result(result)
 }
 
@@ -391,6 +661,8 @@ pub async fn obfuscation_config(Query(plugin_id): Query<i64>) -> impl IntoRespon
     let result = verification_service::get_obfuscation_config(plugin_id).await;
     ApiResponse::from_result(result)
 }
+
+// ==================== Card ====================
 
 #[derive(Debug, Deserialize)]
 pub struct GenerateCardsParams {
@@ -414,12 +686,14 @@ pub struct BatchListParams {
 }
 
 pub async fn card_batch_list(Query(params): Query<BatchListParams>) -> impl IntoResponse {
-    let result = card_service::list_batches(params.plugin_id.unwrap_or(0), params.page_num.unwrap_or(1), params.page_size.unwrap_or(10)).await;
+    let page_num = params.page_num.unwrap_or(1);
+    let page_size = params.page_size.unwrap_or(10);
+    let result = card_service::list_batches(params.plugin_id, page_num, page_size).await;
     ApiResponse::from_result(result.map(|(list, total)| ListData {
         list,
-        total,
-        page_num: 1,
-        page_size: 10,
+        total: total as u64,
+        total_pages: ((total as f64) / page_size as f64).ceil() as u64,
+        page_num: page_num as u64,
     }))
 }
 
@@ -428,7 +702,7 @@ pub async fn export_cards(Path(batch_id): Path<i64>) -> impl IntoResponse {
     ApiResponse::from_result(result)
 }
 
-pub async fn redeem_card(Json(params): Json<card_service::RedeemCardParams>) -> impl IntoResponse {
+pub async fn redeem_card(Json(params): Json<RedeemCardParams>) -> impl IntoResponse {
     let result = card_service::redeem(0, params.card_no, params.card_pwd).await;
     ApiResponse::from_result(result)
 }
@@ -448,24 +722,34 @@ pub async fn unfreeze_card(Json(params): Json<FreezeCardParams>) -> impl IntoRes
     ApiResponse::from_result(result)
 }
 
-#[derive(Debug, Deserialize)]
-pub struct ReviewListParams {
-    pub page_num: Option<u32>,
-    pub page_size: Option<u32>,
-}
+// ==================== Review ====================
 
-pub async fn review_list(Path(plugin_id): Path<i64>, Query(params): Query<ReviewListParams>) -> impl IntoResponse {
-    let result = review_service::list(plugin_id, params.page_num.unwrap_or(1), params.page_size.unwrap_or(10)).await;
+pub async fn review_list(Path(plugin_id): Path<i64>, Query(params): Query<LicenseListParams>) -> impl IntoResponse {
+    let page_num = params.page_num.unwrap_or(1);
+    let page_size = params.page_size.unwrap_or(10);
+    let result = review_service::list(plugin_id, page_num, page_size).await;
     ApiResponse::from_result(result.map(|(list, total)| ListData {
         list,
-        total,
-        page_num: 1,
-        page_size: 10,
+        total: total as u64,
+        total_pages: ((total as f64) / page_size as f64).ceil() as u64,
+        page_num: page_num as u64,
     }))
 }
 
-pub async fn create_review(Json(params): Json<review_service::CreateReviewParams>) -> impl IntoResponse {
-    let result = review_service::create(0, params).await;
+#[derive(Debug, Deserialize)]
+pub struct CreateReviewParams {
+    pub plugin_id: i64,
+    pub rating: i32,
+    pub content: String,
+}
+
+pub async fn create_review(Json(params): Json<CreateReviewParams>) -> impl IntoResponse {
+    let svc_params = review_service::CreateReviewParams {
+        plugin_id: params.plugin_id,
+        rating: params.rating,
+        content: params.content,
+    };
+    let result = review_service::create(0, svc_params).await;
     ApiResponse::from_result(result)
 }
 
@@ -485,8 +769,22 @@ pub async fn review_stats(Path(plugin_id): Path<i64>) -> impl IntoResponse {
     ApiResponse::from_result(result)
 }
 
-pub async fn register_developer(Json(params): Json<developer_service::RegisterDeveloperParams>) -> impl IntoResponse {
-    let result = developer_service::register(0, params).await;
+// ==================== Developer ====================
+
+#[derive(Debug, Deserialize)]
+pub struct RegisterDeveloperParams {
+    pub name: String,
+    pub contact: Option<String>,
+    pub description: Option<String>,
+}
+
+pub async fn register_developer(Json(params): Json<RegisterDeveloperParams>) -> impl IntoResponse {
+    let svc_params = developer_service::RegisterDeveloperParams {
+        name: params.name,
+        description: params.description,
+        contact: params.contact,
+    };
+    let result = developer_service::register(0, svc_params).await;
     ApiResponse::from_result(result)
 }
 
@@ -495,18 +793,36 @@ pub async fn developer_profile() -> impl IntoResponse {
     ApiResponse::from_result(result)
 }
 
-pub async fn update_developer(Json(params): Json<developer_service::UpdateDeveloperParams>) -> impl IntoResponse {
-    let result = developer_service::update(0, params).await;
+#[derive(Debug, Deserialize)]
+pub struct UpdateDeveloperParams {
+    pub name: Option<String>,
+    pub logo: Option<String>,
+    pub contact: Option<String>,
+    pub description: Option<String>,
+}
+
+pub async fn update_developer(Json(params): Json<UpdateDeveloperParams>) -> impl IntoResponse {
+    let svc_params = developer_service::UpdateDeveloperParams {
+        name: params.name,
+        logo: params.logo,
+        description: params.description,
+        contact: params.contact,
+    };
+    let result = developer_service::update(0, svc_params).await;
     ApiResponse::from_result(result)
 }
 
+// ==================== Subscription ====================
+
 pub async fn subscription_list(Query(params): Query<LicenseListParams>) -> impl IntoResponse {
-    let result = subscription_service::list(0, params.page_num.unwrap_or(1), params.page_size.unwrap_or(10)).await;
+    let page_num = params.page_num.unwrap_or(1);
+    let page_size = params.page_size.unwrap_or(10);
+    let result = subscription_service::list(0, page_num, page_size).await;
     ApiResponse::from_result(result.map(|(list, total)| ListData {
         list,
-        total,
-        page_num: 1,
-        page_size: 10,
+        total: total as u64,
+        total_pages: ((total as f64) / page_size as f64).ceil() as u64,
+        page_num: page_num as u64,
     }))
 }
 

@@ -1,4 +1,4 @@
-use crate::domain::entity::p_plan::*;
+use crate::domain::entity::p_plan;
 use crate::domain::entity::p_plan::Entity as PlanEntity;
 use crate::domain::entity::p_plugin::Entity as PluginEntity;
 use crate::common::error::Error;
@@ -44,7 +44,7 @@ pub async fn list(plugin_id: i64) -> Result<Vec<PlanItem>, Error> {
     Ok(items)
 }
 
-pub async fn detail(id: i64) -> Result<Option<Plan>, Error> {
+pub async fn detail(id: i64) -> Result<Option<p_plan::Model>, Error> {
     let db = DB().await;
     let plan = PlanEntity::find_by_id(id).one(db).await?;
     Ok(plan)

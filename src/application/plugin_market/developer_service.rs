@@ -1,4 +1,4 @@
-use crate::domain::entity::p_developer::*;
+use crate::domain::entity::p_developer;
 use crate::domain::entity::p_developer::Entity as DeveloperEntity;
 use crate::common::error::Error;
 use crate::infrastructure::db::DB;
@@ -52,7 +52,7 @@ pub struct RegisterDeveloperParams {
     pub contact: Option<String>,
 }
 
-pub async fn get_by_user_id(user_id: i64) -> Result<Option<Developer>, Error> {
+pub async fn get_by_user_id(user_id: i64) -> Result<Option<p_developer::Model>, Error> {
     let db = DB().await;
     let developer = DeveloperEntity::find()
         .filter(p_developer::Column::UserId.eq(user_id))
@@ -137,8 +137,9 @@ pub async fn increment_plugin_count(developer_id: i64) -> Result<(), Error> {
         .await?
         .ok_or_else(|| Error::not_found("开发者不存在"))?;
 
+    let count = developer.plugins_count;
     let mut active_model: p_developer::ActiveModel = developer.into();
-    active_model.plugins_count = Set(developer.plugins_count + 1);
+    active_model.plugins_count = Set(count + 1);
     active_model.update(db).await?;
 
     Ok(())
@@ -152,8 +153,9 @@ pub async fn increment_downloads(developer_id: i64, delta: i64) -> Result<(), Er
         .await?
         .ok_or_else(|| Error::not_found("开发者不存在"))?;
 
+    let downloads = developer.total_downloads;
     let mut active_model: p_developer::ActiveModel = developer.into();
-    active_model.total_downloads = Set(developer.total_downloads + delta);
+    active_model.total_downloads = Set(downloads + delta);
     active_model.update(db).await?;
 
     Ok(())
