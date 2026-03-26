@@ -3,19 +3,17 @@ use crate::domain::entity::p_order;
 use crate::domain::entity::p_order::Entity as OrderEntity;
 use crate::domain::entity::p_plugin::Entity as PluginEntity;
 use crate::domain::entity::p_plan::Entity as PlanEntity;
-use crate::domain::entity::p_license::Entity as LicenseEntity;
 use crate::domain::args::a_order::OrderSearchParams;
 use crate::common::error::Error;
 use crate::infrastructure::db::DB;
 use sea_orm::*;
 use chrono::{Duration, Utc};
-use uuid::Uuid;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 pub async fn create(user_id: i64, params: CreateOrderParams) -> Result<i64, Error> {
     let db = DB().await;
 
-    let plugin = PluginEntity::find_by_id(params.plugin_id)
+    let _plugin = PluginEntity::find_by_id(params.plugin_id)
         .one(db)
         .await?
         .ok_or_else(|| Error::not_found("插件不存在"))?;

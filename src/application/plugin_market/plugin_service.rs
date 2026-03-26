@@ -7,7 +7,7 @@ use crate::domain::entity::p_developer::Entity as DeveloperEntity;
 use crate::common::error::Error;
 use crate::infrastructure::db::DB;
 use sea_orm::*;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 pub async fn market_list(params: PluginSearchParams) -> Result<(Vec<PluginListItem>, i64), Error> {
     let db = DB().await;
@@ -239,7 +239,7 @@ pub async fn hot(limit: i32) -> Result<Vec<PluginListItem>, Error> {
     Ok(items)
 }
 
-pub async fn developer_list(developer_id: i64, page_num: u32, page_size: u32) -> Result<(Vec<PluginListItem>, i64), Error> {
+pub async fn developer_list(_developer_id: i64, page_num: u32, page_size: u32) -> Result<(Vec<PluginListItem>, i64), Error> {
     market_list(PluginSearchParams {
         keyword: None,
         category_id: None,

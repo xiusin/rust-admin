@@ -9,7 +9,7 @@ use sea_orm::*;
 use sea_orm::prelude::Expr;
 use chrono::{Duration, Utc, NaiveDateTime};
 use uuid::Uuid;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
 pub async fn create_from_order(order_id: i64) -> Result<i64, Error> {
     let db = DB().await;

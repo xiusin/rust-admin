@@ -1,5 +1,4 @@
 use serde::{Deserialize, Serialize};
-use crate::model::prelude::*;
 
 #[derive(Debug, Serialize, Clone, Deserialize)]
 pub struct CategoryItem {

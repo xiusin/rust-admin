@@ -70,13 +70,40 @@ impl WebPath {
     }
 
     fn convert_path_params(path: &str) -> String {
+        // Axum 0.8+ 要求使用 {id} 而不是 :id 作为路径参数
+        // 使用正则表达式匹配所有 :param_name 格式并转换为 {param_name}
         let mut result = path.to_string();
-        let params = ["id", "product_id", "categoryId", "storeId", "brand_id", "group_id", "template_id", "sku_id"];
-        for param in &params {
-            result = result.replace(&format!(":{{{}}}", param), &format!("{{{}}}", param));
-            result = result.replace(&format!("/:{}", param), &format!("/{{{}}}", param));
+        
+        // 匹配所有以冒号开头的路径参数，如 :id, :product_id 等
+        // 使用简单的状态机来解析
+        let mut converted = String::new();
+        let chars: Vec<char> = result.chars().collect();
+        let mut i = 0;
+        
+        while i < chars.len() {
+            if chars[i] == ':' && (i == 0 || chars[i - 1] == '/') {
+                // 找到路径参数的开始
+                let start = i + 1;
+                let mut end = start;
+                
+                // 找到参数名的结束位置
+                while end < chars.len() && (chars[end].is_alphanumeric() || chars[end] == '_') {
+                    end += 1;
+                }
+                
+                // 提取参数名
+                let param_name: String = chars[start..end].iter().collect();
+                converted.push('{');
+                converted.push_str(&param_name);
+                converted.push('}');
+                i = end;
+            } else {
+                converted.push(chars[i]);
+                i += 1;
+            }
         }
-        result
+        
+        converted
     }
     pub fn final_to_path(mut self) -> Self {
         self.concat_sub_paths_final_paths("");

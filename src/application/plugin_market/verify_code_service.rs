@@ -51,7 +51,7 @@ pub async fn send(license_id: i64, _user_id: i64, _plugin_id: i64, _purpose: Str
 }
 
 fn generate_random_code(length: usize) -> String {
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
     let code: u32 = rng.random_range(10_u32.pow(length as u32 - 1)..10_u32.pow(length as u32));
     code.to_string()
 }

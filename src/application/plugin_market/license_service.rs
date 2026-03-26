@@ -2,7 +2,6 @@ use crate::domain::entity::p_license;
 use crate::domain::entity::p_license::Entity as LicenseEntity;
 use crate::domain::entity::p_device;
 use crate::domain::entity::p_device::Entity as DeviceEntity;
-use crate::domain::entity::p_plugin::Entity as PluginEntity;
 use crate::common::error::Error;
 use crate::infrastructure::db::DB;
 use sea_orm::*;

@@ -1,10 +1,9 @@
 use crate::domain::entity::p_plan;
 use crate::domain::entity::p_plan::Entity as PlanEntity;
-use crate::domain::entity::p_plugin::Entity as PluginEntity;
 use crate::common::error::Error;
 use crate::infrastructure::db::DB;
 use sea_orm::*;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use crate::domain::model::m_plugin::*;
 
 pub async fn list(plugin_id: i64) -> Result<Vec<PlanItem>, Error> {

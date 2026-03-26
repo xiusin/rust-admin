@@ -9,22 +9,21 @@ use crate::infrastructure::db::DB;
 use sea_orm::*;
 use sea_orm::prelude::Expr;
 use chrono::{Duration, Utc};
-use uuid::Uuid;
 use md5;
 use rand::Rng;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 const CARD_CHARSET: &[u8] = b"ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 
 pub async fn generate_batch(plugin_id: i64, plan_id: i64, count: i32, price: f64, expire_days: i32, creator_id: i64) -> Result<i64, Error> {
     let db = DB().await;
 
-    let plugin = PluginEntity::find_by_id(plugin_id)
+    let _plugin = PluginEntity::find_by_id(plugin_id)
         .one(db)
         .await?
         .ok_or_else(|| Error::not_found("插件不存在"))?;
 
-    let plan = PlanEntity::find_by_id(plan_id)
+    let _plan = PlanEntity::find_by_id(plan_id)
         .one(db)
         .await?
         .ok_or_else(|| Error::not_found("套餐不存在"))?;
@@ -106,7 +105,7 @@ fn generate_card_pair() -> (String, String) {
 }
 
 fn generate_card_no() -> String {
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
     let mut s = String::new();
     for _ in 0..16 {
         let idx = rng.random_range(0..CARD_CHARSET.len());

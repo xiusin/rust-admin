@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use crate::domain::model::m_plugin::*;
 
 #[derive(Debug, Deserialize)]

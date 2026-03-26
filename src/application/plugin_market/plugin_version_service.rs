@@ -7,7 +7,6 @@ use crate::infrastructure::db::DB;
 use sea_orm::*;
 use sea_orm::prelude::Expr;
 use serde::{Deserialize, Serialize};
-use crate::domain::model::m_plugin::*;
 
 #[derive(Debug, Serialize, Clone)]
 pub struct VersionListItem {
