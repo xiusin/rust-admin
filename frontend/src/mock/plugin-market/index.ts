@@ -2397,20 +2397,20 @@ const verificationCodes: Record<string, { code: string; expireTime: number; atte
 
 const mockPluginMarket: MockMethod[] = [
   {
-    url: "/mock/plugin/category/list",
+    url: "/plugin/category/list",
     method: "get",
     response: () => resultSuccess(categories.filter(c => c.parentId === 0)),
   },
   {
-    url: "/mock/plugin/category/tree",
+    url: "/plugin/category/tree",
     method: "get",
     response: () => resultSuccess(categories),
   },
   {
-    url: "/mock/plugin/category/detail",
+    url: "/plugin/category/:id",
     method: "get",
-    response: ({ query }: any) => {
-      const id = parseInt(query.id);
+    response: ({ params }: any) => {
+      const id = parseInt(params.id);
       const findCategory = (cats: any[]): any => {
         for (const cat of cats) {
           if (cat.id === id) return cat;
@@ -2425,24 +2425,24 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/category/add",
+    url: "/plugin/category/add",
     method: "post",
     response: () => resultSuccess(Date.now()),
   },
   {
-    url: "/mock/plugin/category/edit",
+    url: "/plugin/category/edit",
     method: "put",
     response: () => resultSuccess(null),
   },
   {
-    url: "/mock/plugin/category/delete",
+    url: "/plugin/category/delete",
     method: "delete",
     response: () => resultSuccess(null),
   },
   {
-    url: "/mock/plugin/market/list",
+    url: "/plugin/market/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       let list = [...plugins];
       if (query.categoryId) {
         const catId = parseInt(query.categoryId);
@@ -2493,10 +2493,10 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/market/detail",
+    url: "/plugin/market/detail/:id",
     method: "get",
-    response: ({ query }: any) => {
-      const id = parseInt(query.id);
+    response: ({ params }: any) => {
+      const id = parseInt(params.id);
       const plugin = plugins.find(p => p.id === id);
       if (plugin) {
         const pluginPlans = plans.filter(p => p.pluginId === id);
@@ -2527,9 +2527,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/market/search",
+    url: "/plugin/market/search",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       const keyword = (query.keyword || '').toLowerCase();
       const list = plugins.filter(p => 
         p.name.toLowerCase().includes(keyword) || 
@@ -2550,9 +2550,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/market/recommend",
+    url: "/plugin/market/recommend",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       const limit = parseInt(query.limit) || 4;
       const recommendPlugins = plugins
         .filter(p => p.isOfficial === 1 || p.rating >= 4.8)
@@ -2561,9 +2561,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/market/hot",
+    url: "/plugin/market/hot",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       const limit = parseInt(query.limit) || 4;
       const hotPlugins = [...plugins]
         .sort((a, b) => b.downloadCount - a.downloadCount)
@@ -2572,14 +2572,14 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/market/categories",
+    url: "/plugin/market/categories",
     method: "get",
     response: () => resultSuccess(categories),
   },
   {
-    url: "/mock/plugin/developer/list",
+    url: "/plugin/developer/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       const developerId = parseInt(query.developerId) || 1;
       let list = plugins.filter(p => p.developerId === developerId);
       if (query.status !== undefined && query.status !== '') {
@@ -2597,109 +2597,109 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/developer/add",
+    url: "/plugin/developer/add",
     method: "post",
     response: () => resultSuccess({ id: Date.now() }),
   },
   {
-    url: "/mock/plugin/developer/edit",
+    url: "/plugin/developer/edit",
     method: "put",
     response: () => resultSuccess(null),
   },
   {
-    url: "/mock/plugin/developer/delete",
+    url: "/plugin/developer/delete",
     method: "delete",
     response: () => resultSuccess(null),
   },
   {
-    url: "/mock/plugin/developer/audit",
+    url: "/plugin/developer/audit",
     method: "post",
     response: () => resultSuccess(null),
   },
   {
-    url: "/mock/plugin/developer/stats",
+    url: "/plugin/developer/stats",
     method: "get",
     response: () => resultSuccess(developerStats),
   },
   {
-    url: "/mock/plugin/developer/register",
+    url: "/plugin/developer/register",
     method: "post",
     response: () => resultSuccess({ id: Date.now() }),
   },
   {
-    url: "/mock/plugin/developer/profile",
+    url: "/plugin/developer/profile",
     method: "get",
     response: () => resultSuccess(developers[0]),
   },
   {
-    url: "/mock/plugin/developer/update",
+    url: "/plugin/developer/update",
     method: "put",
     response: () => resultSuccess(null),
   },
   {
-    url: "/mock/plugin/developer/version/add",
+    url: "/plugin/developer/version/add",
     method: "post",
     response: () => resultSuccess({ id: Date.now() }),
   },
   {
-    url: "/mock/plugin/version/list",
+    url: "/plugin/version/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       const pluginId = parseInt(query.pluginId);
       return resultSuccess(versions.filter(v => v.pluginId === pluginId));
     },
   },
   {
-    url: "/mock/plugin/version/detail",
+    url: "/plugin/version/detail/:id",
     method: "get",
-    response: ({ query }: any) => {
-      const id = parseInt(query.id);
+    response: ({ params }: any) => {
+      const id = parseInt(params.id);
       return resultSuccess(versions.find(v => v.id === id) || null);
     },
   },
   {
-    url: "/mock/plugin/version/latest",
+    url: "/plugin/version/latest",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       const pluginId = parseInt(query.pluginId);
       return resultSuccess(versions.find(v => v.pluginId === pluginId && v.isLatest === 1) || null);
     },
   },
   {
-    url: "/mock/plugin/plan/list",
+    url: "/plugin/plan/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       const pluginId = parseInt(query.pluginId);
       return resultSuccess(plans.filter(p => p.pluginId === pluginId));
     },
   },
   {
-    url: "/mock/plugin/plan/detail",
+    url: "/plugin/plan/detail/:id",
     method: "get",
-    response: ({ query }: any) => {
-      const id = parseInt(query.id);
+    response: ({ params }: any) => {
+      const id = parseInt(params.id);
       return resultSuccess(plans.find(p => p.id === id) || null);
     },
   },
   {
-    url: "/mock/plugin/plan/add",
+    url: "/plugin/plan/add",
     method: "post",
     response: () => resultSuccess({ id: Date.now() }),
   },
   {
-    url: "/mock/plugin/plan/edit",
+    url: "/plugin/plan/edit",
     method: "put",
     response: () => resultSuccess(null),
   },
   {
-    url: "/mock/plugin/plan/delete",
+    url: "/plugin/plan/delete",
     method: "delete",
     response: () => resultSuccess(null),
   },
   {
-    url: "/mock/plugin/cart/list",
+    url: "/plugin/cart/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       const userId = query.userId ? parseInt(query.userId) : 1;
       const items = cartItems.filter(c => c.userId === userId);
       const totalAmount = items.reduce((sum, item) => sum + (item.selected ? item.price : 0), 0);
@@ -2715,7 +2715,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/cart/add",
+    url: "/plugin/cart/add",
     method: "post",
     response: ({ body }: any) => {
       const plugin = plugins.find(p => p.id === body.pluginId);
@@ -2727,17 +2727,17 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/cart/remove",
+    url: "/plugin/cart/remove",
     method: "delete",
     response: () => resultSuccess(null),
   },
   {
-    url: "/mock/plugin/cart/clear",
+    url: "/plugin/cart/clear",
     method: "delete",
     response: () => resultSuccess(null),
   },
   {
-    url: "/mock/plugin/cart/update",
+    url: "/plugin/cart/update",
     method: "put",
     response: ({ body }: any) => {
       const item = cartItems.find(c => c.id === body.id);
@@ -2748,7 +2748,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/order/create",
+    url: "/plugin/order/create",
     method: "post",
     response: ({ body }: any) => {
       const plugin = plugins.find(p => p.id === body.pluginId);
@@ -2775,9 +2775,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/order/list",
+    url: "/plugin/order/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       let list = [...orders];
       if (query.status !== undefined && query.status !== '') {
         list = list.filter(o => o.status === parseInt(query.status));
@@ -2812,10 +2812,10 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/order/detail",
+    url: "/plugin/order/detail/:id",
     method: "get",
-    response: ({ query }: any) => {
-      const id = parseInt(query.id);
+    response: ({ params }: any) => {
+      const id = parseInt(params.id);
       const order = orders.find(o => o.id === id);
       if (order) {
         const license = licenses.find(l => l.orderId === id);
@@ -2830,7 +2830,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/order/cancel",
+    url: "/plugin/order/cancel",
     method: "post",
     response: ({ body }: any) => {
       const id = body.id || body.orderId;
@@ -2844,7 +2844,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/order/pay",
+    url: "/plugin/order/pay",
     method: "post",
     response: ({ body }: any) => {
       const id = body.id || body.orderId;
@@ -2862,7 +2862,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/order/payCallback",
+    url: "/plugin/order/payCallback",
     method: "post",
     response: ({ body }: any) => {
       const order = orders.find(o => o.id === body.orderId);
@@ -2882,9 +2882,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/subscription/list",
+    url: "/plugin/subscription/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       let list = [...subscriptions];
       if (query.status !== undefined && query.status !== '') {
         list = list.filter(s => s.status === parseInt(query.status));
@@ -2905,7 +2905,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/subscription/renew",
+    url: "/plugin/subscription/renew",
     method: "post",
     response: ({ body }: any) => {
       const subscription = subscriptions.find(s => s.id === body.subscriptionId);
@@ -2919,7 +2919,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/subscription/cancel",
+    url: "/plugin/subscription/cancel",
     method: "post",
     response: ({ body }: any) => {
       const id = body.id || body.subscriptionId;
@@ -2932,9 +2932,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/license/list",
+    url: "/plugin/license/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       let list = [...licenses];
       if (query.status !== undefined && query.status !== '') {
         list = list.filter(l => l.status === parseInt(query.status));
@@ -2956,10 +2956,10 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/license/detail",
+    url: "/plugin/license/detail/:id",
     method: "get",
-    response: ({ query }: any) => {
-      const id = parseInt(query.id);
+    response: ({ params }: any) => {
+      const id = parseInt(params.id);
       const license = licenses.find(l => l.id === id);
       if (license) {
         const licenseDevices = devices.filter(d => d.licenseId === id);
@@ -2979,7 +2979,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/license/bind",
+    url: "/plugin/license/bind",
     method: "post",
     response: ({ body }: any) => {
       const license = licenses.find(l => l.id === body.licenseId);
@@ -3017,7 +3017,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/license/unbind",
+    url: "/plugin/license/unbind",
     method: "post",
     response: ({ body }: any) => {
       const deviceIndex = devices.findIndex(d => d.licenseId === body.licenseId && d.deviceId === body.deviceId);
@@ -3033,7 +3033,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/license/renew",
+    url: "/plugin/license/renew",
     method: "post",
     response: ({ body }: any) => {
       const license = licenses.find(l => l.id === body.licenseId);
@@ -3052,7 +3052,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/license/revoke",
+    url: "/plugin/license/revoke",
     method: "post",
     response: ({ body }: any) => {
       const license = licenses.find(l => l.id === body.licenseId);
@@ -3065,7 +3065,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/license/verify",
+    url: "/plugin/license/verify",
     method: "post",
     response: ({ body }: any) => {
       const license = licenses.find(l => l.licenseKey === body.licenseKey);
@@ -3120,7 +3120,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/license/heartbeat",
+    url: "/plugin/license/heartbeat",
     method: "post",
     response: ({ body }: any) => {
       const license = licenses.find(l => l.licenseKey === body.licenseKey);
@@ -3144,9 +3144,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/device/list",
+    url: "/plugin/device/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       let list = [...devices];
       if (query.licenseId) {
         list = list.filter(d => d.licenseId === parseInt(query.licenseId));
@@ -3163,7 +3163,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/verify/device/register",
+    url: "/plugin/verify/device/register",
     method: "post",
     response: ({ body }: any) => {
       const license = licenses.find(l => l.id === body.licenseId);
@@ -3205,7 +3205,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/device/unbind",
+    url: "/plugin/device/unbind",
     method: "post",
     response: ({ body }: any) => {
       const deviceIndex = devices.findIndex(d => d.id === body.deviceId);
@@ -3222,7 +3222,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/verify/code/send",
+    url: "/plugin/verify/code/send",
     method: "post",
     response: ({ body }: any) => {
       const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -3241,7 +3241,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/verify/code/check",
+    url: "/plugin/verify/code/check",
     method: "post",
     response: ({ body }: any) => {
       const key = `${body.licenseId}_0`;
@@ -3282,9 +3282,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/verify/obfuscation/config",
+    url: "/plugin/verify/obfuscation/config",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       const plugin = plugins.find(p => p.id === parseInt(query.pluginId));
       if (plugin) {
         return resultSuccess({
@@ -3314,7 +3314,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/card/generate",
+    url: "/plugin/card/generate",
     method: "post",
     response: ({ body }: any) => {
       const batchNo = `BATCH${Date.now()}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
@@ -3330,9 +3330,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/card/batch/list",
+    url: "/plugin/card/batch/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       let list = [...cardBatches];
       if (query.pluginId) {
         list = list.filter(b => b.pluginId === parseInt(query.pluginId));
@@ -3352,10 +3352,10 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/card/batch/detail",
+    url: "/plugin/card/batch/detail/:id",
     method: "get",
-    response: ({ query }: any) => {
-      const id = parseInt(query.id);
+    response: ({ params }: any) => {
+      const id = parseInt(params.id);
       const batch = cardBatches.find(b => b.id === id);
       if (batch) {
         const batchCards = cards.filter(c => c.batchId === id);
@@ -3375,9 +3375,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/card/list",
+    url: "/plugin/card/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       let list = [...cards];
       if (query.batchId) {
         list = list.filter(c => c.batchId === parseInt(query.batchId));
@@ -3403,7 +3403,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/card/redeem",
+    url: "/plugin/card/redeem",
     method: "post",
     response: ({ body }: any) => {
       const card = cards.find(c => c.cardNo === body.cardNo && c.cardPwd === body.cardPwd);
@@ -3441,7 +3441,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/card/freeze",
+    url: "/plugin/card/freeze",
     method: "post",
     response: ({ body }: any) => {
       const card = cards.find(c => c.id === body.cardId);
@@ -3454,7 +3454,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/card/unfreeze",
+    url: "/plugin/card/unfreeze",
     method: "post",
     response: ({ body }: any) => {
       const card = cards.find(c => c.id === body.cardId);
@@ -3467,9 +3467,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/card/batch/export",
+    url: "/plugin/card/batch/export",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       const batch = cardBatches.find(b => b.id === parseInt(query.batchId));
       if (batch) {
         const batchCards = cards.filter(c => c.batchId === batch.id);
@@ -3489,9 +3489,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/review/list",
+    url: "/plugin/review/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       let list = [...reviews];
       if (query.pluginId) {
         list = list.filter(r => r.pluginId === parseInt(query.pluginId));
@@ -3511,12 +3511,12 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/review/add",
+    url: "/plugin/review/add",
     method: "post",
     response: () => resultSuccess({ id: Date.now() }),
   },
   {
-    url: "/mock/plugin/review/helpful",
+    url: "/plugin/review/helpful",
     method: "post",
     response: ({ body }: any) => {
       const review = reviews.find(r => r.id === body.reviewId);
@@ -3528,7 +3528,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/review/reply",
+    url: "/plugin/review/reply",
     method: "post",
     response: ({ body }: any) => {
       const review = reviews.find(r => r.id === body.reviewId);
@@ -3541,7 +3541,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/developer/income/overview",
+    url: "/plugin/developer/income/overview",
     method: "get",
     response: () => resultSuccess({
       totalIncome: 125680.50,
@@ -3568,9 +3568,9 @@ const mockPluginMarket: MockMethod[] = [
     }),
   },
   {
-    url: "/mock/plugin/developer/income/list",
+    url: "/plugin/developer/income/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       const list = [
         { id: 1, type: 1, typeName: '插件销售', amount: 299, pluginName: '智能优惠券', orderNo: 'PLM20260325001', status: 1, createdAt: '2024-03-25T10:00:00Z' },
         { id: 2, type: 1, typeName: '插件销售', amount: 399, pluginName: '数据统计分析', orderNo: 'PLM20260325002', status: 1, createdAt: '2024-03-25T09:30:00Z' },
@@ -3590,7 +3590,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/developer/withdraw/apply",
+    url: "/plugin/developer/withdraw/apply",
     method: "post",
     response: ({ body }: any) => {
       return resultSuccess({
@@ -3605,9 +3605,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/developer/withdraw/list",
+    url: "/plugin/developer/withdraw/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       let list = [...withdrawRecords];
       const pageNum = parseInt(query.pageNum) || 1;
       const pageSize = parseInt(query.pageSize) || 10;
@@ -3621,15 +3621,15 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/developer/withdraw/detail",
+    url: "/plugin/developer/withdraw/detail/:id",
     method: "get",
-    response: ({ query }: any) => {
-      const record = withdrawRecords.find(r => r.id === parseInt(query.id));
+    response: ({ params }: any) => {
+      const record = withdrawRecords.find(r => r.id === parseInt(params.id));
       return resultSuccess(record || null);
     },
   },
   {
-    url: "/mock/plugin/developer/bank/info",
+    url: "/plugin/developer/bank/info",
     method: "get",
     response: () => resultSuccess({
       bankName: '招商银行',
@@ -3642,12 +3642,12 @@ const mockPluginMarket: MockMethod[] = [
     }),
   },
   {
-    url: "/mock/plugin/developer/bank/update",
+    url: "/plugin/developer/bank/update",
     method: "post",
     response: () => resultSuccess({ message: '银行账户信息已更新' }),
   },
   {
-    url: "/mock/plugin/admin/overview",
+    url: "/plugin/admin/overview",
     method: "get",
     response: () => resultSuccess({
       totalPlugins: 156,
@@ -3681,9 +3681,9 @@ const mockPluginMarket: MockMethod[] = [
     }),
   },
   {
-    url: "/mock/plugin/admin/plugin/list",
+    url: "/plugin/admin/plugin/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       let list = [...plugins];
       if (query.status !== undefined && query.status !== '') {
         list = list.filter(p => p.status === parseInt(query.status));
@@ -3710,7 +3710,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/admin/plugin/audit",
+    url: "/plugin/admin/plugin/audit",
     method: "post",
     response: ({ body }: any) => {
       const plugin = plugins.find(p => p.id === body.pluginId);
@@ -3723,7 +3723,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/admin/plugin/offline",
+    url: "/plugin/admin/plugin/offline",
     method: "post",
     response: ({ body }: any) => {
       const plugin = plugins.find(p => p.id === body.pluginId);
@@ -3736,9 +3736,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/admin/developer/list",
+    url: "/plugin/admin/developer/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       let list = [...developers];
       if (query.status !== undefined && query.status !== '') {
         list = list.filter(d => d.status === parseInt(query.status));
@@ -3765,7 +3765,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/admin/developer/verify",
+    url: "/plugin/admin/developer/verify",
     method: "post",
     response: ({ body }: any) => {
       const developer = developers.find(d => d.id === body.developerId);
@@ -3778,9 +3778,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/admin/order/list",
+    url: "/plugin/admin/order/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       let list = [...orders];
       if (query.status !== undefined && query.status !== '') {
         list = list.filter(o => o.status === parseInt(query.status));
@@ -3806,7 +3806,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/admin/order/refund",
+    url: "/plugin/admin/order/refund",
     method: "post",
     response: ({ body }: any) => {
       const order = orders.find(o => o.id === body.orderId);
@@ -3819,9 +3819,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/admin/statistics/sales",
+    url: "/plugin/admin/statistics/sales",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       const days = parseInt(query.days) || 7;
       const data = [];
       for (let i = days - 1; i >= 0; i--) {
@@ -3847,7 +3847,7 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/admin/statistics/plugins",
+    url: "/plugin/admin/statistics/plugins",
     method: "get",
     response: () => resultSuccess({
       topDownloads: plugins.slice(0, 10).map(p => ({
@@ -3874,7 +3874,7 @@ const mockPluginMarket: MockMethod[] = [
     }),
   },
   {
-    url: "/mock/plugin/admin/statistics/developers",
+    url: "/plugin/admin/statistics/developers",
     method: "get",
     response: () => resultSuccess({
       topDevelopers: developers.slice(0, 10).map(d => ({
@@ -3892,7 +3892,7 @@ const mockPluginMarket: MockMethod[] = [
     }),
   },
   {
-    url: "/mock/plugin/admin/report/generate",
+    url: "/plugin/admin/report/generate",
     method: "post",
     response: ({ body }: any) => {
       return resultSuccess({
@@ -3905,9 +3905,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/admin/report/list",
+    url: "/plugin/admin/report/list",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       const list = [
         { id: 1, reportType: 'sales', reportTypeName: '销售报表', period: '2024-03', status: 1, statusName: '已完成', fileUrl: '/reports/sales_202403.xlsx', createdAt: '2024-03-25T10:00:00Z' },
         { id: 2, reportType: 'plugin', reportTypeName: '插件报表', period: '2024-03', status: 1, statusName: '已完成', fileUrl: '/reports/plugin_202403.xlsx', createdAt: '2024-03-24T15:00:00Z' },
@@ -3925,9 +3925,9 @@ const mockPluginMarket: MockMethod[] = [
     },
   },
   {
-    url: "/mock/plugin/admin/report/download",
+    url: "/plugin/admin/report/download",
     method: "get",
-    response: ({ query }: any) => {
+    response: ({ params }: any) => {
       return resultSuccess({
         downloadUrl: `/reports/report_${query.reportId}.xlsx`,
         fileName: `report_${query.reportId}.xlsx`,
