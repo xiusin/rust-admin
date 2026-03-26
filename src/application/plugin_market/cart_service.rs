@@ -5,7 +5,6 @@ use crate::domain::entity::p_plan::Entity as PlanEntity;
 use crate::common::error::Error;
 use crate::infrastructure::db::DB;
 use sea_orm::*;
-use serde::Deserialize;
 use crate::domain::model::m_cart::*;
 
 pub async fn list(user_id: i64) -> Result<Vec<CartItem>, Error> {

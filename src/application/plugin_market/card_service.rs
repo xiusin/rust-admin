@@ -11,7 +11,7 @@ use sea_orm::prelude::Expr;
 use chrono::{Duration, Utc};
 use md5;
 use rand::Rng;
-use serde::Deserialize;
+use serde::Serialize;
 
 const CARD_CHARSET: &[u8] = b"ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 
