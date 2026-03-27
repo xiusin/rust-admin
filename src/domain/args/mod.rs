@@ -42,3 +42,13 @@ pub mod a_plugin;
 pub mod a_order;
 pub mod a_license;
 pub mod a_card;
+
+// CMS Args
+pub mod a_cms_model;
+pub mod a_cms_field;
+pub mod a_cms_content;
+pub mod a_cms_category;
+pub mod a_cms_tag;
+pub mod a_form_config;
+pub mod a_table_config;
+pub mod a_code_gen;

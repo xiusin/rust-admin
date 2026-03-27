@@ -1,0 +1,64 @@
+import request from '@/utils/request';
+import type { ApiResponse, PageResult } from '@/types';
+
+export interface {{ model_name_pascal }}Item {
+  id: number;
+  {% for field in api_fields %}
+  {{ field.code }}: {{ field.ts_type }}{% if not field.is_required %}?{% endif %};
+  {% endfor %}
+  createdAt?: string;
+}
+
+export interface {{ model_name_pascal }}Detail {
+  id: number;
+  {% for field in api_fields %}
+  {{ field.code }}: {{ field.ts_type }}{% if not field.is_required %}?{% endif %};
+  {% endfor %}
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface {{ model_name_pascal }}AddReq {
+  {% for field in api_fields %}
+  {{ field.code }}: {{ field.ts_type }}{% if not field.is_required %}?{% endif %};
+  {% endfor %}
+}
+
+export interface {{ model_name_pascal }}EditReq {
+  id: number;
+  {% for field in api_fields %}
+  {{ field.code }}?: {{ field.ts_type }};
+  {% endfor %}
+}
+
+export interface {{ model_name_pascal }}ListReq {
+  pageNum: number;
+  pageSize: number;
+  {% for field in api_fields %}
+  {{ field.code }}?: {{ field.ts_type }};
+  {% endfor %}
+}
+
+export function get{{ model_name_pascal }}List(params: {{ model_name_pascal }}ListReq): Promise<ApiResponse<PageResult<{{ model_name_pascal }}Item>>> {
+  return request.get('/cms/{{ model_code_kebab }}/list', { params });
+}
+
+export function get{{ model_name_pascal }}Detail(id: number): Promise<ApiResponse<{{ model_name_pascal }}Detail>> {
+  return request.get('/cms/{{ model_code_kebab }}/detail', { params: { id } });
+}
+
+export function add{{ model_name_pascal }}(data: {{ model_name_pascal }}AddReq): Promise<ApiResponse<number>> {
+  return request.post('/cms/{{ model_code_kebab }}/add', data);
+}
+
+export function edit{{ model_name_pascal }}(data: {{ model_name_pascal }}EditReq): Promise<ApiResponse<string>> {
+  return request.put('/cms/{{ model_code_kebab }}/edit', data);
+}
+
+export function delete{{ model_name_pascal }}(id: number): Promise<ApiResponse<string>> {
+  return request.delete('/cms/{{ model_code_kebab }}/delete', { data: { id } });
+}
+
+export function batchDelete{{ model_name_pascal }}(ids: number[]): Promise<ApiResponse<string>> {
+  return request.delete('/cms/{{ model_code_kebab }}/batch-delete', { data: { ids } });
+}

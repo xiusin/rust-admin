@@ -42,9 +42,172 @@ export const staticRoutes = [
     path: "/layout",
     name: "layout",
     redirect: HOME_PATH,
-    component: Layout, // 容器布局-顶层路由
-    // 二级路由-主要渲染页面
-    children: []
+    component: Layout,
+    children: [
+      {
+        path: "/cms",
+        name: "cms",
+        redirect: "/cms/model/list",
+        meta: {
+          title: "cms",
+          icon: "icon-apps"
+        },
+        children: [
+          {
+            path: "/cms/model",
+            name: "cms-model",
+            redirect: "/cms/model/list",
+            meta: {
+              title: "cms-model",
+              icon: "icon-apps"
+            }
+          },
+          {
+            path: "/cms/model/list",
+            name: "cms-model-list",
+            component: () => import("@/views/cms/model/list.vue"),
+            meta: {
+              title: "cms-model-list",
+              icon: "icon-list"
+            }
+          },
+          {
+            path: "/cms/model/design",
+            name: "cms-model-design",
+            component: () => import("@/views/cms/model/design.vue"),
+            meta: {
+              title: "cms-model-design",
+              hide: true
+            }
+          },
+          {
+            path: "/cms/content",
+            name: "cms-content",
+            redirect: "/cms/model/list",
+            meta: {
+              title: "cms-content",
+              icon: "icon-file"
+            }
+          },
+          {
+            path: "/cms/content/list",
+            name: "cms-content-list",
+            component: () => import("@/views/cms/content/list.vue"),
+            meta: {
+              title: "cms-content-list",
+              hide: true
+            }
+          },
+          {
+            path: "/cms/content/form",
+            name: "cms-content-form",
+            component: () => import("@/views/cms/content/form.vue"),
+            meta: {
+              title: "cms-content-form",
+              hide: true
+            }
+          },
+          {
+            path: "/cms/content/detail",
+            name: "cms-content-detail",
+            component: () => import("@/views/cms/content/detail.vue"),
+            meta: {
+              title: "cms-content-detail",
+              hide: true
+            }
+          },
+          {
+            path: "/cms/content/recycle",
+            name: "cms-content-recycle",
+            component: () => import("@/views/cms/content/recycle.vue"),
+            meta: {
+              title: "cms-content-recycle",
+              hide: true
+            }
+          },
+          {
+            path: "/cms/category",
+            name: "cms-category",
+            component: () => import("@/views/cms/category/list.vue"),
+            meta: {
+              title: "cms-category",
+              icon: "icon-folder"
+            }
+          },
+          {
+            path: "/cms/tag",
+            name: "cms-tag",
+            component: () => import("@/views/cms/tag/list.vue"),
+            meta: {
+              title: "cms-tag",
+              icon: "icon-tag"
+            }
+          },
+          {
+            path: "/cms/form-config",
+            name: "cms-form-config",
+            component: () => import("@/views/cms/form-config/list.vue"),
+            meta: {
+              title: "cms-form-config",
+              icon: "icon-form"
+            }
+          },
+          {
+            path: "/cms/form-config/builder",
+            name: "cms-form-config-builder",
+            component: () => import("@/views/cms/form-config/builder.vue"),
+            meta: {
+              title: "cms-form-config-builder",
+              hide: true
+            }
+          },
+          {
+            path: "/cms/table-config",
+            name: "cms-table-config",
+            component: () => import("@/views/cms/table-config/list.vue"),
+            meta: {
+              title: "cms-table-config",
+              icon: "icon-table"
+            }
+          },
+          {
+            path: "/cms/table-config/builder",
+            name: "cms-table-config-builder",
+            component: () => import("@/views/cms/table-config/builder.vue"),
+            meta: {
+              title: "cms-table-config-builder",
+              hide: true
+            }
+          },
+          {
+            path: "/cms/code-gen",
+            name: "cms-code-gen",
+            redirect: "/cms/code-gen/index",
+            meta: {
+              title: "cms-code-gen",
+              icon: "icon-code"
+            }
+          },
+          {
+            path: "/cms/code-gen/index",
+            name: "cms-code-gen-index",
+            component: () => import("@/views/cms/code-gen/index.vue"),
+            meta: {
+              title: "cms-code-gen-index"
+            }
+          },
+          {
+            path: "/cms/code-gen/preview",
+            name: "cms-code-gen-preview",
+            component: () => import("@/views/cms/code-gen/preview.vue"),
+            meta: {
+              title: "cms-code-gen-preview",
+              hide: true
+            }
+          }
+        ]
+      }
+    ]
   }
   /**
    * 提示：写在这里的为全屏界面，不建议写在这里非全屏界面，请写在 layout.children 路由数组中
@@ -61,7 +224,7 @@ export const staticRoutes = [
  */
 export const notFoundAndNoPower = [
   {
-    path: "/401", // 无权限，跳转401
+    path: "/401",
     name: "no-access",
     component: () => import("@/views/error/401.vue"),
     meta: {
@@ -70,7 +233,7 @@ export const notFoundAndNoPower = [
     }
   },
   {
-    path: "/500", // 无网络-浏览器离线
+    path: "/500",
     name: "no-network",
     component: () => import("@/views/error/500.vue"),
     meta: {
@@ -79,7 +242,7 @@ export const notFoundAndNoPower = [
     }
   },
   {
-    path: "/:path(.*)*", // 匹配任意路由，兜底，未找到页面的时候跳转该页面
+    path: "/:path(.*)*",
     name: "not-found",
     component: () => import("@/views/error/404.vue"),
     meta: {

@@ -72,7 +72,7 @@ impl WebPath {
     fn convert_path_params(path: &str) -> String {
         // Axum 0.8+ 要求使用 {id} 而不是 :id 作为路径参数
         // 使用正则表达式匹配所有 :param_name 格式并转换为 {param_name}
-        let mut result = path.to_string();
+        let result = path.to_string();
         
         // 匹配所有以冒号开头的路径参数，如 :id, :product_id 等
         // 使用简单的状态机来解析

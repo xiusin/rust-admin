@@ -1,0 +1,204 @@
+<template>
+  <el-dialog
+    v-model="visible"
+    :title="title"
+    width="600px"
+    :close-on-click-modal="false"
+    @close="handleClose"
+  >
+    <el-form
+      ref="formRef"
+      :model="formData"
+      :rules="rules"
+      label-width="100px"
+    >
+      {% for field in form_fields %}
+      <el-form-item label="{{ field.name }}" prop="{{ field.code }}">
+        {% if field.field_type == "text" or field.field_type == "input" %}
+        <el-input
+          v-model="formData.{{ field.code }}"
+          placeholder="{{ field.placeholder }}"
+          clearable
+        />
+        {% elif field.field_type == "textarea" %}
+        <el-input
+          v-model="formData.{{ field.code }}"
+          type="textarea"
+          placeholder="{{ field.placeholder }}"
+          :rows="4"
+        />
+        {% elif field.field_type == "number" %}
+        <el-input-number
+          v-model="formData.{{ field.code }}"
+          placeholder="{{ field.placeholder }}"
+          style="width: 100%"
+        />
+        {% elif field.field_type == "select" %}
+        <el-select
+          v-model="formData.{{ field.code }}"
+          placeholder="请选择{{ field.name }}"
+          clearable
+          style="width: 100%"
+        >
+          <el-option label="选项1" value="1" />
+          <el-option label="选项2" value="2" />
+        </el-select>
+        {% elif field.field_type == "date" %}
+        <el-date-picker
+          v-model="formData.{{ field.code }}"
+          type="date"
+          placeholder="请选择{{ field.name }}"
+          style="width: 100%"
+        />
+        {% elif field.field_type == "datetime" %}
+        <el-date-picker
+          v-model="formData.{{ field.code }}"
+          type="datetime"
+          placeholder="请选择{{ field.name }}"
+          style="width: 100%"
+        />
+        {% elif field.field_type == "switch" %}
+        <el-switch v-model="formData.{{ field.code }}" />
+        {% elif field.field_type == "image" %}
+        <el-upload
+          class="avatar-uploader"
+          action="/api/upload"
+          :show-file-list="false"
+        >
+          <img v-if="formData.{{ field.code }}" :src="formData.{{ field.code }}" class="avatar" />
+          <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+        </el-upload>
+        {% else %}
+        <el-input
+          v-model="formData.{{ field.code }}"
+          placeholder="{{ field.placeholder }}"
+          clearable
+        />
+        {% endif %}
+      </el-form-item>
+      {% endfor %}
+    </el-form>
+
+    <template #footer>
+      <el-button @click="handleClose">取消</el-button>
+      <el-button type="primary" :loading="submitLoading" @click="handleSubmit">
+        确定
+      </el-button>
+    </template>
+  </el-dialog>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, computed } from 'vue';
+import { ElMessage } from 'element-plus';
+import { Plus } from '@element-plus/icons-vue';
+import type { FormInstance, FormRules } from 'element-plus';
+import { get{{ model_name_pascal }}Detail, add{{ model_name_pascal }}, edit{{ model_name_pascal }} } from '@/api/cms/{{ model_code_kebab }}';
+
+const emit = defineEmits(['success']);
+
+const visible = ref(false);
+const formRef = ref<FormInstance>();
+const submitLoading = ref(false);
+const isEdit = ref(false);
+const currentId = ref<number>();
+
+const title = computed(() => (isEdit.value ? '编辑{{ model_name }}' : '新增{{ model_name }}'));
+
+const formData = reactive({
+  {% for field in form_fields %}
+  {{ field.code }}: {% if field.field_type == "number" %}0{% elif field.field_type == "switch" %}false{% else %}''{% endif %},
+  {% endfor %}
+});
+
+const rules = reactive<FormRules>({
+  {% for field in form_fields %}
+  {% if field.is_required %}
+  {{ field.code }}: [{ required: true, message: '请输入{{ field.name }}', trigger: 'blur' }],
+  {% endif %}
+  {% endfor %}
+});
+
+const resetForm = () => {
+  {% for field in form_fields %}
+  formData.{{ field.code }} = {% if field.field_type == "number" %}0{% elif field.field_type == "switch" %}false{% else %}''{% endif %};
+  {% endfor %}
+};
+
+const open = async (id?: number) => {
+  visible.value = true;
+  isEdit.value = !!id;
+  currentId.value = id;
+
+  if (id) {
+    try {
+      const { data } = await get{{ model_name_pascal }}Detail(id);
+      Object.assign(formData, data);
+    } catch (error) {
+      console.error(error);
+    }
+  } else {
+    resetForm();
+  }
+};
+
+const handleClose = () => {
+  visible.value = false;
+  formRef.value?.resetFields();
+};
+
+const handleSubmit = async () => {
+  const valid = await formRef.value?.validate();
+  if (!valid) return;
+
+  submitLoading.value = true;
+  try {
+    if (isEdit.value && currentId.value) {
+      await edit{{ model_name_pascal }}({ id: currentId.value, ...formData });
+      ElMessage.success('编辑成功');
+    } else {
+      await add{{ model_name_pascal }}(formData);
+      ElMessage.success('新增成功');
+    }
+    emit('success');
+    handleClose();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    submitLoading.value = false;
+  }
+};
+
+defineExpose({ open });
+</script>
+
+<style scoped lang="scss">
+.avatar-uploader {
+  :deep(.el-upload) {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+      border-color: #409eff;
+    }
+  }
+}
+
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 100px;
+  height: 100px;
+  text-align: center;
+  line-height: 100px;
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  display: block;
+}
+</style>

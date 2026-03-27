@@ -7,6 +7,7 @@ import fileModule from "./file/index";
 import tableModule from "./table/index";
 import monitorModule from "./monitor/index";
 import pluginMarketModule from "./plugin-market/index";
+import cmsModule from "./cms/index";
 
 export function setupProdMockServer() {
   createProdMockServer([
@@ -17,5 +18,6 @@ export function setupProdMockServer() {
     ...tableModule,
     ...monitorModule,
     ...pluginMarketModule,
+    ...cmsModule,
   ]);
 }

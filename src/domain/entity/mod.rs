@@ -94,3 +94,15 @@ pub mod p_card;
 pub mod p_card_batch;
 pub mod p_developer;
 pub mod p_verification_code;
+
+// CMS Entities
+pub mod cms_model;
+pub mod cms_field;
+pub mod cms_content;
+pub mod cms_content_tag;
+pub mod cms_content_version;
+pub mod cms_category;
+pub mod cms_tag;
+pub mod cms_form_config;
+pub mod cms_table_config;
+pub mod cms_code_gen;

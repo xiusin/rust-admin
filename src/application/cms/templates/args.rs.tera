@@ -1,0 +1,44 @@
+use crate::model::prelude::*;
+
+#[derive(Debug, Deserialize, Serialize, Clone, Validate)]
+pub struct {{ model_name }}AddReq {
+    {% for field in fields %}
+    {% if field.is_required %}
+    #[validate({{ field.validation }})]
+    {% endif %}
+    pub {{ field.code }}: {{ field.rust_type }},
+    {% endfor %}
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, Validate)]
+pub struct {{ model_name }}EditReq {
+    pub id: i64,
+    {% for field in fields %}
+    pub {{ field.code }}: Option<{{ field.rust_type }}>,
+    {% endfor %}
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, Default)]
+pub struct {{ model_name }}ListReq {
+    {% for field in fields %}
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub {{ field.code }}: Option<{{ field.rust_type }}>,
+    {% endfor %}
+    #[serde(default = "default_page_num")]
+    pub page_num: u32,
+    #[serde(default = "default_page_size")]
+    pub page_size: u32,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, Validate)]
+pub struct {{ model_name }}IdReq {
+    pub id: i64,
+}
+
+fn default_page_num() -> u32 {
+    1
+}
+
+fn default_page_size() -> u32 {
+    10
+}

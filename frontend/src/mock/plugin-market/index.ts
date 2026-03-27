@@ -2444,43 +2444,43 @@ const mockPluginMarket: MockMethod[] = [
     method: "get",
     response: ({ params }: any) => {
       let list = [...plugins];
-      if (query.categoryId) {
-        const catId = parseInt(query.categoryId);
+      if (params.categoryId) {
+        const catId = parseInt(params.categoryId);
         list = list.filter(p => p.categoryId === catId || p.parentCategoryName === categories.find(c => c.id === catId)?.name);
       }
-      if (query.keyword) {
-        const keyword = query.keyword.toLowerCase();
+      if (params.keyword) {
+        const keyword = params.keyword.toLowerCase();
         list = list.filter(p => 
           p.name.toLowerCase().includes(keyword) || 
           p.summary.toLowerCase().includes(keyword) ||
           p.tags.some((t: string) => t.toLowerCase().includes(keyword))
         );
       }
-      if (query.priceType !== undefined && query.priceType !== '') {
-        list = list.filter(p => p.priceType === parseInt(query.priceType));
+      if (params.priceType !== undefined && params.priceType !== '') {
+        list = list.filter(p => p.priceType === parseInt(params.priceType));
       }
-      if (query.isOfficial !== undefined && query.isOfficial !== '') {
-        list = list.filter(p => p.isOfficial === parseInt(query.isOfficial));
+      if (params.isOfficial !== undefined && params.isOfficial !== '') {
+        list = list.filter(p => p.isOfficial === parseInt(params.isOfficial));
       }
-      if (query.verifyLevel !== undefined && query.verifyLevel !== '') {
-        list = list.filter(p => p.verifyLevel === parseInt(query.verifyLevel));
+      if (params.verifyLevel !== undefined && params.verifyLevel !== '') {
+        list = list.filter(p => p.verifyLevel === parseInt(params.verifyLevel));
       }
-      if (query.minRating !== undefined && query.minRating !== '') {
-        list = list.filter(p => p.rating >= parseFloat(query.minRating));
+      if (params.minRating !== undefined && params.minRating !== '') {
+        list = list.filter(p => p.rating >= parseFloat(params.minRating));
       }
-      if (query.sortBy === 'download') {
+      if (params.sortBy === 'download') {
         list.sort((a, b) => b.downloadCount - a.downloadCount);
-      } else if (query.sortBy === 'rating') {
+      } else if (params.sortBy === 'rating') {
         list.sort((a, b) => b.rating - a.rating);
-      } else if (query.sortBy === 'price_asc') {
+      } else if (params.sortBy === 'price_asc') {
         list.sort((a, b) => a.price - b.price);
-      } else if (query.sortBy === 'price_desc') {
+      } else if (params.sortBy === 'price_desc') {
         list.sort((a, b) => b.price - a.price);
-      } else if (query.sortBy === 'newest') {
+      } else if (params.sortBy === 'newest') {
         list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       }
-      const pageNum = parseInt(query.pageNum) || 1;
-      const pageSize = parseInt(query.pageSize) || 10;
+      const pageNum = parseInt(params.pageNum) || 1;
+      const pageSize = parseInt(params.pageSize) || 10;
       const start = (pageNum - 1) * pageSize;
       const pagedList = list.slice(start, start + pageSize);
       return resultSuccess({
@@ -2530,15 +2530,15 @@ const mockPluginMarket: MockMethod[] = [
     url: "/plugin/market/search",
     method: "get",
     response: ({ params }: any) => {
-      const keyword = (query.keyword || '').toLowerCase();
+      const keyword = (params.keyword || '').toLowerCase();
       const list = plugins.filter(p => 
         p.name.toLowerCase().includes(keyword) || 
         p.summary.toLowerCase().includes(keyword) ||
         p.tags.some((t: string) => t.toLowerCase().includes(keyword)) ||
         p.developerName.toLowerCase().includes(keyword)
       );
-      const pageNum = parseInt(query.pageNum) || 1;
-      const pageSize = parseInt(query.pageSize) || 10;
+      const pageNum = parseInt(params.pageNum) || 1;
+      const pageSize = parseInt(params.pageSize) || 10;
       const start = (pageNum - 1) * pageSize;
       return resultSuccess({
         list: list.slice(start, start + pageSize),
@@ -2553,7 +2553,7 @@ const mockPluginMarket: MockMethod[] = [
     url: "/plugin/market/recommend",
     method: "get",
     response: ({ params }: any) => {
-      const limit = parseInt(query.limit) || 4;
+      const limit = parseInt(params.limit) || 4;
       const recommendPlugins = plugins
         .filter(p => p.isOfficial === 1 || p.rating >= 4.8)
         .slice(0, limit);
@@ -2564,7 +2564,7 @@ const mockPluginMarket: MockMethod[] = [
     url: "/plugin/market/hot",
     method: "get",
     response: ({ params }: any) => {
-      const limit = parseInt(query.limit) || 4;
+      const limit = parseInt(params.limit) || 4;
       const hotPlugins = [...plugins]
         .sort((a, b) => b.downloadCount - a.downloadCount)
         .slice(0, limit);
@@ -2580,13 +2580,13 @@ const mockPluginMarket: MockMethod[] = [
     url: "/plugin/developer/list",
     method: "get",
     response: ({ params }: any) => {
-      const developerId = parseInt(query.developerId) || 1;
+      const developerId = parseInt(params.developerId) || 1;
       let list = plugins.filter(p => p.developerId === developerId);
-      if (query.status !== undefined && query.status !== '') {
-        list = list.filter(p => p.status === parseInt(query.status));
+      if (params.status !== undefined && params.status !== '') {
+        list = list.filter(p => p.status === parseInt(params.status));
       }
-      const pageNum = parseInt(query.pageNum) || 1;
-      const pageSize = parseInt(query.pageSize) || 10;
+      const pageNum = parseInt(params.pageNum) || 1;
+      const pageSize = parseInt(params.pageSize) || 10;
       const start = (pageNum - 1) * pageSize;
       return resultSuccess({
         list: list.slice(start, start + pageSize),
@@ -2645,7 +2645,7 @@ const mockPluginMarket: MockMethod[] = [
     url: "/plugin/version/list",
     method: "get",
     response: ({ params }: any) => {
-      const pluginId = parseInt(query.pluginId);
+      const pluginId = parseInt(params.pluginId);
       return resultSuccess(versions.filter(v => v.pluginId === pluginId));
     },
   },
@@ -2661,7 +2661,7 @@ const mockPluginMarket: MockMethod[] = [
     url: "/plugin/version/latest",
     method: "get",
     response: ({ params }: any) => {
-      const pluginId = parseInt(query.pluginId);
+      const pluginId = parseInt(params.pluginId);
       return resultSuccess(versions.find(v => v.pluginId === pluginId && v.isLatest === 1) || null);
     },
   },
@@ -2669,7 +2669,7 @@ const mockPluginMarket: MockMethod[] = [
     url: "/plugin/plan/list",
     method: "get",
     response: ({ params }: any) => {
-      const pluginId = parseInt(query.pluginId);
+      const pluginId = parseInt(params.pluginId);
       return resultSuccess(plans.filter(p => p.pluginId === pluginId));
     },
   },
@@ -2700,7 +2700,7 @@ const mockPluginMarket: MockMethod[] = [
     url: "/plugin/cart/list",
     method: "get",
     response: ({ params }: any) => {
-      const userId = query.userId ? parseInt(query.userId) : 1;
+      const userId = params.userId ? parseInt(params.userId) : 1;
       const items = cartItems.filter(c => c.userId === userId);
       const totalAmount = items.reduce((sum, item) => sum + (item.selected ? item.price : 0), 0);
       const totalOriginalAmount = items.reduce((sum, item) => sum + (item.selected ? item.originalPrice : 0), 0);
@@ -2779,23 +2779,23 @@ const mockPluginMarket: MockMethod[] = [
     method: "get",
     response: ({ params }: any) => {
       let list = [...orders];
-      if (query.status !== undefined && query.status !== '') {
-        list = list.filter(o => o.status === parseInt(query.status));
+      if (params.status !== undefined && params.status !== '') {
+        list = list.filter(o => o.status === parseInt(params.status));
       }
-      if (query.pluginId) {
-        list = list.filter(o => o.pluginId === parseInt(query.pluginId));
+      if (params.pluginId) {
+        list = list.filter(o => o.pluginId === parseInt(params.pluginId));
       }
-      if (query.orderNo) {
-        list = list.filter(o => o.orderNo.includes(query.orderNo));
+      if (params.orderNo) {
+        list = list.filter(o => o.orderNo.includes(params.orderNo));
       }
-      if (query.startDate) {
-        list = list.filter(o => new Date(o.createdAt) >= new Date(query.startDate));
+      if (params.startDate) {
+        list = list.filter(o => new Date(o.createdAt) >= new Date(params.startDate));
       }
-      if (query.endDate) {
-        list = list.filter(o => new Date(o.createdAt) <= new Date(query.endDate));
+      if (params.endDate) {
+        list = list.filter(o => new Date(o.createdAt) <= new Date(params.endDate));
       }
-      const pageNum = parseInt(query.pageNum) || 1;
-      const pageSize = parseInt(query.pageSize) || 10;
+      const pageNum = parseInt(params.pageNum) || 1;
+      const pageSize = parseInt(params.pageSize) || 10;
       const start = (pageNum - 1) * pageSize;
       return resultSuccess({
         list: list.slice(start, start + pageSize),
@@ -2886,14 +2886,14 @@ const mockPluginMarket: MockMethod[] = [
     method: "get",
     response: ({ params }: any) => {
       let list = [...subscriptions];
-      if (query.status !== undefined && query.status !== '') {
-        list = list.filter(s => s.status === parseInt(query.status));
+      if (params.status !== undefined && params.status !== '') {
+        list = list.filter(s => s.status === parseInt(params.status));
       }
-      if (query.pluginId) {
-        list = list.filter(s => s.pluginId === parseInt(query.pluginId));
+      if (params.pluginId) {
+        list = list.filter(s => s.pluginId === parseInt(params.pluginId));
       }
-      const pageNum = parseInt(query.pageNum) || 1;
-      const pageSize = parseInt(query.pageSize) || 10;
+      const pageNum = parseInt(params.pageNum) || 1;
+      const pageSize = parseInt(params.pageSize) || 10;
       const start = (pageNum - 1) * pageSize;
       return resultSuccess({
         list: list.slice(start, start + pageSize),
@@ -2909,7 +2909,7 @@ const mockPluginMarket: MockMethod[] = [
     method: "post",
     response: ({ body }: any) => {
       const subscription = subscriptions.find(s => s.id === body.subscriptionId);
-      if (subscription) {
+      if (subscription && subscription.endTime) {
         return resultSuccess({
           success: true,
           newEndTime: new Date(new Date(subscription.endTime).getTime() + body.extendDays * 24 * 60 * 60 * 1000).toISOString(),
@@ -2936,14 +2936,14 @@ const mockPluginMarket: MockMethod[] = [
     method: "get",
     response: ({ params }: any) => {
       let list = [...licenses];
-      if (query.status !== undefined && query.status !== '') {
-        list = list.filter(l => l.status === parseInt(query.status));
+      if (params.status !== undefined && params.status !== '') {
+        list = list.filter(l => l.status === parseInt(params.status));
       }
-      if (query.pluginId) {
-        list = list.filter(l => l.pluginId === parseInt(query.pluginId));
+      if (params.pluginId) {
+        list = list.filter(l => l.pluginId === parseInt(params.pluginId));
       }
-      const pageNum = parseInt(query.pageNum) || 1;
-      const pageSize = parseInt(query.pageSize) || 10;
+      const pageNum = parseInt(params.pageNum) || 1;
+      const pageSize = parseInt(params.pageSize) || 10;
       const start = (pageNum - 1) * pageSize;
       return resultSuccess({
         list: list.slice(start, start + pageSize),
@@ -3037,7 +3037,7 @@ const mockPluginMarket: MockMethod[] = [
     method: "post",
     response: ({ body }: any) => {
       const license = licenses.find(l => l.id === body.licenseId);
-      if (license) {
+      if (license && license.endTime) {
         const newEndTime = new Date(new Date(license.endTime).getTime() + body.extendDays * 24 * 60 * 60 * 1000);
         license.endTime = newEndTime.toISOString();
         license.isExpired = false;
@@ -3148,11 +3148,11 @@ const mockPluginMarket: MockMethod[] = [
     method: "get",
     response: ({ params }: any) => {
       let list = [...devices];
-      if (query.licenseId) {
-        list = list.filter(d => d.licenseId === parseInt(query.licenseId));
+      if (params.licenseId) {
+        list = list.filter(d => d.licenseId === parseInt(params.licenseId));
       }
-      if (query.status !== undefined && query.status !== '') {
-        list = list.filter(d => d.status === parseInt(query.status));
+      if (params.status !== undefined && params.status !== '') {
+        list = list.filter(d => d.status === parseInt(params.status));
       }
       return resultSuccess({
         list,
@@ -3285,7 +3285,7 @@ const mockPluginMarket: MockMethod[] = [
     url: "/plugin/verify/obfuscation/config",
     method: "get",
     response: ({ params }: any) => {
-      const plugin = plugins.find(p => p.id === parseInt(query.pluginId));
+      const plugin = plugins.find(p => p.id === parseInt(params.pluginId));
       if (plugin) {
         return resultSuccess({
           enabled: plugin.verifyLevel > 0,
@@ -3334,14 +3334,14 @@ const mockPluginMarket: MockMethod[] = [
     method: "get",
     response: ({ params }: any) => {
       let list = [...cardBatches];
-      if (query.pluginId) {
-        list = list.filter(b => b.pluginId === parseInt(query.pluginId));
+      if (params.pluginId) {
+        list = list.filter(b => b.pluginId === parseInt(params.pluginId));
       }
-      if (query.status !== undefined && query.status !== '') {
-        list = list.filter(b => b.status === parseInt(query.status));
+      if (params.status !== undefined && params.status !== '') {
+        list = list.filter(b => b.status === parseInt(params.status));
       }
-      const pageNum = parseInt(query.pageNum) || 1;
-      const pageSize = parseInt(query.pageSize) || 10;
+      const pageNum = parseInt(params.pageNum) || 1;
+      const pageSize = parseInt(params.pageSize) || 10;
       const start = (pageNum - 1) * pageSize;
       return resultSuccess({
         list: list.slice(start, start + pageSize),
@@ -3379,20 +3379,20 @@ const mockPluginMarket: MockMethod[] = [
     method: "get",
     response: ({ params }: any) => {
       let list = [...cards];
-      if (query.batchId) {
-        list = list.filter(c => c.batchId === parseInt(query.batchId));
+      if (params.batchId) {
+        list = list.filter(c => c.batchId === parseInt(params.batchId));
       }
-      if (query.pluginId) {
-        list = list.filter(c => c.pluginId === parseInt(query.pluginId));
+      if (params.pluginId) {
+        list = list.filter(c => c.pluginId === parseInt(params.pluginId));
       }
-      if (query.status !== undefined && query.status !== '') {
-        list = list.filter(c => c.status === parseInt(query.status));
+      if (params.status !== undefined && params.status !== '') {
+        list = list.filter(c => c.status === parseInt(params.status));
       }
-      if (query.cardNo) {
-        list = list.filter(c => c.cardNo.includes(query.cardNo));
+      if (params.cardNo) {
+        list = list.filter(c => c.cardNo.includes(params.cardNo));
       }
-      const pageNum = parseInt(query.pageNum) || 1;
-      const pageSize = parseInt(query.pageSize) || 10;
+      const pageNum = parseInt(params.pageNum) || 1;
+      const pageSize = parseInt(params.pageSize) || 10;
       const start = (pageNum - 1) * pageSize;
       return resultSuccess({
         list: list.slice(start, start + pageSize),
@@ -3470,7 +3470,7 @@ const mockPluginMarket: MockMethod[] = [
     url: "/plugin/card/batch/export",
     method: "get",
     response: ({ params }: any) => {
-      const batch = cardBatches.find(b => b.id === parseInt(query.batchId));
+      const batch = cardBatches.find(b => b.id === parseInt(params.batchId));
       if (batch) {
         const batchCards = cards.filter(c => c.batchId === batch.id);
         return resultSuccess({
@@ -3493,14 +3493,14 @@ const mockPluginMarket: MockMethod[] = [
     method: "get",
     response: ({ params }: any) => {
       let list = [...reviews];
-      if (query.pluginId) {
-        list = list.filter(r => r.pluginId === parseInt(query.pluginId));
+      if (params.pluginId) {
+        list = list.filter(r => r.pluginId === parseInt(params.pluginId));
       }
-      if (query.rating) {
-        list = list.filter(r => r.rating === parseInt(query.rating));
+      if (params.rating) {
+        list = list.filter(r => r.rating === parseInt(params.rating));
       }
-      const pageNum = parseInt(query.pageNum) || 1;
-      const pageSize = parseInt(query.pageSize) || 10;
+      const pageNum = parseInt(params.pageNum) || 1;
+      const pageSize = parseInt(params.pageSize) || 10;
       const start = (pageNum - 1) * pageSize;
       return resultSuccess({
         list: list.slice(start, start + pageSize),
@@ -3578,8 +3578,8 @@ const mockPluginMarket: MockMethod[] = [
         { id: 4, type: 2, typeName: '续费收入', amount: 299, pluginName: '智能优惠券', orderNo: 'PLM20260324001', status: 1, createdAt: '2024-03-24T16:00:00Z' },
         { id: 5, type: 3, typeName: '退款扣除', amount: -299, pluginName: '数据统计分析', orderNo: 'PLM20260324002', status: 1, createdAt: '2024-03-24T14:00:00Z' },
       ];
-      const pageNum = parseInt(query.pageNum) || 1;
-      const pageSize = parseInt(query.pageSize) || 10;
+      const pageNum = parseInt(params.pageNum) || 1;
+      const pageSize = parseInt(params.pageSize) || 10;
       const start = (pageNum - 1) * pageSize;
       return resultSuccess({
         list: list.slice(start, start + pageSize),
@@ -3609,8 +3609,8 @@ const mockPluginMarket: MockMethod[] = [
     method: "get",
     response: ({ params }: any) => {
       let list = [...withdrawRecords];
-      const pageNum = parseInt(query.pageNum) || 1;
-      const pageSize = parseInt(query.pageSize) || 10;
+      const pageNum = parseInt(params.pageNum) || 1;
+      const pageSize = parseInt(params.pageSize) || 10;
       const start = (pageNum - 1) * pageSize;
       return resultSuccess({
         list: list.slice(start, start + pageSize),
@@ -3685,21 +3685,21 @@ const mockPluginMarket: MockMethod[] = [
     method: "get",
     response: ({ params }: any) => {
       let list = [...plugins];
-      if (query.status !== undefined && query.status !== '') {
-        list = list.filter(p => p.status === parseInt(query.status));
+      if (params.status !== undefined && params.status !== '') {
+        list = list.filter(p => p.status === parseInt(params.status));
       }
-      if (query.verifyLevel !== undefined && query.verifyLevel !== '') {
-        list = list.filter(p => p.verifyLevel === parseInt(query.verifyLevel));
+      if (params.verifyLevel !== undefined && params.verifyLevel !== '') {
+        list = list.filter(p => p.verifyLevel === parseInt(params.verifyLevel));
       }
-      if (query.keyword) {
-        const keyword = query.keyword.toLowerCase();
+      if (params.keyword) {
+        const keyword = params.keyword.toLowerCase();
         list = list.filter(p => 
           p.name.toLowerCase().includes(keyword) || 
           p.code.toLowerCase().includes(keyword)
         );
       }
-      const pageNum = parseInt(query.pageNum) || 1;
-      const pageSize = parseInt(query.pageSize) || 10;
+      const pageNum = parseInt(params.pageNum) || 1;
+      const pageSize = parseInt(params.pageSize) || 10;
       const start = (pageNum - 1) * pageSize;
       return resultSuccess({
         list: list.slice(start, start + pageSize),
@@ -3740,21 +3740,21 @@ const mockPluginMarket: MockMethod[] = [
     method: "get",
     response: ({ params }: any) => {
       let list = [...developers];
-      if (query.status !== undefined && query.status !== '') {
-        list = list.filter(d => d.status === parseInt(query.status));
+      if (params.status !== undefined && params.status !== '') {
+        list = list.filter(d => d.status === parseInt(params.status));
       }
-      if (query.verified !== undefined && query.verified !== '') {
-        list = list.filter(d => d.verified === (query.verified === 'true' || query.verified === '1'));
+      if (params.verified !== undefined && params.verified !== '') {
+        list = list.filter(d => d.verified === (params.verified === 'true' || params.verified === '1'));
       }
-      if (query.keyword) {
-        const keyword = query.keyword.toLowerCase();
+      if (params.keyword) {
+        const keyword = params.keyword.toLowerCase();
         list = list.filter(d => 
           d.name.toLowerCase().includes(keyword) || 
           d.contact.toLowerCase().includes(keyword)
         );
       }
-      const pageNum = parseInt(query.pageNum) || 1;
-      const pageSize = parseInt(query.pageSize) || 10;
+      const pageNum = parseInt(params.pageNum) || 1;
+      const pageSize = parseInt(params.pageSize) || 10;
       const start = (pageNum - 1) * pageSize;
       return resultSuccess({
         list: list.slice(start, start + pageSize),
@@ -3782,20 +3782,20 @@ const mockPluginMarket: MockMethod[] = [
     method: "get",
     response: ({ params }: any) => {
       let list = [...orders];
-      if (query.status !== undefined && query.status !== '') {
-        list = list.filter(o => o.status === parseInt(query.status));
+      if (params.status !== undefined && params.status !== '') {
+        list = list.filter(o => o.status === parseInt(params.status));
       }
-      if (query.orderNo) {
-        list = list.filter(o => o.orderNo.includes(query.orderNo));
+      if (params.orderNo) {
+        list = list.filter(o => o.orderNo.includes(params.orderNo));
       }
-      if (query.startDate) {
-        list = list.filter(o => new Date(o.createdAt) >= new Date(query.startDate));
+      if (params.startDate) {
+        list = list.filter(o => new Date(o.createdAt) >= new Date(params.startDate));
       }
-      if (query.endDate) {
-        list = list.filter(o => new Date(o.createdAt) <= new Date(query.endDate));
+      if (params.endDate) {
+        list = list.filter(o => new Date(o.createdAt) <= new Date(params.endDate));
       }
-      const pageNum = parseInt(query.pageNum) || 1;
-      const pageSize = parseInt(query.pageSize) || 10;
+      const pageNum = parseInt(params.pageNum) || 1;
+      const pageSize = parseInt(params.pageSize) || 10;
       const start = (pageNum - 1) * pageSize;
       return resultSuccess({
         list: list.slice(start, start + pageSize),
@@ -3822,7 +3822,7 @@ const mockPluginMarket: MockMethod[] = [
     url: "/plugin/admin/statistics/sales",
     method: "get",
     response: ({ params }: any) => {
-      const days = parseInt(query.days) || 7;
+      const days = parseInt(params.days) || 7;
       const data = [];
       for (let i = days - 1; i >= 0; i--) {
         const date = new Date();
@@ -3913,8 +3913,8 @@ const mockPluginMarket: MockMethod[] = [
         { id: 2, reportType: 'plugin', reportTypeName: '插件报表', period: '2024-03', status: 1, statusName: '已完成', fileUrl: '/reports/plugin_202403.xlsx', createdAt: '2024-03-24T15:00:00Z' },
         { id: 3, reportType: 'developer', reportTypeName: '开发者报表', period: '2024-03', status: 0, statusName: '生成中', fileUrl: null, createdAt: '2024-03-25T14:00:00Z' },
       ];
-      const pageNum = parseInt(query.pageNum) || 1;
-      const pageSize = parseInt(query.pageSize) || 10;
+      const pageNum = parseInt(params.pageNum) || 1;
+      const pageSize = parseInt(params.pageSize) || 10;
       const start = (pageNum - 1) * pageSize;
       return resultSuccess({
         list: list.slice(start, start + pageSize),
@@ -3929,8 +3929,8 @@ const mockPluginMarket: MockMethod[] = [
     method: "get",
     response: ({ params }: any) => {
       return resultSuccess({
-        downloadUrl: `/reports/report_${query.reportId}.xlsx`,
-        fileName: `report_${query.reportId}.xlsx`,
+        downloadUrl: `/reports/report_${params.reportId}.xlsx`,
+        fileName: `report_${params.reportId}.xlsx`,
         fileSize: 1024000,
       });
     },

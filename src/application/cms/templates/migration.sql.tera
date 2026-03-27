@@ -1,0 +1,18 @@
+-- m{{ "now" | date(format="%Y%m%d") }}_001_{{ model_code }}_create_table.sql
+-- 描述：创建{{ model_name }}表
+-- 作者：cms-codegen
+-- 日期：{{ "now" | date(format="%Y-%m-%d") }}
+
+CREATE TABLE `{{ table_name }}` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    {% for field in fields %}
+    `{{ field.code }}` {{ field.db_type }} {% if field.nullable %}DEFAULT NULL{% else %}NOT NULL{% endif %} COMMENT '{{ field.comment }}',
+    {% endfor %}
+    `created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `deleted_at` datetime DEFAULT NULL COMMENT '删除时间',
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='{{ model_name }}';
+
+-- ROLLBACK:
+-- DROP TABLE IF EXISTS `{{ table_name }}`;

@@ -1,3 +1,4 @@
+pub mod cms;
 pub mod consumer;
 pub mod monitor;
 pub mod payment;

@@ -1,3 +1,4 @@
+pub mod cms;
 pub mod consumer;
 pub mod payment;
 pub mod plugin_market;
@@ -24,6 +25,7 @@ impl WebApi {
         webpath = webpath.merge(test::router_test());
         webpath = webpath.merge(product::router_product());
         webpath = webpath.merge(plugin_market::router::router_plugin_market());
+        webpath = webpath.merge(cms::router_cms());
 
         webpath = webpath.final_to_path();
         let expand_path = webpath.get_last_level_paths();

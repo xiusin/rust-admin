@@ -1,0 +1,51 @@
+<template>
+  <el-dialog
+    v-model="visible"
+    title="{{ model_name }}详情"
+    width="600px"
+    :close-on-click-modal="false"
+  >
+    <el-descriptions :column="1" border>
+      <el-descriptions-item label="ID">{{ detail.id }}</el-descriptions-item>
+      {% for field in detail_fields %}
+      <el-descriptions-item label="{{ field.name }}">
+        {{ detail.{{ field.code }} }}
+      </el-descriptions-item>
+      {% endfor %}
+      <el-descriptions-item label="创建时间">{{ detail.createdAt }}</el-descriptions-item>
+      <el-descriptions-item label="更新时间">{{ detail.updatedAt }}</el-descriptions-item>
+    </el-descriptions>
+
+    <template #footer>
+      <el-button @click="visible = false">关闭</el-button>
+    </template>
+  </el-dialog>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive } from 'vue';
+import { get{{ model_name_pascal }}Detail } from '@/api/cms/{{ model_code_kebab }}';
+
+const visible = ref(false);
+
+const detail = reactive({
+  id: 0,
+  {% for field in detail_fields %}
+  {{ field.code }}: '' as any,
+  {% endfor %}
+  createdAt: '',
+  updatedAt: '',
+});
+
+const open = async (id: number) => {
+  visible.value = true;
+  try {
+    const { data } = await get{{ model_name_pascal }}Detail(id);
+    Object.assign(detail, data);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+defineExpose({ open });
+</script>

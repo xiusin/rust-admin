@@ -1,0 +1,127 @@
+use crate::domain::entity::{{ model_code }}::{self, Entity, Model, ActiveModel, Column};
+use crate::domain::model::m_{{ model_code }}::*;
+use crate::domain::args::a_{{ model_code }}::*;
+use crate::service::prelude::*;
+
+pub async fn list(
+    VQuery(page): VQuery<PageParams>,
+    VQuery(search): VQuery<{{ model_name }}ListReq>,
+) -> impl IntoResponse {
+    let db = DB().await;
+    
+    let mut query = Entity::find()
+        .filter(Column::DeletedAt.is_null());
+    
+    {% for field in searchable_fields %}
+    if let Some(ref {{ field.code }}) = search.{{ field.code }} {
+        query = query.filter(Column::{{ field.code | title }}.contains({{ field.code }}));
+    }
+    {% endfor %}
+    
+    let total = query.clone().count(db).await.unwrap_or(0);
+    
+    let list = query
+        .order_by_desc(Column::CreatedAt)
+        .offset((page.page_num - 1) * page.page_size)
+        .limit(page.page_size)
+        .into_model::<{{ model_name }}Item>()
+        .all(db)
+        .await
+        .unwrap_or_default();
+    
+    ApiResponse::ok({{ model_name }}List {
+        list,
+        total: total as i64,
+        page_num: page.page_num,
+        page_size: page.page_size,
+    })
+}
+
+pub async fn detail(VQuery(arg): VQuery<{{ model_name }}IdReq>) -> impl IntoResponse {
+    let db = DB().await;
+    
+    let item = Entity::find_by_id(arg.id)
+        .filter(Column::DeletedAt.is_null())
+        .into_model::<{{ model_name }}Detail>()
+        .one(db)
+        .await;
+    
+    match item {
+        Ok(Some(detail)) => ApiResponse::ok(detail),
+        Ok(None) => ApiResponse::not_found("Record not found"),
+        Err(e) => ApiResponse::bad_request(e.to_string()),
+    }
+}
+
+pub async fn add(VJson(arg): VJson<{{ model_name }}AddReq>) -> impl IntoResponse {
+    let db = DB().await;
+    
+    let id = GID().await;
+    let now = Local::now().naive_local();
+    
+    let active_model = ActiveModel {
+        id: Set(id),
+        {% for field in fields %}
+        {{ field.code | title }}: Set(arg.{{ field.code }}),
+        {% endfor %}
+        created_at: Set(Some(now)),
+        updated_at: Set(Some(now)),
+        deleted_at: Set(None),
+    };
+    
+    match active_model.insert(db).await {
+        Ok(_) => ApiResponse::ok(id),
+        Err(e) => ApiResponse::bad_request(e.to_string()),
+    }
+}
+
+pub async fn edit(VJson(arg): VJson<{{ model_name }}EditReq>) -> impl IntoResponse {
+    let db = DB().await;
+    
+    let model = match Entity::find_by_id(arg.id)
+        .filter(Column::DeletedAt.is_null())
+        .one(db)
+        .await
+    {
+        Ok(Some(m)) => m,
+        Ok(None) => return ApiResponse::not_found("Record not found"),
+        Err(e) => return ApiResponse::bad_request(e.to_string()),
+    };
+    
+    let mut active_model: ActiveModel = model.into();
+    
+    {% for field in fields %}
+    if let Some({{ field.code }}) = arg.{{ field.code }} {
+        active_model.{{ field.code | title }} = Set({{ field.code }});
+    }
+    {% endfor %}
+    
+    active_model.updated_at = Set(Some(Local::now().naive_local()));
+    
+    match active_model.update(db).await {
+        Ok(_) => ApiResponse::ok("success"),
+        Err(e) => ApiResponse::bad_request(e.to_string()),
+    }
+}
+
+pub async fn delete(VJson(arg): VJson<{{ model_name }}IdReq>) -> impl IntoResponse {
+    let db = DB().await;
+    
+    let model = match Entity::find_by_id(arg.id)
+        .filter(Column::DeletedAt.is_null())
+        .one(db)
+        .await
+    {
+        Ok(Some(m)) => m,
+        Ok(None) => return ApiResponse::not_found("Record not found"),
+        Err(e) => return ApiResponse::bad_request(e.to_string()),
+    };
+    
+    let mut active_model: ActiveModel = model.into();
+    active_model.deleted_at = Set(Some(Local::now().naive_local()));
+    
+    match active_model.update(db).await {
+        Ok(_) => ApiResponse::ok("success"),
+        Err(e) => ApiResponse::bad_request(e.to_string()),
+    }
+}

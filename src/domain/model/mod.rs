@@ -52,3 +52,13 @@ pub mod m_license;
 pub mod m_device;
 pub mod m_card;
 pub mod m_developer;
+
+// CMS Models
+pub mod m_cms_model;
+pub mod m_cms_field;
+pub mod m_cms_content;
+pub mod m_cms_category;
+pub mod m_cms_tag;
+pub mod m_form_config;
+pub mod m_table_config;
+pub mod m_code_gen;

@@ -1,0 +1,15 @@
+import type { RouteRecordRaw } from 'vue-router';
+
+const {{ model_name_pascal }}Routes: RouteRecordRaw[] = [
+  {
+    path: '/cms/{{ model_code_kebab }}',
+    name: '{{ model_name_pascal }}',
+    component: () => import('@/views/cms/{{ model_code_kebab }}/index.vue'),
+    meta: {
+      title: '{{ model_name }}管理',
+      icon: 'document',
+    },
+  },
+];
+
+export default {{ model_name_pascal }}Routes;

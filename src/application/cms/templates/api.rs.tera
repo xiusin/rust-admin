@@ -1,0 +1,11 @@
+use crate::api::prelude::*;
+use crate::application::cms::{{ model_code }}_service;
+
+pub fn {{ model_code }}() -> WebPath {
+    WebPath::new()
+        .route("/list", WebPathType::Get, Some("获取{{ model_name }}列表"), get({{ model_code }}_service::list))
+        .route("/detail", WebPathType::Get, Some("获取{{ model_name }}详情"), get({{ model_code }}_service::detail))
+        .route("/add", WebPathType::Post, Some("添加{{ model_name }}"), post({{ model_code }}_service::add))
+        .route("/edit", WebPathType::Put, Some("编辑{{ model_name }}"), put({{ model_code }}_service::edit))
+        .route("/delete", WebPathType::Delete, Some("删除{{ model_name }}"), delete({{ model_code }}_service::delete))
+}
