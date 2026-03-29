@@ -53,7 +53,9 @@
                 <div class="action-icon"><icon-line-height size="18" /></div>
               </a-tooltip>
               <template #content>
-                <a-doption v-for="item in densityType" :value="item.value" :key="item.value" :disabled="item.value === density">{{ item.label }}</a-doption>
+                <a-doption v-for="item in densityType" :value="item.value" :key="item.value" :disabled="item.value === density">{{
+                  item.label
+                }}</a-doption>
               </template>
             </a-dropdown>
             <a-tooltip content="列设置">
@@ -116,7 +118,7 @@
           </a-descriptions-item>
           <a-descriptions-item label="执行次数">{{ currentLog.run_count }}</a-descriptions-item>
           <a-descriptions-item label="执行耗时">{{ currentLog.elapsed_time }} ms</a-descriptions-item>
-          <a-descriptions-item label="执行结果">{{ currentLog.job_message || '无' }}</a-descriptions-item>
+          <a-descriptions-item label="执行结果">{{ currentLog.job_message || "无" }}</a-descriptions-item>
           <a-descriptions-item label="执行时间">{{ currentLog.created_at }}</a-descriptions-item>
         </a-descriptions>
       </div>

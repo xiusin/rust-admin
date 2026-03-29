@@ -1,8 +1,8 @@
 import axios from "@/api";
-import type { CmsTag } from './tag';
+import type { CmsTag } from "./tag";
 
-export type ContentType = 'article' | 'image' | 'video' | 'audio' | 'file' | 'link' | 'custom';
-export type ContentStatus = 'draft' | 'pending' | 'published' | 'offline' | 'rejected' | 'recycled';
+export type ContentType = "article" | "image" | "video" | "audio" | "file" | "link" | "custom";
+export type ContentStatus = "draft" | "pending" | "published" | "offline" | "rejected" | "recycled";
 
 export interface Attachment {
   id: number;
@@ -136,7 +136,7 @@ export interface ContentEditParams extends ContentAddParams {
 
 export interface AuditParams {
   id: number;
-  status: 'approved' | 'rejected';
+  status: "approved" | "rejected";
   remark?: string;
 }
 
@@ -160,7 +160,7 @@ interface ListResponse<T> {
 
 const getData = <T>(res: ApiResponse<T>): T => {
   if (res.code !== 200) {
-    throw new Error(res.message || '请求失败');
+    throw new Error(res.message || "请求失败");
   }
   return res.data;
 };
@@ -256,7 +256,11 @@ export const contentApi = {
     getData(res);
   },
 
-  recycleList: async (params: { modelId: number; pageNum?: number; pageSize?: number }): Promise<ListResponse<CmsContentList>> => {
+  recycleList: async (params: {
+    modelId: number;
+    pageNum?: number;
+    pageSize?: number;
+  }): Promise<ListResponse<CmsContentList>> => {
     const res = await axios.get("/cms/content/recycle/list", { params });
     return getData(res);
   },
@@ -264,5 +268,5 @@ export const contentApi = {
   clearRecycle: async (ids?: number[]): Promise<void> => {
     const res = await axios.delete("/cms/content/recycle/clear", { data: { ids } });
     getData(res);
-  },
+  }
 };

@@ -17,18 +17,18 @@
         </a-button>
       </a-space>
     </div>
-    
+
     <div class="designer-content">
       <div class="left-panel">
         <a-card title="基本信息" class="panel-card">
           <ModelForm v-model="modelData" />
         </a-card>
-        
+
         <a-card title="模型配置" class="panel-card">
           <ModelConfig v-model="modelData.config" />
         </a-card>
       </div>
-      
+
       <div class="right-panel">
         <a-card title="字段列表" class="panel-card">
           <template #extra>
@@ -37,163 +37,154 @@
               添加字段
             </a-button>
           </template>
-          <FieldList
-            v-model="modelData.fields"
-            @edit="handleEditField"
-            @delete="handleDeleteField"
-          />
+          <FieldList v-model="modelData.fields" @edit="handleEditField" @delete="handleDeleteField" />
         </a-card>
       </div>
     </div>
-    
-    <FieldEditor
-      v-model:visible="fieldEditorVisible"
-      :field="currentField"
-      :mode="fieldEditorMode"
-      @save="handleFieldSave"
-    />
+
+    <FieldEditor v-model:visible="fieldEditorVisible" :field="currentField" :mode="fieldEditorMode" @save="handleFieldSave" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { Message } from '@arco-design/web-vue'
-import ModelForm from './ModelForm.vue'
-import ModelConfig from './ModelConfig.vue'
-import FieldList from './FieldList.vue'
-import FieldEditor from './FieldEditor.vue'
+import { Message } from "@arco-design/web-vue";
+import ModelForm from "./ModelForm.vue";
+import ModelConfig from "./ModelConfig.vue";
+import FieldList from "./FieldList.vue";
+import FieldEditor from "./FieldEditor.vue";
 
 interface ModelField {
-  id: string
-  name: string
-  label: string
-  type: string
-  required: boolean
-  defaultValue?: any
-  placeholder?: string
-  formConfig?: Record<string, any>
-  tableConfig?: Record<string, any>
-  validationRules?: any[]
-  sort: number
+  id: string;
+  name: string;
+  label: string;
+  type: string;
+  required: boolean;
+  defaultValue?: any;
+  placeholder?: string;
+  formConfig?: Record<string, any>;
+  tableConfig?: Record<string, any>;
+  validationRules?: any[];
+  sort: number;
 }
 
 interface ModelConfig {
-  tableName?: string
-  description?: string
-  enableCache?: boolean
-  enableSoftDelete?: boolean
-  enableTimestamp?: boolean
-  [key: string]: any
+  tableName?: string;
+  description?: string;
+  enableCache?: boolean;
+  enableSoftDelete?: boolean;
+  enableTimestamp?: boolean;
+  [key: string]: any;
 }
 
 interface ModelData {
-  id?: string
-  name: string
-  label: string
-  description?: string
-  config: ModelConfig
-  fields: ModelField[]
+  id?: string;
+  name: string;
+  label: string;
+  description?: string;
+  config: ModelConfig;
+  fields: ModelField[];
 }
 
 interface Props {
-  modelValue?: ModelData
+  modelValue?: ModelData;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: () => ({
-    name: '',
-    label: '',
+    name: "",
+    label: "",
     config: {
-      tableName: '',
+      tableName: "",
       enableCache: false,
       enableSoftDelete: true,
       enableTimestamp: true
     },
     fields: []
   })
-})
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: ModelData]
-  'save': [value: ModelData]
-  'preview': [value: ModelData]
-  'generate-code': [value: ModelData]
-}>()
+  "update:modelValue": [value: ModelData];
+  save: [value: ModelData];
+  preview: [value: ModelData];
+  "generate-code": [value: ModelData];
+}>();
 
-const modelData = ref<ModelData>(props.modelValue)
+const modelData = ref<ModelData>(props.modelValue);
 
 watch(
   () => props.modelValue,
-  (val) => {
-    modelData.value = val
+  val => {
+    modelData.value = val;
   },
   { deep: true }
-)
+);
 
 watch(
   modelData,
-  (val) => {
-    emit('update:modelValue', val)
+  val => {
+    emit("update:modelValue", val);
   },
   { deep: true }
-)
+);
 
-const fieldEditorVisible = ref(false)
-const currentField = ref<ModelField | null>(null)
-const fieldEditorMode = ref<'add' | 'edit'>('add')
+const fieldEditorVisible = ref(false);
+const currentField = ref<ModelField | null>(null);
+const fieldEditorMode = ref<"add" | "edit">("add");
 
 const handleAddField = () => {
   currentField.value = {
-    id: '',
-    name: '',
-    label: '',
-    type: 'text',
+    id: "",
+    name: "",
+    label: "",
+    type: "text",
     required: false,
     sort: modelData.value.fields.length
-  }
-  fieldEditorMode.value = 'add'
-  fieldEditorVisible.value = true
-}
+  };
+  fieldEditorMode.value = "add";
+  fieldEditorVisible.value = true;
+};
 
 const handleEditField = (field: ModelField) => {
-  currentField.value = { ...field }
-  fieldEditorMode.value = 'edit'
-  fieldEditorVisible.value = true
-}
+  currentField.value = { ...field };
+  fieldEditorMode.value = "edit";
+  fieldEditorVisible.value = true;
+};
 
 const handleDeleteField = (fieldId: string) => {
-  const index = modelData.value.fields.findIndex((f) => f.id === fieldId)
+  const index = modelData.value.fields.findIndex(f => f.id === fieldId);
   if (index > -1) {
-    modelData.value.fields.splice(index, 1)
-    Message.success('删除成功')
+    modelData.value.fields.splice(index, 1);
+    Message.success("删除成功");
   }
-}
+};
 
 const handleFieldSave = (field: ModelField) => {
-  if (fieldEditorMode.value === 'add') {
-    field.id = `field_${Date.now()}`
-    modelData.value.fields.push(field)
-    Message.success('添加成功')
+  if (fieldEditorMode.value === "add") {
+    field.id = `field_${Date.now()}`;
+    modelData.value.fields.push(field);
+    Message.success("添加成功");
   } else {
-    const index = modelData.value.fields.findIndex((f) => f.id === field.id)
+    const index = modelData.value.fields.findIndex(f => f.id === field.id);
     if (index > -1) {
-      modelData.value.fields[index] = field
-      Message.success('更新成功')
+      modelData.value.fields[index] = field;
+      Message.success("更新成功");
     }
   }
-}
+};
 
 const handleSave = () => {
-  emit('save', modelData.value)
-  Message.success('保存成功')
-}
+  emit("save", modelData.value);
+  Message.success("保存成功");
+};
 
 const handlePreview = () => {
-  emit('preview', modelData.value)
-}
+  emit("preview", modelData.value);
+};
 
 const handleGenerateCode = () => {
-  emit('generate-code', modelData.value)
-}
+  emit("generate-code", modelData.value);
+};
 </script>
 
 <style lang="scss" scoped>

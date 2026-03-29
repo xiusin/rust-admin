@@ -18,9 +18,9 @@
         <a-descriptions-item label="实付金额">
           <span class="text-danger">¥{{ orderInfo.pay_amount }}</span>
         </a-descriptions-item>
-        <a-descriptions-item label="支付方式">{{ orderInfo.pay_method || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="支付方式">{{ orderInfo.pay_method || "-" }}</a-descriptions-item>
         <a-descriptions-item label="创建时间">{{ orderInfo.created_at }}</a-descriptions-item>
-        <a-descriptions-item label="支付时间">{{ orderInfo.paid_at || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="支付时间">{{ orderInfo.paid_at || "-" }}</a-descriptions-item>
       </a-descriptions>
 
       <a-descriptions title="收货信息" :column="2" bordered style="margin-top: 16px">
@@ -33,7 +33,7 @@
         <a-descriptions-item label="快递公司">{{ orderInfo.express_company }}</a-descriptions-item>
         <a-descriptions-item label="快递单号">{{ orderInfo.express_no }}</a-descriptions-item>
         <a-descriptions-item label="发货时间">{{ orderInfo.shipped_at }}</a-descriptions-item>
-        <a-descriptions-item label="收货时间">{{ orderInfo.received_at || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="收货时间">{{ orderInfo.received_at || "-" }}</a-descriptions-item>
       </a-descriptions>
 
       <a-divider>商品信息</a-divider>
@@ -56,38 +56,38 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
-import { Message } from '@arco-design/web-vue';
+import { ref, reactive } from "vue";
+import { Message } from "@arco-design/web-vue";
 
-const orderNo = ref('');
+const orderNo = ref("");
 const searched = ref(false);
 const orderInfo = reactive<any>({});
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
-    pending: 'orange',
-    paid: 'blue',
-    shipped: 'cyan',
-    completed: 'green',
-    cancelled: 'gray',
+    pending: "orange",
+    paid: "blue",
+    shipped: "cyan",
+    completed: "green",
+    cancelled: "gray"
   };
-  return colors[status] || 'gray';
+  return colors[status] || "gray";
 };
 
 const getStatusText = (status: string) => {
   const texts: Record<string, string> = {
-    pending: '待支付',
-    paid: '已支付',
-    shipped: '已发货',
-    completed: '已完成',
-    cancelled: '已取消',
+    pending: "待支付",
+    paid: "已支付",
+    shipped: "已发货",
+    completed: "已完成",
+    cancelled: "已取消"
   };
   return texts[status] || status;
 };
 
 const handleSearch = async () => {
   if (!orderNo.value) {
-    Message.warning('请输入订单号');
+    Message.warning("请输入订单号");
     return;
   }
   searched.value = true;
@@ -95,22 +95,22 @@ const handleSearch = async () => {
     id: 1,
     order_no: orderNo.value,
     consumer_id: 1001,
-    status: 'shipped',
-    total_amount: '157.00',
-    pay_amount: '157.00',
-    pay_method: 'wechat',
-    receiver_name: '张三',
-    receiver_phone: '13800138001',
-    receiver_address: '北京市朝阳区xxx街道xxx小区1号楼101',
-    express_company: '顺丰速运',
-    express_no: 'SF1234567890',
-    created_at: '2026-03-22 10:00:00',
-    paid_at: '2026-03-22 10:05:00',
-    shipped_at: '2026-03-22 14:00:00',
+    status: "shipped",
+    total_amount: "157.00",
+    pay_amount: "157.00",
+    pay_method: "wechat",
+    receiver_name: "张三",
+    receiver_phone: "13800138001",
+    receiver_address: "北京市朝阳区xxx街道xxx小区1号楼101",
+    express_company: "顺丰速运",
+    express_no: "SF1234567890",
+    created_at: "2026-03-22 10:00:00",
+    paid_at: "2026-03-22 10:05:00",
+    shipped_at: "2026-03-22 14:00:00",
     items: [
-      { id: 1, name: 'iPhone 15 Pro 手机壳', price: 99, quantity: 1 },
-      { id: 2, name: '钢化膜', price: 29, quantity: 2 },
-    ],
+      { id: 1, name: "iPhone 15 Pro 手机壳", price: 99, quantity: 1 },
+      { id: 2, name: "钢化膜", price: 29, quantity: 2 }
+    ]
   });
 };
 </script>

@@ -206,6 +206,54 @@ export const staticRoutes = [
             }
           }
         ]
+      },
+      {
+        path: "/ppt",
+        name: "ppt",
+        redirect: "/ppt/generate",
+        meta: {
+          title: "ppt",
+          icon: "icon-file"
+        },
+        children: [
+          {
+            path: "/ppt/generate",
+            name: "ppt-generate",
+            component: () => import("@/views/ppt/generate/index.vue"),
+            meta: {
+              title: "ppt-generate",
+              icon: "icon-plus"
+            }
+          },
+          {
+            path: "/ppt/editor/:id?",
+            name: "ppt-editor",
+            component: () => import("@/views/ppt/editor/index.vue"),
+            meta: {
+              title: "ppt-editor",
+              icon: "icon-edit",
+              hide: true
+            }
+          },
+          {
+            path: "/ppt/template",
+            name: "ppt-template",
+            component: () => import("@/views/ppt/template/index.vue"),
+            meta: {
+              title: "ppt-template",
+              icon: "icon-apps"
+            }
+          },
+          {
+            path: "/ppt/history",
+            name: "ppt-history",
+            component: () => import("@/views/ppt/history/index.vue"),
+            meta: {
+              title: "ppt-history",
+              icon: "icon-history"
+            }
+          }
+        ]
       }
     ]
   }

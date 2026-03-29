@@ -5,34 +5,34 @@
         <a-row :gutter="16">
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="6" :xxl="6">
             <a-form-item field="serial" label="集合编号">
-              <a-input  v-model="formData.form.serial" placeholder="请输入集合编号" allow-clear />
+              <a-input v-model="formData.form.serial" placeholder="请输入集合编号" allow-clear />
             </a-form-item>
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="6" :xxl="6">
             <a-form-item field="name" label="集合名称">
-              <a-input  v-model="formData.form.name" placeholder="请输入集合名称" allow-clear />
+              <a-input v-model="formData.form.name" placeholder="请输入集合名称" allow-clear />
             </a-form-item>
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="6" :xxl="6">
             <a-form-item field="content" label="内容载体">
-              <a-input  v-model="formData.form.content" placeholder="请输入内容载体" allow-clear />
+              <a-input v-model="formData.form.content" placeholder="请输入内容载体" allow-clear />
             </a-form-item>
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="6" :xxl="6">
             <a-space class="search-btn">
-              <a-button  type="primary" @click="getCustomTableList">
+              <a-button type="primary" @click="getCustomTableList">
                 <template #icon>
                   <icon-search />
                 </template>
                 <template #default>查询</template>
               </a-button>
-              <a-button  @click="onReset">
+              <a-button @click="onReset">
                 <template #icon>
                   <icon-refresh />
                 </template>
                 <template #default>重置</template>
               </a-button>
-              <a-button  type="text" @click="formData.search = !formData.search">
+              <a-button type="text" @click="formData.search = !formData.search">
                 <template #icon>
                   <icon-up v-if="formData.search" />
                   <icon-down v-else />
@@ -45,12 +45,12 @@
         <a-row :gutter="16" v-if="formData.search">
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="6" :xxl="6">
             <a-form-item field="contentSize" label="内容量">
-              <a-input  v-model="formData.form.contentSize" placeholder="请输入内容量" allow-clear />
+              <a-input v-model="formData.form.contentSize" placeholder="请输入内容量" allow-clear />
             </a-form-item>
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="6" :xxl="6">
             <a-form-item field="status" label="集合状态">
-              <a-select  v-model="formData.form.status" placeholder="请选择集合状态" allow-clear>
+              <a-select v-model="formData.form.status" placeholder="请选择集合状态" allow-clear>
                 <a-option value="1">已上线</a-option>
                 <a-option value="2">已下线</a-option>
               </a-select>
@@ -58,7 +58,7 @@
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="6" :xxl="6">
             <a-form-item field="createTime" label="创建时间">
-              <a-range-picker  v-model="formData.form.createTime" />
+              <a-range-picker v-model="formData.form.createTime" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -67,7 +67,7 @@
       <a-row :gutter="16" style="margin: 16px 0">
         <a-col :span="12">
           <a-space size="medium">
-            <a-button  type="primary">
+            <a-button type="primary">
               <template #icon>
                 <icon-plus />
               </template>
@@ -157,7 +157,7 @@
         </template>
         <template #optional>
           <a-space>
-            <a-button   type="text">查看</a-button>
+            <a-button type="text">查看</a-button>
           </a-space>
         </template>
       </a-table>

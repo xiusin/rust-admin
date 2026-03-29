@@ -1,14 +1,14 @@
-import axios from 'axios';
-import { Message } from '@arco-design/web-vue';
+import axios from "axios";
+import { Message } from "@arco-design/web-vue";
 
 export interface PaymentOrder {
   id: number;
   order_no: string;
   consumer_id: number;
-  payment_method: 'wechat' | 'alipay' | 'yeepay';
-  payment_type: 'app' | 'h5' | 'mini' | 'qrcode';
+  payment_method: "wechat" | "alipay" | "yeepay";
+  payment_type: "app" | "h5" | "mini" | "qrcode";
   amount: string;
-  status: 'pending' | 'success' | 'failed' | 'closed' | 'refunded';
+  status: "pending" | "success" | "failed" | "closed" | "refunded";
   transaction_id?: string;
   callback_data?: string;
   paid_at?: string;
@@ -42,8 +42,8 @@ export interface PageParams {
 
 export const paymentApi = {
   create: async (params: CreatePaymentParams) => {
-    const res = await axios.post('/payment/create', params);
-    if (res.data.message !== 'success') {
+    const res = await axios.post("/payment/create", params);
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
@@ -55,13 +55,13 @@ export const paymentApi = {
   },
 
   list: async (params: PageParams) => {
-    const res = await axios.get('/payment/list', { params });
+    const res = await axios.get("/payment/list", { params });
     return res.data;
   },
 
   refund: async (params: RefundParams) => {
-    const res = await axios.post('/payment/refund', params);
-    if (res.data.message !== 'success') {
+    const res = await axios.post("/payment/refund", params);
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
@@ -69,14 +69,14 @@ export const paymentApi = {
 
   close: async (order_no: string) => {
     const res = await axios.post(`/payment/close/${order_no}`);
-    if (res.data.message !== 'success') {
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
   },
 
   statistics: async (consumer_id?: number) => {
-    const res = await axios.get('/payment/statistics', { params: { consumer_id } });
+    const res = await axios.get("/payment/statistics", { params: { consumer_id } });
     return res.data;
-  },
+  }
 };

@@ -18,7 +18,7 @@
           <a-table-column title="计费方式" data-index="calc_type" :width="120">
             <template #cell="{ record }">
               <a-tag :color="record.calc_type === 'weight' ? 'blue' : 'green'">
-                {{ record.calc_type === 'weight' ? '按重量' : '按件数' }}
+                {{ record.calc_type === "weight" ? "按重量" : "按件数" }}
               </a-tag>
             </template>
           </a-table-column>
@@ -29,7 +29,7 @@
           <a-table-column title="状态" data-index="status" :width="80">
             <template #cell="{ record }">
               <a-tag :color="record.status === '1' ? 'green' : 'red'">
-                {{ record.status === '1' ? '启用' : '禁用' }}
+                {{ record.status === "1" ? "启用" : "禁用" }}
               </a-tag>
             </template>
           </a-table-column>
@@ -48,7 +48,12 @@
       </a-table>
     </a-card>
 
-    <a-modal v-model:visible="formVisible" :title="form.id ? '编辑模板' : '新建模板'" @ok="handleSubmit" @cancel="formVisible = false">
+    <a-modal
+      v-model:visible="formVisible"
+      :title="form.id ? '编辑模板' : '新建模板'"
+      @ok="handleSubmit"
+      @cancel="formVisible = false"
+    >
       <a-form :model="form" layout="vertical">
         <a-form-item label="模板名称" required>
           <a-input v-model="form.name" placeholder="请输入模板名称" />
@@ -83,8 +88,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { Message } from '@arco-design/web-vue';
+import { ref, reactive, onMounted } from "vue";
+import { Message } from "@arco-design/web-vue";
 
 interface FreightTemplate {
   id: number;
@@ -105,13 +110,13 @@ const pagination = ref({ current: 1, pageSize: 10, total: 0 });
 const formVisible = ref(false);
 const form = reactive({
   id: 0,
-  name: '',
-  calc_type: 'weight',
+  name: "",
+  calc_type: "weight",
   first_unit: 1,
   first_fee: 0,
   continue_unit: 1,
   continue_fee: 0,
-  status: '1',
+  status: "1"
 });
 
 const loadData = async () => {
@@ -135,13 +140,13 @@ const handlePageChange = (page: number) => {
 const handleCreate = () => {
   Object.assign(form, {
     id: 0,
-    name: '',
-    calc_type: 'weight',
+    name: "",
+    calc_type: "weight",
     first_unit: 1,
     first_fee: 0,
     continue_unit: 1,
     continue_fee: 0,
-    status: '1',
+    status: "1"
   });
   formVisible.value = true;
 };
@@ -153,12 +158,12 @@ const handleEdit = (record: FreightTemplate) => {
 
 const handleSubmit = async () => {
   if (!form.name) {
-    Message.warning('请输入模板名称');
+    Message.warning("请输入模板名称");
     return;
   }
   try {
     // TODO: 调用实际API
-    Message.success('保存成功');
+    Message.success("保存成功");
     formVisible.value = false;
     loadData();
   } catch (error) {
@@ -169,7 +174,7 @@ const handleSubmit = async () => {
 const handleDelete = async (record: FreightTemplate) => {
   try {
     // TODO: 调用实际API
-    Message.success('删除成功');
+    Message.success("删除成功");
     loadData();
   } catch (error) {
     console.error(error);

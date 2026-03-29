@@ -61,8 +61,17 @@
             <template #cell="{ record }">
               <a-space>
                 <a-button type="text" size="small" @click="handleDetail(record)">详情</a-button>
-                <a-button v-if="record.status === 'paid'" type="text" size="small" status="success" @click="handleShip(record)">发货</a-button>
-                <a-button v-if="record.status === 'pending'" type="text" size="small" status="danger" @click="handleCancel(record)">取消</a-button>
+                <a-button v-if="record.status === 'paid'" type="text" size="small" status="success" @click="handleShip(record)"
+                  >发货</a-button
+                >
+                <a-button
+                  v-if="record.status === 'pending'"
+                  type="text"
+                  size="small"
+                  status="danger"
+                  @click="handleCancel(record)"
+                  >取消</a-button
+                >
               </a-space>
             </template>
           </a-table-column>
@@ -83,12 +92,12 @@
         <a-descriptions-item label="实付金额">
           <span class="text-danger">¥{{ currentRecord.pay_amount }}</span>
         </a-descriptions-item>
-        <a-descriptions-item label="支付方式">{{ currentRecord.pay_method || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="支付方式">{{ currentRecord.pay_method || "-" }}</a-descriptions-item>
         <a-descriptions-item label="收货人">{{ currentRecord.receiver_name }}</a-descriptions-item>
         <a-descriptions-item label="联系电话">{{ currentRecord.receiver_phone }}</a-descriptions-item>
         <a-descriptions-item label="收货地址" :span="2">{{ currentRecord.receiver_address }}</a-descriptions-item>
         <a-descriptions-item label="创建时间">{{ currentRecord.created_at }}</a-descriptions-item>
-        <a-descriptions-item label="支付时间">{{ currentRecord.paid_at || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="支付时间">{{ currentRecord.paid_at || "-" }}</a-descriptions-item>
       </a-descriptions>
       <a-divider>商品信息</a-divider>
       <a-table :data="currentRecord.items || []" :pagination="false">
@@ -129,8 +138,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { Message, Modal } from '@arco-design/web-vue';
+import { ref, reactive, onMounted } from "vue";
+import { Message, Modal } from "@arco-design/web-vue";
 
 interface OrderItem {
   id: number;
@@ -159,38 +168,38 @@ const loading = ref(false);
 const tableData = ref<OrderRecord[]>([]);
 const pagination = ref({ current: 1, pageSize: 10, total: 0 });
 const searchForm = reactive({
-  keyword: '',
-  status: '',
-  dateRange: [],
+  keyword: "",
+  status: "",
+  dateRange: []
 });
 const detailVisible = ref(false);
 const shipVisible = ref(false);
 const currentRecord = ref<OrderRecord>({} as OrderRecord);
 const shipForm = reactive({
   order_id: 0,
-  express_company: '',
-  express_no: '',
-  remark: '',
+  express_company: "",
+  express_no: "",
+  remark: ""
 });
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
-    pending: 'orange',
-    paid: 'blue',
-    shipped: 'cyan',
-    completed: 'green',
-    cancelled: 'gray',
+    pending: "orange",
+    paid: "blue",
+    shipped: "cyan",
+    completed: "green",
+    cancelled: "gray"
   };
-  return colors[status] || 'gray';
+  return colors[status] || "gray";
 };
 
 const getStatusText = (status: string) => {
   const texts: Record<string, string> = {
-    pending: '待支付',
-    paid: '已支付',
-    shipped: '已发货',
-    completed: '已完成',
-    cancelled: '已取消',
+    pending: "待支付",
+    paid: "已支付",
+    shipped: "已发货",
+    completed: "已完成",
+    cancelled: "已取消"
   };
   return texts[status] || status;
 };
@@ -200,9 +209,52 @@ const loadData = async () => {
   try {
     await new Promise(resolve => setTimeout(resolve, 500));
     tableData.value = [
-      { id: 1, order_no: 'ORD2026032200001', consumer_id: 1001, items: [{ id: 1, name: 'iPhone 15 Pro 手机壳', price: 99, quantity: 1 }, { id: 2, name: '钢化膜', price: 29, quantity: 2 }], total_amount: '157.00', pay_amount: '157.00', status: 'paid', receiver_name: '张三', receiver_phone: '13800138001', receiver_address: '北京市朝阳区xxx街道xxx小区1号楼101', pay_method: 'wechat', created_at: '2026-03-22 10:00:00', paid_at: '2026-03-22 10:05:00' },
-      { id: 2, order_no: 'ORD2026032200002', consumer_id: 1002, items: [{ id: 3, name: 'MacBook Pro 14寸保护套', price: 299, quantity: 1 }], total_amount: '299.00', pay_amount: '299.00', status: 'shipped', receiver_name: '李四', receiver_phone: '13800138002', receiver_address: '上海市浦东新区xxx路xxx号', pay_method: 'alipay', created_at: '2026-03-21 15:30:00', paid_at: '2026-03-21 15:35:00' },
-      { id: 3, order_no: 'ORD2026032200003', consumer_id: 1003, items: [{ id: 4, name: 'AirPods Pro 2 保护套', price: 49, quantity: 1 }], total_amount: '49.00', pay_amount: '0.00', status: 'pending', receiver_name: '王五', receiver_phone: '13800138003', receiver_address: '广州市天河区xxx大道xxx号', created_at: '2026-03-22 11:00:00' },
+      {
+        id: 1,
+        order_no: "ORD2026032200001",
+        consumer_id: 1001,
+        items: [
+          { id: 1, name: "iPhone 15 Pro 手机壳", price: 99, quantity: 1 },
+          { id: 2, name: "钢化膜", price: 29, quantity: 2 }
+        ],
+        total_amount: "157.00",
+        pay_amount: "157.00",
+        status: "paid",
+        receiver_name: "张三",
+        receiver_phone: "13800138001",
+        receiver_address: "北京市朝阳区xxx街道xxx小区1号楼101",
+        pay_method: "wechat",
+        created_at: "2026-03-22 10:00:00",
+        paid_at: "2026-03-22 10:05:00"
+      },
+      {
+        id: 2,
+        order_no: "ORD2026032200002",
+        consumer_id: 1002,
+        items: [{ id: 3, name: "MacBook Pro 14寸保护套", price: 299, quantity: 1 }],
+        total_amount: "299.00",
+        pay_amount: "299.00",
+        status: "shipped",
+        receiver_name: "李四",
+        receiver_phone: "13800138002",
+        receiver_address: "上海市浦东新区xxx路xxx号",
+        pay_method: "alipay",
+        created_at: "2026-03-21 15:30:00",
+        paid_at: "2026-03-21 15:35:00"
+      },
+      {
+        id: 3,
+        order_no: "ORD2026032200003",
+        consumer_id: 1003,
+        items: [{ id: 4, name: "AirPods Pro 2 保护套", price: 49, quantity: 1 }],
+        total_amount: "49.00",
+        pay_amount: "0.00",
+        status: "pending",
+        receiver_name: "王五",
+        receiver_phone: "13800138003",
+        receiver_address: "广州市天河区xxx大道xxx号",
+        created_at: "2026-03-22 11:00:00"
+      }
     ];
     pagination.value.total = 3;
   } finally {
@@ -221,7 +273,7 @@ const handlePageChange = (page: number) => {
 };
 
 const handleExport = () => {
-  Message.success('订单导出中，请稍后...');
+  Message.success("订单导出中，请稍后...");
 };
 
 const handleDetail = (record: OrderRecord) => {
@@ -231,30 +283,30 @@ const handleDetail = (record: OrderRecord) => {
 
 const handleShip = (record: OrderRecord) => {
   shipForm.order_id = record.id;
-  shipForm.express_company = '';
-  shipForm.express_no = '';
-  shipForm.remark = '';
+  shipForm.express_company = "";
+  shipForm.express_no = "";
+  shipForm.remark = "";
   shipVisible.value = true;
 };
 
 const submitShip = async () => {
   if (!shipForm.express_company || !shipForm.express_no) {
-    Message.warning('请填写快递公司和快递单号');
+    Message.warning("请填写快递公司和快递单号");
     return;
   }
-  Message.success('发货成功');
+  Message.success("发货成功");
   shipVisible.value = false;
   loadData();
 };
 
 const handleCancel = (record: OrderRecord) => {
   Modal.confirm({
-    title: '确认取消',
+    title: "确认取消",
     content: `确定要取消订单"${record.order_no}"吗？`,
     onOk: () => {
-      Message.success('订单已取消');
+      Message.success("订单已取消");
       loadData();
-    },
+    }
   });
 };
 

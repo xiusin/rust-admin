@@ -31,8 +31,8 @@
             </template>
             <template #optional>
               <a-space>
-                <a-button   type="text">查看</a-button>
-                <a-button   type="text">撤回</a-button>
+                <a-button type="text">查看</a-button>
+                <a-button type="text">撤回</a-button>
               </a-space>
             </template>
           </a-table>

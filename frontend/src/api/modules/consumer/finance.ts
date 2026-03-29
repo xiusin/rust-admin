@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { Message } from '@arco-design/web-vue';
+import axios from "axios";
+import { Message } from "@arco-design/web-vue";
 
 export interface AccountInfo {
   id: number;
@@ -15,7 +15,7 @@ export interface Transaction {
   id: number;
   consumer_id: number;
   transaction_no: string;
-  transaction_type: 'recharge' | 'consume' | 'withdraw' | 'refund';
+  transaction_type: "recharge" | "consume" | "withdraw" | "refund";
   amount: string;
   balance_before: string;
   balance_after: string;
@@ -50,7 +50,7 @@ export const financeApi = {
 
   recharge: async (consumer_id: number, params: RechargeParams) => {
     const res = await axios.post(`/finance/recharge/${consumer_id}`, params);
-    if (res.data.message !== 'success') {
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
@@ -58,19 +58,19 @@ export const financeApi = {
 
   withdraw: async (consumer_id: number, params: WithdrawParams) => {
     const res = await axios.post(`/finance/withdraw/${consumer_id}`, params);
-    if (res.data.message !== 'success') {
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
   },
 
   transactions: async (params: PageParams) => {
-    const res = await axios.get('/finance/transactions', { params });
+    const res = await axios.get("/finance/transactions", { params });
     return res.data;
   },
 
   statistics: async (consumer_id?: number) => {
-    const res = await axios.get('/finance/statistics', { params: { consumer_id } });
+    const res = await axios.get("/finance/statistics", { params: { consumer_id } });
     return res.data;
-  },
+  }
 };

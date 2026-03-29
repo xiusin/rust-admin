@@ -13,10 +13,10 @@
             <s-recorder-pcm ref="RecorderPCM" @change="onChange" />
           </div>
           <a-space wrap>
-            <a-button  type="primary" @click="recOpen">打开录音权限</a-button>
-            <a-button  type="primary" @click="recStart">开始录音</a-button>
-            <a-button  @click="recStop">结束录音</a-button>
-            <a-button  @click="audioList.length = 0">清空列表</a-button>
+            <a-button type="primary" @click="recOpen">打开录音权限</a-button>
+            <a-button type="primary" @click="recStart">开始录音</a-button>
+            <a-button @click="recStop">结束录音</a-button>
+            <a-button @click="audioList.length = 0">清空列表</a-button>
           </a-space>
         </a-space>
         <audio ref="audioElement" controls v-if="audioList.length"></audio>
@@ -27,7 +27,7 @@
               <span v-if="!item.close">PCM音频实时帧 - {{ index }}</span>
               <span v-else>PCM完整音频</span>
               <a-button-group>
-                <a-button  @click="playAudio(item)">播放</a-button>
+                <a-button @click="playAudio(item)">播放</a-button>
               </a-button-group>
             </a-space>
           </a-list-item>

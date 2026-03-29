@@ -59,9 +59,29 @@
             <template #cell="{ record }">
               <a-space>
                 <a-button type="text" size="small" @click="handleDetail(record)">详情</a-button>
-                <a-button v-if="record.status === 'pending'" type="text" size="small" status="success" @click="handleAudit(record)">审核</a-button>
-                <a-button v-if="record.status === 'approved' && record.type !== 'refund_only'" type="text" size="small" @click="handleLogistics(record)">物流</a-button>
-                <a-button v-if="record.status === 'refunding'" type="text" size="small" status="warning" @click="handleRefund(record)">退款</a-button>
+                <a-button
+                  v-if="record.status === 'pending'"
+                  type="text"
+                  size="small"
+                  status="success"
+                  @click="handleAudit(record)"
+                  >审核</a-button
+                >
+                <a-button
+                  v-if="record.status === 'approved' && record.type !== 'refund_only'"
+                  type="text"
+                  size="small"
+                  @click="handleLogistics(record)"
+                  >物流</a-button
+                >
+                <a-button
+                  v-if="record.status === 'refunding'"
+                  type="text"
+                  size="small"
+                  status="warning"
+                  @click="handleRefund(record)"
+                  >退款</a-button
+                >
               </a-space>
             </template>
           </a-table-column>
@@ -80,7 +100,7 @@
         </a-descriptions-item>
         <a-descriptions-item label="退款金额">¥{{ currentAfterSale.total_refund_amount }}</a-descriptions-item>
         <a-descriptions-item label="原因" :span="2">{{ currentAfterSale.reason }}</a-descriptions-item>
-        <a-descriptions-item label="描述" :span="2">{{ currentAfterSale.description || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="描述" :span="2">{{ currentAfterSale.description || "-" }}</a-descriptions-item>
       </a-descriptions>
 
       <a-divider>售后商品</a-divider>
@@ -132,7 +152,7 @@
         <a-descriptions-item label="发货地址" :span="2">{{ currentLogistics.sender_address }}</a-descriptions-item>
         <a-descriptions-item label="状态">
           <a-tag :color="currentLogistics.status === 'received' ? 'green' : 'blue'">
-            {{ currentLogistics.status === 'received' ? '已签收' : '运输中' }}
+            {{ currentLogistics.status === "received" ? "已签收" : "运输中" }}
           </a-tag>
         </a-descriptions-item>
         <a-descriptions-item label="发货时间">{{ currentLogistics.shipped_at }}</a-descriptions-item>
@@ -143,9 +163,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue';
-import { Message } from '@arco-design/web-vue';
-import { afterSaleApi, AfterSaleModel, AfterSaleStatistics, AfterSaleLogisticsModel } from '@/api/modules/consumer/afterSale';
+import { ref, onMounted, reactive } from "vue";
+import { Message } from "@arco-design/web-vue";
+import { afterSaleApi, AfterSaleModel, AfterSaleStatistics, AfterSaleLogisticsModel } from "@/api/modules/consumer/afterSale";
 
 const loading = ref(false);
 const afterSaleList = ref<AfterSaleModel[]>([]);
@@ -154,20 +174,20 @@ const statistics = ref<AfterSaleStatistics>({
   processing_count: 0,
   completed_count: 0,
   rejected_count: 0,
-  total_refund_amount: '0',
+  total_refund_amount: "0"
 });
 
 const pagination = ref({
   current: 1,
   pageSize: 10,
-  total: 0,
+  total: 0
 });
 
 const searchForm = reactive({
-  status: '',
-  type: '',
+  status: "",
+  type: "",
   start_time: 0,
-  end_time: 0,
+  end_time: 0
 });
 const dateRange = ref<string[]>([]);
 
@@ -182,63 +202,63 @@ const currentLogistics = ref<AfterSaleLogisticsModel | null>(null);
 const auditForm = reactive({
   after_sale_id: 0,
   agree: true,
-  reject_reason: '',
+  reject_reason: "",
   processor_id: 1,
-  processor_name: 'admin',
+  processor_name: "admin"
 });
 
 const refundForm = reactive({
   after_sale_id: 0,
-  refund_channel: 'original',
-  refund_amount: 0,
+  refund_channel: "original",
+  refund_amount: 0
 });
 
 const getTypeName = (type: string) => {
   const map: Record<string, string> = {
-    refund_only: '仅退款',
-    return_refund: '退货退款',
-    exchange: '换货',
+    refund_only: "仅退款",
+    return_refund: "退货退款",
+    exchange: "换货"
   };
   return map[type] || type;
 };
 
 const getTypeColor = (type: string) => {
   const map: Record<string, string> = {
-    refund_only: 'red',
-    return_refund: 'orange',
-    exchange: 'blue',
+    refund_only: "red",
+    return_refund: "orange",
+    exchange: "blue"
   };
-  return map[type] || 'gray';
+  return map[type] || "gray";
 };
 
 const getStatusName = (status: string) => {
   const map: Record<string, string> = {
-    pending: '待审核',
-    approved: '已通过',
-    rejected: '已拒绝',
-    returning: '退货中',
-    returned: '已退货',
-    refunding: '退款中',
-    refunded: '已退款',
-    completed: '已完成',
-    closed: '已关闭',
+    pending: "待审核",
+    approved: "已通过",
+    rejected: "已拒绝",
+    returning: "退货中",
+    returned: "已退货",
+    refunding: "退款中",
+    refunded: "已退款",
+    completed: "已完成",
+    closed: "已关闭"
   };
   return map[status] || status;
 };
 
 const getStatusColor = (status: string) => {
   const map: Record<string, string> = {
-    pending: 'orange',
-    approved: 'green',
-    rejected: 'red',
-    returning: 'blue',
-    returned: 'cyan',
-    refunding: 'purple',
-    refunded: 'arcoblue',
-    completed: 'green',
-    closed: 'gray',
+    pending: "orange",
+    approved: "green",
+    rejected: "red",
+    returning: "blue",
+    returned: "cyan",
+    refunding: "purple",
+    refunded: "arcoblue",
+    completed: "green",
+    closed: "gray"
   };
-  return map[status] || 'gray';
+  return map[status] || "gray";
 };
 
 const loadData = async () => {
@@ -251,9 +271,9 @@ const loadData = async () => {
         status: searchForm.status || undefined,
         type: searchForm.type || undefined,
         start_time: searchForm.start_time || undefined,
-        end_time: searchForm.end_time || undefined,
+        end_time: searchForm.end_time || undefined
       }),
-      afterSaleApi.getStatistics(),
+      afterSaleApi.getStatistics()
     ]);
     afterSaleList.value = listRes.data?.list || [];
     pagination.value.total = listRes.data?.total || 0;
@@ -275,8 +295,8 @@ const handleSearch = () => {
 };
 
 const handleReset = () => {
-  searchForm.status = '';
-  searchForm.type = '';
+  searchForm.status = "";
+  searchForm.type = "";
   searchForm.start_time = 0;
   searchForm.end_time = 0;
   dateRange.value = [];
@@ -302,14 +322,14 @@ const handleDetail = async (record: AfterSaleModel) => {
 const handleAudit = (record: AfterSaleModel) => {
   auditForm.after_sale_id = record.id;
   auditForm.agree = true;
-  auditForm.reject_reason = '';
+  auditForm.reject_reason = "";
   auditVisible.value = true;
 };
 
 const submitAudit = async () => {
   try {
     await afterSaleApi.audit(auditForm);
-    Message.success('审核成功');
+    Message.success("审核成功");
     auditVisible.value = false;
     loadData();
   } catch (error) {
@@ -330,7 +350,7 @@ const handleLogistics = async (record: AfterSaleModel) => {
 const handleRefund = (record: AfterSaleModel) => {
   refundForm.after_sale_id = record.id;
   refundForm.refund_amount = parseFloat(record.total_refund_amount);
-  refundForm.refund_channel = 'original';
+  refundForm.refund_channel = "original";
   refundVisible.value = true;
 };
 
@@ -339,9 +359,9 @@ const submitRefund = async () => {
     await afterSaleApi.createRefund({
       after_sale_id: refundForm.after_sale_id,
       refund_channel: refundForm.refund_channel,
-      refund_amount: refundForm.refund_amount.toString(),
+      refund_amount: refundForm.refund_amount.toString()
     });
-    Message.success('退款处理成功');
+    Message.success("退款处理成功");
     refundVisible.value = false;
     loadData();
   } catch (error) {

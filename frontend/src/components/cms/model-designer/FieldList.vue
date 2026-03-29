@@ -7,21 +7,14 @@
         </template>
       </a-empty>
     </div>
-    
-    <draggable
-      v-else
-      v-model="localFields"
-      item-key="id"
-      handle=".drag-handle"
-      animation="200"
-      @end="handleDragEnd"
-    >
+
+    <draggable v-else v-model="localFields" item-key="id" handle=".drag-handle" animation="200" @end="handleDragEnd">
       <template #item="{ element, index }">
         <div class="field-item" :class="{ 'is-required': element.required }">
           <div class="drag-handle">
             <icon-drag-dot-vertical />
           </div>
-          
+
           <div class="field-info">
             <div class="field-header">
               <span class="field-name">{{ element.name }}</span>
@@ -32,7 +25,7 @@
             </div>
             <div class="field-label">{{ element.label }}</div>
           </div>
-          
+
           <div class="field-actions">
             <a-button type="text" size="small" @click="handleEdit(element)">
               <template #icon><icon-edit /></template>
@@ -50,85 +43,85 @@
 </template>
 
 <script setup lang="ts">
-import draggable from 'vuedraggable'
-import { Message } from '@arco-design/web-vue'
+import draggable from "vuedraggable";
+import { Message } from "@arco-design/web-vue";
 
 interface ModelField {
-  id: string
-  name: string
-  label: string
-  type: string
-  required: boolean
-  sort: number
+  id: string;
+  name: string;
+  label: string;
+  type: string;
+  required: boolean;
+  sort: number;
 }
 
 interface Props {
-  modelValue: ModelField[]
+  modelValue: ModelField[];
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: ModelField[]]
-  'edit': [field: ModelField]
-  'delete': [fieldId: string]
-}>()
+  "update:modelValue": [value: ModelField[]];
+  edit: [field: ModelField];
+  delete: [fieldId: string];
+}>();
 
-const localFields = ref<ModelField[]>([...props.modelValue])
+const localFields = ref<ModelField[]>([...props.modelValue]);
 
 watch(
   () => props.modelValue,
-  (val) => {
-    localFields.value = [...val]
+  val => {
+    localFields.value = [...val];
   },
   { deep: true }
-)
+);
 
 watch(
   localFields,
-  (val) => {
-    emit('update:modelValue', val)
+  val => {
+    emit("update:modelValue", val);
   },
   { deep: true }
-)
+);
 
 const handleDragEnd = () => {
   localFields.value.forEach((field, index) => {
-    field.sort = index
-  })
-  Message.success('排序已更新')
-}
+    field.sort = index;
+  });
+  Message.success("排序已更新");
+};
 
 const handleEdit = (field: ModelField) => {
-  emit('edit', field)
-}
+  emit("edit", field);
+};
 
 const handleDelete = (field: ModelField) => {
-  emit('delete', field.id)
-}
+  emit("delete", field.id);
+};
 
 const fieldTypeMap: Record<string, { label: string; color: string }> = {
-  text: { label: '文本', color: 'arcoblue' },
-  textarea: { label: '多行文本', color: 'blue' },
-  number: { label: '数字', color: 'green' },
-  select: { label: '下拉选择', color: 'orange' },
-  radio: { label: '单选', color: 'purple' },
-  checkbox: { label: '多选', color: 'magenta' },
-  date: { label: '日期', color: 'cyan' },
-  datetime: { label: '日期时间', color: 'teal' },
-  image: { label: '图片', color: 'gold' },
-  file: { label: '文件', color: 'lime' },
-  editor: { label: '富文本', color: 'pink' },
-  json: { label: 'JSON', color: 'gray' }
-}
+  text: { label: "文本", color: "arcoblue" },
+  textarea: { label: "多行文本", color: "blue" },
+  number: { label: "数字", color: "green" },
+  select: { label: "下拉选择", color: "orange" },
+  radio: { label: "单选", color: "purple" },
+  checkbox: { label: "多选", color: "magenta" },
+  date: { label: "日期", color: "cyan" },
+  datetime: { label: "日期时间", color: "teal" },
+  image: { label: "图片", color: "gold" },
+  file: { label: "文件", color: "lime" },
+  editor: { label: "富文本", color: "pink" },
+  json: { label: "JSON", color: "gray" }
+};
 
 const getFieldTypeLabel = (type: string) => {
-  return fieldTypeMap[type]?.label || type
-}
+  return fieldTypeMap[type]?.label || type;
+};
 
 const getFieldTypeColor = (type: string) => {
-  return fieldTypeMap[type]?.color || 'gray'
-}
+  return fieldTypeMap[type]?.color || "gray";
+};
 </script>
 
 <style lang="scss" scoped>

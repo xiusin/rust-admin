@@ -75,7 +75,7 @@
     <a-modal v-model:visible="detailVisible" title="支付详情" :footer="false" :width="600">
       <a-descriptions :column="2" bordered>
         <a-descriptions-item label="订单号">{{ currentRecord.order_no }}</a-descriptions-item>
-        <a-descriptions-item label="第三方交易号">{{ currentRecord.transaction_id || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="第三方交易号">{{ currentRecord.transaction_id || "-" }}</a-descriptions-item>
         <a-descriptions-item label="用户ID">{{ currentRecord.consumer_id }}</a-descriptions-item>
         <a-descriptions-item label="支付方式">
           <a-tag :color="getPaymentMethodColor(currentRecord.payment_method)">
@@ -90,16 +90,16 @@
             {{ getStatusName(currentRecord.status) }}
           </a-tag>
         </a-descriptions-item>
-        <a-descriptions-item label="支付时间">{{ currentRecord.paid_at || '-' }}</a-descriptions-item>
-        <a-descriptions-item label="创建时间">{{ currentRecord.created_at || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="支付时间">{{ currentRecord.paid_at || "-" }}</a-descriptions-item>
+        <a-descriptions-item label="创建时间">{{ currentRecord.created_at || "-" }}</a-descriptions-item>
       </a-descriptions>
     </a-modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import axios from '@/api';
+import { ref, reactive, onMounted } from "vue";
+import axios from "@/api";
 
 interface PaymentRecord {
   id: number;
@@ -116,9 +116,9 @@ interface PaymentRecord {
 
 const formData = reactive({
   form: {
-    order_no: '',
-    status: null as string | null,
-  },
+    order_no: "",
+    status: null as string | null
+  }
 });
 
 const formRef = ref();
@@ -141,62 +141,62 @@ const pageSizeChange = (pageSize: number) => {
 };
 
 const columns = [
-  { title: '订单号', dataIndex: 'order_no', width: 200 },
-  { title: '用户ID', dataIndex: 'consumer_id', width: 100 },
-  { title: '支付方式', slotName: 'paymentMethod', width: 120 },
-  { title: '支付金额', slotName: 'amount', width: 120 },
-  { title: '支付状态', slotName: 'status', width: 100 },
-  { title: '支付时间', dataIndex: 'paid_at', width: 160 },
-  { title: '创建时间', dataIndex: 'created_at', width: 160 },
-  { title: '操作', slotName: 'optional', width: 100 },
+  { title: "订单号", dataIndex: "order_no", width: 200 },
+  { title: "用户ID", dataIndex: "consumer_id", width: 100 },
+  { title: "支付方式", slotName: "paymentMethod", width: 120 },
+  { title: "支付金额", slotName: "amount", width: 120 },
+  { title: "支付状态", slotName: "status", width: 100 },
+  { title: "支付时间", dataIndex: "paid_at", width: 160 },
+  { title: "创建时间", dataIndex: "created_at", width: 160 },
+  { title: "操作", slotName: "optional", width: 100 }
 ];
 
 const getPaymentMethodName = (method: string) => {
-  if (!method) return '-';
+  if (!method) return "-";
   const m = method.toLowerCase();
   const names: Record<string, string> = {
-    wechat: '微信支付',
-    alipay: '支付宝',
-    unionpay: '银联',
-    balance: '余额',
-    yeepay: '易宝支付',
+    wechat: "微信支付",
+    alipay: "支付宝",
+    unionpay: "银联",
+    balance: "余额",
+    yeepay: "易宝支付"
   };
   return names[m] || method;
 };
 
 const getPaymentMethodColor = (method: string) => {
-  if (!method) return 'gray';
+  if (!method) return "gray";
   const m = method.toLowerCase();
   const colors: Record<string, string> = {
-    wechat: 'green',
-    alipay: 'blue',
-    unionpay: 'orange',
-    balance: 'gray',
-    yeepay: 'purple',
+    wechat: "green",
+    alipay: "blue",
+    unionpay: "orange",
+    balance: "gray",
+    yeepay: "purple"
   };
-  return colors[m] || 'arcoblue';
+  return colors[m] || "arcoblue";
 };
 
 const getStatusName = (status: string) => {
   const names: Record<string, string> = {
-    pending: '待支付',
-    success: '支付成功',
-    failed: '支付失败',
-    closed: '已关闭',
-    refunded: '已退款',
+    pending: "待支付",
+    success: "支付成功",
+    failed: "支付失败",
+    closed: "已关闭",
+    refunded: "已退款"
   };
   return names[status] || status;
 };
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
-    pending: 'orange',
-    success: 'green',
-    failed: 'red',
-    closed: 'gray',
-    refunded: 'purple',
+    pending: "orange",
+    success: "green",
+    failed: "red",
+    closed: "gray",
+    refunded: "purple"
   };
-  return colors[status] || 'arcoblue';
+  return colors[status] || "arcoblue";
 };
 
 const detailVisible = ref(false);
@@ -207,13 +207,13 @@ const loadData = async () => {
   try {
     const params: any = {
       page_num: pagination.value.current,
-      page_size: pagination.value.pageSize,
+      page_size: pagination.value.pageSize
     };
     if (formData.form.status) {
       params.status = formData.form.status;
     }
-    const { data } = await axios.get('/payment/list', { params });
-    if (data.message === 'success') {
+    const { data } = await axios.get("/payment/list", { params });
+    if (data.message === "success") {
       tableData.value = data.data?.list || [];
       pagination.value.total = data.data?.total || 0;
     }

@@ -62,16 +62,10 @@
               </a-tag>
             </template>
             <template #lastVerifyTime="{ record }">
-              {{ record.lastVerifyTime || '-' }}
+              {{ record.lastVerifyTime || "-" }}
             </template>
             <template #optional="{ record }">
-              <a-button
-                v-if="record.status === 1"
-                type="text"
-                size="small"
-                status="danger"
-                @click="handleUnbindDevice(record)"
-              >
+              <a-button v-if="record.status === 1" type="text" size="small" status="danger" @click="handleUnbindDevice(record)">
                 解绑
               </a-button>
               <a-tag v-else-if="record.status === 0" color="gray">已离线</a-tag>
@@ -104,18 +98,16 @@
           <a-badge :status="getStatusType(currentLicense.status)" :text="currentLicense.statusName" />
         </a-descriptions-item>
         <a-descriptions-item label="设备限额">
-          {{ currentLicense.usedDevices || 0 }} / {{ currentLicense.maxDevices === -1 ? '无限制' : currentLicense.maxDevices }}
+          {{ currentLicense.usedDevices || 0 }} / {{ currentLicense.maxDevices === -1 ? "无限制" : currentLicense.maxDevices }}
         </a-descriptions-item>
-        <a-descriptions-item label="生效时间">{{ currentLicense.startTime || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="生效时间">{{ currentLicense.startTime || "-" }}</a-descriptions-item>
         <a-descriptions-item label="到期时间">
           <span :class="{ 'text-danger': currentLicense.isExpired }">
-            {{ currentLicense.endTime || '永久有效' }}
+            {{ currentLicense.endTime || "永久有效" }}
           </span>
         </a-descriptions-item>
         <a-descriptions-item label="剩余天数">
-          <span :class="{ 'text-danger': currentLicense.isExpired }">
-            {{ currentLicense.daysRemaining || 0 }} 天
-          </span>
+          <span :class="{ 'text-danger': currentLicense.isExpired }"> {{ currentLicense.daysRemaining || 0 }} 天 </span>
         </a-descriptions-item>
         <a-descriptions-item label="验证次数">{{ currentLicense.verifyCount || 0 }}</a-descriptions-item>
       </a-descriptions>
@@ -125,7 +117,7 @@
       <a-progress
         v-if="currentLicense.maxDevices !== -1"
         :percent="currentLicense.maxDevices > 0 ? ((currentLicense.usedDevices || 0) / currentLicense.maxDevices) * 100 : 0"
-        :format="(percent) => `${currentLicense.usedDevices || 0} / ${currentLicense.maxDevices}`"
+        :format="percent => `${currentLicense.usedDevices || 0} / ${currentLicense.maxDevices}`"
         :color="getUsageColor(currentLicense.usedDevices || 0, currentLicense.maxDevices)"
       />
 
@@ -190,8 +182,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { Message, Modal } from '@arco-design/web-vue';
+import { ref, reactive, onMounted } from "vue";
+import { Message, Modal } from "@arco-design/web-vue";
 
 interface LicenseRecord {
   id: number;
@@ -239,190 +231,193 @@ const pagination = ref({ current: 1, pageSize: 10, total: 0 });
 const devicePagination = ref({ current: 1, pageSize: 10, total: 0 });
 
 const licenseColumns = [
-  { title: '许可证密钥', slotName: 'licenseKey', width: 220 },
-  { title: '插件', dataIndex: 'pluginName', width: 140 },
-  { title: '方案', dataIndex: 'planName', width: 100 },
-  { title: '状态', slotName: 'status', width: 80 },
-  { title: '到期时间', dataIndex: 'endTime', width: 160 },
-  { title: '操作', slotName: 'optional', width: 80 },
+  { title: "许可证密钥", slotName: "licenseKey", width: 220 },
+  { title: "插件", dataIndex: "pluginName", width: 140 },
+  { title: "方案", dataIndex: "planName", width: 100 },
+  { title: "状态", slotName: "status", width: 80 },
+  { title: "到期时间", dataIndex: "endTime", width: 160 },
+  { title: "操作", slotName: "optional", width: 80 }
 ];
 
 const deviceColumns = [
-  { title: '设备ID', dataIndex: 'deviceId', width: 120 },
-  { title: '设备名称', dataIndex: 'deviceName', width: 120 },
-  { title: '设备类型', dataIndex: 'deviceType', width: 90 },
-  { title: '状态', slotName: 'status', width: 80 },
-  { title: '最后验证', slotName: 'lastVerifyTime', width: 160 },
-  { title: '绑定时间', dataIndex: 'bindTime', width: 160 },
-  { title: '操作', slotName: 'optional', width: 80 },
+  { title: "设备ID", dataIndex: "deviceId", width: 120 },
+  { title: "设备名称", dataIndex: "deviceName", width: 120 },
+  { title: "设备类型", dataIndex: "deviceType", width: 90 },
+  { title: "状态", slotName: "status", width: 80 },
+  { title: "最后验证", slotName: "lastVerifyTime", width: 160 },
+  { title: "绑定时间", dataIndex: "bindTime", width: 160 },
+  { title: "操作", slotName: "optional", width: 80 }
 ];
 
 const bindForm = reactive({
   licenseId: 0,
-  deviceId: '',
-  deviceName: '',
-  deviceType: '',
-  osVersion: '',
-  appVersion: '',
-  macAddress: '',
+  deviceId: "",
+  deviceName: "",
+  deviceType: "",
+  osVersion: "",
+  appVersion: "",
+  macAddress: ""
 });
 
 const mockLicenseData: LicenseRecord[] = [
   {
     id: 1,
-    licenseKey: '550e8400-e29b-41d4-a716-446655440001',
+    licenseKey: "550e8400-e29b-41d4-a716-446655440001",
     pluginId: 1,
-    pluginName: '智能优惠券',
+    pluginName: "智能优惠券",
     planId: 2,
-    planName: '专业版',
+    planName: "专业版",
     status: 1,
-    statusName: '启用',
-    startTime: '2024-03-20 10:35:00',
-    endTime: '2025-03-20 10:35:00',
+    statusName: "启用",
+    startTime: "2024-03-20 10:35:00",
+    endTime: "2025-03-20 10:35:00",
     isExpired: false,
     daysRemaining: 361,
     verifyCount: 156,
     maxDevices: 5,
-    usedDevices: 2,
+    usedDevices: 2
   },
   {
     id: 2,
-    licenseKey: '550e8400-e29b-41d4-a716-446655440002',
+    licenseKey: "550e8400-e29b-41d4-a716-446655440002",
     pluginId: 2,
-    pluginName: '限时秒杀',
+    pluginName: "限时秒杀",
     planId: 1,
-    planName: '基础版',
+    planName: "基础版",
     status: 1,
-    statusName: '启用',
-    startTime: '2024-02-15 14:20:00',
-    endTime: '2025-02-15 14:20:00',
+    statusName: "启用",
+    startTime: "2024-02-15 14:20:00",
+    endTime: "2025-02-15 14:20:00",
     isExpired: false,
     daysRemaining: 329,
     verifyCount: 89,
     maxDevices: 1,
-    usedDevices: 1,
+    usedDevices: 1
   },
   {
     id: 3,
-    licenseKey: '550e8400-e29b-41d4-a716-446655440003',
+    licenseKey: "550e8400-e29b-41d4-a716-446655440003",
     pluginId: 3,
-    pluginName: '数据统计分析',
+    pluginName: "数据统计分析",
     planId: 3,
-    planName: '企业版',
+    planName: "企业版",
     status: 0,
-    statusName: '禁用',
-    startTime: '2024-01-10 09:00:00',
-    endTime: '2024-01-10 09:00:00',
+    statusName: "禁用",
+    startTime: "2024-01-10 09:00:00",
+    endTime: "2024-01-10 09:00:00",
     isExpired: true,
     daysRemaining: 0,
     verifyCount: 23,
     maxDevices: -1,
-    usedDevices: 0,
-  },
+    usedDevices: 0
+  }
 ];
 
 const mockDeviceData: DeviceRecord[] = [
   {
     id: 1,
-    deviceId: 'device-001',
-    deviceName: '办公电脑',
-    deviceType: 'windows',
-    osVersion: 'Windows 10 21H2',
-    appVersion: '2.1.0',
-    macAddress: '00:1A:2B:3C:4D:5E',
-    ipAddress: '192.168.1.100',
+    deviceId: "device-001",
+    deviceName: "办公电脑",
+    deviceType: "windows",
+    osVersion: "Windows 10 21H2",
+    appVersion: "2.1.0",
+    macAddress: "00:1A:2B:3C:4D:5E",
+    ipAddress: "192.168.1.100",
     status: 1,
-    lastVerifyTime: '2025-03-24 10:30:00',
-    bindTime: '2024-03-20 10:40:00',
+    lastVerifyTime: "2025-03-24 10:30:00",
+    bindTime: "2024-03-20 10:40:00"
   },
   {
     id: 2,
-    deviceId: 'device-002',
-    deviceName: 'MacBook Pro',
-    deviceType: 'macos',
-    osVersion: 'macOS Sonoma 14.0',
-    appVersion: '2.1.0',
-    macAddress: 'A1:B2:C3:D4:E5:F6',
-    ipAddress: '192.168.1.101',
+    deviceId: "device-002",
+    deviceName: "MacBook Pro",
+    deviceType: "macos",
+    osVersion: "macOS Sonoma 14.0",
+    appVersion: "2.1.0",
+    macAddress: "A1:B2:C3:D4:E5:F6",
+    ipAddress: "192.168.1.101",
     status: 1,
-    lastVerifyTime: '2025-03-24 09:15:00',
-    bindTime: '2024-03-21 14:20:00',
+    lastVerifyTime: "2025-03-24 09:15:00",
+    bindTime: "2024-03-21 14:20:00"
   },
   {
     id: 3,
-    deviceId: 'device-003',
-    deviceName: '备用服务器',
-    deviceType: 'linux',
-    osVersion: 'Ubuntu 22.04 LTS',
-    appVersion: '2.1.0',
-    macAddress: '11:22:33:44:55:66',
-    ipAddress: '192.168.1.102',
+    deviceId: "device-003",
+    deviceName: "备用服务器",
+    deviceType: "linux",
+    osVersion: "Ubuntu 22.04 LTS",
+    appVersion: "2.1.0",
+    macAddress: "11:22:33:44:55:66",
+    ipAddress: "192.168.1.102",
     status: 0,
-    lastVerifyTime: '2024-12-01 08:30:00',
-    bindTime: '2024-03-22 09:00:00',
-  },
+    lastVerifyTime: "2024-12-01 08:30:00",
+    bindTime: "2024-03-22 09:00:00"
+  }
 ];
 
 const getStatusType = (status: number) => {
   switch (status) {
     case 1:
-      return 'success';
+      return "success";
     case 0:
-      return 'danger';
+      return "danger";
     default:
-      return 'default';
+      return "default";
   }
 };
 
 const getDeviceStatusColor = (status: number) => {
   switch (status) {
     case 1:
-      return 'green';
+      return "green";
     case 0:
-      return 'gray';
+      return "gray";
     default:
-      return 'default';
+      return "default";
   }
 };
 
 const getDeviceStatusText = (status: number) => {
   switch (status) {
     case 1:
-      return '在线';
+      return "在线";
     case 0:
-      return '离线';
+      return "离线";
     default:
-      return '未知';
+      return "未知";
   }
 };
 
 const getUsageColor = (used: number, max: number) => {
-  if (max === -1) return 'green';
+  if (max === -1) return "green";
   const ratio = used / max;
-  if (ratio >= 0.9) return 'red';
-  if (ratio >= 0.7) return 'orange';
-  return 'green';
+  if (ratio >= 0.9) return "red";
+  if (ratio >= 0.7) return "orange";
+  return "green";
 };
 
 const maskLicenseKey = (key: string) => {
-  if (!key) return '-';
-  if (key.length <= 8) return '****';
+  if (!key) return "-";
+  if (key.length <= 8) return "****";
   return `${key.slice(0, 4)}...${key.slice(-4)}`;
 };
 
 const copyLicenseKey = (key: string) => {
   if (!key) return;
-  navigator.clipboard.writeText(key).then(() => {
-    Message.success('许可证密钥已复制到剪贴板');
-  }).catch(() => {
-    Message.error('复制失败，请手动复制');
-  });
+  navigator.clipboard
+    .writeText(key)
+    .then(() => {
+      Message.success("许可证密钥已复制到剪贴板");
+    })
+    .catch(() => {
+      Message.error("复制失败，请手动复制");
+    });
 };
 
 const loadData = async () => {
   loading.value = true;
   try {
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 500));
     licenseData.value = mockLicenseData;
     pagination.value.total = mockLicenseData.length;
   } finally {
@@ -434,7 +429,7 @@ const loadDevices = async () => {
   if (!selectedLicense.value) return;
   deviceLoading.value = true;
   try {
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 500));
     deviceData.value = mockDeviceData;
     devicePagination.value.total = mockDeviceData.length;
   } finally {
@@ -460,7 +455,7 @@ const handleLicenseDetail = (record: LicenseRecord) => {
 };
 
 const handleLicenseSelectChange = (licenseId: number) => {
-  const selected = licenseData.value.find((item) => item.id === licenseId);
+  const selected = licenseData.value.find(item => item.id === licenseId);
   if (selected) {
     selectedLicense.value = selected;
   }
@@ -468,47 +463,47 @@ const handleLicenseSelectChange = (licenseId: number) => {
 
 const handleBindDevice = () => {
   bindForm.licenseId = currentLicense.value.id;
-  bindForm.deviceId = '';
-  bindForm.deviceName = '';
-  bindForm.deviceType = '';
-  bindForm.osVersion = '';
-  bindForm.appVersion = '';
-  bindForm.macAddress = '';
+  bindForm.deviceId = "";
+  bindForm.deviceName = "";
+  bindForm.deviceType = "";
+  bindForm.osVersion = "";
+  bindForm.appVersion = "";
+  bindForm.macAddress = "";
   bindDeviceVisible.value = true;
 };
 
 const submitBindDevice = async () => {
   if (!bindForm.licenseId) {
-    Message.warning('请选择许可证');
+    Message.warning("请选择许可证");
     return;
   }
   if (!bindForm.deviceId) {
-    Message.warning('请输入设备ID');
+    Message.warning("请输入设备ID");
     return;
   }
   try {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    Message.success('设备绑定成功');
+    await new Promise(resolve => setTimeout(resolve, 500));
+    Message.success("设备绑定成功");
     bindDeviceVisible.value = false;
     loadDevices();
   } catch {
-    Message.error('设备绑定失败，请重试');
+    Message.error("设备绑定失败，请重试");
   }
 };
 
 const handleUnbindDevice = (record: DeviceRecord) => {
   Modal.confirm({
-    title: '确认解绑',
+    title: "确认解绑",
     content: `确定要解绑设备"${record.deviceName || record.deviceId}"吗？解绑后该设备将无法使用此许可证。`,
     onOk: async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        Message.success('设备已解绑');
+        await new Promise(resolve => setTimeout(resolve, 500));
+        Message.success("设备已解绑");
         loadDevices();
       } catch {
-        Message.error('解绑失败，请重试');
+        Message.error("解绑失败，请重试");
       }
-    },
+    }
   });
 };
 
@@ -529,7 +524,7 @@ onMounted(() => {
 }
 
 .license-key {
-  font-family: 'Monaco', 'Menlo', monospace;
+  font-family: "Monaco", "Menlo", monospace;
   font-size: 12px;
   cursor: pointer;
 }
@@ -538,7 +533,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Monaco', 'Menlo', monospace;
+  font-family: "Monaco", "Menlo", monospace;
   font-size: 12px;
   word-break: break-all;
 }

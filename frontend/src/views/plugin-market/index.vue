@@ -70,10 +70,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { market, category } from '@/api/modules/plugin-market/market';
-import PluginCard from './components/plugin-card.vue';
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { market, category } from "@/api/modules/plugin-market/market";
+import PluginCard from "./components/plugin-card.vue";
 
 interface Plugin {
   id: number;
@@ -112,25 +112,25 @@ interface Category {
 }
 
 const router = useRouter();
-const searchKeyword = ref('');
+const searchKeyword = ref("");
 const categories = ref<Category[]>([]);
 const recommendList = ref<Plugin[]>([]);
 const hotList = ref<Plugin[]>([]);
 
 const handleSearch = (value: string) => {
-  router.push({ path: '/plugin-market/search', query: { keyword: value } });
+  router.push({ path: "/plugin-market/search", query: { keyword: value } });
 };
 
 const handleCategoryClick = (category: Category) => {
-  router.push({ path: '/plugin-market/list', query: { categoryId: String(category.id) } });
+  router.push({ path: "/plugin-market/list", query: { categoryId: String(category.id) } });
 };
 
 const goToList = () => {
-  router.push('/plugin-market/list');
+  router.push("/plugin-market/list");
 };
 
 const goToDetail = (id: number) => {
-  router.push({ path: '/plugin-market/detail', query: { id: String(id) } });
+  router.push({ path: "/plugin-market/detail", query: { id: String(id) } });
 };
 
 const loadCategories = async () => {

@@ -117,7 +117,7 @@ interface ListResponse<T> {
 
 const getData = <T>(res: ApiResponse<T>): T => {
   if (res.code !== 200) {
-    throw new Error(res.message || '请求失败');
+    throw new Error(res.message || "请求失败");
   }
   return res.data;
 };
@@ -137,11 +137,7 @@ export const verificationApi = {
     return getData(res);
   },
 
-  verify: async (data: {
-    code: string;
-    storeId?: number;
-    remark?: string;
-  }): Promise<VerificationResult> => {
+  verify: async (data: { code: string; storeId?: number; remark?: string }): Promise<VerificationResult> => {
     const res = await axios.post("/product/verification/verify", data);
     return getData(res);
   },
@@ -167,5 +163,5 @@ export const verificationApi = {
   statistics: async (): Promise<VerificationStatistics> => {
     const res = await axios.get("/product/verification/statistics");
     return getData(res);
-  },
+  }
 };

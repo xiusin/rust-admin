@@ -91,9 +91,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { Message, Modal } from '@arco-design/web-vue';
-import axios from '@/api';
+import { ref, reactive, onMounted } from "vue";
+import { Message, Modal } from "@arco-design/web-vue";
+import axios from "@/api";
 
 interface MiniRecord {
   id: number;
@@ -108,9 +108,9 @@ interface MiniRecord {
 
 const formData = reactive({
   form: {
-    name: '',
-    app_id: '',
-  },
+    name: "",
+    app_id: ""
+  }
 });
 
 const formRef = ref();
@@ -123,30 +123,30 @@ const loading = ref(false);
 const tableData = ref<MiniRecord[]>([]);
 
 const columns = [
-  { title: 'AppID', dataIndex: 'app_id', width: 180 },
-  { title: '小程序名称', dataIndex: 'name', width: 200 },
-  { title: '原始ID', dataIndex: 'original_id', width: 180 },
-  { title: '状态', dataIndex: 'status', slotName: 'status', width: 100 },
-  { title: '创建时间', dataIndex: 'created_at', width: 160 },
-  { title: '操作', slotName: 'optional', align: 'center', width: 180 },
+  { title: "AppID", dataIndex: "app_id", width: 180 },
+  { title: "小程序名称", dataIndex: "name", width: 200 },
+  { title: "原始ID", dataIndex: "original_id", width: 180 },
+  { title: "状态", dataIndex: "status", slotName: "status", width: 100 },
+  { title: "创建时间", dataIndex: "created_at", width: 160 },
+  { title: "操作", slotName: "optional", align: "center", width: 180 }
 ];
 
 const modalVisible = ref(false);
-const modalTitle = ref('新增小程序');
+const modalTitle = ref("新增小程序");
 const form = reactive({
   id: 0,
-  app_id: '',
-  app_secret: '',
-  name: '',
-  original_id: '',
-  status: 1,
+  app_id: "",
+  app_secret: "",
+  name: "",
+  original_id: "",
+  status: 1
 });
 
 const loadData = async () => {
   loading.value = true;
   try {
-    const { data } = await axios.get('/wechat-mini/list');
-    if (data.message === 'success') {
+    const { data } = await axios.get("/wechat-mini/list");
+    if (data.message === "success") {
       tableData.value = data.data || [];
     }
   } catch (e) {
@@ -157,36 +157,36 @@ const loadData = async () => {
 };
 
 const handleAdd = () => {
-  modalTitle.value = '新增小程序';
-  Object.assign(form, { id: 0, app_id: '', app_secret: '', name: '', original_id: '', status: 1 });
+  modalTitle.value = "新增小程序";
+  Object.assign(form, { id: 0, app_id: "", app_secret: "", name: "", original_id: "", status: 1 });
   modalVisible.value = true;
 };
 
 const handleEdit = (record: MiniRecord) => {
-  modalTitle.value = '编辑小程序';
+  modalTitle.value = "编辑小程序";
   Object.assign(form, record);
   modalVisible.value = true;
 };
 
 const handleDelete = (record: MiniRecord) => {
   Modal.confirm({
-    title: '确认删除',
+    title: "确认删除",
     content: `确定要删除小程序"${record.name}"吗？`,
     onOk: async () => {
       try {
-        await axios.delete('/wechat-mini/del', { params: { id: record.id } });
-        Message.success('删除成功');
+        await axios.delete("/wechat-mini/del", { params: { id: record.id } });
+        Message.success("删除成功");
         loadData();
       } catch (e) {
         console.error(e);
       }
-    },
+    }
   });
 };
 
 const handleStatusChange = async (record: MiniRecord) => {
   try {
-    await axios.put('/wechat-mini/toggle', null, { params: { id: record.id } });
+    await axios.put("/wechat-mini/toggle", null, { params: { id: record.id } });
     Message.success(`${record.name} 状态已切换`);
     loadData();
   } catch (e) {
@@ -196,7 +196,7 @@ const handleStatusChange = async (record: MiniRecord) => {
 
 const handleSubmit = async () => {
   if (!form.app_id || !form.app_secret || !form.name) {
-    Message.warning('请填写完整信息');
+    Message.warning("请填写完整信息");
     return;
   }
   try {
@@ -205,15 +205,15 @@ const handleSubmit = async () => {
       app_id: form.app_id,
       app_secret: form.app_secret,
       original_id: form.original_id || null,
-      status: form.status,
+      status: form.status
     };
 
     if (form.id) {
-      await axios.put('/wechat-mini/edit', { ...submitData, id: form.id });
-      Message.success('编辑成功');
+      await axios.put("/wechat-mini/edit", { ...submitData, id: form.id });
+      Message.success("编辑成功");
     } else {
-      await axios.post('/wechat-mini/add', submitData);
-      Message.success('新增成功');
+      await axios.post("/wechat-mini/add", submitData);
+      Message.success("新增成功");
     }
     modalVisible.value = false;
     loadData();

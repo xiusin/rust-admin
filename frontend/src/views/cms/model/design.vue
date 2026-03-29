@@ -7,7 +7,7 @@
           返回列表
         </a-button>
         <a-divider direction="vertical" />
-        <span class="model-name">{{ modelDetail?.name || '模型设计器' }}</span>
+        <span class="model-name">{{ modelDetail?.name || "模型设计器" }}</span>
       </div>
       <div class="header-right">
         <a-space>
@@ -157,7 +157,11 @@
                     </a-col>
                   </a-row>
                   <a-form-item label="验证规则">
-                    <a-textarea v-model="currentField.validation" placeholder="请输入验证规则（JSON格式）" :auto-size="{ minRows: 2, maxRows: 4 }" />
+                    <a-textarea
+                      v-model="currentField.validation"
+                      placeholder="请输入验证规则（JSON格式）"
+                      :auto-size="{ minRows: 2, maxRows: 4 }"
+                    />
                   </a-form-item>
                   <a-form-item label="字段提示">
                     <a-input v-model="currentField.placeholder" placeholder="请输入字段提示" />
@@ -182,7 +186,7 @@
           <a-descriptions-item label="模型名称">{{ modelDetail?.name }}</a-descriptions-item>
           <a-descriptions-item label="模型编码">{{ modelDetail?.code }}</a-descriptions-item>
           <a-descriptions-item label="表名称">{{ modelDetail?.tableName }}</a-descriptions-item>
-          <a-descriptions-item label="状态">{{ modelDetail?.isEnabled ? '启用' : '禁用' }}</a-descriptions-item>
+          <a-descriptions-item label="状态">{{ modelDetail?.isEnabled ? "启用" : "禁用" }}</a-descriptions-item>
           <a-descriptions-item label="字段数量" :span="2">{{ fields.length }}</a-descriptions-item>
         </a-descriptions>
         <a-divider>字段列表</a-divider>
@@ -193,7 +197,7 @@
             <a-table-column title="字段类型" data-index="fieldType" />
             <a-table-column title="必填" data-index="required">
               <template #cell="{ record }">
-                <a-tag :color="record.required ? 'green' : 'gray'" size="small">{{ record.required ? '是' : '否' }}</a-tag>
+                <a-tag :color="record.required ? 'green' : 'gray'" size="small">{{ record.required ? "是" : "否" }}</a-tag>
               </template>
             </a-table-column>
           </template>
@@ -204,15 +208,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { modelApi, type CmsModelDetail, type CmsFieldInfo, type ModelConfig } from '@/api/modules/cms/model';
+import { ref, reactive, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { modelApi, type CmsModelDetail, type CmsFieldInfo, type ModelConfig } from "@/api/modules/cms/model";
 
 const router = useRouter();
 const route = useRoute();
 const loading = ref(false);
 const saving = ref(false);
-const activeTab = ref('fields');
+const activeTab = ref("fields");
 const previewVisible = ref(false);
 
 const modelId = computed(() => Number(route.query.id));
@@ -228,11 +232,11 @@ const modelConfig = reactive<ModelConfig>({
   enableVersion: true,
   enableRecycle: true,
   listPageSize: 20,
-  defaultSort: 'createdAt desc',
+  defaultSort: "createdAt desc"
 });
 
 const goBack = () => {
-  router.push('/cms/model/list');
+  router.push("/cms/model/list");
 };
 
 const loadModel = async () => {
@@ -262,9 +266,9 @@ const selectField = (field: CmsFieldInfo) => {
 const addField = () => {
   const newField: CmsFieldInfo = {
     id: Date.now(),
-    name: '新字段',
+    name: "新字段",
     code: `field_${fields.value.length + 1}`,
-    fieldType: 'text',
+    fieldType: "text"
   } as any;
   fields.value.push(newField);
   currentField.value = newField;
@@ -278,9 +282,9 @@ const handleSave = async () => {
       name: modelDetail.value!.name,
       code: modelDetail.value!.code,
       tableName: modelDetail.value!.tableName,
-      config: modelConfig,
+      config: modelConfig
     });
-    arcoMessage('success', '保存成功');
+    arcoMessage("success", "保存成功");
   } catch (error) {
     console.error(error);
   } finally {
@@ -294,8 +298,8 @@ const handlePreview = () => {
 
 const handleGenerateCode = () => {
   router.push({
-    path: '/cms/code-gen/index',
-    query: { modelId: modelId.value },
+    path: "/cms/code-gen/index",
+    query: { modelId: modelId.value }
   });
 };
 

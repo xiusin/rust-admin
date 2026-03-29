@@ -58,7 +58,9 @@
                 <div class="action-icon"><icon-line-height size="18" /></div>
               </a-tooltip>
               <template #content>
-                <a-doption v-for="item in densityType" :value="item.value" :key="item.value" :disabled="item.value === density">{{ item.label }}</a-doption>
+                <a-doption v-for="item in densityType" :value="item.value" :key="item.value" :disabled="item.value === density">{{
+                  item.label
+                }}</a-doption>
               </template>
             </a-dropdown>
             <a-tooltip content="列设置">
@@ -95,11 +97,14 @@
       >
         <template #platform="{ record }">
           <a-tag :color="record.platform === 'mp' ? 'green' : 'blue'">
-            {{ record.platform === 'mp' ? '公众号' : '小程序' }}
+            {{ record.platform === "mp" ? "公众号" : "小程序" }}
           </a-tag>
         </template>
         <template #status="{ record }">
-          <a-badge :status="record.status === 'active' ? 'success' : 'default'" :text="record.status === 'active' ? '启用' : '停用'" />
+          <a-badge
+            :status="record.status === 'active' ? 'success' : 'default'"
+            :text="record.status === 'active' ? '启用' : '停用'"
+          />
         </template>
         <template #optional="{ record }">
           <a-space>
@@ -148,10 +153,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, nextTick } from 'vue';
-import { Message, Modal } from '@arco-design/web-vue';
-import Sortable from 'sortablejs';
-import { deepClone } from '@/utils';
+import { ref, reactive, onMounted, nextTick } from "vue";
+import { Message, Modal } from "@arco-design/web-vue";
+import Sortable from "sortablejs";
+import { deepClone } from "@/utils";
 
 interface TemplateRecord {
   id: number;
@@ -165,10 +170,10 @@ interface TemplateRecord {
 
 const formData = reactive({
   form: {
-    title: '',
+    title: "",
     platform: null as string | null,
-    status: null as string | null,
-  },
+    status: null as string | null
+  }
 });
 
 const formRef = ref();
@@ -201,13 +206,13 @@ interface Column {
 
 const columnsShow = ref<Column[]>([]);
 const columns = ref<Column[]>([
-  { title: '模板ID', dataIndex: 'template_id', checked: true, width: 180 },
-  { title: '模板名称', dataIndex: 'title', checked: true, width: 200 },
-  { title: '所属平台', dataIndex: 'platform', checked: true, slotName: 'platform', width: 100 },
-  { title: '模板类型', dataIndex: 'type', checked: true, width: 120 },
-  { title: '状态', dataIndex: 'status', checked: true, slotName: 'status', width: 100 },
-  { title: '创建时间', dataIndex: 'created_at', checked: true, width: 160 },
-  { title: '操作', slotName: 'optional', align: 'center', checked: true, width: 180 },
+  { title: "模板ID", dataIndex: "template_id", checked: true, width: 180 },
+  { title: "模板名称", dataIndex: "title", checked: true, width: 200 },
+  { title: "所属平台", dataIndex: "platform", checked: true, slotName: "platform", width: 100 },
+  { title: "模板类型", dataIndex: "type", checked: true, width: 120 },
+  { title: "状态", dataIndex: "status", checked: true, slotName: "status", width: 100 },
+  { title: "创建时间", dataIndex: "created_at", checked: true, width: 160 },
+  { title: "操作", slotName: "optional", align: "center", checked: true, width: 180 }
 ]);
 
 const deepColumns = () => {
@@ -216,13 +221,13 @@ const deepColumns = () => {
 deepColumns();
 
 const densityType = ref([
-  { value: 'mini', label: '迷你' },
-  { value: 'small', label: '偏小' },
-  { value: 'medium', label: '中等' },
-  { value: 'large', label: '偏大' },
+  { value: "mini", label: "迷你" },
+  { value: "small", label: "偏小" },
+  { value: "medium", label: "中等" },
+  { value: "large", label: "偏大" }
 ]);
 
-const density = ref('small');
+const density = ref("small");
 const onDensity = (e: string) => {
   density.value = e;
 };
@@ -238,13 +243,13 @@ const onCheckbox = (checked: any, row: any, index: any) => {
 const popupVisibleChange = (visible: boolean) => {
   if (visible) {
     nextTick(() => {
-      const el = document.getElementById('tableSetting') as HTMLElement;
+      const el = document.getElementById("tableSetting") as HTMLElement;
       new Sortable(el, {
         onEnd(e: any) {
           const { oldIndex, newIndex } = e;
           exchangeArray(columns.value, oldIndex, newIndex);
           exchangeArray(columnsShow.value, oldIndex, newIndex);
-        },
+        }
       });
     });
   }
@@ -257,15 +262,15 @@ const exchangeArray = (cols: Array<any>, oldIndex: number, newIndex: number) => 
 };
 
 const modalVisible = ref(false);
-const modalTitle = ref('新增模板');
+const modalTitle = ref("新增模板");
 const form = reactive({
   id: 0,
-  template_id: '',
-  title: '',
-  platform: 'mp',
-  type: '',
-  content: '',
-  status: 'active',
+  template_id: "",
+  title: "",
+  platform: "mp",
+  type: "",
+  content: "",
+  status: "active"
 });
 
 const loadData = async () => {
@@ -273,8 +278,24 @@ const loadData = async () => {
   try {
     await new Promise(resolve => setTimeout(resolve, 500));
     tableData.value = [
-      { id: 1, template_id: 'TEMPLATE_ID_001', title: '订单支付成功通知', platform: 'mp', type: 'order', status: 'active', created_at: '2026-01-15 10:00:00' },
-      { id: 2, template_id: 'TEMPLATE_ID_002', title: '发货通知', platform: 'mini', type: 'shipping', status: 'active', created_at: '2026-02-20 14:30:00' },
+      {
+        id: 1,
+        template_id: "TEMPLATE_ID_001",
+        title: "订单支付成功通知",
+        platform: "mp",
+        type: "order",
+        status: "active",
+        created_at: "2026-01-15 10:00:00"
+      },
+      {
+        id: 2,
+        template_id: "TEMPLATE_ID_002",
+        title: "发货通知",
+        platform: "mini",
+        type: "shipping",
+        status: "active",
+        created_at: "2026-02-20 14:30:00"
+      }
     ];
     pagination.value.total = 2;
   } finally {
@@ -283,30 +304,30 @@ const loadData = async () => {
 };
 
 const handleAdd = () => {
-  modalTitle.value = '新增模板';
-  Object.assign(form, { id: 0, template_id: '', title: '', platform: 'mp', type: '', content: '', status: 'active' });
+  modalTitle.value = "新增模板";
+  Object.assign(form, { id: 0, template_id: "", title: "", platform: "mp", type: "", content: "", status: "active" });
   modalVisible.value = true;
 };
 
 const handleEdit = (record: TemplateRecord) => {
-  modalTitle.value = '编辑模板';
+  modalTitle.value = "编辑模板";
   Object.assign(form, record);
   modalVisible.value = true;
 };
 
 const handleDelete = (record: TemplateRecord) => {
   Modal.confirm({
-    title: '确认删除',
+    title: "确认删除",
     content: `确定要删除模板"${record.title}"吗？`,
     onOk: () => {
-      Message.success('删除成功');
+      Message.success("删除成功");
       loadData();
-    },
+    }
   });
 };
 
 const handleSubmit = async () => {
-  Message.success(form.id ? '编辑成功' : '新增成功');
+  Message.success(form.id ? "编辑成功" : "新增成功");
   modalVisible.value = false;
   loadData();
 };

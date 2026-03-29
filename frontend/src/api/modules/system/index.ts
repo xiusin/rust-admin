@@ -53,7 +53,13 @@ export const deleteDivisionAPI = (params: { dept_id: string }) => {
 };
 
 // 获取角色数据
-export const getRoleAPI = (params?: { role_name?: string; role_key?: string; status?: string; start_time?: string; end_time?: string }) => {
+export const getRoleAPI = (params?: {
+  role_name?: string;
+  role_key?: string;
+  status?: string;
+  start_time?: string;
+  end_time?: string;
+}) => {
   return axios({
     url: "/sys/role/list",
     method: "get",
@@ -62,7 +68,14 @@ export const getRoleAPI = (params?: { role_name?: string; role_key?: string; sta
 };
 
 // 获取账户数据
-export const getAccountAPI = (params?: { dept_id?: number; user_name?: string; phonenumber?: string; status?: string; start_time?: string; end_time?: string }) => {
+export const getAccountAPI = (params?: {
+  dept_id?: number;
+  user_name?: string;
+  phonenumber?: string;
+  status?: string;
+  start_time?: string;
+  end_time?: string;
+}) => {
   return axios({
     url: "/sys/user/list",
     method: "get",

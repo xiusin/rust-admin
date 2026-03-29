@@ -24,19 +24,19 @@ const cmsModule: MockMethod[] = [
     response: ({ query }) => {
       const { page = 1, pageSize = 10, name, isEnabled } = query;
       let list = [...modelList];
-      
+
       if (name) {
         list = list.filter(item => item.name.includes(name) || item.code.includes(name));
       }
       if (isEnabled !== undefined) {
-        list = list.filter(item => item.isEnabled === (isEnabled === 'true' || isEnabled === true));
+        list = list.filter(item => item.isEnabled === (isEnabled === "true" || isEnabled === true));
       }
-      
+
       const total = list.length;
       const start = (page - 1) * pageSize;
       const end = start + pageSize;
       const data = list.slice(start, end);
-      
+
       return resultSuccess({
         list: data,
         total,
@@ -54,12 +54,12 @@ const cmsModule: MockMethod[] = [
       if (!id) {
         return resultError(null, "模型ID不能为空", 400);
       }
-      
+
       const model = modelList.find(item => item.id === Number(id));
       if (!model) {
         return resultError(null, "模型不存在", 404);
       }
-      
+
       const detail = {
         ...modelDetail,
         id: model.id,
@@ -73,7 +73,7 @@ const cmsModule: MockMethod[] = [
         sort: model.sort,
         fields: fieldList.filter(f => f.modelId === Number(id))
       };
-      
+
       return resultSuccess(detail);
     }
   },
@@ -108,11 +108,11 @@ const cmsModule: MockMethod[] = [
     response: ({ query }) => {
       const { modelId } = query;
       let list = [...fieldList];
-      
+
       if (modelId) {
         list = list.filter(item => item.modelId === Number(modelId));
       }
-      
+
       return resultSuccess(list);
     }
   },
@@ -123,7 +123,7 @@ const cmsModule: MockMethod[] = [
     response: ({ query }) => {
       const { page = 1, pageSize = 10, title, categoryId, modelId, status } = query;
       let list = [...contentList];
-      
+
       if (title) {
         list = list.filter(item => item.title.includes(title));
       }
@@ -136,12 +136,12 @@ const cmsModule: MockMethod[] = [
       if (status) {
         list = list.filter(item => item.status === status);
       }
-      
+
       const total = list.length;
       const start = (page - 1) * pageSize;
       const end = start + pageSize;
       const data = list.slice(start, end);
-      
+
       return resultSuccess({
         list: data,
         total,
@@ -159,12 +159,12 @@ const cmsModule: MockMethod[] = [
       if (!id) {
         return resultError(null, "内容ID不能为空", 400);
       }
-      
+
       const content = contentList.find(item => item.id === Number(id));
       if (!content) {
         return resultError(null, "内容不存在", 404);
       }
-      
+
       return resultSuccess(contentDetail);
     }
   },
@@ -223,19 +223,19 @@ const cmsModule: MockMethod[] = [
     response: ({ query }) => {
       const { page = 1, pageSize = 10, name, status } = query;
       let list = [...categoryList];
-      
+
       if (name) {
         list = list.filter(item => item.name.includes(name) || item.code.includes(name));
       }
       if (status !== undefined) {
-        list = list.filter(item => item.status === (status === 'true' || status === true));
+        list = list.filter(item => item.status === (status === "true" || status === true));
       }
-      
+
       const total = list.length;
       const start = (page - 1) * pageSize;
       const end = start + pageSize;
       const data = list.slice(start, end);
-      
+
       return resultSuccess({
         list: data,
         total,
@@ -275,19 +275,19 @@ const cmsModule: MockMethod[] = [
     response: ({ query }) => {
       const { page = 1, pageSize = 10, name, status } = query;
       let list = [...tagList];
-      
+
       if (name) {
         list = list.filter(item => item.name.includes(name) || item.code.includes(name));
       }
       if (status !== undefined) {
-        list = list.filter(item => item.status === (status === 'true' || status === true));
+        list = list.filter(item => item.status === (status === "true" || status === true));
       }
-      
+
       const total = list.length;
       const start = (page - 1) * pageSize;
       const end = start + pageSize;
       const data = list.slice(start, end);
-      
+
       return resultSuccess({
         list: data,
         total,
@@ -335,19 +335,19 @@ const cmsModule: MockMethod[] = [
     response: ({ query }) => {
       const { page = 1, pageSize = 10, modelId, formType } = query;
       let list = [...formConfigList];
-      
+
       if (modelId) {
         list = list.filter(item => item.modelId === Number(modelId));
       }
       if (formType) {
         list = list.filter(item => item.formType === formType);
       }
-      
+
       const total = list.length;
       const start = (page - 1) * pageSize;
       const end = start + pageSize;
       const data = list.slice(start, end);
-      
+
       return resultSuccess({
         list: data,
         total,
@@ -361,7 +361,7 @@ const cmsModule: MockMethod[] = [
     method: "get",
     timeout: 300,
     response: ({ query }) => {
-      const { modelId, formType = 'create' } = query;
+      const { modelId, formType = "create" } = query;
       return resultSuccess({
         ...formSchema,
         formType
@@ -383,16 +383,16 @@ const cmsModule: MockMethod[] = [
     response: ({ query }) => {
       const { page = 1, pageSize = 10, modelId } = query;
       let list = [...tableConfigList];
-      
+
       if (modelId) {
         list = list.filter(item => item.modelId === Number(modelId));
       }
-      
+
       const total = list.length;
       const start = (page - 1) * pageSize;
       const end = start + pageSize;
       const data = list.slice(start, end);
-      
+
       return resultSuccess({
         list: data,
         total,

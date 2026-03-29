@@ -18,8 +18,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import type { FormConfigDetail, FormFieldConfig } from '@/api/modules/cms/form';
+import { ref, computed, watch } from "vue";
+import type { FormConfigDetail, FormFieldConfig } from "@/api/modules/cms/form";
 
 interface Props {
   config: FormConfigDetail;
@@ -33,28 +33,28 @@ const formData = ref<Record<string, any>>({});
 
 const getFieldComponent = (type: string) => {
   const components: Record<string, string> = {
-    text: 'a-input',
-    textarea: 'a-textarea',
-    number: 'a-input-number',
-    select: 'a-select',
-    radio: 'a-radio-group',
-    checkbox: 'a-checkbox-group',
-    date: 'a-date-picker',
-    datetime: 'a-date-picker',
-    image: 'a-upload',
-    file: 'a-upload',
-    editor: 'a-textarea',
-    switch: 'a-switch',
+    text: "a-input",
+    textarea: "a-textarea",
+    number: "a-input-number",
+    select: "a-select",
+    radio: "a-radio-group",
+    checkbox: "a-checkbox-group",
+    date: "a-date-picker",
+    datetime: "a-date-picker",
+    image: "a-upload",
+    file: "a-upload",
+    editor: "a-textarea",
+    switch: "a-switch"
   };
-  return components[type] || 'a-input';
+  return components[type] || "a-input";
 };
 
 watch(
   () => props.config,
   () => {
     formData.value = {};
-    fields.value.forEach((f) => {
-      formData.value[f.code] = f.defaultValue || '';
+    fields.value.forEach(f => {
+      formData.value[f.code] = f.defaultValue || "";
     });
   },
   { immediate: true }

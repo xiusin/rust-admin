@@ -24,7 +24,7 @@
           <a-table-column title="禁用类型" data-index="ban_type" :width="100">
             <template #cell="{ record }">
               <a-tag :color="record.ban_type === 'permanent' ? 'red' : 'orange'">
-                {{ record.ban_type === 'permanent' ? '永久' : '临时' }}
+                {{ record.ban_type === "permanent" ? "永久" : "临时" }}
               </a-tag>
             </template>
           </a-table-column>
@@ -39,7 +39,7 @@
           <a-table-column title="禁用时间" data-index="start_at" :width="180" />
           <a-table-column title="到期时间" data-index="end_at" :width="180">
             <template #cell="{ record }">
-              {{ record.end_at || '永久' }}
+              {{ record.end_at || "永久" }}
             </template>
           </a-table-column>
           <a-table-column title="操作" :width="100" fixed="right">
@@ -85,47 +85,47 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { Message } from '@arco-design/web-vue';
-import { userExtensionApi, UserBanModel } from '@/api/modules/consumer/userExtension';
+import { ref, reactive, onMounted } from "vue";
+import { Message } from "@arco-design/web-vue";
+import { userExtensionApi, UserBanModel } from "@/api/modules/consumer/userExtension";
 
 const loading = ref(false);
 const banList = ref<UserBanModel[]>([]);
 const pagination = ref({ current: 1, pageSize: 10, total: 0 });
 
 const searchForm = reactive({
-  consumer_id: '',
-  status: '',
+  consumer_id: "",
+  status: ""
 });
 
 const banVisible = ref(false);
 const banForm = reactive({
   consumer_id: 0,
-  ban_type: 'temporary',
-  reason: '',
-  end_at: '',
+  ban_type: "temporary",
+  reason: "",
+  end_at: ""
 });
 
 const unbanVisible = ref(false);
 const unbanForm = reactive({
   consumer_id: 0,
-  unban_reason: '',
+  unban_reason: ""
 });
 
 const getStatusColor = (status: string) => {
   const map: Record<string, string> = {
-    active: 'red',
-    expired: 'gray',
-    unbanned: 'green',
+    active: "red",
+    expired: "gray",
+    unbanned: "green"
   };
-  return map[status] || 'gray';
+  return map[status] || "gray";
 };
 
 const getStatusName = (status: string) => {
   const map: Record<string, string> = {
-    active: '禁用中',
-    expired: '已过期',
-    unbanned: '已解禁',
+    active: "禁用中",
+    expired: "已过期",
+    unbanned: "已解禁"
   };
   return map[status] || status;
 };
@@ -137,7 +137,7 @@ const loadData = async () => {
       page_num: pagination.value.current,
       page_size: pagination.value.pageSize,
       consumer_id: searchForm.consumer_id ? parseInt(searchForm.consumer_id) : undefined,
-      status: searchForm.status || undefined,
+      status: searchForm.status || undefined
     });
     banList.value = res.data?.list || [];
     pagination.value.total = res.data?.total || 0;
@@ -161,20 +161,20 @@ const handlePageChange = (page: number) => {
 const handleBan = () => {
   Object.assign(banForm, {
     consumer_id: 0,
-    ban_type: 'temporary',
-    reason: '',
-    end_at: '',
+    ban_type: "temporary",
+    reason: "",
+    end_at: ""
   });
   banVisible.value = true;
 };
 
 const submitBan = async () => {
   if (!banForm.consumer_id) {
-    Message.warning('请输入用户ID');
+    Message.warning("请输入用户ID");
     return;
   }
   if (!banForm.reason) {
-    Message.warning('请输入禁用原因');
+    Message.warning("请输入禁用原因");
     return;
   }
   try {
@@ -182,9 +182,9 @@ const submitBan = async () => {
       consumer_id: banForm.consumer_id,
       ban_type: banForm.ban_type,
       reason: banForm.reason,
-      end_at: banForm.end_at || undefined,
+      end_at: banForm.end_at || undefined
     });
-    Message.success('禁用成功');
+    Message.success("禁用成功");
     banVisible.value = false;
     loadData();
   } catch (error) {
@@ -194,7 +194,7 @@ const submitBan = async () => {
 
 const handleUnban = (record: UserBanModel) => {
   unbanForm.consumer_id = record.consumer_id;
-  unbanForm.unban_reason = '';
+  unbanForm.unban_reason = "";
   unbanVisible.value = true;
 };
 
@@ -202,9 +202,9 @@ const submitUnban = async () => {
   try {
     await userExtensionApi.unbanUser({
       consumer_id: unbanForm.consumer_id,
-      unban_reason: unbanForm.unban_reason,
+      unban_reason: unbanForm.unban_reason
     });
-    Message.success('解禁成功');
+    Message.success("解禁成功");
     unbanVisible.value = false;
     loadData();
   } catch (error) {

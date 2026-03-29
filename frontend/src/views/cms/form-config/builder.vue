@@ -164,7 +164,11 @@
 
       <a-modal v-model:visible="previewVisible" :width="800" :footer="false" title="表单预览">
         <div class="preview-form">
-          <a-form :model="previewData" :label-width="formConfig.labelWidth" :layout="formConfig.labelPosition === 'top' ? 'vertical' : 'horizontal'">
+          <a-form
+            :model="previewData"
+            :label-width="formConfig.labelWidth"
+            :layout="formConfig.labelPosition === 'top' ? 'vertical' : 'horizontal'"
+          >
             <a-row :gutter="16">
               <a-col :span="12" v-for="field in fields" :key="field.id">
                 <a-form-item :label="field.name" :required="field.required">
@@ -185,9 +189,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { formApi, type FormFieldConfig, type FormConfigDetail } from '@/api/modules/cms/form';
+import { ref, reactive, computed, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { formApi, type FormFieldConfig, type FormConfigDetail } from "@/api/modules/cms/form";
 
 const router = useRouter();
 const route = useRoute();
@@ -199,57 +203,57 @@ const draggedField = ref<FormFieldConfig | null>(null);
 
 const formId = computed(() => Number(route.query.id));
 const modelId = computed(() => Number(route.query.modelId));
-const formTitle = computed(() => (formId.value ? '编辑表单配置' : '新增表单配置'));
+const formTitle = computed(() => (formId.value ? "编辑表单配置" : "新增表单配置"));
 
 const fields = ref<FormFieldConfig[]>([]);
 const previewData = ref<Record<string, any>>({});
 
 const formConfig = reactive({
-  name: '',
-  code: '',
-  formType: 'create' as 'create' | 'edit' | 'detail' | 'search',
+  name: "",
+  code: "",
+  formType: "create" as "create" | "edit" | "detail" | "search",
   labelWidth: 100,
-  labelPosition: 'right' as 'left' | 'right' | 'top',
+  labelPosition: "right" as "left" | "right" | "top"
 });
 
 const goBack = () => {
-  router.push('/cms/form-config/list');
+  router.push("/cms/form-config/list");
 };
 
 const getFieldTypeText = (type: string) => {
   const texts: Record<string, string> = {
-    text: '文本',
-    textarea: '多行文本',
-    number: '数字',
-    select: '下拉',
-    radio: '单选',
-    checkbox: '多选',
-    date: '日期',
-    datetime: '日期时间',
-    image: '图片',
-    file: '文件',
-    editor: '富文本',
-    switch: '开关',
+    text: "文本",
+    textarea: "多行文本",
+    number: "数字",
+    select: "下拉",
+    radio: "单选",
+    checkbox: "多选",
+    date: "日期",
+    datetime: "日期时间",
+    image: "图片",
+    file: "文件",
+    editor: "富文本",
+    switch: "开关"
   };
   return texts[type] || type;
 };
 
 const getFieldComponent = (type: string) => {
   const components: Record<string, string> = {
-    text: 'a-input',
-    textarea: 'a-textarea',
-    number: 'a-input-number',
-    select: 'a-select',
-    radio: 'a-radio-group',
-    checkbox: 'a-checkbox-group',
-    date: 'a-date-picker',
-    datetime: 'a-date-picker',
-    image: 'a-upload',
-    file: 'a-upload',
-    editor: 'a-textarea',
-    switch: 'a-switch',
+    text: "a-input",
+    textarea: "a-textarea",
+    number: "a-input-number",
+    select: "a-select",
+    radio: "a-radio-group",
+    checkbox: "a-checkbox-group",
+    date: "a-date-picker",
+    datetime: "a-date-picker",
+    image: "a-upload",
+    file: "a-upload",
+    editor: "a-textarea",
+    switch: "a-switch"
   };
-  return components[type] || 'a-input';
+  return components[type] || "a-input";
 };
 
 const selectField = (field: FormFieldConfig) => {
@@ -259,12 +263,12 @@ const selectField = (field: FormFieldConfig) => {
 const addField = () => {
   const newField: FormFieldConfig = {
     id: Date.now(),
-    name: '新字段',
+    name: "新字段",
     code: `field_${fields.value.length + 1}`,
-    type: 'text',
+    type: "text",
     required: false,
     disabled: false,
-    visible: true,
+    visible: true
   };
   fields.value.push(newField);
   currentField.value = newField;
@@ -276,16 +280,16 @@ const onDragStart = (e: DragEvent, field: FormFieldConfig) => {
 
 const onDrop = (e: DragEvent, targetField: FormFieldConfig) => {
   if (!draggedField.value || draggedField.value.id === targetField.id) return;
-  const draggedIndex = fields.value.findIndex((f) => f.id === draggedField.value!.id);
-  const targetIndex = fields.value.findIndex((f) => f.id === targetField.id);
+  const draggedIndex = fields.value.findIndex(f => f.id === draggedField.value!.id);
+  const targetIndex = fields.value.findIndex(f => f.id === targetField.id);
   fields.value.splice(draggedIndex, 1);
   fields.value.splice(targetIndex, 0, draggedField.value);
 };
 
 const handlePreview = () => {
   previewData.value = {};
-  fields.value.forEach((f) => {
-    previewData.value[f.code] = f.defaultValue || '';
+  fields.value.forEach(f => {
+    previewData.value[f.code] = f.defaultValue || "";
   });
   previewVisible.value = true;
 };
@@ -302,15 +306,15 @@ const handleSave = async () => {
       config: {
         labelWidth: formConfig.labelWidth,
         labelPosition: formConfig.labelPosition,
-        fields: fields.value,
-      },
+        fields: fields.value
+      }
     };
     if (formId.value) {
       await formApi.edit(params);
-      arcoMessage('success', '保存成功');
+      arcoMessage("success", "保存成功");
     } else {
       await formApi.add(params);
-      arcoMessage('success', '创建成功');
+      arcoMessage("success", "创建成功");
     }
     goBack();
   } catch (error) {
@@ -323,11 +327,11 @@ const handleSave = async () => {
 const handleExport = () => {
   const config = {
     ...formConfig,
-    fields: fields.value,
+    fields: fields.value
   };
-  const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
   const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
   a.download = `form-config-${Date.now()}.json`;
   a.click();
@@ -343,7 +347,7 @@ const loadForm = async () => {
     formConfig.code = data.code;
     formConfig.formType = data.formType;
     formConfig.labelWidth = data.config?.labelWidth || 100;
-    formConfig.labelPosition = data.config?.labelPosition || 'right';
+    formConfig.labelPosition = data.config?.labelPosition || "right";
     fields.value = data.config?.fields || [];
     if (fields.value.length > 0) {
       currentField.value = fields.value[0];

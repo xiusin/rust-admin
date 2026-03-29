@@ -52,7 +52,7 @@
             <a-table-column title="套餐说明" :width="200">
               <template #cell="{ record }">
                 <div v-if="getSelectedPlan(record)" class="plan-desc text-muted">
-                  {{ getSelectedPlan(record)?.description || '-' }}
+                  {{ getSelectedPlan(record)?.description || "-" }}
                 </div>
               </template>
             </a-table-column>
@@ -101,10 +101,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue';
-import { Message, Modal } from '@arco-design/web-vue';
-import { useRouter } from 'vue-router';
-import { cart } from '@/api/modules/plugin-market/order';
+import { ref, reactive, computed, onMounted } from "vue";
+import { Message, Modal } from "@arco-design/web-vue";
+import { useRouter } from "vue-router";
+import { cart } from "@/api/modules/plugin-market/order";
 
 interface Plan {
   id: number;
@@ -135,7 +135,7 @@ const totalPrice = computed(() => {
 });
 
 const getSelectedPlan = (item: CartItem) => {
-  return item.plans.find((p) => p.id === item.planId);
+  return item.plans.find(p => p.id === item.planId);
 };
 
 const loadCartData = async () => {
@@ -149,28 +149,28 @@ const loadCartData = async () => {
         {
           id: 1,
           pluginId: 1,
-          pluginName: 'VIP会员插件',
-          pluginCode: 'vip-member',
-          pluginIcon: '',
+          pluginName: "VIP会员插件",
+          pluginCode: "vip-member",
+          pluginIcon: "",
           planId: 2,
           plans: [
-            { id: 1, name: '月度套餐', price: 29.9, description: '每月续费' },
-            { id: 2, name: '年度套餐', price: 299, description: '年费（推荐）' },
-            { id: 3, name: '终身套餐', price: 999, description: '一次性购买' },
-          ],
+            { id: 1, name: "月度套餐", price: 29.9, description: "每月续费" },
+            { id: 2, name: "年度套餐", price: 299, description: "年费（推荐）" },
+            { id: 3, name: "终身套餐", price: 999, description: "一次性购买" }
+          ]
         },
         {
           id: 2,
           pluginId: 2,
-          pluginName: '高级数据分析',
-          pluginCode: 'advanced-analytics',
-          pluginIcon: '',
+          pluginName: "高级数据分析",
+          pluginCode: "advanced-analytics",
+          pluginIcon: "",
           planId: 1,
           plans: [
-            { id: 1, name: '基础版', price: 99, description: '基础分析功能' },
-            { id: 2, name: '专业版', price: 399, description: '高级分析功能' },
-          ],
-        },
+            { id: 1, name: "基础版", price: 99, description: "基础分析功能" },
+            { id: 2, name: "专业版", price: 399, description: "高级分析功能" }
+          ]
+        }
       ];
     }
   } catch (error) {
@@ -178,28 +178,28 @@ const loadCartData = async () => {
       {
         id: 1,
         pluginId: 1,
-        pluginName: 'VIP会员插件',
-        pluginCode: 'vip-member',
-        pluginIcon: '',
+        pluginName: "VIP会员插件",
+        pluginCode: "vip-member",
+        pluginIcon: "",
         planId: 2,
         plans: [
-          { id: 1, name: '月度套餐', price: 29.9, description: '每月续费' },
-          { id: 2, name: '年度套餐', price: 299, description: '年费（推荐）' },
-          { id: 3, name: '终身套餐', price: 999, description: '一次性购买' },
-        ],
+          { id: 1, name: "月度套餐", price: 29.9, description: "每月续费" },
+          { id: 2, name: "年度套餐", price: 299, description: "年费（推荐）" },
+          { id: 3, name: "终身套餐", price: 999, description: "一次性购买" }
+        ]
       },
       {
         id: 2,
         pluginId: 2,
-        pluginName: '高级数据分析',
-        pluginCode: 'advanced-analytics',
-        pluginIcon: '',
+        pluginName: "高级数据分析",
+        pluginCode: "advanced-analytics",
+        pluginIcon: "",
         planId: 1,
         plans: [
-          { id: 1, name: '基础版', price: 99, description: '基础分析功能' },
-          { id: 2, name: '专业版', price: 399, description: '高级分析功能' },
-        ],
-      },
+          { id: 1, name: "基础版", price: 99, description: "基础分析功能" },
+          { id: 2, name: "专业版", price: 399, description: "高级分析功能" }
+        ]
+      }
     ];
   } finally {
     loading.value = false;
@@ -212,58 +212,58 @@ const handlePlanChange = (item: CartItem) => {
 
 const handleRemove = (item: CartItem) => {
   Modal.confirm({
-    title: '确认移除',
+    title: "确认移除",
     content: `确定要从购物车中移除"${item.pluginName}"吗？`,
     onOk: async () => {
       try {
         await cart.remove({ ids: [item.id] });
-        cartData.value = cartData.value.filter((c) => c.id !== item.id);
-        Message.success('已移除');
+        cartData.value = cartData.value.filter(c => c.id !== item.id);
+        Message.success("已移除");
       } catch (error) {
-        cartData.value = cartData.value.filter((c) => c.id !== item.id);
-        Message.success('已移除');
+        cartData.value = cartData.value.filter(c => c.id !== item.id);
+        Message.success("已移除");
       }
-    },
+    }
   });
 };
 
 const handleClearCart = () => {
   Modal.confirm({
-    title: '确认清空',
-    content: '确定要清空购物车吗？',
+    title: "确认清空",
+    content: "确定要清空购物车吗？",
     onOk: async () => {
       try {
         await cart.clear();
         cartData.value = [];
-        Message.success('购物车已清空');
+        Message.success("购物车已清空");
       } catch (error) {
         cartData.value = [];
-        Message.success('购物车已清空');
+        Message.success("购物车已清空");
       }
-    },
+    }
   });
 };
 
 const handleCheckout = () => {
   if (cartData.value.length === 0) {
-    Message.warning('购物车是空的');
+    Message.warning("购物车是空的");
     return;
   }
-  const hasInvalidPlan = cartData.value.some((item) => !item.planId || item.planId === 0);
+  const hasInvalidPlan = cartData.value.some(item => !item.planId || item.planId === 0);
   if (hasInvalidPlan) {
-    Message.warning('请为所有商品选择套餐');
+    Message.warning("请为所有商品选择套餐");
     return;
   }
   router.push({
-    path: '/order/checkout',
+    path: "/order/checkout",
     query: {
       items: JSON.stringify(
-        cartData.value.map((item) => ({
+        cartData.value.map(item => ({
           pluginId: item.pluginId,
-          planId: item.planId,
+          planId: item.planId
         }))
-      ),
-    },
+      )
+    }
   });
 };
 

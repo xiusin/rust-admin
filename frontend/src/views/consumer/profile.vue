@@ -36,7 +36,7 @@
                 </a-avatar>
                 <div class="user-detail">
                   <div class="nickname">
-                    {{ record.nickname || '未设置' }}
+                    {{ record.nickname || "未设置" }}
                     <a-tag v-if="record.level_name" :color="getLevelColor(record.level)" size="small">
                       {{ record.level_name }}
                     </a-tag>
@@ -47,7 +47,7 @@
             </template>
           </a-table-column>
           <a-table-column title="邮箱" :width="180" ellipsis>
-            <template #cell="{ record }">{{ record.email || '-' }}</template>
+            <template #cell="{ record }">{{ record.email || "-" }}</template>
           </a-table-column>
           <a-table-column title="第三方绑定" :width="160">
             <template #cell="{ record }">
@@ -81,7 +81,7 @@
           </a-table-column>
           <a-table-column title="消费金额" :width="120">
             <template #cell="{ record }">
-              <span class="text-danger">¥{{ record.total_consumption || '0.00' }}</span>
+              <span class="text-danger">¥{{ record.total_consumption || "0.00" }}</span>
             </template>
           </a-table-column>
           <a-table-column title="订单数" :width="80">
@@ -126,23 +126,31 @@
           <a-descriptions :column="2" bordered>
             <a-descriptions-item label="用户ID">{{ currentUser.id }}</a-descriptions-item>
             <a-descriptions-item label="手机号">{{ currentUser.phone }}</a-descriptions-item>
-            <a-descriptions-item label="昵称">{{ currentUser.nickname || '-' }}</a-descriptions-item>
-            <a-descriptions-item label="邮箱">{{ currentUser.email || '-' }}</a-descriptions-item>
+            <a-descriptions-item label="昵称">{{ currentUser.nickname || "-" }}</a-descriptions-item>
+            <a-descriptions-item label="邮箱">{{ currentUser.email || "-" }}</a-descriptions-item>
             <a-descriptions-item label="会员等级">
-              <a-tag :color="getLevelColor(currentUser.level)">{{ currentUser.level_name || '普通会员' }}</a-tag>
+              <a-tag :color="getLevelColor(currentUser.level)">{{ currentUser.level_name || "普通会员" }}</a-tag>
             </a-descriptions-item>
             <a-descriptions-item label="经验值">{{ currentUser.total_exp || 0 }}</a-descriptions-item>
             <a-descriptions-item label="账户状态">
-              <a-badge :status="currentUser.status === '0' ? 'success' : 'danger'" :text="currentUser.status === '0' ? '正常' : '禁用'" />
+              <a-badge
+                :status="currentUser.status === '0' ? 'success' : 'danger'"
+                :text="currentUser.status === '0' ? '正常' : '禁用'"
+              />
             </a-descriptions-item>
             <a-descriptions-item label="风险评分">
-              <a-progress :percent="currentUser.risk_score || 0" :status="getRiskStatus(currentUser.risk_score)" size="small" style="width: 100px" />
+              <a-progress
+                :percent="currentUser.risk_score || 0"
+                :status="getRiskStatus(currentUser.risk_score)"
+                size="small"
+                style="width: 100px"
+              />
             </a-descriptions-item>
             <a-descriptions-item label="注册时间">{{ currentUser.created_at }}</a-descriptions-item>
-            <a-descriptions-item label="最后登录">{{ currentUser.last_login_at || '-' }}</a-descriptions-item>
-            <a-descriptions-item label="最后登录IP">{{ currentUser.last_login_ip || '-' }}</a-descriptions-item>
+            <a-descriptions-item label="最后登录">{{ currentUser.last_login_at || "-" }}</a-descriptions-item>
+            <a-descriptions-item label="最后登录IP">{{ currentUser.last_login_ip || "-" }}</a-descriptions-item>
             <a-descriptions-item label="消费金额">
-              <span class="text-danger">¥{{ currentUser.total_consumption || '0.00' }}</span>
+              <span class="text-danger">¥{{ currentUser.total_consumption || "0.00" }}</span>
             </a-descriptions-item>
           </a-descriptions>
         </a-tab-pane>
@@ -176,7 +184,14 @@
         </a-tab-pane>
         <a-tab-pane key="tags" title="用户标签">
           <div class="tags-container">
-            <a-tag v-for="tag in (currentUser.tags || [])" :key="tag.id" :color="tag.color" closable @close="removeTag(tag.id)" style="margin: 4px">
+            <a-tag
+              v-for="tag in currentUser.tags || []"
+              :key="tag.id"
+              :color="tag.color"
+              closable
+              @close="removeTag(tag.id)"
+              style="margin: 4px"
+            >
               {{ tag.name }}
             </a-tag>
             <a-button type="dashed" size="small" @click="handleTags(currentUser)">
@@ -205,7 +220,14 @@
       <a-form layout="vertical">
         <a-form-item label="当前标签">
           <div>
-            <a-tag v-for="tag in (currentUser.tags || [])" :key="tag.id" :color="tag.color" closable @close="removeTagInline(tag.id)" style="margin: 4px">
+            <a-tag
+              v-for="tag in currentUser.tags || []"
+              :key="tag.id"
+              :color="tag.color"
+              closable
+              @close="removeTagInline(tag.id)"
+              style="margin: 4px"
+            >
               {{ tag.name }}
             </a-tag>
             <span v-if="!(currentUser.tags || []).length" class="text-muted">暂无标签</span>
@@ -257,7 +279,7 @@
     <a-modal v-model:visible="levelVisible" title="调整用户等级" @ok="submitLevel" @cancel="levelVisible = false">
       <a-form :model="levelForm" layout="vertical">
         <a-form-item label="当前等级">
-          <a-tag :color="getLevelColor(currentUser.level)">{{ currentUser.level_name || '普通会员' }}</a-tag>
+          <a-tag :color="getLevelColor(currentUser.level)">{{ currentUser.level_name || "普通会员" }}</a-tag>
           <span style="margin-left: 8px">经验值: {{ currentUser.total_exp || 0 }}</span>
         </a-form-item>
         <a-form-item label="调整方式">
@@ -306,19 +328,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue';
-import { Message } from '@arco-design/web-vue';
-import { consumerApi, ConsumerListItem } from '@/api/modules/consumer/index';
-import { userExtensionApi, UserTagModel, UserOauthModel } from '@/api/modules/consumer/userExtension';
+import { ref, reactive, computed, onMounted } from "vue";
+import { Message } from "@arco-design/web-vue";
+import { consumerApi, ConsumerListItem } from "@/api/modules/consumer/index";
+import { userExtensionApi, UserTagModel, UserOauthModel } from "@/api/modules/consumer/userExtension";
 
 const loading = ref(false);
 const userList = ref<ConsumerListItem[]>([]);
 const pagination = ref({ current: 1, pageSize: 10, total: 0 });
 
 const searchForm = reactive({
-  keyword: '',
-  status: '',
-  level: undefined as number | undefined,
+  keyword: "",
+  status: "",
+  level: undefined as number | undefined
 });
 
 const detailVisible = ref(false);
@@ -339,55 +361,55 @@ const availableTags = computed(() => {
 });
 
 const levelForm = reactive({
-  adjust_type: 'exp',
+  adjust_type: "exp",
   exp_change: 0,
   target_level: 1,
-  remark: '',
+  remark: ""
 });
 
 const banForm = reactive({
   consumer_id: 0,
-  ban_type: 'temporary',
-  reason: '',
-  end_at: '',
+  ban_type: "temporary",
+  reason: "",
+  end_at: ""
 });
 
 const getLevelColor = (level?: number) => {
   const colors: Record<number, string> = {
-    1: '#999999',
-    2: '#cd7f32',
-    3: '#c0c0c0',
-    4: '#ffd700',
-    5: '#b9f2ff',
-    6: '#ff6b6b',
+    1: "#999999",
+    2: "#cd7f32",
+    3: "#c0c0c0",
+    4: "#ffd700",
+    5: "#b9f2ff",
+    6: "#ff6b6b"
   };
-  return colors[level || 1] || '#999999';
+  return colors[level || 1] || "#999999";
 };
 
 const getRiskStatus = (score?: number) => {
-  if (!score || score < 30) return 'success';
-  if (score < 60) return 'warning';
-  return 'danger';
+  if (!score || score < 30) return "success";
+  if (score < 60) return "warning";
+  return "danger";
 };
 
 const getOAuthTypeName = (type: string) => {
   const names: Record<string, string> = {
-    wechat: '微信',
-    github: 'GitHub',
-    apple: 'Apple',
-    google: 'Google',
+    wechat: "微信",
+    github: "GitHub",
+    apple: "Apple",
+    google: "Google"
   };
   return names[type] || type;
 };
 
 const getOAuthColor = (type: string) => {
   const colors: Record<string, string> = {
-    wechat: '#07c160',
-    github: '#333333',
-    apple: '#000000',
-    google: '#4285f4',
+    wechat: "#07c160",
+    github: "#333333",
+    apple: "#000000",
+    google: "#4285f4"
   };
-  return colors[type] || '#999999';
+  return colors[type] || "#999999";
 };
 
 const loadData = async () => {
@@ -397,7 +419,7 @@ const loadData = async () => {
       page_num: pagination.value.current,
       page_size: pagination.value.pageSize,
       phone: searchForm.keyword || undefined,
-      status: searchForm.status || undefined,
+      status: searchForm.status || undefined
     });
     userList.value = res.data?.list || [];
     pagination.value.total = res.data?.total || 0;
@@ -433,8 +455,8 @@ const handleSearch = () => {
 };
 
 const handleReset = () => {
-  searchForm.keyword = '';
-  searchForm.status = '';
+  searchForm.keyword = "";
+  searchForm.status = "";
   searchForm.level = undefined;
   pagination.value.current = 1;
   loadData();
@@ -463,10 +485,10 @@ const submitTags = async () => {
     if (selectedTagIds.value.length > 0) {
       await userExtensionApi.addUserTags({
         consumer_id: currentUser.value.id,
-        tag_ids: selectedTagIds.value,
+        tag_ids: selectedTagIds.value
       });
     }
-    Message.success('标签更新成功');
+    Message.success("标签更新成功");
     tagsVisible.value = false;
     loadData();
   } catch (error) {
@@ -478,9 +500,9 @@ const removeTag = async (tagId: number) => {
   try {
     await userExtensionApi.removeUserTags({
       consumer_id: currentUser.value.id,
-      tag_ids: [tagId],
+      tag_ids: [tagId]
     });
-    Message.success('移除成功');
+    Message.success("移除成功");
     currentUser.value.tags = (currentUser.value.tags || []).filter(t => t.id !== tagId);
     loadData();
   } catch (error) {
@@ -502,9 +524,9 @@ const handleUnbindOAuth = async (oauth: UserOauthModel) => {
   try {
     await userExtensionApi.unbindOauth({
       consumer_id: currentUser.value.id,
-      oauth_type: oauth.oauth_type,
+      oauth_type: oauth.oauth_type
     });
-    Message.success('解绑成功');
+    Message.success("解绑成功");
     await loadUserOauths(currentUser.value.id);
     loadData();
   } catch (error) {
@@ -516,9 +538,9 @@ const setPrimaryOAuth = async (oauth: UserOauthModel) => {
   try {
     await userExtensionApi.setPrimaryBind({
       consumer_id: currentUser.value.id,
-      oauth_id: oauth.id,
+      oauth_id: oauth.id
     });
-    Message.success('设置成功');
+    Message.success("设置成功");
     await loadUserOauths(currentUser.value.id);
   } catch (error) {
     console.error(error);
@@ -527,27 +549,27 @@ const setPrimaryOAuth = async (oauth: UserOauthModel) => {
 
 const handleLevel = (record: ConsumerListItem) => {
   currentUser.value = record;
-  levelForm.adjust_type = 'exp';
+  levelForm.adjust_type = "exp";
   levelForm.exp_change = 0;
   levelForm.target_level = record.level || 1;
-  levelForm.remark = '';
+  levelForm.remark = "";
   levelVisible.value = true;
 };
 
 const submitLevel = async () => {
   try {
-    if (levelForm.adjust_type === 'exp') {
+    if (levelForm.adjust_type === "exp") {
       await userExtensionApi.addExp({
         consumer_id: currentUser.value.id,
         exp: levelForm.exp_change,
-        source: 'admin_adjust',
-        remark: levelForm.remark,
+        source: "admin_adjust",
+        remark: levelForm.remark
       });
     } else {
-      Message.warning('暂不支持直接设置等级');
+      Message.warning("暂不支持直接设置等级");
       return;
     }
-    Message.success('等级调整成功');
+    Message.success("等级调整成功");
     levelVisible.value = false;
     loadData();
   } catch (error) {
@@ -557,15 +579,15 @@ const submitLevel = async () => {
 
 const handleBan = (record: ConsumerListItem) => {
   banForm.consumer_id = record.id;
-  banForm.ban_type = 'temporary';
-  banForm.reason = '';
-  banForm.end_at = '';
+  banForm.ban_type = "temporary";
+  banForm.reason = "";
+  banForm.end_at = "";
   banVisible.value = true;
 };
 
 const submitBan = async () => {
   if (!banForm.reason) {
-    Message.warning('请输入禁用原因');
+    Message.warning("请输入禁用原因");
     return;
   }
   try {
@@ -573,9 +595,9 @@ const submitBan = async () => {
       consumer_id: banForm.consumer_id,
       ban_type: banForm.ban_type,
       reason: banForm.reason,
-      end_at: banForm.end_at || undefined,
+      end_at: banForm.end_at || undefined
     });
-    Message.success('禁用成功');
+    Message.success("禁用成功");
     banVisible.value = false;
     loadData();
   } catch (error) {
@@ -587,9 +609,9 @@ const handleUnban = async (record: ConsumerListItem) => {
   try {
     await userExtensionApi.unbanUser({
       consumer_id: record.id,
-      unban_reason: '管理员解禁',
+      unban_reason: "管理员解禁"
     });
-    Message.success('解禁成功');
+    Message.success("解禁成功");
     loadData();
   } catch (error) {
     console.error(error);

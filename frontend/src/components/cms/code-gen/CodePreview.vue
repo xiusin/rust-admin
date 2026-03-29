@@ -13,16 +13,12 @@
         </a-button>
       </a-space>
     </div>
-    
+
     <div class="preview-content">
       <div class="file-tree-panel">
-        <FileTree
-          :files="fileTree"
-          :active-file="activeFile"
-          @select="handleFileSelect"
-        />
+        <FileTree :files="fileTree" :active-file="activeFile" @select="handleFileSelect" />
       </div>
-      
+
       <div class="code-viewer-panel">
         <CodeViewer
           v-if="currentCode"
@@ -33,7 +29,7 @@
         <a-empty v-else description="请选择文件查看代码" />
       </div>
     </div>
-    
+
     <div class="preview-footer">
       <GenConfig v-model="genConfig" @generate="handleGenerate" />
     </div>
@@ -41,79 +37,77 @@
 </template>
 
 <script setup lang="ts">
-import { Message } from '@arco-design/web-vue'
-import FileTree from './FileTree.vue'
-import CodeViewer from './CodeViewer.vue'
-import GenConfig from './GenConfig.vue'
+import { Message } from "@arco-design/web-vue";
+import FileTree from "./FileTree.vue";
+import CodeViewer from "./CodeViewer.vue";
+import GenConfig from "./GenConfig.vue";
 
 interface CodeFile {
-  id: string
-  name: string
-  path: string
-  language: string
-  content: string
-  children?: CodeFile[]
+  id: string;
+  name: string;
+  path: string;
+  language: string;
+  content: string;
+  children?: CodeFile[];
 }
 
 interface Props {
-  modelValue?: CodeFile[]
+  modelValue?: CodeFile[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: () => []
-})
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: CodeFile[]]
-  'download': [files: CodeFile[]]
-}>()
+  "update:modelValue": [value: CodeFile[]];
+  download: [files: CodeFile[]];
+}>();
 
-const fileTree = ref<CodeFile[]>(props.modelValue)
-const activeFile = ref<string>('')
-const currentFile = ref<CodeFile | null>(null)
+const fileTree = ref<CodeFile[]>(props.modelValue);
+const activeFile = ref<string>("");
+const currentFile = ref<CodeFile | null>(null);
 const genConfig = ref({
-  outputDir: '/src',
+  outputDir: "/src",
   overwrite: false,
   generateTests: false,
   generateDocs: false
-})
+});
 
-const currentCode = computed(() => currentFile.value)
+const currentCode = computed(() => currentFile.value);
 
 watch(
   () => props.modelValue,
-  (val) => {
-    fileTree.value = val
+  val => {
+    fileTree.value = val;
   },
   { deep: true }
-)
+);
 
 const handleFileSelect = (file: CodeFile) => {
-  activeFile.value = file.id
-  currentFile.value = file
-}
+  activeFile.value = file.id;
+  currentFile.value = file;
+};
 
 const handleCopyAll = async () => {
   try {
-    const allCode = fileTree.value
-      .map(f => `// ${f.path}\n${f.content}`)
-      .join('\n\n')
-    await navigator.clipboard.writeText(allCode)
-    Message.success('复制成功')
+    const allCode = fileTree.value.map(f => `// ${f.path}\n${f.content}`).join("\n\n");
+    await navigator.clipboard.writeText(allCode);
+    Message.success("复制成功");
   } catch {
-    Message.error('复制失败')
+    Message.error("复制失败");
   }
-}
+};
 
 const handleDownload = () => {
-  emit('download', fileTree.value)
-  Message.success('开始下载')
-}
+  emit("download", fileTree.value);
+  Message.success("开始下载");
+};
 
 const handleGenerate = (config: any) => {
-  console.log('Generate with config:', config)
-  Message.success('代码生成成功')
-}
+  console.log("Generate with config:", config);
+  Message.success("代码生成成功");
+};
 </script>
 
 <style lang="scss" scoped>

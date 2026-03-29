@@ -77,8 +77,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import type { CmsCategoryTree } from '@/api/modules/cms/category';
+import { computed } from "vue";
+import type { CmsCategoryTree } from "@/api/modules/cms/category";
 
 interface SearchForm {
   title: string;
@@ -101,14 +101,14 @@ interface Props {
 const props = defineProps<Props>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: SearchForm];
+  "update:modelValue": [value: SearchForm];
   search: [];
   reset: [];
 }>();
 
 const modelValue = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val),
+  set: val => emit("update:modelValue", val)
 });
 
 const dateRange = computed({
@@ -123,10 +123,10 @@ const dateRange = computed({
       props.modelValue.startTime = val[0];
       props.modelValue.endTime = val[1];
     } else {
-      props.modelValue.startTime = '';
-      props.modelValue.endTime = '';
+      props.modelValue.startTime = "";
+      props.modelValue.endTime = "";
     }
-  },
+  }
 });
 </script>
 

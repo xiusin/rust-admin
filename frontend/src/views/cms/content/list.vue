@@ -1,13 +1,7 @@
 <template>
   <div class="snow-page">
     <div class="snow-inner">
-      <ContentFilter
-        v-model="searchForm"
-        :model-id="modelId"
-        :categories="categories"
-        @search="search"
-        @reset="reset"
-      />
+      <ContentFilter v-model="searchForm" :model-id="modelId" :categories="categories" @search="search" @reset="reset" />
 
       <a-divider :margin="0" />
 
@@ -86,27 +80,15 @@
                 <template #icon><icon-more /></template>
               </a-button>
               <template #content>
-                <a-doption v-if="record.status === 'draft'" @click="onPublish(record)">
-                  <icon-upload /> 发布
-                </a-doption>
-                <a-doption v-if="record.status === 'published'" @click="onOffline(record)">
-                  <icon-download /> 下线
-                </a-doption>
-                <a-doption @click="onToggleTop(record)">
-                  <icon-to-top /> {{ record.isTop ? '取消置顶' : '置顶' }}
-                </a-doption>
+                <a-doption v-if="record.status === 'draft'" @click="onPublish(record)"> <icon-upload /> 发布 </a-doption>
+                <a-doption v-if="record.status === 'published'" @click="onOffline(record)"> <icon-download /> 下线 </a-doption>
+                <a-doption @click="onToggleTop(record)"> <icon-to-top /> {{ record.isTop ? "取消置顶" : "置顶" }} </a-doption>
                 <a-doption @click="onToggleRecommend(record)">
-                  <icon-star /> {{ record.isRecommend ? '取消推荐' : '推荐' }}
+                  <icon-star /> {{ record.isRecommend ? "取消推荐" : "推荐" }}
                 </a-doption>
-                <a-doption @click="onToggleHot(record)">
-                  <icon-fire /> {{ record.isHot ? '取消热门' : '热门' }}
-                </a-doption>
-                <a-doption v-if="record.status === 'recycled'" @click="onRestore(record)">
-                  <icon-undo /> 恢复
-                </a-doption>
-                <a-doption @click="onDelete(record)">
-                  <icon-delete /> 删除
-                </a-doption>
+                <a-doption @click="onToggleHot(record)"> <icon-fire /> {{ record.isHot ? "取消热门" : "热门" }} </a-doption>
+                <a-doption v-if="record.status === 'recycled'" @click="onRestore(record)"> <icon-undo /> 恢复 </a-doption>
+                <a-doption @click="onDelete(record)"> <icon-delete /> 删除 </a-doption>
               </template>
             </a-dropdown>
           </a-space>
@@ -117,12 +99,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, watch } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { contentApi, type CmsContentList, type ContentStatus } from '@/api/modules/cms/content';
-import { modelApi } from '@/api/modules/cms/model';
-import { categoryApi, type CmsCategoryTree } from '@/api/modules/cms/category';
-import ContentFilter from './components/ContentFilter.vue';
+import { ref, reactive, onMounted, computed, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { contentApi, type CmsContentList, type ContentStatus } from "@/api/modules/cms/content";
+import { modelApi } from "@/api/modules/cms/model";
+import { categoryApi, type CmsCategoryTree } from "@/api/modules/cms/category";
+import ContentFilter from "./components/ContentFilter.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -130,20 +112,20 @@ const loading = ref(false);
 const tableData = ref<CmsContentList[]>([]);
 const selectedIds = ref<number[]>([]);
 const categories = ref<CmsCategoryTree[]>([]);
-const currentStatus = ref<string>('all');
+const currentStatus = ref<string>("all");
 
 const modelId = computed(() => Number(route.query.modelId));
 
 const searchForm = reactive({
-  title: '',
+  title: "",
   categoryId: null as number | null,
   status: null as ContentStatus | null,
   contentType: null as string | null,
   isTop: null as boolean | null,
   isRecommend: null as boolean | null,
   isHot: null as boolean | null,
-  startTime: '',
-  endTime: '',
+  startTime: "",
+  endTime: ""
 });
 
 const pagination = reactive({
@@ -151,44 +133,44 @@ const pagination = reactive({
   pageSize: 20,
   showPageSize: true,
   showTotal: true,
-  total: 0,
+  total: 0
 });
 
 const columns = computed(() => [
-  { title: '缩略图', dataIndex: 'thumbnail', slotName: 'thumbnail', width: 80 },
-  { title: '标题', dataIndex: 'title', width: 200, ellipsis: true, tooltip: true },
-  { title: '分类', dataIndex: 'categoryName', width: 100 },
-  { title: '状态', dataIndex: 'status', slotName: 'status', width: 80, align: 'center' },
-  { title: '标记', slotName: 'flags', width: 150 },
-  { title: '浏览', dataIndex: 'viewCount', width: 80, align: 'center' },
-  { title: '点赞', dataIndex: 'likeCount', width: 80, align: 'center' },
-  { title: '评论', dataIndex: 'commentCount', width: 80, align: 'center' },
-  { title: '排序', dataIndex: 'sort', width: 80, align: 'center' },
-  { title: '发布时间', dataIndex: 'publishTime', width: 160 },
-  { title: '创建时间', dataIndex: 'createdAt', width: 160 },
-  { title: '操作', slotName: 'optional', width: 160, fixed: 'right', align: 'center' },
+  { title: "缩略图", dataIndex: "thumbnail", slotName: "thumbnail", width: 80 },
+  { title: "标题", dataIndex: "title", width: 200, ellipsis: true, tooltip: true },
+  { title: "分类", dataIndex: "categoryName", width: 100 },
+  { title: "状态", dataIndex: "status", slotName: "status", width: 80, align: "center" },
+  { title: "标记", slotName: "flags", width: 150 },
+  { title: "浏览", dataIndex: "viewCount", width: 80, align: "center" },
+  { title: "点赞", dataIndex: "likeCount", width: 80, align: "center" },
+  { title: "评论", dataIndex: "commentCount", width: 80, align: "center" },
+  { title: "排序", dataIndex: "sort", width: 80, align: "center" },
+  { title: "发布时间", dataIndex: "publishTime", width: 160 },
+  { title: "创建时间", dataIndex: "createdAt", width: 160 },
+  { title: "操作", slotName: "optional", width: 160, fixed: "right", align: "center" }
 ]);
 
 const getStatusColor = (status: ContentStatus) => {
   const colors: Record<ContentStatus, string> = {
-    draft: 'gray',
-    pending: 'orange',
-    published: 'green',
-    offline: 'gray',
-    rejected: 'red',
-    recycled: 'gray',
+    draft: "gray",
+    pending: "orange",
+    published: "green",
+    offline: "gray",
+    rejected: "red",
+    recycled: "gray"
   };
-  return colors[status] || 'gray';
+  return colors[status] || "gray";
 };
 
 const getStatusText = (status: ContentStatus) => {
   const texts: Record<ContentStatus, string> = {
-    draft: '草稿',
-    pending: '待审核',
-    published: '已发布',
-    offline: '已下线',
-    rejected: '已拒绝',
-    recycled: '回收站',
+    draft: "草稿",
+    pending: "待审核",
+    published: "已发布",
+    offline: "已下线",
+    rejected: "已拒绝",
+    recycled: "回收站"
   };
   return texts[status] || status;
 };
@@ -219,19 +201,19 @@ const getList = async () => {
       isRecommend: searchForm.isRecommend ?? undefined,
       isHot: searchForm.isHot ?? undefined,
       startTime: searchForm.startTime || undefined,
-      endTime: searchForm.endTime || undefined,
+      endTime: searchForm.endTime || undefined
     };
 
-    if (currentStatus.value === 'recycled') {
+    if (currentStatus.value === "recycled") {
       const data = await contentApi.recycleList({
         modelId: modelId.value,
         pageNum: pagination.current,
-        pageSize: pagination.pageSize,
+        pageSize: pagination.pageSize
       });
       tableData.value = data.list || [];
       pagination.total = data.total || 0;
     } else {
-      if (currentStatus.value !== 'all') {
+      if (currentStatus.value !== "all") {
         params.status = currentStatus.value as ContentStatus;
       }
       const data = await contentApi.list(params);
@@ -251,15 +233,15 @@ const search = () => {
 };
 
 const reset = () => {
-  searchForm.title = '';
+  searchForm.title = "";
   searchForm.categoryId = null;
   searchForm.status = null;
   searchForm.contentType = null;
   searchForm.isTop = null;
   searchForm.isRecommend = null;
   searchForm.isHot = null;
-  searchForm.startTime = '';
-  searchForm.endTime = '';
+  searchForm.startTime = "";
+  searchForm.endTime = "";
   pagination.current = 1;
   getList();
 };
@@ -285,29 +267,29 @@ const handlePageSizeChange = (pageSize: number) => {
 
 const onAdd = () => {
   router.push({
-    path: '/cms/content/form',
-    query: { modelId: modelId.value },
+    path: "/cms/content/form",
+    query: { modelId: modelId.value }
   });
 };
 
 const onEdit = (record: CmsContentList) => {
   router.push({
-    path: '/cms/content/form',
-    query: { id: record.id, modelId: modelId.value },
+    path: "/cms/content/form",
+    query: { id: record.id, modelId: modelId.value }
   });
 };
 
 const onDetail = (record: CmsContentList) => {
   router.push({
-    path: '/cms/content/detail',
-    query: { id: record.id },
+    path: "/cms/content/detail",
+    query: { id: record.id }
   });
 };
 
 const onPublish = async (record: CmsContentList) => {
   try {
     await contentApi.publish(record.id);
-    arcoMessage('success', '发布成功');
+    arcoMessage("success", "发布成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -317,7 +299,7 @@ const onPublish = async (record: CmsContentList) => {
 const onOffline = async (record: CmsContentList) => {
   try {
     await contentApi.offline(record.id);
-    arcoMessage('success', '下线成功');
+    arcoMessage("success", "下线成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -327,7 +309,7 @@ const onOffline = async (record: CmsContentList) => {
 const onToggleTop = async (record: CmsContentList) => {
   try {
     await contentApi.updateTop(record.id, !record.isTop);
-    arcoMessage('success', record.isTop ? '取消置顶成功' : '置顶成功');
+    arcoMessage("success", record.isTop ? "取消置顶成功" : "置顶成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -337,7 +319,7 @@ const onToggleTop = async (record: CmsContentList) => {
 const onToggleRecommend = async (record: CmsContentList) => {
   try {
     await contentApi.updateRecommend(record.id, !record.isRecommend);
-    arcoMessage('success', record.isRecommend ? '取消推荐成功' : '推荐成功');
+    arcoMessage("success", record.isRecommend ? "取消推荐成功" : "推荐成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -347,7 +329,7 @@ const onToggleRecommend = async (record: CmsContentList) => {
 const onToggleHot = async (record: CmsContentList) => {
   try {
     await contentApi.updateHot(record.id, !record.isHot);
-    arcoMessage('success', record.isHot ? '取消热门成功' : '热门成功');
+    arcoMessage("success", record.isHot ? "取消热门成功" : "热门成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -357,7 +339,7 @@ const onToggleHot = async (record: CmsContentList) => {
 const onRestore = async (record: CmsContentList) => {
   try {
     await contentApi.restore(record.id);
-    arcoMessage('success', '恢复成功');
+    arcoMessage("success", "恢复成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -366,18 +348,18 @@ const onRestore = async (record: CmsContentList) => {
 
 const onDelete = async (record: CmsContentList) => {
   Modal.warning({
-    title: '确认删除',
+    title: "确认删除",
     content: `确定要删除内容"${record.title}"吗？`,
     hideCancel: false,
     onOk: async () => {
       try {
         await contentApi.delete(record.id);
-        arcoMessage('success', '删除成功');
+        arcoMessage("success", "删除成功");
         getList();
       } catch (error) {
         console.error(error);
       }
-    },
+    }
   });
 };
 
@@ -385,7 +367,7 @@ const onBatchPublish = async () => {
   if (selectedIds.value.length === 0) return;
   try {
     await contentApi.batchPublish(selectedIds.value);
-    arcoMessage('success', '批量发布成功');
+    arcoMessage("success", "批量发布成功");
     selectedIds.value = [];
     getList();
   } catch (error) {
@@ -397,7 +379,7 @@ const onBatchOffline = async () => {
   if (selectedIds.value.length === 0) return;
   try {
     await contentApi.batchOffline(selectedIds.value);
-    arcoMessage('success', '批量下线成功');
+    arcoMessage("success", "批量下线成功");
     selectedIds.value = [];
     getList();
   } catch (error) {
@@ -408,19 +390,19 @@ const onBatchOffline = async () => {
 const onBatchDelete = async () => {
   if (selectedIds.value.length === 0) return;
   Modal.warning({
-    title: '确认删除',
+    title: "确认删除",
     content: `确定要删除选中的${selectedIds.value.length}条内容吗？`,
     hideCancel: false,
     onOk: async () => {
       try {
         await contentApi.batchDelete(selectedIds.value);
-        arcoMessage('success', '批量删除成功');
+        arcoMessage("success", "批量删除成功");
         selectedIds.value = [];
         getList();
       } catch (error) {
         console.error(error);
       }
-    },
+    }
   });
 };
 

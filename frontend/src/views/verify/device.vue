@@ -37,10 +37,7 @@
           </a-tag>
         </template>
         <template #onlineStatus="{ record }">
-          <a-badge
-            :status="record.online ? 'success' : 'default'"
-            :text="record.online ? '在线' : '离线'"
-          />
+          <a-badge :status="record.online ? 'success' : 'default'" :text="record.online ? '在线' : '离线'" />
         </template>
         <template #lastActiveTime="{ record }">
           {{ formatTime(record.lastActiveTime) }}
@@ -83,9 +80,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { license } from '@/api/modules/plugin-market/license';
-import { Message, Modal } from '@arco-design/web-vue';
+import { ref, reactive, onMounted } from "vue";
+import { license } from "@/api/modules/plugin-market/license";
+import { Message, Modal } from "@arco-design/web-vue";
 
 interface DeviceItem {
   deviceId: string;
@@ -104,64 +101,64 @@ const deviceList = ref<DeviceItem[]>([]);
 const maxDevices = ref(5);
 const unbindModalVisible = ref(false);
 const currentDevice = ref<DeviceItem | null>(null);
-const confirmText = ref('');
+const confirmText = ref("");
 
 const columns = [
-  { title: '设备名称', dataIndex: 'deviceName', width: 180 },
-  { title: '设备类型', dataIndex: 'deviceType', width: 120 },
-  { title: '操作系统', dataIndex: 'osVersion', width: 150 },
-  { title: '状态', slotName: 'status', width: 100 },
-  { title: '在线状态', slotName: 'onlineStatus', width: 100 },
-  { title: '最后活跃', slotName: 'lastActiveTime', width: 180 },
-  { title: '绑定时间', dataIndex: 'bindTime', width: 180 },
-  { title: '操作', slotName: 'optional', width: 100, fixed: 'right' },
+  { title: "设备名称", dataIndex: "deviceName", width: 180 },
+  { title: "设备类型", dataIndex: "deviceType", width: 120 },
+  { title: "操作系统", dataIndex: "osVersion", width: 150 },
+  { title: "状态", slotName: "status", width: 100 },
+  { title: "在线状态", slotName: "onlineStatus", width: 100 },
+  { title: "最后活跃", slotName: "lastActiveTime", width: 180 },
+  { title: "绑定时间", dataIndex: "bindTime", width: 180 },
+  { title: "操作", slotName: "optional", width: 100, fixed: "right" }
 ];
 
 const getStatusColor = (status: number) => {
-  const colors: Record<number, string> = { 0: 'gray', 1: 'green', 2: 'red' };
-  return colors[status] || 'gray';
+  const colors: Record<number, string> = { 0: "gray", 1: "green", 2: "red" };
+  return colors[status] || "gray";
 };
 
 const formatTime = (time?: string) => {
-  if (!time) return '-';
+  if (!time) return "-";
   const date = new Date(time);
   return date.toLocaleString();
 };
 
 const mockDeviceList: DeviceItem[] = [
   {
-    deviceId: 'device-001-xxxx-xxxx',
-    deviceName: 'MacBook Pro - macOS 14.0',
-    deviceType: 'Mac',
-    osVersion: 'macOS 14.0 Sonoma',
+    deviceId: "device-001-xxxx-xxxx",
+    deviceName: "MacBook Pro - macOS 14.0",
+    deviceType: "Mac",
+    osVersion: "macOS 14.0 Sonoma",
     status: 1,
-    statusName: '正常',
+    statusName: "正常",
     online: true,
     lastActiveTime: new Date().toISOString(),
-    bindTime: '2024-03-15T10:30:00Z',
+    bindTime: "2024-03-15T10:30:00Z"
   },
   {
-    deviceId: 'device-002-xxxx-xxxx',
-    deviceName: 'Windows PC',
-    deviceType: 'Windows PC',
-    osVersion: 'Windows 11',
+    deviceId: "device-002-xxxx-xxxx",
+    deviceName: "Windows PC",
+    deviceType: "Windows PC",
+    osVersion: "Windows 11",
     status: 1,
-    statusName: '正常',
+    statusName: "正常",
     online: false,
     lastActiveTime: new Date(Date.now() - 86400000).toISOString(),
-    bindTime: '2024-03-10T08:15:00Z',
+    bindTime: "2024-03-10T08:15:00Z"
   },
   {
-    deviceId: 'device-003-xxxx-xxxx',
-    deviceName: 'iPhone 15 Pro',
-    deviceType: 'iPhone',
-    osVersion: 'iOS 17.4',
+    deviceId: "device-003-xxxx-xxxx",
+    deviceName: "iPhone 15 Pro",
+    deviceType: "iPhone",
+    osVersion: "iOS 17.4",
     status: 1,
-    statusName: '正常',
+    statusName: "正常",
     online: false,
     lastActiveTime: new Date(Date.now() - 172800000).toISOString(),
-    bindTime: '2024-02-28T14:20:00Z',
-  },
+    bindTime: "2024-02-28T14:20:00Z"
+  }
 ];
 
 const fetchDeviceList = async () => {
@@ -185,12 +182,12 @@ const fetchDeviceList = async () => {
 
 const handleUnbind = (record: DeviceItem) => {
   currentDevice.value = record;
-  confirmText.value = '';
+  confirmText.value = "";
   unbindModalVisible.value = true;
 };
 
 const handleConfirmUnbind = async () => {
-  if (confirmText.value !== '解绑') {
+  if (confirmText.value !== "解绑") {
     Message.warning('请输入 "解绑" 确认操作');
     return;
   }
@@ -200,14 +197,14 @@ const handleConfirmUnbind = async () => {
   try {
     await license.unbind({
       licenseId: 0,
-      deviceId: currentDevice.value.deviceId,
+      deviceId: currentDevice.value.deviceId
     });
-    Message.success('设备解绑成功');
+    Message.success("设备解绑成功");
     unbindModalVisible.value = false;
     fetchDeviceList();
   } catch (error) {
     console.error(error);
-    Message.error('设备解绑失败，请稍后重试');
+    Message.error("设备解绑失败，请稍后重试");
   }
 };
 

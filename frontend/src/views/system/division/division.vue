@@ -53,7 +53,9 @@
                 <div class="action-icon"><icon-line-height size="18" /></div>
               </a-tooltip>
               <template #content>
-                <a-doption v-for="item in densityType" :value="item.value" :key="item.value" :disabled="item.value === density">{{ item.label }}</a-doption>
+                <a-doption v-for="item in densityType" :value="item.value" :key="item.value" :disabled="item.value === density">{{
+                  item.label
+                }}</a-doption>
               </template>
             </a-dropdown>
             <a-tooltip content="列设置">
@@ -254,7 +256,7 @@ const addFrom = ref<any>({
   leader: null,
   phone: "",
   email: "",
-  status: '1',
+  status: "1",
   remark: ""
 });
 const formType = ref(0);
@@ -273,7 +275,7 @@ const handleOk = async () => {
       ...addFrom.value,
       dept_id: addFrom.value.dept_id ? String(addFrom.value.dept_id) : undefined,
       parent_id: addFrom.value.parent_id ? String(addFrom.value.parent_id) : "0",
-      order: Number(addFrom.value.order) || 0,
+      order: Number(addFrom.value.order) || 0
     };
     if (addFrom.value.leader) {
       apiData.leader = String(addFrom.value.leader);
@@ -301,7 +303,7 @@ const afterClose = () => {
     leader: null,
     phone: "",
     email: "",
-    status: '1',
+    status: "1",
     remark: ""
   };
 };
@@ -322,7 +324,7 @@ const addSubDivision = (id: any) => {
     leader: null,
     phone: "",
     email: "",
-    status: '1',
+    status: "1",
     remark: ""
   };
   open.value = true;

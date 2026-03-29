@@ -5,8 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
-import { modelApi, type CmsModel } from '@/api/modules/cms/model';
+import { ref, onMounted, watch } from "vue";
+import { modelApi, type CmsModel } from "@/api/modules/cms/model";
 
 const modelValue = defineModel<number | null>({ default: null });
 
@@ -29,6 +29,6 @@ onMounted(() => {
 });
 
 watch(modelValue, () => {
-  emit('change');
+  emit("change");
 });
 </script>

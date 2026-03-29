@@ -3,7 +3,7 @@
     <div class="snow-inner">
       <a-card title="拼音转换" hoverable>
         <a-space direction="vertical" size="large" fill>
-          <a-textarea  v-model="myText" placeholder="请输入内容" allow-clear />
+          <a-textarea v-model="myText" placeholder="请输入内容" allow-clear />
           <s-pinyin-pro
             v-if="myText"
             :text="myText"

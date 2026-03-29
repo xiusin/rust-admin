@@ -50,7 +50,7 @@ export interface CodeTemplate {
   id: number;
   name: string;
   code: string;
-  type: 'entity' | 'model' | 'args' | 'service' | 'api' | 'vue' | 'component' | 'store' | 'route';
+  type: "entity" | "model" | "args" | "service" | "api" | "vue" | "component" | "store" | "route";
   language: string;
   template: string;
   description?: string;
@@ -69,7 +69,7 @@ export interface CodeTemplateDetail extends CodeTemplate {
 
 export interface TemplateVariable {
   name: string;
-  type: 'string' | 'number' | 'boolean' | 'array' | 'object';
+  type: "string" | "number" | "boolean" | "array" | "object";
   description?: string;
   defaultValue?: any;
   required?: boolean;
@@ -78,7 +78,7 @@ export interface TemplateVariable {
 export interface TemplateAddParams {
   name: string;
   code: string;
-  type: CodeTemplate['type'];
+  type: CodeTemplate["type"];
   language: string;
   template: string;
   description?: string;
@@ -99,7 +99,7 @@ interface ApiResponse<T = any> {
 
 const getData = <T>(res: ApiResponse<T>): T => {
   if (res.code !== 200) {
-    throw new Error(res.message || '请求失败');
+    throw new Error(res.message || "请求失败");
   }
   return res.data;
 };
@@ -111,9 +111,9 @@ export const codeGenApi = {
   },
 
   download: async (modelId: number): Promise<Blob> => {
-    const res = await axios.get("/cms/codegen/download", { 
+    const res = await axios.get("/cms/codegen/download", {
       params: { modelId },
-      responseType: 'blob'
+      responseType: "blob"
     });
     return res as unknown as Blob;
   },
@@ -129,13 +129,13 @@ export const codeGenApi = {
   },
 
   generateSingle: async (modelId: number, type: string, template?: string): Promise<GeneratedFile> => {
-    const res = await axios.post("/cms/codegen/generateSingle", null, { 
-      params: { modelId, type, template } 
+    const res = await axios.post("/cms/codegen/generateSingle", null, {
+      params: { modelId, type, template }
     });
     return getData(res);
   },
 
-  getTemplates: async (type?: CodeTemplate['type']): Promise<CodeTemplateItem[]> => {
+  getTemplates: async (type?: CodeTemplate["type"]): Promise<CodeTemplateItem[]> => {
     const res = await axios.get("/cms/codegen/templates", { params: { type } });
     return getData(res);
   },
@@ -161,8 +161,8 @@ export const codeGenApi = {
   },
 
   previewTemplate: async (templateId: number, modelId: number): Promise<string> => {
-    const res = await axios.get("/cms/codegen/templates/preview", { 
-      params: { templateId, modelId } 
+    const res = await axios.get("/cms/codegen/templates/preview", {
+      params: { templateId, modelId }
     });
     return getData(res);
   },
@@ -173,8 +173,8 @@ export const codeGenApi = {
   },
 
   getPreviewFile: async (modelId: number, filePath: string): Promise<GeneratedFile> => {
-    const res = await axios.get("/cms/codegen/previewFile", { 
-      params: { modelId, filePath } 
+    const res = await axios.get("/cms/codegen/previewFile", {
+      params: { modelId, filePath }
     });
     return getData(res);
   },
@@ -187,5 +187,5 @@ export const codeGenApi = {
   getAvailableTypes: async (): Promise<Array<{ value: string; label: string; extension: string }>> => {
     const res = await axios.get("/cms/codegen/availableTypes");
     return getData(res);
-  },
+  }
 };

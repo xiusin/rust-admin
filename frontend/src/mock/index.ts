@@ -18,6 +18,6 @@ export function setupProdMockServer() {
     ...tableModule,
     ...monitorModule,
     ...pluginMarketModule,
-    ...cmsModule,
+    ...cmsModule
   ]);
 }

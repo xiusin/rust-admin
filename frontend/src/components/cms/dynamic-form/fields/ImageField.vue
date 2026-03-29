@@ -33,93 +33,91 @@
 </template>
 
 <script setup lang="ts">
-import { Message } from '@arco-design/web-vue'
+import { Message } from "@arco-design/web-vue";
 
 interface UploadFile {
-  uid: string
-  name: string
-  url?: string
-  status?: string
-  response?: any
+  uid: string;
+  name: string;
+  url?: string;
+  status?: string;
+  response?: any;
 }
 
 interface Props {
-  modelValue: string | string[]
-  placeholder?: string
-  disabled?: boolean
-  accept?: string
-  multiple?: boolean
-  limit?: number
-  listType?: 'text' | 'picture' | 'picture-card'
-  autoUpload?: boolean
-  action?: string
-  headers?: Record<string, string>
-  data?: Record<string, any>
+  modelValue: string | string[];
+  placeholder?: string;
+  disabled?: boolean;
+  accept?: string;
+  multiple?: boolean;
+  limit?: number;
+  listType?: "text" | "picture" | "picture-card";
+  autoUpload?: boolean;
+  action?: string;
+  headers?: Record<string, string>;
+  data?: Record<string, any>;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: '',
-  placeholder: '请上传图片',
+  modelValue: "",
+  placeholder: "请上传图片",
   disabled: false,
-  accept: 'image/*',
+  accept: "image/*",
   multiple: false,
   limit: 1,
-  listType: 'picture-card',
+  listType: "picture-card",
   autoUpload: true,
-  action: '/api/upload'
-})
+  action: "/api/upload"
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string | string[]]
-  'success': [file: any]
-  'error': [error: any]
-}>()
+  "update:modelValue": [value: string | string[]];
+  success: [file: any];
+  error: [error: any];
+}>();
 
-const fileList = ref<UploadFile[]>([])
+const fileList = ref<UploadFile[]>([]);
 
 watch(
   () => props.modelValue,
-  (val) => {
+  val => {
     if (!val) {
-      fileList.value = []
-      return
+      fileList.value = [];
+      return;
     }
-    
-    const urls = Array.isArray(val) ? val : [val]
+
+    const urls = Array.isArray(val) ? val : [val];
     fileList.value = urls.map((url, index) => ({
       uid: `-${index}`,
-      name: url.split('/').pop() || '',
+      name: url.split("/").pop() || "",
       url,
-      status: 'done'
-    }))
+      status: "done"
+    }));
   },
   { immediate: true }
-)
+);
 
 const handleSuccess = (response: any) => {
   if (response.code === 0 || response.success) {
-    const url = response.data?.url || response.url
+    const url = response.data?.url || response.url;
     if (props.multiple) {
-      const urls = fileList.value
-        .filter(f => f.status === 'done' && f.url)
-        .map(f => f.url)
-      emit('update:modelValue', urls)
+      const urls = fileList.value.filter(f => f.status === "done" && f.url).map(f => f.url);
+      emit("update:modelValue", urls);
     } else {
-      emit('update:modelValue', url)
+      emit("update:modelValue", url);
     }
-    emit('success', response)
-    Message.success('上传成功')
+    emit("success", response);
+    Message.success("上传成功");
   }
-}
+};
 
 const handleError = (error: any) => {
-  Message.error('上传失败')
-  emit('error', error)
-}
+  Message.error("上传失败");
+  emit("error", error);
+};
 
 const handleExceed = () => {
-  Message.warning(`最多只能上传 ${props.limit} 张图片`)
-}
+  Message.warning(`最多只能上传 ${props.limit} 张图片`);
+};
 </script>
 
 <style lang="scss" scoped>

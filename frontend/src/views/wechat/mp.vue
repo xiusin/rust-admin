@@ -55,12 +55,12 @@
       >
         <template #mp_type="{ record }">
           <a-tag :color="record.mp_type === 'service' ? 'blue' : 'green'">
-            {{ record.mp_type === 'service' ? '服务号' : '订阅号' }}
+            {{ record.mp_type === "service" ? "服务号" : "订阅号" }}
           </a-tag>
         </template>
         <template #verified="{ record }">
           <a-tag :color="record.verified === 1 ? 'green' : 'orange'">
-            {{ record.verified === 1 ? '已认证' : '未认证' }}
+            {{ record.verified === 1 ? "已认证" : "未认证" }}
           </a-tag>
         </template>
         <template #status="{ record }">
@@ -113,9 +113,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { Message, Modal } from '@arco-design/web-vue';
-import axios from '@/api';
+import { ref, reactive, onMounted } from "vue";
+import { Message, Modal } from "@arco-design/web-vue";
+import axios from "@/api";
 
 interface MpRecord {
   id: number;
@@ -133,9 +133,9 @@ interface MpRecord {
 
 const formData = reactive({
   form: {
-    name: '',
-    app_id: '',
-  },
+    name: "",
+    app_id: ""
+  }
 });
 
 const formRef = ref();
@@ -148,34 +148,34 @@ const loading = ref(false);
 const tableData = ref<MpRecord[]>([]);
 
 const columns = [
-  { title: 'AppID', dataIndex: 'app_id', width: 180 },
-  { title: '公众号名称', dataIndex: 'name', width: 200 },
-  { title: '类型', dataIndex: 'mp_type', slotName: 'mp_type', width: 100 },
-  { title: '认证状态', dataIndex: 'verified', slotName: 'verified', width: 100 },
-  { title: '状态', dataIndex: 'status', slotName: 'status', width: 100 },
-  { title: '创建时间', dataIndex: 'created_at', width: 160 },
-  { title: '操作', slotName: 'optional', align: 'center', width: 180 },
+  { title: "AppID", dataIndex: "app_id", width: 180 },
+  { title: "公众号名称", dataIndex: "name", width: 200 },
+  { title: "类型", dataIndex: "mp_type", slotName: "mp_type", width: 100 },
+  { title: "认证状态", dataIndex: "verified", slotName: "verified", width: 100 },
+  { title: "状态", dataIndex: "status", slotName: "status", width: 100 },
+  { title: "创建时间", dataIndex: "created_at", width: 160 },
+  { title: "操作", slotName: "optional", align: "center", width: 180 }
 ];
 
 const modalVisible = ref(false);
-const modalTitle = ref('新增公众号');
+const modalTitle = ref("新增公众号");
 const form = reactive({
   id: 0,
-  app_id: '',
-  app_secret: '',
-  name: '',
-  token: '',
-  encoding_aes_key: '',
-  mp_type: 'service',
+  app_id: "",
+  app_secret: "",
+  name: "",
+  token: "",
+  encoding_aes_key: "",
+  mp_type: "service",
   verified: false,
-  status: 1,
+  status: 1
 });
 
 const loadData = async () => {
   loading.value = true;
   try {
-    const { data } = await axios.get('/wechat-mp/list');
-    if (data.message === 'success') {
+    const { data } = await axios.get("/wechat-mp/list");
+    if (data.message === "success") {
       tableData.value = data.data || [];
     }
   } catch (e) {
@@ -186,39 +186,49 @@ const loadData = async () => {
 };
 
 const handleAdd = () => {
-  modalTitle.value = '新增公众号';
-  Object.assign(form, { id: 0, app_id: '', app_secret: '', name: '', token: '', encoding_aes_key: '', mp_type: 'service', verified: false, status: 1 });
+  modalTitle.value = "新增公众号";
+  Object.assign(form, {
+    id: 0,
+    app_id: "",
+    app_secret: "",
+    name: "",
+    token: "",
+    encoding_aes_key: "",
+    mp_type: "service",
+    verified: false,
+    status: 1
+  });
   modalVisible.value = true;
 };
 
 const handleEdit = (record: MpRecord) => {
-  modalTitle.value = '编辑公众号';
+  modalTitle.value = "编辑公众号";
   Object.assign(form, {
     ...record,
-    verified: record.verified === 1,
+    verified: record.verified === 1
   });
   modalVisible.value = true;
 };
 
 const handleDelete = (record: MpRecord) => {
   Modal.confirm({
-    title: '确认删除',
+    title: "确认删除",
     content: `确定要删除公众号"${record.name}"吗？`,
     onOk: async () => {
       try {
-        await axios.delete('/wechat-mp/del', { params: { id: record.id } });
-        Message.success('删除成功');
+        await axios.delete("/wechat-mp/del", { params: { id: record.id } });
+        Message.success("删除成功");
         loadData();
       } catch (e) {
         console.error(e);
       }
-    },
+    }
   });
 };
 
 const handleStatusChange = async (record: MpRecord) => {
   try {
-    await axios.put('/wechat-mp/toggle', null, { params: { id: record.id } });
+    await axios.put("/wechat-mp/toggle", null, { params: { id: record.id } });
     Message.success(`${record.name} 状态已切换`);
     loadData();
   } catch (e) {
@@ -228,7 +238,7 @@ const handleStatusChange = async (record: MpRecord) => {
 
 const handleSubmit = async () => {
   if (!form.app_id || !form.app_secret || !form.name) {
-    Message.warning('请填写完整信息');
+    Message.warning("请填写完整信息");
     return;
   }
   try {
@@ -240,15 +250,15 @@ const handleSubmit = async () => {
       encoding_aes_key: form.encoding_aes_key || null,
       mp_type: form.mp_type,
       verified: form.verified ? 1 : 0,
-      status: form.status,
+      status: form.status
     };
 
     if (form.id) {
-      await axios.put('/wechat-mp/edit', { ...submitData, id: form.id });
-      Message.success('编辑成功');
+      await axios.put("/wechat-mp/edit", { ...submitData, id: form.id });
+      Message.success("编辑成功");
     } else {
-      await axios.post('/wechat-mp/add', submitData);
-      Message.success('新增成功');
+      await axios.post("/wechat-mp/add", submitData);
+      Message.success("新增成功");
     }
     modalVisible.value = false;
     loadData();

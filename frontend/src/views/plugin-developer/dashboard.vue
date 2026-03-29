@@ -28,14 +28,7 @@
             <div class="stat-icon orders">
               <icon-shopping-cart />
             </div>
-            <a-statistic
-              title="订单数"
-              :value="statsData.totalOrders"
-              suffix="笔"
-              :value-from="0"
-              :start="true"
-              animation
-            />
+            <a-statistic title="订单数" :value="statsData.totalOrders" suffix="笔" :value-from="0" :start="true" animation />
             <div class="stat-trend up">
               <icon-caret-up />
               <span>{{ statsData.ordersGrowth }}%</span>
@@ -48,14 +41,7 @@
             <div class="stat-icon downloads">
               <icon-download />
             </div>
-            <a-statistic
-              title="下载量"
-              :value="statsData.totalDownloads"
-              suffix="次"
-              :value-from="0"
-              :start="true"
-              animation
-            />
+            <a-statistic title="下载量" :value="statsData.totalDownloads" suffix="次" :value-from="0" :start="true" animation />
             <div class="stat-trend down">
               <icon-caret-down />
               <span>{{ statsData.downloadsGrowth }}%</span>
@@ -68,14 +54,7 @@
             <div class="stat-icon plugins">
               <icon-code />
             </div>
-            <a-statistic
-              title="插件数"
-              :value="statsData.totalPlugins"
-              suffix="个"
-              :value-from="0"
-              :start="true"
-              animation
-            />
+            <a-statistic title="插件数" :value="statsData.totalPlugins" suffix="个" :value-from="0" :start="true" animation />
             <div class="stat-trend neutral">
               <icon-minus />
               <span>0%</span>
@@ -164,14 +143,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch } from 'vue';
-import { useRouter } from 'vue-router';
-import { default as VChart } from '@visactor/vchart';
-import { developer } from '@/api/modules/plugin-market/market';
+import { ref, reactive, onMounted, watch } from "vue";
+import { useRouter } from "vue-router";
+import { default as VChart } from "@visactor/vchart";
+import { developer } from "@/api/modules/plugin-market/market";
 
 const router = useRouter();
 const loading = ref(false);
-const revenueChartType = ref('month');
+const revenueChartType = ref("month");
 const revenueChartRef = ref();
 const pieChartRef = ref();
 
@@ -182,84 +161,121 @@ const statsData = reactive({
   ordersGrowth: 0,
   totalDownloads: 0,
   downloadsGrowth: 0,
-  totalPlugins: 0,
+  totalPlugins: 0
 });
 
 const recentOrders = ref([
-  { id: 1, orderNo: 'PLM202603201030000001', pluginName: '智能优惠券', amount: 299, status: 1, statusName: '已支付', createdAt: '2024-03-20 10:30' },
-  { id: 2, orderNo: 'PLM202603191520000002', pluginName: '限时秒杀', amount: 199, status: 1, statusName: '已支付', createdAt: '2024-03-19 15:20' },
-  { id: 3, orderNo: 'PLM202603181030000003', pluginName: '数据统计分析', amount: 399, status: 1, statusName: '已支付', createdAt: '2024-03-18 10:30' },
-  { id: 4, orderNo: 'PLM202603171520000004', pluginName: 'AI智能客服', amount: 799, status: 0, statusName: '待支付', createdAt: '2024-03-17 15:20' },
+  {
+    id: 1,
+    orderNo: "PLM202603201030000001",
+    pluginName: "智能优惠券",
+    amount: 299,
+    status: 1,
+    statusName: "已支付",
+    createdAt: "2024-03-20 10:30"
+  },
+  {
+    id: 2,
+    orderNo: "PLM202603191520000002",
+    pluginName: "限时秒杀",
+    amount: 199,
+    status: 1,
+    statusName: "已支付",
+    createdAt: "2024-03-19 15:20"
+  },
+  {
+    id: 3,
+    orderNo: "PLM202603181030000003",
+    pluginName: "数据统计分析",
+    amount: 399,
+    status: 1,
+    statusName: "已支付",
+    createdAt: "2024-03-18 10:30"
+  },
+  {
+    id: 4,
+    orderNo: "PLM202603171520000004",
+    pluginName: "AI智能客服",
+    amount: 799,
+    status: 0,
+    statusName: "待支付",
+    createdAt: "2024-03-17 15:20"
+  }
 ]);
 
 const topPlugins = ref([
-  { id: 1, name: '智能优惠券', downloadCount: 2560, rating: 4.8, revenue: 125600, status: 1 },
-  { id: 2, name: '限时秒杀', downloadCount: 1890, rating: 4.9, revenue: 89600, status: 1 },
-  { id: 3, name: 'AI智能客服', downloadCount: 2100, rating: 4.9, revenue: 78600, status: 1 },
-  { id: 4, name: '短信通知', downloadCount: 1230, rating: 4.6, revenue: 45600, status: 2 },
-  { id: 5, name: '数据统计分析', downloadCount: 980, rating: 4.7, revenue: 32100, status: 1 },
+  { id: 1, name: "智能优惠券", downloadCount: 2560, rating: 4.8, revenue: 125600, status: 1 },
+  { id: 2, name: "限时秒杀", downloadCount: 1890, rating: 4.9, revenue: 89600, status: 1 },
+  { id: 3, name: "AI智能客服", downloadCount: 2100, rating: 4.9, revenue: 78600, status: 1 },
+  { id: 4, name: "短信通知", downloadCount: 1230, rating: 4.6, revenue: 45600, status: 2 },
+  { id: 5, name: "数据统计分析", downloadCount: 980, rating: 4.7, revenue: 32100, status: 1 }
 ]);
 
 const revenueChartData = {
   week: [
-    { day: '周一', revenue: 1200 },
-    { day: '周二', revenue: 1500 },
-    { day: '周三', revenue: 1800 },
-    { day: '周四', revenue: 2100 },
-    { day: '周五', revenue: 2400 },
-    { day: '周六', revenue: 2800 },
-    { day: '周日', revenue: 3200 },
+    { day: "周一", revenue: 1200 },
+    { day: "周二", revenue: 1500 },
+    { day: "周三", revenue: 1800 },
+    { day: "周四", revenue: 2100 },
+    { day: "周五", revenue: 2400 },
+    { day: "周六", revenue: 2800 },
+    { day: "周日", revenue: 3200 }
   ],
   month: [
-    { day: '1日', revenue: 1200 },
-    { day: '5日', revenue: 1500 },
-    { day: '10日', revenue: 1800 },
-    { day: '15日', revenue: 2100 },
-    { day: '20日', revenue: 2400 },
-    { day: '25日', revenue: 2800 },
-    { day: '30日', revenue: 3200 },
+    { day: "1日", revenue: 1200 },
+    { day: "5日", revenue: 1500 },
+    { day: "10日", revenue: 1800 },
+    { day: "15日", revenue: 2100 },
+    { day: "20日", revenue: 2400 },
+    { day: "25日", revenue: 2800 },
+    { day: "30日", revenue: 3200 }
   ],
   year: [
-    { month: '1月', revenue: 12000 },
-    { month: '2月', revenue: 15000 },
-    { month: '3月', revenue: 18000 },
-    { month: '4月', revenue: 21000 },
-    { month: '5月', revenue: 24000 },
-    { month: '6月', revenue: 28000 },
-    { month: '7月', revenue: 32000 },
-    { month: '8月', revenue: 35000 },
-    { month: '9月', revenue: 38000 },
-    { month: '10月', revenue: 42000 },
-    { month: '11月', revenue: 45000 },
-    { month: '12月', revenue: 48000 },
-  ],
+    { month: "1月", revenue: 12000 },
+    { month: "2月", revenue: 15000 },
+    { month: "3月", revenue: 18000 },
+    { month: "4月", revenue: 21000 },
+    { month: "5月", revenue: 24000 },
+    { month: "6月", revenue: 28000 },
+    { month: "7月", revenue: 32000 },
+    { month: "8月", revenue: 35000 },
+    { month: "9月", revenue: 38000 },
+    { month: "10月", revenue: 42000 },
+    { month: "11月", revenue: 45000 },
+    { month: "12月", revenue: 48000 }
+  ]
 };
 
 const pieChartData = [
-  { type: '智能优惠券', value: 45 },
-  { type: '限时秒杀', value: 25 },
-  { type: 'AI智能客服', value: 18 },
-  { type: '短信通知', value: 8 },
-  { type: '其他', value: 4 },
+  { type: "智能优惠券", value: 45 },
+  { type: "限时秒杀", value: 25 },
+  { type: "AI智能客服", value: 18 },
+  { type: "短信通知", value: 8 },
+  { type: "其他", value: 4 }
 ];
 
 const getOrderStatusColor = (status: number) => {
-  const colors: Record<number, string> = { 0: 'orange', 1: 'green', 2: 'gray', 3: 'red' };
-  return colors[status] || 'default';
+  const colors: Record<number, string> = { 0: "orange", 1: "green", 2: "gray", 3: "red" };
+  return colors[status] || "default";
 };
 
 const initRevenueChart = () => {
   if (!revenueChartRef.value) return;
-  const data = revenueChartType.value === 'year' ? revenueChartData.year : revenueChartType.value === 'month' ? revenueChartData.month : revenueChartData.week;
-  const xField = revenueChartType.value === 'year' ? 'month' : 'day';
+  const data =
+    revenueChartType.value === "year"
+      ? revenueChartData.year
+      : revenueChartType.value === "month"
+        ? revenueChartData.month
+        : revenueChartData.week;
+  const xField = revenueChartType.value === "year" ? "month" : "day";
   const spec = {
-    type: 'bar',
-    data: [{ id: 'revenue', values: data }],
+    type: "bar",
+    data: [{ id: "revenue", values: data }],
     xField,
-    yField: 'revenue',
+    yField: "revenue",
     barWidth: 20,
-    label: { visible: true, position: 'top' },
-    tooltip: { mark: { content: [{ key: (datum: any) => datum[xField], value: (datum: any) => `¥${datum.revenue}` }] } },
+    label: { visible: true, position: "top" },
+    tooltip: { mark: { content: [{ key: (datum: any) => datum[xField], value: (datum: any) => `¥${datum.revenue}` }] } }
   };
   const vchart = new VChart(spec as any, { dom: revenueChartRef.value });
   vchart.renderSync();
@@ -268,14 +284,14 @@ const initRevenueChart = () => {
 const initPieChart = () => {
   if (!pieChartRef.value) return;
   const spec = {
-    type: 'pie',
-    data: [{ id: 'pie', values: pieChartData }],
+    type: "pie",
+    data: [{ id: "pie", values: pieChartData }],
     outerRadius: 0.7,
     innerRadius: 0.5,
-    valueField: 'value',
-    categoryField: 'type',
+    valueField: "value",
+    categoryField: "type",
     label: { visible: true },
-    tooltip: { mark: { content: [{ key: (datum: any) => datum['type'], value: (datum: any) => `${datum.value}%` }] } },
+    tooltip: { mark: { content: [{ key: (datum: any) => datum["type"], value: (datum: any) => `${datum.value}%` }] } }
   };
   const vchart = new VChart(spec as any, { dom: pieChartRef.value });
   vchart.renderSync();
@@ -294,11 +310,11 @@ const fetchStats = async () => {
 };
 
 const goToOrders = () => {
-  router.push({ name: 'plugin-order-list' });
+  router.push({ name: "plugin-order-list" });
 };
 
 const goToPlugins = () => {
-  router.push({ name: 'plugin-list' });
+  router.push({ name: "plugin-list" });
 };
 
 watch(revenueChartType, () => {
@@ -334,10 +350,18 @@ onMounted(() => {
     font-size: 24px;
     color: #fff;
 
-    &.revenue { background: linear-gradient(135deg, #165dff, #4080ff); }
-    &.orders { background: linear-gradient(135deg, #00b42a, #23c343); }
-    &.downloads { background: linear-gradient(135deg, #ff7d00, #ff9d00); }
-    &.plugins { background: linear-gradient(135deg, #722ed1, #9254de); }
+    &.revenue {
+      background: linear-gradient(135deg, #165dff, #4080ff);
+    }
+    &.orders {
+      background: linear-gradient(135deg, #00b42a, #23c343);
+    }
+    &.downloads {
+      background: linear-gradient(135deg, #ff7d00, #ff9d00);
+    }
+    &.plugins {
+      background: linear-gradient(135deg, #722ed1, #9254de);
+    }
   }
 
   .stat-trend {
@@ -346,9 +370,15 @@ onMounted(() => {
     margin-top: 8px;
     font-size: 12px;
 
-    &.up { color: #00b42a; }
-    &.down { color: #f53f3f; }
-    &.neutral { color: #86909c; }
+    &.up {
+      color: #00b42a;
+    }
+    &.down {
+      color: #f53f3f;
+    }
+    &.neutral {
+      color: #86909c;
+    }
 
     .trend-text {
       margin-left: 4px;
@@ -387,9 +417,18 @@ onMounted(() => {
     background: #e5e6eb;
     color: $color-text-3;
 
-    &.gold { background: linear-gradient(135deg, #ffd700, #ffb700); color: #fff; }
-    &.silver { background: linear-gradient(135deg, #c0c0c0, #a8a8a8); color: #fff; }
-    &.bronze { background: linear-gradient(135deg, #cd7f32, #b87333); color: #fff; }
+    &.gold {
+      background: linear-gradient(135deg, #ffd700, #ffb700);
+      color: #fff;
+    }
+    &.silver {
+      background: linear-gradient(135deg, #c0c0c0, #a8a8a8);
+      color: #fff;
+    }
+    &.bronze {
+      background: linear-gradient(135deg, #cd7f32, #b87333);
+      color: #fff;
+    }
   }
 
   .plugin-info {

@@ -19,62 +19,62 @@
 
 <script setup lang="ts">
 interface ButtonConfig {
-  label: string
-  type?: 'primary' | 'secondary' | 'dashed' | 'outline' | 'text'
-  status?: 'normal' | 'success' | 'warning' | 'danger'
-  icon?: string
-  action?: string
-  condition?: string
-  confirm?: string
+  label: string;
+  type?: "primary" | "secondary" | "dashed" | "outline" | "text";
+  status?: "normal" | "success" | "warning" | "danger";
+  icon?: string;
+  action?: string;
+  condition?: string;
+  confirm?: string;
 }
 
 interface Props {
-  buttons: ButtonConfig[]
-  record: any
-  size?: 'mini' | 'small' | 'medium' | 'large'
+  buttons: ButtonConfig[];
+  record: any;
+  size?: "mini" | "small" | "medium" | "large";
 }
 
 const props = withDefaults(defineProps<Props>(), {
   buttons: () => [],
-  size: 'small'
-})
+  size: "small"
+});
 
 const emit = defineEmits<{
-  'click': [button: ButtonConfig, record: any]
-}>()
+  click: [button: ButtonConfig, record: any];
+}>();
 
 const isDisabled = (btn: ButtonConfig) => {
-  if (!btn.condition) return false
-  
+  if (!btn.condition) return false;
+
   try {
-    const fn = new Function('record', `return ${btn.condition}`)
-    return !fn(props.record)
+    const fn = new Function("record", `return ${btn.condition}`);
+    return !fn(props.record);
   } catch {
-    return false
+    return false;
   }
-}
+};
 
 const handleClick = async (btn: ButtonConfig) => {
   if (btn.confirm) {
     const confirmed = await new Promise(resolve => {
       Modal.confirm({
-        title: '确认操作',
+        title: "确认操作",
         content: btn.confirm,
         onOk: () => resolve(true),
         onCancel: () => resolve(false)
-      })
-    })
-    if (!confirmed) return
+      });
+    });
+    if (!confirmed) return;
   }
-  
-  emit('click', btn, props.record)
-}
+
+  emit("click", btn, props.record);
+};
 </script>
 
 <script lang="ts">
-import { Modal } from '@arco-design/web-vue'
+import { Modal } from "@arco-design/web-vue";
 
 export default {
-  name: 'ButtonRenderer'
-}
+  name: "ButtonRenderer"
+};
 </script>

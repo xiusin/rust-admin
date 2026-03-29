@@ -6,7 +6,7 @@
     <div class="prompt">
       <div class="title">500</div>
       <div class="text">抱歉，无网络连接~</div>
-      <a-button  type="primary" v-throttle="onBack">立即返回</a-button>
+      <a-button type="primary" v-throttle="onBack">立即返回</a-button>
     </div>
   </div>
 </template>

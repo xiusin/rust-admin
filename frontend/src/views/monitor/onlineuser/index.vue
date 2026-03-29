@@ -2,14 +2,14 @@
   <div class="snow-page">
     <div class="snow-inner">
       <a-space wrap>
-        <a-input  v-model="form.loginLocation" placeholder="请输入登录地址" allow-clear />
-        <a-input  v-model="form.userName" placeholder="请输入账户名称" allow-clear />
-        <a-range-picker  v-model="form.loginTime" show-time format="YYYY-MM-DD HH:mm" allow-clear />
-        <a-button  type="primary" @click="search">
+        <a-input v-model="form.loginLocation" placeholder="请输入登录地址" allow-clear />
+        <a-input v-model="form.userName" placeholder="请输入账户名称" allow-clear />
+        <a-range-picker v-model="form.loginTime" show-time format="YYYY-MM-DD HH:mm" allow-clear />
+        <a-button type="primary" @click="search">
           <template #icon><icon-search /></template>
           <span>查询</span>
         </a-button>
-        <a-button  @click="reset">
+        <a-button @click="reset">
           <template #icon><icon-refresh /></template>
           <span>重置</span>
         </a-button>
@@ -47,7 +47,7 @@
             <template #cell="{ record }">
               <a-space>
                 <a-popconfirm type="warning" content="确定强制退出该账号吗?" @ok="onLogout(record)">
-                  <a-button  type="primary" status="danger">
+                  <a-button type="primary" status="danger">
                     <template #icon><icon-export /></template>
                     <span>强退</span>
                   </a-button>

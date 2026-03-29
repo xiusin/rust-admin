@@ -35,7 +35,7 @@
           {{ verifyPhone(text03) }}
         </div>
         <div>
-          <a-input  :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text03" />
+          <a-input :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text03" />
         </div>
       </a-space>
       <a-divider />
@@ -45,7 +45,7 @@
           {{ verifyTelPhone(text04) }}
         </div>
         <div>
-          <a-input  :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text04" />
+          <a-input :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text04" />
         </div>
       </a-space>
       <a-divider />
@@ -55,7 +55,7 @@
           {{ verifyAccount(text05) }}
         </div>
         <div>
-          <a-input  :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text05" />
+          <a-input :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text05" />
         </div>
       </a-space>
       <a-divider />
@@ -65,7 +65,7 @@
           {{ verifyPassword(text06) }}
         </div>
         <div>
-          <a-input  :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text06" />
+          <a-input :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text06" />
         </div>
       </a-space>
       <a-divider />
@@ -75,7 +75,7 @@
           {{ verifyPasswordPowerful(text07) }}
         </div>
         <div>
-          <a-input  :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text07" />
+          <a-input :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text07" />
         </div>
       </a-space>
       <a-divider />
@@ -88,7 +88,7 @@
         <div>中：字母+数字，字母+特殊字符，数字+特殊字符</div>
         <div>强：字母+数字+特殊字符</div>
         <div>
-          <a-input  :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text08" />
+          <a-input :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text08" />
         </div>
       </a-space>
       <a-divider />
@@ -98,7 +98,7 @@
           {{ verifyIPAddress(text09) }}
         </div>
         <div>
-          <a-input  :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text09" />
+          <a-input :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text09" />
         </div>
       </a-space>
       <a-divider />
@@ -108,7 +108,7 @@
           {{ verifyEmail(text10) }}
         </div>
         <div>
-          <a-input  :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text10" />
+          <a-input :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text10" />
         </div>
       </a-space>
       <a-divider />
@@ -118,7 +118,7 @@
           {{ verifyIdCard(text11) }}
         </div>
         <div>
-          <a-input  :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text11" />
+          <a-input :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text11" />
         </div>
       </a-space>
       <a-divider />
@@ -128,7 +128,7 @@
           {{ verifyFullName(text12) }}
         </div>
         <div>
-          <a-input  :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text12" />
+          <a-input :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text12" />
         </div>
       </a-space>
       <a-divider />
@@ -138,7 +138,7 @@
           {{ verifyPostalCode(text13) }}
         </div>
         <div>
-          <a-input  :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text13" />
+          <a-input :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text13" />
         </div>
       </a-space>
       <a-divider />
@@ -148,7 +148,7 @@
           {{ verifyUrl(text14) }}
         </div>
         <div>
-          <a-input  :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text14" />
+          <a-input :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text14" />
         </div>
       </a-space>
       <a-divider />
@@ -158,7 +158,7 @@
           {{ verifyCarNum(text15) }}
         </div>
         <div>
-          <a-input  :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text15" />
+          <a-input :style="{ width: '320px' }" placeholder="请输入" allow-clear v-model="text15" />
         </div>
       </a-space>
       <a-divider />

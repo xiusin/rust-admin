@@ -69,12 +69,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { formApi, type FormConfigItem, type FormConfigDetail } from '@/api/modules/cms/form';
-import { modelApi, type CmsModel } from '@/api/modules/cms/model';
-import ConfigCard from './components/ConfigCard.vue';
-import PreviewModal from './components/PreviewModal.vue';
+import { ref, reactive, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { formApi, type FormConfigItem, type FormConfigDetail } from "@/api/modules/cms/form";
+import { modelApi, type CmsModel } from "@/api/modules/cms/model";
+import ConfigCard from "./components/ConfigCard.vue";
+import PreviewModal from "./components/PreviewModal.vue";
 
 const router = useRouter();
 const loading = ref(false);
@@ -85,7 +85,7 @@ const previewConfig = ref<FormConfigDetail | null>(null);
 const searchFormRef = ref();
 
 const searchForm = reactive({
-  modelId: null as number | null,
+  modelId: null as number | null
 });
 
 const loadModels = async () => {
@@ -130,22 +130,22 @@ const refresh = () => {
 
 const onAdd = () => {
   router.push({
-    path: '/cms/form-config/builder',
-    query: { modelId: searchForm.modelId },
+    path: "/cms/form-config/builder",
+    query: { modelId: searchForm.modelId }
   });
 };
 
 const onEdit = (record: FormConfigItem) => {
   router.push({
-    path: '/cms/form-config/builder',
-    query: { id: record.id, modelId: searchForm.modelId },
+    path: "/cms/form-config/builder",
+    query: { id: record.id, modelId: searchForm.modelId }
   });
 };
 
 const onDelete = async (record: FormConfigItem) => {
   try {
     await formApi.delete(record.id);
-    arcoMessage('success', '删除成功');
+    arcoMessage("success", "删除成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -164,7 +164,7 @@ const onPreview = async (record: FormConfigItem) => {
 const onSetDefault = async (record: FormConfigItem) => {
   try {
     await formApi.setDefault(record.id);
-    arcoMessage('success', '设置成功');
+    arcoMessage("success", "设置成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -174,7 +174,7 @@ const onSetDefault = async (record: FormConfigItem) => {
 const onCopy = async (record: FormConfigItem) => {
   try {
     await formApi.copy(record.id);
-    arcoMessage('success', '复制成功');
+    arcoMessage("success", "复制成功");
     getList();
   } catch (error) {
     console.error(error);

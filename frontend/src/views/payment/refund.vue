@@ -69,9 +69,9 @@
     <a-modal v-model:visible="detailVisible" title="退款详情" :footer="false" :width="600">
       <a-descriptions :column="2" bordered>
         <a-descriptions-item label="退款单号">{{ currentRecord.refund_no }}</a-descriptions-item>
-        <a-descriptions-item label="第三方退款号">{{ currentRecord.transaction_id || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="第三方退款号">{{ currentRecord.transaction_id || "-" }}</a-descriptions-item>
         <a-descriptions-item label="售后单ID">{{ currentRecord.after_sale_id }}</a-descriptions-item>
-        <a-descriptions-item label="退款渠道">{{ currentRecord.refund_channel || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="退款渠道">{{ currentRecord.refund_channel || "-" }}</a-descriptions-item>
         <a-descriptions-item label="退款金额">
           <span class="amount">¥{{ parseFloat(currentRecord.refund_amount || 0).toFixed(2) }}</span>
         </a-descriptions-item>
@@ -80,15 +80,15 @@
             {{ getStatusName(currentRecord.status) }}
           </a-tag>
         </a-descriptions-item>
-        <a-descriptions-item label="退款时间">{{ currentRecord.refund_at || '-' }}</a-descriptions-item>
-        <a-descriptions-item label="失败原因">{{ currentRecord.fail_reason || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="退款时间">{{ currentRecord.refund_at || "-" }}</a-descriptions-item>
+        <a-descriptions-item label="失败原因">{{ currentRecord.fail_reason || "-" }}</a-descriptions-item>
       </a-descriptions>
     </a-modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted } from "vue";
 
 interface RefundRecord {
   id: number;
@@ -105,9 +105,9 @@ interface RefundRecord {
 
 const formData = reactive({
   form: {
-    refund_no: '',
-    status: null as string | null,
-  },
+    refund_no: "",
+    status: null as string | null
+  }
 });
 
 const formRef = ref();
@@ -130,33 +130,33 @@ const pageSizeChange = (pageSize: number) => {
 };
 
 const columns = [
-  { title: '退款单号', dataIndex: 'refund_no', width: 180 },
-  { title: '售后单ID', dataIndex: 'after_sale_id', width: 100 },
-  { title: '退款金额', slotName: 'amount', width: 120 },
-  { title: '退款状态', slotName: 'status', width: 100 },
-  { title: '退款渠道', dataIndex: 'refund_channel', width: 100 },
-  { title: '重试次数', dataIndex: 'retry_count', width: 80 },
-  { title: '操作', slotName: 'optional', width: 100 },
+  { title: "退款单号", dataIndex: "refund_no", width: 180 },
+  { title: "售后单ID", dataIndex: "after_sale_id", width: 100 },
+  { title: "退款金额", slotName: "amount", width: 120 },
+  { title: "退款状态", slotName: "status", width: 100 },
+  { title: "退款渠道", dataIndex: "refund_channel", width: 100 },
+  { title: "重试次数", dataIndex: "retry_count", width: 80 },
+  { title: "操作", slotName: "optional", width: 100 }
 ];
 
 const getStatusName = (status: string) => {
   const names: Record<string, string> = {
-    pending: '待处理',
-    processing: '处理中',
-    success: '退款成功',
-    failed: '退款失败',
+    pending: "待处理",
+    processing: "处理中",
+    success: "退款成功",
+    failed: "退款失败"
   };
   return names[status] || status;
 };
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
-    pending: 'orange',
-    processing: 'blue',
-    success: 'green',
-    failed: 'red',
+    pending: "orange",
+    processing: "blue",
+    success: "green",
+    failed: "red"
   };
-  return colors[status] || 'arcoblue';
+  return colors[status] || "arcoblue";
 };
 
 const detailVisible = ref(false);
@@ -167,7 +167,7 @@ const loadData = async () => {
   try {
     const params: any = {
       page_num: pagination.value.current,
-      page_size: pagination.value.pageSize,
+      page_size: pagination.value.pageSize
     };
     if (formData.form.status) {
       params.status = formData.form.status;
@@ -175,8 +175,8 @@ const loadData = async () => {
     if (formData.form.refund_no) {
       params.refund_no = formData.form.refund_no;
     }
-    const { data } = await axios.get('/after-sale/refund/list', { params });
-    if (data.message === 'success') {
+    const { data } = await axios.get("/after-sale/refund/list", { params });
+    if (data.message === "success") {
       tableData.value = data.data?.list || [];
       pagination.value.total = data.data?.total || 0;
     }

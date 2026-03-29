@@ -6,14 +6,14 @@
       </div>
       <div class="card-status">
         <a-tag :color="data.isEnabled ? 'green' : 'red'" size="small">
-          {{ data.isEnabled ? '启用' : '禁用' }}
+          {{ data.isEnabled ? "启用" : "禁用" }}
         </a-tag>
       </div>
     </div>
     <div class="card-body">
       <div class="card-title">{{ data.name }}</div>
       <div class="card-code">{{ data.code }}</div>
-      <div class="card-desc">{{ data.description || '暂无描述' }}</div>
+      <div class="card-desc">{{ data.description || "暂无描述" }}</div>
     </div>
     <div class="card-footer">
       <div class="card-stats">
@@ -41,18 +41,10 @@
           <template #icon><icon-more /></template>
         </a-button>
         <template #content>
-          <a-doption @click="emit('edit', data)">
-            <icon-edit /> 编辑
-          </a-doption>
-          <a-doption @click="emit('copy', data)">
-            <icon-copy /> 复制
-          </a-doption>
-          <a-doption @click="emit('toggle-status', data)">
-            <icon-swap /> {{ data.isEnabled ? '禁用' : '启用' }}
-          </a-doption>
-          <a-doption @click="handleDelete">
-            <icon-delete /> 删除
-          </a-doption>
+          <a-doption @click="emit('edit', data)"> <icon-edit /> 编辑 </a-doption>
+          <a-doption @click="emit('copy', data)"> <icon-copy /> 复制 </a-doption>
+          <a-doption @click="emit('toggle-status', data)"> <icon-swap /> {{ data.isEnabled ? "禁用" : "启用" }} </a-doption>
+          <a-doption @click="handleDelete"> <icon-delete /> 删除 </a-doption>
         </template>
       </a-dropdown>
     </div>
@@ -60,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import type { CmsModelList } from '@/api/modules/cms/model';
+import type { CmsModelList } from "@/api/modules/cms/model";
 
 interface Props {
   data: CmsModelList;
@@ -74,17 +66,17 @@ const emit = defineEmits<{
   design: [record: CmsModelList];
   content: [record: CmsModelList];
   copy: [record: CmsModelList];
-  'toggle-status': [record: CmsModelList];
+  "toggle-status": [record: CmsModelList];
 }>();
 
 const handleDelete = () => {
   Modal.warning({
-    title: '确认删除',
+    title: "确认删除",
     content: `确定要删除模型"${props.data.name}"吗？`,
     hideCancel: false,
     onOk: () => {
-      emit('delete', props.data);
-    },
+      emit("delete", props.data);
+    }
   });
 };
 </script>

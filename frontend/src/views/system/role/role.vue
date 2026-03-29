@@ -62,7 +62,9 @@
                 <div class="action-icon"><icon-line-height size="18" /></div>
               </a-tooltip>
               <template #content>
-                <a-doption v-for="item in densityType" :value="item.value" :key="item.value" :disabled="item.value === density">{{ item.label }}</a-doption>
+                <a-doption v-for="item in densityType" :value="item.value" :key="item.value" :disabled="item.value === density">{{
+                  item.label
+                }}</a-doption>
               </template>
             </a-dropdown>
             <a-tooltip content="列设置">
@@ -105,15 +107,18 @@
         </template>
         <template #menus="{ record }">
           <a-space wrap>
-            <a-tag v-for="(menu, index) in getDisplayMenus(record.menus)" :key="index" bordered size="small" color="arcoblue">{{ menu.title }}</a-tag>
+            <a-tag v-for="(menu, index) in getDisplayMenus(record.menus)" :key="index" bordered size="small" color="arcoblue">{{
+              menu.title
+            }}</a-tag>
             <a-tag
               v-if="getMoreMenusCount(record.menus) > 0"
               bordered
               size="small"
               color="gray"
-              style="cursor: pointer;"
+              style="cursor: pointer"
               @click="showAllMenus(record)"
-            >+{{ getMoreMenusCount(record.menus) }}</a-tag>
+              >+{{ getMoreMenusCount(record.menus) }}</a-tag
+            >
           </a-space>
         </template>
         <template #optional="{ record }">
@@ -232,7 +237,15 @@
 
 <script setup lang="ts">
 import useGlobalProperties from "@/hooks/useGlobalProperties";
-import { getRoleAPI, getMenuListAPI, getUserPermissionAPI, addRoleAPI, editRoleAPI, deleteRoleAPI, assignMenuAPI } from "@/api/modules/system/index";
+import {
+  getRoleAPI,
+  getMenuListAPI,
+  getUserPermissionAPI,
+  addRoleAPI,
+  editRoleAPI,
+  deleteRoleAPI,
+  assignMenuAPI
+} from "@/api/modules/system/index";
 import { deepClone } from "@/utils";
 import { useLayoutModel } from "@/hooks/useLayoutModel";
 import Sortable from "sortablejs";
@@ -325,7 +338,7 @@ const rules = {
 const addFrom = ref<any>({
   role_name: "",
   role_key: "",
-  status: '1',
+  status: "1",
   order: 1,
   remark: ""
 });
@@ -359,7 +372,7 @@ const afterClose = () => {
   addFrom.value = {
     role_name: "",
     role_key: "",
-    status: '1',
+    status: "1",
     order: 1,
     remark: ""
   };
@@ -433,7 +446,7 @@ const getMoreMenusCount = (menus: any[]) => {
 
 // 查看全部权限弹窗
 const menuModalVisible = ref(false);
-const menuModalTitle = ref('');
+const menuModalTitle = ref("");
 const roleMenuTree = ref([]);
 
 const showAllMenus = (record: any) => {

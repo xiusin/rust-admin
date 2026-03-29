@@ -10,8 +10,8 @@
       </a-space>
       <div class="margin-top">
         <a-space>
-          <a-button  type="primary" @click="openNewbie">打开指引</a-button>
-          <a-button  type="primary" @click="openSystemNewbie">系统指引</a-button>
+          <a-button type="primary" @click="openNewbie">打开指引</a-button>
+          <a-button type="primary" @click="openSystemNewbie">系统指引</a-button>
         </a-space>
       </div>
       <div class="margin-top">

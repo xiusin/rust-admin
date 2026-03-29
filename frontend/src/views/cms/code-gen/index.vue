@@ -32,7 +32,13 @@
                     <template #icon><icon-code /></template>
                     生成代码
                   </a-button>
-                  <a-button type="primary" status="success" @click="handleDownload" :disabled="!selectedModelId" :loading="downloading">
+                  <a-button
+                    type="primary"
+                    status="success"
+                    @click="handleDownload"
+                    :disabled="!selectedModelId"
+                    :loading="downloading"
+                  >
                     <template #icon><icon-download /></template>
                     下载代码
                   </a-button>
@@ -80,12 +86,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
-import { useRouter } from 'vue-router';
-import { codeGenApi, type GeneratedFile, type FileTreeNode, type CodeGenOptions } from '@/api/modules/cms/codeGen';
-import ModelSelect from './components/ModelSelect.vue';
-import GenOptions from './components/GenOptions.vue';
-import DownloadModal from './components/DownloadModal.vue';
+import { ref, reactive } from "vue";
+import { useRouter } from "vue-router";
+import { codeGenApi, type GeneratedFile, type FileTreeNode, type CodeGenOptions } from "@/api/modules/cms/codeGen";
+import ModelSelect from "./components/ModelSelect.vue";
+import GenOptions from "./components/GenOptions.vue";
+import DownloadModal from "./components/DownloadModal.vue";
 
 const router = useRouter();
 const selectedModelId = ref<number | null>(null);
@@ -107,12 +113,12 @@ const genOptions = reactive<CodeGenOptions>({
   generateComponents: true,
   generateRoutes: true,
   generateStore: false,
-  author: '',
-  version: '1.0.0',
+  author: "",
+  version: "1.0.0"
 });
 
 const goBack = () => {
-  router.push('/cms/model/list');
+  router.push("/cms/model/list");
 };
 
 const onModelChange = async () => {
@@ -135,7 +141,7 @@ const onModelChange = async () => {
 
 const onFileSelect = (keys: string[]) => {
   if (keys.length > 0) {
-    const file = generatedFiles.value.find((f) => f.filePath === keys[0]);
+    const file = generatedFiles.value.find(f => f.filePath === keys[0]);
     currentFile.value = file || null;
     selectedFile.value = keys;
   }
@@ -144,7 +150,7 @@ const onFileSelect = (keys: string[]) => {
 const copyCode = () => {
   if (currentFile.value?.content) {
     navigator.clipboard.writeText(currentFile.value.content);
-    arcoMessage('success', '复制成功');
+    arcoMessage("success", "复制成功");
   }
 };
 
@@ -172,12 +178,12 @@ const handleGenerate = async () => {
   try {
     const result = await codeGenApi.generate({
       modelId: selectedModelId.value,
-      options: genOptions,
+      options: genOptions
     });
     if (result.success) {
-      arcoMessage('success', result.message);
+      arcoMessage("success", result.message);
     } else {
-      arcoMessage('error', result.message);
+      arcoMessage("error", result.message);
     }
   } catch (error) {
     console.error(error);
@@ -274,7 +280,7 @@ const handleDownload = () => {
         }
 
         code {
-          font-family: 'Fira Code', monospace;
+          font-family: "Fira Code", monospace;
         }
       }
     }

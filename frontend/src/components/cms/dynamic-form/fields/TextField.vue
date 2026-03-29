@@ -18,28 +18,28 @@
 
 <script setup lang="ts">
 interface Props {
-  modelValue: string
-  placeholder?: string
-  disabled?: boolean
-  maxLength?: number
-  allowClear?: boolean
-  prefix?: string
-  suffix?: string
+  modelValue: string;
+  placeholder?: string;
+  disabled?: boolean;
+  maxLength?: number;
+  allowClear?: boolean;
+  prefix?: string;
+  suffix?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: '',
-  placeholder: '请输入',
+  modelValue: "",
+  placeholder: "请输入",
   disabled: false,
   allowClear: true
-})
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string]
-}>()
+  "update:modelValue": [value: string];
+}>();
 
 const localValue = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
-})
+  set: val => emit("update:modelValue", val)
+});
 </script>

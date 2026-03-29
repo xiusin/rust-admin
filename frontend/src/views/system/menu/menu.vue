@@ -64,7 +64,9 @@
                 <div class="action-icon"><icon-line-height size="18" /></div>
               </a-tooltip>
               <template #content>
-                <a-doption v-for="item in densityType" :value="item.value" :key="item.value" :disabled="item.value === density">{{ item.label }}</a-doption>
+                <a-doption v-for="item in densityType" :value="item.value" :key="item.value" :disabled="item.value === density">{{
+                  item.label
+                }}</a-doption>
               </template>
             </a-dropdown>
             <a-tooltip content="列设置">

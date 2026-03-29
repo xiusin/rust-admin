@@ -3,15 +3,8 @@
     <div v-if="fields.length === 0" class="empty-layout">
       <a-empty description="拖拽字段到此处" />
     </div>
-    
-    <draggable
-      v-else
-      v-model="localFields"
-      item-key="id"
-      group="formFields"
-      animation="200"
-      @end="handleDragEnd"
-    >
+
+    <draggable v-else v-model="localFields" item-key="id" group="formFields" animation="200" @end="handleDragEnd">
       <template #item="{ element, index }">
         <div
           class="field-item"
@@ -34,7 +27,7 @@
               </a-dropdown>
             </a-space>
           </div>
-          
+
           <div class="field-preview">
             <component
               :is="getFieldComponent(element.type)"
@@ -43,7 +36,7 @@
               size="small"
             />
           </div>
-          
+
           <div class="field-actions">
             <a-button-group size="mini">
               <a-button @click.stop="handleSpanChange(element, -1)">
@@ -62,112 +55,112 @@
 </template>
 
 <script setup lang="ts">
-import draggable from 'vuedraggable'
-import { Message } from '@arco-design/web-vue'
+import draggable from "vuedraggable";
+import { Message } from "@arco-design/web-vue";
 
 interface FormField {
-  id: string
-  name: string
-  label: string
-  type: string
-  config: Record<string, any>
-  span?: number
+  id: string;
+  name: string;
+  label: string;
+  type: string;
+  config: Record<string, any>;
+  span?: number;
 }
 
 interface Props {
-  modelValue: FormField[]
-  columns?: number
+  modelValue: FormField[];
+  columns?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: () => [],
   columns: 2
-})
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: FormField[]]
-  'select': [field: FormField]
-}>()
+  "update:modelValue": [value: FormField[]];
+  select: [field: FormField];
+}>();
 
-const localFields = ref<FormField[]>([...props.modelValue])
-const selectedFieldId = ref<string>('')
+const localFields = ref<FormField[]>([...props.modelValue]);
+const selectedFieldId = ref<string>("");
 
-const defaultSpan = computed(() => 24 / props.columns)
+const defaultSpan = computed(() => 24 / props.columns);
 
 watch(
   () => props.modelValue,
-  (val) => {
-    localFields.value = [...val]
+  val => {
+    localFields.value = [...val];
   },
   { deep: true }
-)
+);
 
 watch(
   localFields,
-  (val) => {
-    emit('update:modelValue', val)
+  val => {
+    emit("update:modelValue", val);
   },
   { deep: true }
-)
+);
 
 const getFieldWidth = (field: FormField) => {
-  const span = field.span || defaultSpan.value
-  return `${(span / 24) * 100}%`
-}
+  const span = field.span || defaultSpan.value;
+  return `${(span / 24) * 100}%`;
+};
 
 const getFieldComponent = (type: string) => {
   const componentMap: Record<string, string> = {
-    text: 'a-input',
-    textarea: 'a-textarea',
-    number: 'a-input-number',
-    select: 'a-select',
-    radio: 'a-radio-group',
-    checkbox: 'a-checkbox-group',
-    date: 'a-date-picker',
-    datetime: 'a-date-picker',
-    image: 'a-upload',
-    file: 'a-upload',
-    editor: 'a-textarea',
-    json: 'a-textarea'
-  }
-  return componentMap[type] || 'a-input'
-}
+    text: "a-input",
+    textarea: "a-textarea",
+    number: "a-input-number",
+    select: "a-select",
+    radio: "a-radio-group",
+    checkbox: "a-checkbox-group",
+    date: "a-date-picker",
+    datetime: "a-date-picker",
+    image: "a-upload",
+    file: "a-upload",
+    editor: "a-textarea",
+    json: "a-textarea"
+  };
+  return componentMap[type] || "a-input";
+};
 
 const handleSelect = (field: FormField) => {
-  selectedFieldId.value = field.id
-  emit('select', field)
-}
+  selectedFieldId.value = field.id;
+  emit("select", field);
+};
 
 const handleDragEnd = () => {
-  Message.success('排序已更新')
-}
+  Message.success("排序已更新");
+};
 
 const handleSpanChange = (field: FormField, delta: number) => {
-  const currentSpan = field.span || defaultSpan.value
-  const newSpan = Math.max(1, Math.min(24, currentSpan + delta))
-  field.span = newSpan
-}
+  const currentSpan = field.span || defaultSpan.value;
+  const newSpan = Math.max(1, Math.min(24, currentSpan + delta));
+  field.span = newSpan;
+};
 
 const handleAction = (action: string, field: FormField, index: number) => {
   switch (action) {
-    case 'edit':
-      handleSelect(field)
-      break
-    case 'copy':
+    case "edit":
+      handleSelect(field);
+      break;
+    case "copy":
       const newField = {
         ...field,
         id: `${field.id}_copy_${Date.now()}`,
         name: `${field.name}_copy`
-      }
-      localFields.value.splice(index + 1, 0, newField)
-      Message.success('复制成功')
-      break
-    case 'delete':
-      localFields.value.splice(index, 1)
-      Message.success('删除成功')
-      break
+      };
+      localFields.value.splice(index + 1, 0, newField);
+      Message.success("复制成功");
+      break;
+    case "delete":
+      localFields.value.splice(index, 1);
+      Message.success("删除成功");
+      break;
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

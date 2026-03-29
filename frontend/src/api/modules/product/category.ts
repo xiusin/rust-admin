@@ -64,7 +64,7 @@ interface ListResponse<T> {
 
 const getData = <T>(res: ApiResponse<T>): T => {
   if (res.code !== 200) {
-    throw new Error(res.message || '请求失败');
+    throw new Error(res.message || "请求失败");
   }
   return res.data;
 };
@@ -108,8 +108,8 @@ export const categoryApi = {
 
   updateStatus: async (id: number, status: string): Promise<void> => {
     const res = await axios.put("/product/category/updateStatus", null, {
-      params: { id, status },
+      params: { id, status }
     });
     getData(res);
-  },
+  }
 };

@@ -69,33 +69,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted } from "vue";
 
 const statistics = reactive({
   todayOrders: 128,
-  todaySales: 15890.50,
+  todaySales: 15890.5,
   pendingShipment: 15,
-  pendingRefund: 5,
+  pendingRefund: 5
 });
 
 const statusData = ref([
-  { name: '待支付', count: 23, amount: '¥3,450.00', percent: 18, progressStatus: 'warning' },
-  { name: '已支付', count: 15, amount: '¥2,890.00', percent: 12, progressStatus: 'normal' },
-  { name: '已发货', count: 45, amount: '¥6,780.00', percent: 35, progressStatus: 'normal' },
-  { name: '已完成', count: 40, amount: '¥5,230.00', percent: 31, progressStatus: 'success' },
-  { name: '已取消', count: 5, amount: '¥540.50', percent: 4, progressStatus: 'danger' },
+  { name: "待支付", count: 23, amount: "¥3,450.00", percent: 18, progressStatus: "warning" },
+  { name: "已支付", count: 15, amount: "¥2,890.00", percent: 12, progressStatus: "normal" },
+  { name: "已发货", count: 45, amount: "¥6,780.00", percent: 35, progressStatus: "normal" },
+  { name: "已完成", count: 40, amount: "¥5,230.00", percent: 31, progressStatus: "success" },
+  { name: "已取消", count: 5, amount: "¥540.50", percent: 4, progressStatus: "danger" }
 ]);
 
 const topProducts = ref([
-  { name: 'iPhone 15 Pro 手机壳', sales: 156, amount: '¥15,444.00' },
-  { name: 'MacBook Pro 保护套', sales: 89, amount: '¥26,611.00' },
-  { name: 'AirPods Pro 保护套', sales: 78, amount: '¥3,822.00' },
-  { name: 'Apple Watch 表带', sales: 65, amount: '¥6,500.00' },
-  { name: 'iPad 支架', sales: 52, amount: '¥5,200.00' },
+  { name: "iPhone 15 Pro 手机壳", sales: 156, amount: "¥15,444.00" },
+  { name: "MacBook Pro 保护套", sales: 89, amount: "¥26,611.00" },
+  { name: "AirPods Pro 保护套", sales: 78, amount: "¥3,822.00" },
+  { name: "Apple Watch 表带", sales: 65, amount: "¥6,500.00" },
+  { name: "iPad 支架", sales: 52, amount: "¥5,200.00" }
 ]);
 
-onMounted(() => {
-});
+onMounted(() => {});
 </script>
 
 <style scoped>

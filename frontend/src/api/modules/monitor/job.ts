@@ -86,11 +86,7 @@ export const handExecuteJobAPI = (data: { job_id: string }) => {
 // ==================== 定时任务日志 API ====================
 
 // 获取定时任务日志列表
-export const getJobLogListAPI = (params?: {
-  job_id?: string;
-  page_num?: number;
-  page_size?: number;
-}) => {
+export const getJobLogListAPI = (params?: { job_id?: string; page_num?: number; page_size?: number }) => {
   return axios({
     url: "/sys/jobinfo/list",
     method: "get",

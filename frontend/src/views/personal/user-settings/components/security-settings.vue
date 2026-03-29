@@ -8,21 +8,21 @@
               <a-input-password v-model="form.password" placeholder="请输入登录密码" allow-clear />
             </a-form-item>
             <a-form-item field="phone" label="安全手机">
-              <a-input  v-model="form.phone" placeholder="请输入安全手机" allow-clear>
+              <a-input v-model="form.phone" placeholder="请输入安全手机" allow-clear>
                 <template #prepend> +86 </template>
               </a-input>
             </a-form-item>
             <a-form-item field="email" label="安全邮箱">
-              <a-input  v-model="form.email" placeholder="请输入安全邮箱" allow-clear />
+              <a-input v-model="form.email" placeholder="请输入安全邮箱" allow-clear />
             </a-form-item>
             <a-form-item field="question" label="密保问题">
-              <a-input  v-model="form.question" placeholder="请输入密保问题" allow-clear />
+              <a-input v-model="form.question" placeholder="请输入密保问题" allow-clear />
             </a-form-item>
             <a-form-item field="answer" label="密保答案">
-              <a-input  v-model="form.answer" placeholder="请输入密保答案" allow-clear />
+              <a-input v-model="form.answer" placeholder="请输入密保答案" allow-clear />
             </a-form-item>
             <a-form-item>
-              <a-button  type="primary" html-type="submit">提交</a-button>
+              <a-button type="primary" html-type="submit">提交</a-button>
             </a-form-item>
           </a-form>
         </a-card>

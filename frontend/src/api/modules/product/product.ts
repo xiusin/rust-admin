@@ -211,7 +211,7 @@ interface ListResponse<T> {
 
 const getData = <T>(res: ApiResponse<T>): T => {
   if (res.code !== 200) {
-    throw new Error(res.message || '请求失败');
+    throw new Error(res.message || "请求失败");
   }
   return res.data;
 };
@@ -256,7 +256,7 @@ export const productApi = {
 
   updateStatus: async (id: number, status: number): Promise<void> => {
     const res = await axios.put("/product/updateStatus", null, {
-      params: { id, status },
+      params: { id, status }
     });
     getData(res);
   },
@@ -279,7 +279,7 @@ export const productApi = {
   simpleList: async (params?: { name?: string; status?: number }): Promise<ProductListItem[]> => {
     const res = await axios.get("/product/simpleList", { params });
     return getData(res);
-  },
+  }
 };
 
 export const skuApi = {
@@ -311,5 +311,5 @@ export const skuApi = {
   generate: async (productId: number, specs: any[]): Promise<SkuItem[]> => {
     const res = await axios.post("/product/sku/generate", { productId, specs });
     return getData(res);
-  },
+  }
 };

@@ -1,11 +1,11 @@
-import axios from 'axios';
-import { Message } from '@arco-design/web-vue';
+import axios from "axios";
+import { Message } from "@arco-design/web-vue";
 
 export interface MediaFile {
   id: number;
   consumer_id: number;
   file_name: string;
-  file_type: 'image' | 'video';
+  file_type: "image" | "video";
   file_format?: string;
   file_size: number;
   file_url?: string;
@@ -49,28 +49,28 @@ export interface PageParams {
 
 export const mediaApi = {
   generateUploadUrl: async (params: GenerateUploadUrlParams) => {
-    const res = await axios.post('/media/upload-url', params);
+    const res = await axios.post("/media/upload-url", params);
     return res.data;
   },
 
   confirmUpload: async (params: ConfirmUploadParams) => {
-    const res = await axios.post('/media/confirm', params);
-    if (res.data.message !== 'success') {
+    const res = await axios.post("/media/confirm", params);
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
   },
 
   list: async (params: PageParams) => {
-    const res = await axios.get('/media/list', { params });
+    const res = await axios.get("/media/list", { params });
     return res.data;
   },
 
   delete: async (id: number) => {
     const res = await axios.delete(`/media/${id}`);
-    if (res.data.message !== 'success') {
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
-  },
+  }
 };

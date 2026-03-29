@@ -6,28 +6,28 @@
 
 <script setup lang="ts">
 interface Props {
-  value: any
-  emptyText?: string
-  maxLength?: number
+  value: any;
+  emptyText?: string;
+  maxLength?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  emptyText: '-',
+  emptyText: "-",
   maxLength: 50
-})
+});
 
 const displayText = computed(() => {
-  if (props.value === null || props.value === undefined || props.value === '') {
-    return props.emptyText
+  if (props.value === null || props.value === undefined || props.value === "") {
+    return props.emptyText;
   }
-  
-  const text = String(props.value)
+
+  const text = String(props.value);
   if (text.length > props.maxLength) {
-    return text.slice(0, props.maxLength) + '...'
+    return text.slice(0, props.maxLength) + "...";
   }
-  
-  return text
-})
+
+  return text;
+});
 </script>
 
 <style lang="scss" scoped>

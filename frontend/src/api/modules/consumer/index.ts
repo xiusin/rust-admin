@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { Message } from '@arco-design/web-vue';
+import axios from "axios";
+import { Message } from "@arco-design/web-vue";
 
 export interface UserTagBrief {
   id: number;
@@ -36,7 +36,7 @@ export interface ConsumerInfo {
   email?: string;
   nickname?: string;
   avatar?: string;
-  status: 'normal' | 'locked' | 'deactivated';
+  status: "normal" | "locked" | "deactivated";
   risk_score: number;
   wechat_openid?: string;
   wechat_unionid?: string;
@@ -90,16 +90,16 @@ export interface UpdateParams {
 
 export const consumerApi = {
   register: async (params: RegisterParams) => {
-    const res = await axios.post('/consumer/register', params);
-    if (res.data.message !== 'success') {
+    const res = await axios.post("/consumer/register", params);
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
   },
 
   login: async (params: LoginParams) => {
-    const res = await axios.post('/consumer/login', params);
-    if (res.data.message !== 'success') {
+    const res = await axios.post("/consumer/login", params);
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
@@ -112,19 +112,19 @@ export const consumerApi = {
 
   update: async (id: number, params: UpdateParams) => {
     const res = await axios.put(`/consumer/update/${id}`, params);
-    if (res.data.message !== 'success') {
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
   },
 
   list: async (params: PageParams) => {
-    const res = await axios.get('/consumer/list', { params });
+    const res = await axios.get("/consumer/list", { params });
     return res.data;
   },
 
   loginLogs: async (params: PageParams & { consumer_id?: number; login_type?: string; success?: boolean }) => {
-    const res = await axios.get('/consumer/login-logs', { params });
+    const res = await axios.get("/consumer/login-logs", { params });
     return res.data;
-  },
+  }
 };

@@ -58,7 +58,9 @@
                 <div class="action-icon"><icon-line-height size="18" /></div>
               </a-tooltip>
               <template #content>
-                <a-doption v-for="item in densityType" :value="item.value" :key="item.value" :disabled="item.value === density">{{ item.label }}</a-doption>
+                <a-doption v-for="item in densityType" :value="item.value" :key="item.value" :disabled="item.value === density">{{
+                  item.label
+                }}</a-doption>
               </template>
             </a-dropdown>
             <a-tooltip content="列设置">
@@ -106,15 +108,20 @@
         </template>
         <template #oauthType="{ record }">
           <a-tag :color="record.oauth_type === 'wechat' ? 'green' : 'blue'">
-            {{ record.oauth_type === 'wechat' ? '公众号' : '小程序' }}
+            {{ record.oauth_type === "wechat" ? "公众号" : "小程序" }}
           </a-tag>
         </template>
         <template #status="{ record }">
-          <a-badge :status="record.status === 'active' ? 'success' : 'default'" :text="record.status === 'active' ? '已绑定' : '已解绑'" />
+          <a-badge
+            :status="record.status === 'active' ? 'success' : 'default'"
+            :text="record.status === 'active' ? '已绑定' : '已解绑'"
+          />
         </template>
         <template #optional="{ record }">
           <a-space>
-            <a-button v-if="record.status === 'active'" type="text" size="small" status="danger" @click="handleUnbind(record)">解绑</a-button>
+            <a-button v-if="record.status === 'active'" type="text" size="small" status="danger" @click="handleUnbind(record)"
+              >解绑</a-button
+            >
             <span v-else class="text-muted">-</span>
           </a-space>
         </template>
@@ -124,10 +131,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, nextTick } from 'vue';
-import { Message, Modal } from '@arco-design/web-vue';
-import Sortable from 'sortablejs';
-import { deepClone } from '@/utils';
+import { ref, reactive, onMounted, nextTick } from "vue";
+import { Message, Modal } from "@arco-design/web-vue";
+import Sortable from "sortablejs";
+import { deepClone } from "@/utils";
 
 interface OAuthRecord {
   id: number;
@@ -143,10 +150,10 @@ interface OAuthRecord {
 
 const formData = reactive({
   form: {
-    keyword: '',
+    keyword: "",
     oauth_type: null as string | null,
-    status: null as string | null,
-  },
+    status: null as string | null
+  }
 });
 
 const formRef = ref();
@@ -159,9 +166,9 @@ const loading = ref(false);
 const tableData = ref<OAuthRecord[]>([]);
 const selectedKeys = ref<number[]>([]);
 const rowSelection = reactive({
-  type: 'checkbox' as const,
+  type: "checkbox" as const,
   showCheckedAll: true,
-  onlyCurrent: false,
+  onlyCurrent: false
 });
 
 const pagination = ref({ showPageSize: true, showTotal: true, current: 1, pageSize: 10, total: 0 });
@@ -186,13 +193,13 @@ interface Column {
 
 const columnsShow = ref<Column[]>([]);
 const columns = ref<Column[]>([
-  { title: '用户信息', dataIndex: 'userInfo', checked: true, slotName: 'userInfo', width: 200 },
-  { title: '授权类型', dataIndex: 'oauth_type', checked: true, slotName: 'oauthType', width: 120 },
-  { title: 'OpenID', dataIndex: 'openid', checked: true, width: 220, ellipsis: true },
-  { title: 'UnionID', dataIndex: 'unionid', checked: true, width: 220, ellipsis: true },
-  { title: '绑定状态', dataIndex: 'status', checked: true, slotName: 'status', width: 100 },
-  { title: '授权时间', dataIndex: 'created_at', checked: true, width: 160 },
-  { title: '操作', slotName: 'optional', align: 'center', checked: true, width: 120 },
+  { title: "用户信息", dataIndex: "userInfo", checked: true, slotName: "userInfo", width: 200 },
+  { title: "授权类型", dataIndex: "oauth_type", checked: true, slotName: "oauthType", width: 120 },
+  { title: "OpenID", dataIndex: "openid", checked: true, width: 220, ellipsis: true },
+  { title: "UnionID", dataIndex: "unionid", checked: true, width: 220, ellipsis: true },
+  { title: "绑定状态", dataIndex: "status", checked: true, slotName: "status", width: 100 },
+  { title: "授权时间", dataIndex: "created_at", checked: true, width: 160 },
+  { title: "操作", slotName: "optional", align: "center", checked: true, width: 120 }
 ]);
 
 const deepColumns = () => {
@@ -201,13 +208,13 @@ const deepColumns = () => {
 deepColumns();
 
 const densityType = ref([
-  { value: 'mini', label: '迷你' },
-  { value: 'small', label: '偏小' },
-  { value: 'medium', label: '中等' },
-  { value: 'large', label: '偏大' },
+  { value: "mini", label: "迷你" },
+  { value: "small", label: "偏小" },
+  { value: "medium", label: "中等" },
+  { value: "large", label: "偏大" }
 ]);
 
-const density = ref('small');
+const density = ref("small");
 const onDensity = (e: string) => {
   density.value = e;
 };
@@ -223,13 +230,13 @@ const onCheckbox = (checked: any, row: any, index: any) => {
 const popupVisibleChange = (visible: boolean) => {
   if (visible) {
     nextTick(() => {
-      const el = document.getElementById('tableSetting') as HTMLElement;
+      const el = document.getElementById("tableSetting") as HTMLElement;
       new Sortable(el, {
         onEnd(e: any) {
           const { oldIndex, newIndex } = e;
           exchangeArray(columns.value, oldIndex, newIndex);
           exchangeArray(columnsShow.value, oldIndex, newIndex);
-        },
+        }
       });
     });
   }
@@ -246,8 +253,28 @@ const loadData = async () => {
   try {
     await new Promise(resolve => setTimeout(resolve, 500));
     tableData.value = [
-      { id: 1, consumer_id: 1001, nickname: '张三', avatar: 'https://thirdwx.qlogo.cn/mmopen/vi_32/xxx', oauth_type: 'wechat', openid: 'oXXXXxXXXXXXXXXXXXX', unionid: 'o6_bmasdasdsad6_2sgVt7hMZOPfL', status: 'active', created_at: '2026-03-22 10:00:00' },
-      { id: 2, consumer_id: 1002, nickname: '李四', avatar: 'https://thirdwx.qlogo.cn/mmopen/vi_32/yyy', oauth_type: 'mini', openid: 'oYYYYyYYYYYYYYYYYYY', unionid: '', status: 'active', created_at: '2026-03-21 15:30:00' },
+      {
+        id: 1,
+        consumer_id: 1001,
+        nickname: "张三",
+        avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/xxx",
+        oauth_type: "wechat",
+        openid: "oXXXXxXXXXXXXXXXXXX",
+        unionid: "o6_bmasdasdsad6_2sgVt7hMZOPfL",
+        status: "active",
+        created_at: "2026-03-22 10:00:00"
+      },
+      {
+        id: 2,
+        consumer_id: 1002,
+        nickname: "李四",
+        avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/yyy",
+        oauth_type: "mini",
+        openid: "oYYYYyYYYYYYYYYYYYY",
+        unionid: "",
+        status: "active",
+        created_at: "2026-03-21 15:30:00"
+      }
     ];
     pagination.value.total = 2;
   } finally {
@@ -257,24 +284,24 @@ const loadData = async () => {
 
 const handleUnbind = (record: OAuthRecord) => {
   Modal.confirm({
-    title: '确认解绑',
+    title: "确认解绑",
     content: `确定要解绑用户"${record.nickname}"的微信授权吗？`,
     onOk: () => {
-      Message.success('解绑成功');
+      Message.success("解绑成功");
       loadData();
-    },
+    }
   });
 };
 
 const handleBatchUnbind = () => {
   Modal.confirm({
-    title: '确认批量解绑',
+    title: "确认批量解绑",
     content: `确定要解绑选中的 ${selectedKeys.value.length} 个授权吗？`,
     onOk: () => {
-      Message.success('批量解绑成功');
+      Message.success("批量解绑成功");
       selectedKeys.value = [];
       loadData();
-    },
+    }
   });
 };
 

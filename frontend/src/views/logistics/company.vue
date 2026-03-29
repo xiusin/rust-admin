@@ -60,9 +60,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { Message, Modal } from '@arco-design/web-vue';
-import axios from '@/api';
+import { ref, reactive, onMounted } from "vue";
+import { Message, Modal } from "@arco-design/web-vue";
+import axios from "@/api";
 
 interface CompanyRecord {
   id: number;
@@ -77,21 +77,21 @@ interface CompanyRecord {
 const loading = ref(false);
 const tableData = ref<CompanyRecord[]>([]);
 const modalVisible = ref(false);
-const modalTitle = ref('新增公司');
+const modalTitle = ref("新增公司");
 const form = reactive({
   id: 0,
-  code: '',
-  name: '',
-  logo: '',
+  code: "",
+  name: "",
+  logo: "",
   sort: 0,
-  is_active: true,
+  is_active: true
 });
 
 const loadData = async () => {
   loading.value = true;
   try {
-    const { data } = await axios.get('/logistics-company/list');
-    if (data.message === 'success') {
+    const { data } = await axios.get("/logistics-company/list");
+    if (data.message === "success") {
       tableData.value = data.data || [];
     }
   } catch (e) {
@@ -102,39 +102,39 @@ const loadData = async () => {
 };
 
 const handleAdd = () => {
-  modalTitle.value = '新增公司';
-  Object.assign(form, { id: 0, code: '', name: '', logo: '', sort: 0, is_active: true });
+  modalTitle.value = "新增公司";
+  Object.assign(form, { id: 0, code: "", name: "", logo: "", sort: 0, is_active: true });
   modalVisible.value = true;
 };
 
 const handleEdit = (record: CompanyRecord) => {
-  modalTitle.value = '编辑公司';
+  modalTitle.value = "编辑公司";
   Object.assign(form, {
     ...record,
-    is_active: record.status === 1,
+    is_active: record.status === 1
   });
   modalVisible.value = true;
 };
 
 const handleDelete = (record: CompanyRecord) => {
   Modal.confirm({
-    title: '确认删除',
+    title: "确认删除",
     content: `确定要删除物流公司"${record.name}"吗？`,
     onOk: async () => {
       try {
-        await axios.delete('/logistics-company/del', { params: { id: record.id } });
-        Message.success('删除成功');
+        await axios.delete("/logistics-company/del", { params: { id: record.id } });
+        Message.success("删除成功");
         loadData();
       } catch (e) {
         console.error(e);
       }
-    },
+    }
   });
 };
 
 const handleStatusChange = async (record: CompanyRecord) => {
   try {
-    await axios.put('/logistics-company/toggle', null, { params: { id: record.id } });
+    await axios.put("/logistics-company/toggle", null, { params: { id: record.id } });
     Message.success(`${record.name} 状态已切换`);
     loadData();
   } catch (e) {
@@ -144,7 +144,7 @@ const handleStatusChange = async (record: CompanyRecord) => {
 
 const handleSubmit = async () => {
   if (!form.code || !form.name) {
-    Message.warning('请填写完整信息');
+    Message.warning("请填写完整信息");
     return;
   }
   try {
@@ -153,15 +153,15 @@ const handleSubmit = async () => {
       name: form.name,
       logo: form.logo || null,
       sort: form.sort,
-      status: form.is_active ? 1 : 0,
+      status: form.is_active ? 1 : 0
     };
 
     if (form.id) {
-      await axios.put('/logistics-company/edit', { ...submitData, id: form.id });
-      Message.success('编辑成功');
+      await axios.put("/logistics-company/edit", { ...submitData, id: form.id });
+      Message.success("编辑成功");
     } else {
-      await axios.post('/logistics-company/add', submitData);
-      Message.success('新增成功');
+      await axios.post("/logistics-company/add", submitData);
+      Message.success("新增成功");
     }
     modalVisible.value = false;
     loadData();

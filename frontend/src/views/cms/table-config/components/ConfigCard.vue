@@ -7,7 +7,7 @@
       </div>
       <div class="card-status">
         <a-tag :color="data.status ? 'green' : 'red'" size="small">
-          {{ data.status ? '启用' : '禁用' }}
+          {{ data.status ? "启用" : "禁用" }}
         </a-tag>
       </div>
     </div>
@@ -38,15 +38,9 @@
             <template #icon><icon-more /></template>
           </a-button>
           <template #content>
-            <a-doption v-if="!data.isDefault" @click="emit('set-default', data)">
-              <icon-star /> 设为默认
-            </a-doption>
-            <a-doption @click="emit('copy', data)">
-              <icon-copy /> 复制
-            </a-doption>
-            <a-doption @click="handleDelete">
-              <icon-delete /> 删除
-            </a-doption>
+            <a-doption v-if="!data.isDefault" @click="emit('set-default', data)"> <icon-star /> 设为默认 </a-doption>
+            <a-doption @click="emit('copy', data)"> <icon-copy /> 复制 </a-doption>
+            <a-doption @click="handleDelete"> <icon-delete /> 删除 </a-doption>
           </template>
         </a-dropdown>
       </a-space>
@@ -55,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import type { TableConfigItem } from '@/api/modules/cms/table';
+import type { TableConfigItem } from "@/api/modules/cms/table";
 
 interface Props {
   data: TableConfigItem;
@@ -68,17 +62,17 @@ const emit = defineEmits<{
   preview: [record: TableConfigItem];
   delete: [record: TableConfigItem];
   copy: [record: TableConfigItem];
-  'set-default': [record: TableConfigItem];
+  "set-default": [record: TableConfigItem];
 }>();
 
 const handleDelete = () => {
   Modal.warning({
-    title: '确认删除',
+    title: "确认删除",
     content: `确定要删除表格配置"${props.data.name}"吗？`,
     hideCancel: false,
     onOk: () => {
-      emit('delete', props.data);
-    },
+      emit("delete", props.data);
+    }
   });
 };
 </script>

@@ -1,14 +1,14 @@
-export * from './market';
-export * from './order';
-export * from './license';
-export * from './verify';
-export * from './card';
+export * from "./market";
+export * from "./order";
+export * from "./license";
+export * from "./verify";
+export * from "./card";
 
-import { market, category, developer, version, plan, review } from './market';
-import { cart, order } from './order';
-import { license, subscription, device } from './license';
-import { verify } from './verify';
-import { card } from './card';
+import { market, category, developer, version, plan, review } from "./market";
+import { cart, order } from "./order";
+import { license, subscription, device } from "./license";
+import { verify } from "./verify";
+import { card } from "./card";
 
 export default {
   market,
@@ -23,5 +23,5 @@ export default {
   subscription,
   device,
   verify,
-  card,
+  card
 };

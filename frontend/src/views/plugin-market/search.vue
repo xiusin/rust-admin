@@ -20,7 +20,8 @@
     <div class="snow-inner">
       <div class="search-result-header">
         <div class="result-info">
-          找到 <span class="highlight">{{ pagination.total }}</span> 个与 "<span class="keyword">{{ searchKeyword }}</span>" 相关的插件
+          找到 <span class="highlight">{{ pagination.total }}</span> 个与 "<span class="keyword">{{ searchKeyword }}</span
+          >" 相关的插件
         </div>
         <a-space>
           <span class="sort-label">排序：</span>
@@ -46,7 +47,13 @@
         </div>
         <div class="filter-group">
           <span class="filter-label">分类：</span>
-          <a-select v-model="selectedCategoryId" placeholder="全部分类" style="width: 160px" allow-clear @change="handleFilterChange">
+          <a-select
+            v-model="selectedCategoryId"
+            placeholder="全部分类"
+            style="width: 160px"
+            allow-clear
+            @change="handleFilterChange"
+          >
             <a-option v-for="category in categoryList" :key="category.id" :value="category.id">
               {{ category.name }}
             </a-option>
@@ -85,10 +92,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { market, category } from '@/api/modules/plugin-market/market';
-import PluginCard from './components/plugin-card.vue';
+import { ref, reactive, onMounted, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { market, category } from "@/api/modules/plugin-market/market";
+import PluginCard from "./components/plugin-card.vue";
 
 interface Plugin {
   id: number;
@@ -129,7 +136,7 @@ interface Category {
 const route = useRoute();
 const router = useRouter();
 
-const searchKeyword = ref('');
+const searchKeyword = ref("");
 const searchResults = ref<Plugin[]>([]);
 const categoryList = ref<Category[]>([]);
 const sortType = ref(0);
@@ -140,7 +147,7 @@ const verifyLevel = ref<number | null>(null);
 const pagination = reactive({
   current: 1,
   pageSize: 12,
-  total: 0,
+  total: 0
 });
 
 const handleSearch = (value: string) => {
@@ -172,7 +179,7 @@ const handlePageSizeChange = (pageSize: number) => {
 };
 
 const goToDetail = (id: number) => {
-  router.push({ path: '/plugin-market/detail', query: { id: String(id) } });
+  router.push({ path: "/plugin-market/detail", query: { id: String(id) } });
 };
 
 const loadCategoryList = async () => {
@@ -201,7 +208,7 @@ const loadSearchResults = async () => {
       categoryId: selectedCategoryId.value || undefined,
       priceType: priceType.value || undefined,
       verifyLevel: verifyLevel.value || undefined,
-      sortType: sortType.value || undefined,
+      sortType: sortType.value || undefined
     });
     if (res.code === 200) {
       searchResults.value = res.data?.list || [];
@@ -222,7 +229,7 @@ onMounted(() => {
 
 watch(
   () => route.query.keyword,
-  (newVal) => {
+  newVal => {
     if (newVal) {
       searchKeyword.value = String(newVal);
       pagination.current = 1;

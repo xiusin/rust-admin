@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <s-svg-icon :name="'snow'" :size="200" class="svg-icon" />
-    <a-button  type="primary" @click="onBack">返回首页</a-button>
+    <a-button type="primary" @click="onBack">返回首页</a-button>
   </div>
 </template>
 

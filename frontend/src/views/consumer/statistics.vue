@@ -46,17 +46,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch } from 'vue';
-import { Message } from '@arco-design/web-vue';
-import { userExtensionApi, ConsumerStatisticsModel } from '@/api/modules/consumer/userExtension';
-import * as echarts from 'echarts';
+import { ref, reactive, computed, onMounted, watch } from "vue";
+import { Message } from "@arco-design/web-vue";
+import { userExtensionApi, ConsumerStatisticsModel } from "@/api/modules/consumer/userExtension";
+import * as echarts from "echarts";
 
 const chartRef = ref<HTMLElement>();
 let chart: echarts.ECharts | null = null;
 
 const searchForm = reactive({
   consumer_id: 0,
-  year: new Date().getFullYear().toString(),
+  year: new Date().getFullYear().toString()
 });
 
 const statistics = ref<ConsumerStatisticsModel>({
@@ -64,10 +64,10 @@ const statistics = ref<ConsumerStatisticsModel>({
   consumer_id: 0,
   year: new Date().getFullYear(),
   total_orders: 0,
-  total_amount: '0',
-  total_refund: '0',
-  total_expense: '0',
-  avg_order_amount: '0',
+  total_amount: "0",
+  total_refund: "0",
+  total_expense: "0",
+  avg_order_amount: "0"
 });
 
 const trendData = ref<{ month: string; amount: string }[]>([]);
@@ -79,19 +79,19 @@ const yearOptions = computed(() => {
 
 const loadStatistics = async () => {
   if (!searchForm.consumer_id) {
-    Message.warning('请输入用户ID');
+    Message.warning("请输入用户ID");
     return;
   }
   try {
     const res = await userExtensionApi.getYearStatistics({
       consumer_id: searchForm.consumer_id,
-      year: searchForm.year,
+      year: searchForm.year
     });
     statistics.value = res.data || statistics.value;
 
     const trendRes = await userExtensionApi.getConsumeTrend({
       consumer_id: searchForm.consumer_id,
-      months: 12,
+      months: 12
     });
     trendData.value = trendRes.data || [];
     updateChart();
@@ -109,45 +109,45 @@ const updateChart = () => {
 
   const option = {
     tooltip: {
-      trigger: 'axis',
+      trigger: "axis"
     },
     xAxis: {
-      type: 'category',
-      data: trendData.value.map((item) => item.month),
+      type: "category",
+      data: trendData.value.map(item => item.month)
     },
     yAxis: {
-      type: 'value',
+      type: "value",
       axisLabel: {
-        formatter: '¥{value}',
-      },
+        formatter: "¥{value}"
+      }
     },
     series: [
       {
-        name: '消费金额',
-        type: 'line',
+        name: "消费金额",
+        type: "line",
         smooth: true,
-        data: trendData.value.map((item) => parseFloat(item.amount) || 0),
+        data: trendData.value.map(item => parseFloat(item.amount) || 0),
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgba(24, 144, 255, 0.3)' },
-            { offset: 1, color: 'rgba(24, 144, 255, 0.05)' },
-          ]),
+            { offset: 0, color: "rgba(24, 144, 255, 0.3)" },
+            { offset: 1, color: "rgba(24, 144, 255, 0.05)" }
+          ])
         },
         lineStyle: {
-          color: '#1890ff',
+          color: "#1890ff"
         },
         itemStyle: {
-          color: '#1890ff',
-        },
-      },
-    ],
+          color: "#1890ff"
+        }
+      }
+    ]
   };
 
   chart.setOption(option);
 };
 
 onMounted(() => {
-  window.addEventListener('resize', () => {
+  window.addEventListener("resize", () => {
     chart?.resize();
   });
 });

@@ -4,16 +4,16 @@
       <a-card title="基本信息">
         <a-form :model="form" :rules="rules" :style="{ width: '600px' }" @submit="onSubmit">
           <a-form-item field="userId" label="用户ID">
-            <a-input  v-model="form.userId" disabled />
+            <a-input v-model="form.userId" disabled />
           </a-form-item>
           <a-form-item field="username" label="用户名">
-            <a-input  v-model="form.username" placeholder="请输入用户名" allow-clear />
+            <a-input v-model="form.username" placeholder="请输入用户名" allow-clear />
           </a-form-item>
           <a-form-item field="nickname" label="用户昵称">
-            <a-input  v-model="form.nickname" placeholder="请输入用户昵称" allow-clear />
+            <a-input v-model="form.nickname" placeholder="请输入用户昵称" allow-clear />
           </a-form-item>
           <a-form-item field="role" label="角色">
-            <a-select  :style="{ width: '320px' }" v-model="form.role" placeholder="请选择角色" allow-clear>
+            <a-select :style="{ width: '320px' }" v-model="form.role" placeholder="请选择角色" allow-clear>
               <a-option>系统管理员</a-option>
               <a-option>普通角色</a-option>
             </a-select>
@@ -29,11 +29,11 @@
             />
           </a-form-item>
           <a-form-item field="introduce" label="简介">
-            <a-textarea  placeholder="请输入简介" v-model="form.introduce" allow-clear />
+            <a-textarea placeholder="请输入简介" v-model="form.introduce" allow-clear />
           </a-form-item>
           <a-form-item>
             <a-space>
-              <a-button  type="primary" html-type="submit">提交</a-button>
+              <a-button type="primary" html-type="submit">提交</a-button>
             </a-space>
           </a-form-item>
         </a-form>

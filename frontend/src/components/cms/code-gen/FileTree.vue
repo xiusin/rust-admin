@@ -1,16 +1,11 @@
 <template>
   <div class="file-tree">
-    <a-input
-      v-model="searchKeyword"
-      placeholder="搜索文件"
-      allow-clear
-      style="margin-bottom: 12px"
-    >
+    <a-input v-model="searchKeyword" placeholder="搜索文件" allow-clear style="margin-bottom: 12px">
       <template #prefix>
         <icon-search />
       </template>
     </a-input>
-    
+
     <div class="tree-container">
       <a-tree
         :data="treeData"
@@ -32,7 +27,7 @@
         </template>
       </a-tree>
     </div>
-    
+
     <div class="tree-actions">
       <a-button long size="small" @click="handleExpandAll">
         <icon-unfold />
@@ -48,88 +43,88 @@
 
 <script setup lang="ts">
 interface CodeFile {
-  id: string
-  name: string
-  path: string
-  language: string
-  content: string
-  children?: CodeFile[]
+  id: string;
+  name: string;
+  path: string;
+  language: string;
+  content: string;
+  children?: CodeFile[];
 }
 
 interface Props {
-  files: CodeFile[]
-  activeFile?: string
+  files: CodeFile[];
+  activeFile?: string;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 const emit = defineEmits<{
-  'select': [file: CodeFile]
-}>()
+  select: [file: CodeFile];
+}>();
 
-const searchKeyword = ref('')
-const selectedKeys = ref<string[]>([])
-const expandedKeys = ref<string[]>([])
+const searchKeyword = ref("");
+const selectedKeys = ref<string[]>([]);
+const expandedKeys = ref<string[]>([]);
 
 const treeData = computed(() => {
   if (!searchKeyword.value) {
-    return props.files
+    return props.files;
   }
-  
+
   const filterTree = (nodes: CodeFile[]): CodeFile[] => {
     return nodes.reduce((acc: CodeFile[], node) => {
       if (node.name.toLowerCase().includes(searchKeyword.value.toLowerCase())) {
-        acc.push(node)
+        acc.push(node);
       } else if (node.children) {
-        const filteredChildren = filterTree(node.children)
+        const filteredChildren = filterTree(node.children);
         if (filteredChildren.length > 0) {
-          acc.push({ ...node, children: filteredChildren })
+          acc.push({ ...node, children: filteredChildren });
         }
       }
-      return acc
-    }, [])
-  }
-  
-  return filterTree(props.files)
-})
+      return acc;
+    }, []);
+  };
+
+  return filterTree(props.files);
+});
 
 watch(
   () => props.activeFile,
-  (val) => {
+  val => {
     if (val) {
-      selectedKeys.value = [val]
+      selectedKeys.value = [val];
     }
   },
   { immediate: true }
-)
+);
 
 const handleSelect = (keys: string[], { node }: { node: any }) => {
-  selectedKeys.value = keys
+  selectedKeys.value = keys;
   if (!node.children) {
-    emit('select', node)
+    emit("select", node);
   }
-}
+};
 
 const handleExpand = (keys: string[]) => {
-  expandedKeys.value = keys
-}
+  expandedKeys.value = keys;
+};
 
 const handleExpandAll = () => {
   const getAllIds = (nodes: CodeFile[]): string[] => {
     return nodes.reduce((acc: string[], node) => {
-      acc.push(node.id)
+      acc.push(node.id);
       if (node.children) {
-        acc.push(...getAllIds(node.children))
+        acc.push(...getAllIds(node.children));
       }
-      return acc
-    }, [])
-  }
-  expandedKeys.value = getAllIds(props.files)
-}
+      return acc;
+    }, []);
+  };
+  expandedKeys.value = getAllIds(props.files);
+};
 
 const handleCollapseAll = () => {
-  expandedKeys.value = []
-}
+  expandedKeys.value = [];
+};
 </script>
 
 <style lang="scss" scoped>

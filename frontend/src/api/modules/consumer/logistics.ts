@@ -1,11 +1,11 @@
-import axios from 'axios';
-import { Message } from '@arco-design/web-vue';
+import axios from "axios";
+import { Message } from "@arco-design/web-vue";
 
 export interface LogisticsDetail {
   id: number;
   tracking_no: string;
   courier_company: string;
-  status: 'pending' | 'in_transit' | 'delivering' | 'delivered';
+  status: "pending" | "in_transit" | "delivering" | "delivered";
   current_location?: string;
   signed_at?: string;
   created_at?: string;
@@ -44,20 +44,20 @@ export interface PageParams {
 
 export const logisticsApi = {
   query: async (params: QueryParams) => {
-    const res = await axios.post('/logistics/query', params);
+    const res = await axios.post("/logistics/query", params);
     return res.data;
   },
 
   subscribe: async (params: SubscribeParams) => {
-    const res = await axios.post('/logistics/subscribe', params);
-    if (res.data.message !== 'success') {
+    const res = await axios.post("/logistics/subscribe", params);
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
   },
 
   history: async (params: PageParams) => {
-    const res = await axios.get('/logistics/history', { params });
+    const res = await axios.get("/logistics/history", { params });
     return res.data;
-  },
+  }
 };

@@ -32,7 +32,7 @@
           <a-table-column title="类型" data-index="tag_type" :width="100">
             <template #cell="{ record }">
               <a-tag :color="record.tag_type === 'system' ? 'blue' : record.tag_type === 'auto' ? 'green' : 'orange'">
-                {{ record.tag_type === 'system' ? '系统' : record.tag_type === 'auto' ? '自动' : '自定义' }}
+                {{ record.tag_type === "system" ? "系统" : record.tag_type === "auto" ? "自动" : "自定义" }}
               </a-tag>
             </template>
           </a-table-column>
@@ -53,7 +53,12 @@
       </a-table>
     </a-card>
 
-    <a-modal v-model:visible="formVisible" :title="form.id ? '编辑标签' : '新建标签'" @ok="handleSubmit" @cancel="formVisible = false">
+    <a-modal
+      v-model:visible="formVisible"
+      :title="form.id ? '编辑标签' : '新建标签'"
+      @ok="handleSubmit"
+      @cancel="formVisible = false"
+    >
       <a-form :model="form" layout="vertical">
         <a-form-item label="标签名称" required>
           <a-input v-model="form.name" placeholder="请输入标签名称" :max-length="50" />
@@ -83,27 +88,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { Message } from '@arco-design/web-vue';
-import { userExtensionApi, UserTagModel } from '@/api/modules/consumer/userExtension';
+import { ref, reactive, onMounted } from "vue";
+import { Message } from "@arco-design/web-vue";
+import { userExtensionApi, UserTagModel } from "@/api/modules/consumer/userExtension";
 
 const loading = ref(false);
 const tagList = ref<UserTagModel[]>([]);
 const pagination = ref({ current: 1, pageSize: 10, total: 0 });
 
 const searchForm = reactive({
-  name: '',
-  tag_type: '',
+  name: "",
+  tag_type: ""
 });
 
 const formVisible = ref(false);
 const form = reactive({
   id: 0,
-  name: '',
-  tag_type: 'custom',
-  category: '',
-  color: '#1890ff',
-  description: '',
+  name: "",
+  tag_type: "custom",
+  category: "",
+  color: "#1890ff",
+  description: ""
 });
 
 const loadData = async () => {
@@ -113,7 +118,7 @@ const loadData = async () => {
       page_num: pagination.value.current,
       page_size: pagination.value.pageSize,
       name: searchForm.name || undefined,
-      tag_type: searchForm.tag_type || undefined,
+      tag_type: searchForm.tag_type || undefined
     });
     tagList.value = res.data?.list || [];
     pagination.value.total = res.data?.total || 0;
@@ -137,11 +142,11 @@ const handlePageChange = (page: number) => {
 const handleCreate = () => {
   Object.assign(form, {
     id: 0,
-    name: '',
-    tag_type: 'custom',
-    category: '',
-    color: '#1890ff',
-    description: '',
+    name: "",
+    tag_type: "custom",
+    category: "",
+    color: "#1890ff",
+    description: ""
   });
   formVisible.value = true;
 };
@@ -153,7 +158,7 @@ const handleEdit = (record: UserTagModel) => {
 
 const handleSubmit = async () => {
   if (!form.name) {
-    Message.warning('请输入标签名称');
+    Message.warning("请输入标签名称");
     return;
   }
   try {
@@ -163,7 +168,7 @@ const handleSubmit = async () => {
         name: form.name,
         category: form.category,
         color: form.color,
-        description: form.description,
+        description: form.description
       });
     } else {
       await userExtensionApi.createTag({
@@ -171,10 +176,10 @@ const handleSubmit = async () => {
         tag_type: form.tag_type,
         category: form.category,
         color: form.color,
-        description: form.description,
+        description: form.description
       });
     }
-    Message.success('保存成功');
+    Message.success("保存成功");
     formVisible.value = false;
     loadData();
   } catch (error) {
@@ -185,7 +190,7 @@ const handleSubmit = async () => {
 const handleDelete = async (record: UserTagModel) => {
   try {
     await userExtensionApi.deleteTag(record.id);
-    Message.success('删除成功');
+    Message.success("删除成功");
     loadData();
   } catch (error) {
     console.error(error);

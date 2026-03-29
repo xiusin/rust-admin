@@ -109,7 +109,13 @@
         </div>
       </a-modal>
 
-      <a-modal v-model:visible="batchModalVisible" :width="600" title="批量添加标签" @ok="onBatchSubmit" @cancel="batchModalVisible = false">
+      <a-modal
+        v-model:visible="batchModalVisible"
+        :width="600"
+        title="批量添加标签"
+        @ok="onBatchSubmit"
+        @cancel="batchModalVisible = false"
+      >
         <div>
           <a-form ref="batchFormRef" :model="batchForm">
             <a-form-item label="标签列表">
@@ -122,9 +128,11 @@
           </a-form>
           <div class="batch-tips">
             <p>示例：</p>
-            <pre>技术|tech|#1890ff
+            <pre>
+技术|tech|#1890ff
 生活|life|#52c41a
-旅行|travel|#fa8c16</pre>
+旅行|travel|#fa8c16</pre
+            >
           </div>
         </div>
       </a-modal>
@@ -137,16 +145,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { tagApi, type CmsTagItem, type TagAddParams, type TagEditParams } from '@/api/modules/cms/tag';
-import TagTable from './components/TagTable.vue';
-import TagCloud from './components/TagCloud.vue';
+import { ref, reactive, onMounted } from "vue";
+import { tagApi, type CmsTagItem, type TagAddParams, type TagEditParams } from "@/api/modules/cms/tag";
+import TagTable from "./components/TagTable.vue";
+import TagCloud from "./components/TagCloud.vue";
 
 const loading = ref(false);
 const tableData = ref<CmsTagItem[]>([]);
 const selectedIds = ref<number[]>([]);
 const modalVisible = ref(false);
-const modalTitle = ref('新增标签');
+const modalTitle = ref("新增标签");
 const formRef = ref();
 const searchFormRef = ref();
 const batchModalVisible = ref(false);
@@ -155,28 +163,28 @@ const tagCloudVisible = ref(false);
 const tagCloudData = ref<CmsTagItem[]>([]);
 
 const searchForm = reactive({
-  name: '',
-  code: '',
-  status: null as boolean | null,
+  name: "",
+  code: "",
+  status: null as boolean | null
 });
 
 const form = reactive({
   id: 0,
-  name: '',
-  code: '',
-  color: '',
+  name: "",
+  code: "",
+  color: "",
   sort: 0,
   status: true,
-  description: '',
+  description: ""
 });
 
 const batchForm = reactive({
-  tagsText: '',
+  tagsText: ""
 });
 
 const rules = {
-  name: [{ required: true, message: '请输入标签名称' }],
-  code: [{ required: true, message: '请输入标签编码' }],
+  name: [{ required: true, message: "请输入标签名称" }],
+  code: [{ required: true, message: "请输入标签编码" }]
 };
 
 const pagination = reactive({
@@ -184,7 +192,7 @@ const pagination = reactive({
   pageSize: 20,
   showPageSize: true,
   showTotal: true,
-  total: 0,
+  total: 0
 });
 
 const getList = async () => {
@@ -195,7 +203,7 @@ const getList = async () => {
       pageSize: pagination.pageSize,
       name: searchForm.name || undefined,
       code: searchForm.code || undefined,
-      status: searchForm.status ?? undefined,
+      status: searchForm.status ?? undefined
     });
     tableData.value = data.list || [];
     pagination.total = data.total || 0;
@@ -236,33 +244,33 @@ const onSelectionChange = (keys: (string | number)[]) => {
 };
 
 const onAdd = () => {
-  modalTitle.value = '新增标签';
+  modalTitle.value = "新增标签";
   form.id = 0;
-  form.name = '';
-  form.code = '';
-  form.color = '';
+  form.name = "";
+  form.code = "";
+  form.color = "";
   form.sort = 0;
   form.status = true;
-  form.description = '';
+  form.description = "";
   modalVisible.value = true;
 };
 
 const onEdit = (record: CmsTagItem) => {
-  modalTitle.value = '编辑标签';
+  modalTitle.value = "编辑标签";
   form.id = record.id;
   form.name = record.name;
   form.code = record.code;
-  form.color = record.color || '';
+  form.color = record.color || "";
   form.sort = record.sort;
   form.status = record.status;
-  form.description = record.description || '';
+  form.description = record.description || "";
   modalVisible.value = true;
 };
 
 const onDelete = async (record: CmsTagItem) => {
   try {
     await tagApi.delete(record.id);
-    arcoMessage('success', '删除成功');
+    arcoMessage("success", "删除成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -272,26 +280,26 @@ const onDelete = async (record: CmsTagItem) => {
 const onBatchDelete = async () => {
   if (selectedIds.value.length === 0) return;
   Modal.warning({
-    title: '确认删除',
+    title: "确认删除",
     content: `确定要删除选中的${selectedIds.value.length}个标签吗？`,
     hideCancel: false,
     onOk: async () => {
       try {
         await tagApi.batchDelete(selectedIds.value);
-        arcoMessage('success', '批量删除成功');
+        arcoMessage("success", "批量删除成功");
         selectedIds.value = [];
         getList();
       } catch (error) {
         console.error(error);
       }
-    },
+    }
   });
 };
 
 const onToggleStatus = async (record: CmsTagItem) => {
   try {
     await tagApi.updateStatus(record.id, !record.status);
-    arcoMessage('success', record.status ? '禁用成功' : '启用成功');
+    arcoMessage("success", record.status ? "禁用成功" : "启用成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -304,10 +312,10 @@ const onSubmit = async () => {
   try {
     if (form.id) {
       await tagApi.edit(form as TagEditParams);
-      arcoMessage('success', '修改成功');
+      arcoMessage("success", "修改成功");
     } else {
       await tagApi.add(form as TagAddParams);
-      arcoMessage('success', '新增成功');
+      arcoMessage("success", "新增成功");
     }
     modalVisible.value = false;
     getList();
@@ -322,33 +330,35 @@ const onCancel = () => {
 };
 
 const onBatchAdd = () => {
-  batchForm.tagsText = '';
+  batchForm.tagsText = "";
   batchModalVisible.value = true;
 };
 
 const onBatchSubmit = async () => {
   if (!batchForm.tagsText.trim()) {
-    arcoMessage('warning', '请输入标签');
+    arcoMessage("warning", "请输入标签");
     return;
   }
-  const lines = batchForm.tagsText.split('\n').filter(Boolean);
-  const tags = lines.map((line) => {
-    const parts = line.split('|');
-    return {
-      name: parts[0]?.trim() || '',
-      code: parts[1]?.trim() || parts[0]?.trim() || '',
-      color: parts[2]?.trim() || undefined,
-    };
-  }).filter((t) => t.name && t.code);
+  const lines = batchForm.tagsText.split("\n").filter(Boolean);
+  const tags = lines
+    .map(line => {
+      const parts = line.split("|");
+      return {
+        name: parts[0]?.trim() || "",
+        code: parts[1]?.trim() || parts[0]?.trim() || "",
+        color: parts[2]?.trim() || undefined
+      };
+    })
+    .filter(t => t.name && t.code);
 
   if (tags.length === 0) {
-    arcoMessage('warning', '请输入有效的标签');
+    arcoMessage("warning", "请输入有效的标签");
     return;
   }
 
   try {
     await tagApi.batchAdd({ tags });
-    arcoMessage('success', '批量添加成功');
+    arcoMessage("success", "批量添加成功");
     batchModalVisible.value = false;
     getList();
   } catch (error) {

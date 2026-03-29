@@ -21,9 +21,9 @@
             <a-col :span="24">
               <a-space>
                 <span>权限按钮：</span>
-                <a-button  v-hasPerm="['sys:btn:add']" type="primary">新增</a-button>
-                <a-button  v-hasPerm="['sys:btn:edit']" type="primary" status="success">编辑</a-button>
-                <a-button  v-hasPerm="['sys:btn:delete']" type="primary" status="danger">删除</a-button>
+                <a-button v-hasPerm="['sys:btn:add']" type="primary">新增</a-button>
+                <a-button v-hasPerm="['sys:btn:edit']" type="primary" status="success">编辑</a-button>
+                <a-button v-hasPerm="['sys:btn:delete']" type="primary" status="danger">删除</a-button>
               </a-space>
             </a-col>
           </a-row>
@@ -35,9 +35,9 @@
             <a-col :span="24">
               <a-space>
                 <span>权限按钮：</span>
-                <a-button  v-hasPerm="['common:btn:add']" type="primary">新增</a-button>
-                <a-button  v-hasPerm="['common:btn:edit']" type="primary" status="success">编辑</a-button>
-                <a-button  v-hasPerm="['common:btn:delete']" type="primary" status="danger">删除</a-button>
+                <a-button v-hasPerm="['common:btn:add']" type="primary">新增</a-button>
+                <a-button v-hasPerm="['common:btn:edit']" type="primary" status="success">编辑</a-button>
+                <a-button v-hasPerm="['common:btn:delete']" type="primary" status="danger">删除</a-button>
               </a-space>
             </a-col>
           </a-row>
@@ -56,8 +56,8 @@
             <a-col :span="24">
               <a-space>
                 <span>权限按钮：</span>
-                <a-button  v-hasRole="['admin']" type="primary">超级管理员</a-button>
-                <a-button  v-hasRole="['common']" type="primary" status="success">普通角色</a-button>
+                <a-button v-hasRole="['admin']" type="primary">超级管理员</a-button>
+                <a-button v-hasRole="['common']" type="primary" status="success">普通角色</a-button>
               </a-space>
             </a-col>
           </a-row>

@@ -107,9 +107,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { Message } from '@arco-design/web-vue';
-import axios from 'axios';
+import { ref, reactive, onMounted } from "vue";
+import { Message } from "@arco-design/web-vue";
+import axios from "axios";
 
 interface SmsRecord {
   id: number;
@@ -126,9 +126,9 @@ interface SmsRecord {
 
 const formData = reactive({
   form: {
-    phone: '',
-    sms_type: null as string | null,
-  },
+    phone: "",
+    sms_type: null as string | null
+  }
 });
 
 const formRef = ref();
@@ -151,43 +151,43 @@ const pageSizeChange = (pageSize: number) => {
 };
 
 const columns = [
-  { title: 'ID', dataIndex: 'id', width: 100 },
-  { title: '手机号', dataIndex: 'phone', width: 140 },
-  { title: '短信类型', dataIndex: 'sms_type', width: 120 },
-  { title: '短信内容', dataIndex: 'content', width: 250, ellipsis: true },
-  { title: '验证码', dataIndex: 'code', width: 100 },
-  { title: '渠道', dataIndex: 'channel', width: 100 },
-  { title: '状态', slotName: 'status', width: 100 },
-  { title: '发送时间', dataIndex: 'sent_at', width: 160 },
-  { title: '操作', slotName: 'optional', width: 100 },
+  { title: "ID", dataIndex: "id", width: 100 },
+  { title: "手机号", dataIndex: "phone", width: 140 },
+  { title: "短信类型", dataIndex: "sms_type", width: 120 },
+  { title: "短信内容", dataIndex: "content", width: 250, ellipsis: true },
+  { title: "验证码", dataIndex: "code", width: 100 },
+  { title: "渠道", dataIndex: "channel", width: 100 },
+  { title: "状态", slotName: "status", width: 100 },
+  { title: "发送时间", dataIndex: "sent_at", width: 160 },
+  { title: "操作", slotName: "optional", width: 100 }
 ];
 
 const getStatusName = (status: string) => {
   const names: Record<string, string> = {
-    sent: '已发送',
-    verified: '已验证',
-    failed: '发送失败',
-    expired: '已过期',
+    sent: "已发送",
+    verified: "已验证",
+    failed: "发送失败",
+    expired: "已过期"
   };
   return names[status] || status;
 };
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
-    sent: 'blue',
-    verified: 'green',
-    failed: 'red',
-    expired: 'gray',
+    sent: "blue",
+    verified: "green",
+    failed: "red",
+    expired: "gray"
   };
-  return colors[status] || 'arcoblue';
+  return colors[status] || "arcoblue";
 };
 
 const sendVisible = ref(false);
 const detailVisible = ref(false);
 const currentRecord = ref<SmsRecord>({} as SmsRecord);
 const sendForm = reactive({
-  phone: '',
-  sms_type: 'verification',
+  phone: "",
+  sms_type: "verification"
 });
 
 const loadData = async () => {
@@ -195,46 +195,46 @@ const loadData = async () => {
   try {
     const params: any = {
       page_num: pagination.value.current,
-      page_size: pagination.value.pageSize,
+      page_size: pagination.value.pageSize
     };
     if (formData.form.phone) params.phone = formData.form.phone;
     if (formData.form.sms_type) params.sms_type = formData.form.sms_type;
-    
-    const { data } = await axios.get('/sms/logs', { params });
-    if (data.message === 'success') {
+
+    const { data } = await axios.get("/sms/logs", { params });
+    if (data.message === "success") {
       tableData.value = data.data?.list || [];
       pagination.value.total = data.data?.total || 0;
     }
   } catch (e) {
     console.error(e);
-    Message.error('加载失败');
+    Message.error("加载失败");
   } finally {
     loading.value = false;
   }
 };
 
 const handleSend = () => {
-  Object.assign(sendForm, { phone: '', sms_type: 'verification' });
+  Object.assign(sendForm, { phone: "", sms_type: "verification" });
   sendVisible.value = true;
 };
 
 const submitSend = async () => {
   if (!sendForm.phone) {
-    Message.warning('请输入手机号');
+    Message.warning("请输入手机号");
     return;
   }
   try {
-    const { data } = await axios.post('/sms/send-code', {
+    const { data } = await axios.post("/sms/send-code", {
       phone: sendForm.phone,
-      sms_type: sendForm.sms_type,
+      sms_type: sendForm.sms_type
     });
-    if (data.message === 'success') {
-      Message.success('短信发送成功');
+    if (data.message === "success") {
+      Message.success("短信发送成功");
       sendVisible.value = false;
       loadData();
     }
   } catch (e: any) {
-    Message.error(e.response?.data?.message || '发送失败');
+    Message.error(e.response?.data?.message || "发送失败");
   }
 };
 

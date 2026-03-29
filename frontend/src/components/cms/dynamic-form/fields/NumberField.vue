@@ -14,29 +14,29 @@
 
 <script setup lang="ts">
 interface Props {
-  modelValue: number | undefined
-  placeholder?: string
-  disabled?: boolean
-  min?: number
-  max?: number
-  step?: number
-  precision?: number
-  mode?: 'embed' | 'button'
+  modelValue: number | undefined;
+  placeholder?: string;
+  disabled?: boolean;
+  min?: number;
+  max?: number;
+  step?: number;
+  precision?: number;
+  mode?: "embed" | "button";
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
-  placeholder: '请输入数字',
+  placeholder: "请输入数字",
   disabled: false,
-  mode: 'embed'
-})
+  mode: "embed"
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: number | undefined]
-}>()
+  "update:modelValue": [value: number | undefined];
+}>();
 
 const localValue = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
-})
+  set: val => emit("update:modelValue", val)
+});
 </script>

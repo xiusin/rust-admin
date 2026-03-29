@@ -1,7 +1,7 @@
 pub use axum::response::{Html, IntoResponse};
 pub use chrono::{Duration, Local};
 pub use sea_orm::{
-    entity::prelude::DateTime, prelude::Expr, ActiveModelBehavior, ActiveModelTrait, ActiveValue,
+    entity::prelude::DateTime, prelude::Expr, prelude::Decimal, prelude::Json, ActiveModelBehavior, ActiveModelTrait, ActiveValue,
     ColumnTrait, Condition, ConnectionTrait, DatabaseConnection, DatabaseTransaction, DbBackend,
     DbErr, EntityTrait, FromQueryResult, IntoActiveModel, JoinType, ModelTrait, Order,
     PaginatorTrait, QueryFilter, QueryOrder, QuerySelect, QueryTrait, Set, TransactionTrait,

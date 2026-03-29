@@ -1,7 +1,7 @@
 import axios from "@/api";
 
-export type FormType = 'create' | 'edit' | 'detail' | 'search';
-export type FormLayout = 'horizontal' | 'vertical' | 'inline';
+export type FormType = "create" | "edit" | "detail" | "search";
+export type FormLayout = "horizontal" | "vertical" | "inline";
 
 export interface FormGroup {
   key: string;
@@ -27,16 +27,16 @@ export interface FormField {
 
 export interface FieldCondition {
   field: string;
-  operator: 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'in' | 'notIn' | 'empty' | 'notEmpty';
+  operator: "eq" | "neq" | "gt" | "gte" | "lt" | "lte" | "in" | "notIn" | "empty" | "notEmpty";
   value: any;
 }
 
 export interface FormAction {
   key: string;
   label: string;
-  type: 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'default';
+  type: "primary" | "success" | "warning" | "danger" | "info" | "default";
   icon?: string;
-  action: 'submit' | 'reset' | 'cancel' | 'custom';
+  action: "submit" | "reset" | "cancel" | "custom";
   handler?: string;
   confirm?: string;
   show?: FieldCondition;
@@ -49,14 +49,14 @@ export interface FormRule {
 }
 
 export interface ValidationRule {
-  type: 'required' | 'email' | 'url' | 'phone' | 'pattern' | 'min' | 'max' | 'minLength' | 'maxLength' | 'custom';
+  type: "required" | "email" | "url" | "phone" | "pattern" | "min" | "max" | "minLength" | "maxLength" | "custom";
   value?: any;
   message: string;
-  trigger?: 'blur' | 'change';
+  trigger?: "blur" | "change";
 }
 
 export interface FormHook {
-  event: 'beforeLoad' | 'afterLoad' | 'beforeSubmit' | 'afterSubmit' | 'onFieldChange';
+  event: "beforeLoad" | "afterLoad" | "beforeSubmit" | "afterSubmit" | "onFieldChange";
   handler: string;
   async?: boolean;
 }
@@ -93,8 +93,8 @@ export interface FormSchema {
   formType: FormType;
   layout: FormLayout;
   labelWidth?: number | string;
-  labelPosition?: 'left' | 'right' | 'top';
-  size?: 'large' | 'default' | 'small';
+  labelPosition?: "left" | "right" | "top";
+  size?: "large" | "default" | "small";
   groups: FormGroup[];
   actions: FormAction[];
   rules: Record<string, ValidationRule[]>;
@@ -126,7 +126,7 @@ interface ApiResponse<T = any> {
 
 const getData = <T>(res: ApiResponse<T>): T => {
   if (res.code !== 200) {
-    throw new Error(res.message || '请求失败');
+    throw new Error(res.message || "请求失败");
   }
   return res.data;
 };
@@ -185,5 +185,5 @@ export const formApi = {
   getDefault: async (modelId: number, formType: FormType): Promise<FormConfigDetail> => {
     const res = await axios.get("/cms/form/getDefault", { params: { modelId, formType } });
     return getData(res);
-  },
+  }
 };

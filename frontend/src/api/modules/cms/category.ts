@@ -97,7 +97,7 @@ interface ApiResponse<T = any> {
 
 const getData = <T>(res: ApiResponse<T>): T => {
   if (res.code !== 200) {
-    throw new Error(res.message || '请求失败');
+    throw new Error(res.message || "请求失败");
   }
   return res.data;
 };
@@ -161,5 +161,5 @@ export const categoryApi = {
   getPath: async (id: number): Promise<CmsCategoryItem[]> => {
     const res = await axios.get(`/cms/category/${id}/path`);
     return getData(res);
-  },
+  }
 };

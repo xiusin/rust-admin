@@ -18,32 +18,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { Message } from '@arco-design/web-vue';
-import { useRouter } from 'vue-router';
-import { consumerApi } from '@/api/modules/consumer';
+import { ref } from "vue";
+import { Message } from "@arco-design/web-vue";
+import { useRouter } from "vue-router";
+import { consumerApi } from "@/api/modules/consumer";
 
 const router = useRouter();
 const form = ref({
-  phone: '',
-  password: '',
+  phone: "",
+  password: ""
 });
 
 const handleLogin = async () => {
   if (!form.value.phone || !form.value.password) {
-    Message.warning('请填写完整信息');
+    Message.warning("请填写完整信息");
     return;
   }
   try {
     const res = await consumerApi.login(form.value);
     if (res.data) {
-      localStorage.setItem('consumer_token', res.token);
-      localStorage.setItem('consumer_info', JSON.stringify(res.consumer));
-      Message.success('登录成功');
-      router.push('/consumer/profile');
+      localStorage.setItem("consumer_token", res.token);
+      localStorage.setItem("consumer_info", JSON.stringify(res.consumer));
+      Message.success("登录成功");
+      router.push("/consumer/profile");
     }
   } catch (error: any) {
-    Message.error(error.message || '登录失败');
+    Message.error(error.message || "登录失败");
   }
 };
 </script>

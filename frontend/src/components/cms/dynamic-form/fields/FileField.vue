@@ -20,101 +20,99 @@
       <div v-if="fileList.length < (limit || 1)" class="upload-area">
         <icon-cloud-upload class="upload-icon" />
         <div class="upload-text">点击或拖拽文件到此区域上传</div>
-        <div class="upload-hint">{{ hint || '支持任意格式文件' }}</div>
+        <div class="upload-hint">{{ hint || "支持任意格式文件" }}</div>
       </div>
     </template>
   </a-upload>
 </template>
 
 <script setup lang="ts">
-import { Message } from '@arco-design/web-vue'
+import { Message } from "@arco-design/web-vue";
 
 interface UploadFile {
-  uid: string
-  name: string
-  url?: string
-  status?: string
-  response?: any
+  uid: string;
+  name: string;
+  url?: string;
+  status?: string;
+  response?: any;
 }
 
 interface Props {
-  modelValue: string | string[]
-  placeholder?: string
-  disabled?: boolean
-  accept?: string
-  multiple?: boolean
-  limit?: number
-  listType?: 'text' | 'picture' | 'picture-card'
-  autoUpload?: boolean
-  action?: string
-  headers?: Record<string, string>
-  data?: Record<string, any>
-  hint?: string
+  modelValue: string | string[];
+  placeholder?: string;
+  disabled?: boolean;
+  accept?: string;
+  multiple?: boolean;
+  limit?: number;
+  listType?: "text" | "picture" | "picture-card";
+  autoUpload?: boolean;
+  action?: string;
+  headers?: Record<string, string>;
+  data?: Record<string, any>;
+  hint?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: '',
-  placeholder: '请上传文件',
+  modelValue: "",
+  placeholder: "请上传文件",
   disabled: false,
-  accept: '*',
+  accept: "*",
   multiple: false,
   limit: 1,
-  listType: 'text',
+  listType: "text",
   autoUpload: true,
-  action: '/api/upload'
-})
+  action: "/api/upload"
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string | string[]]
-  'success': [file: any]
-  'error': [error: any]
-}>()
+  "update:modelValue": [value: string | string[]];
+  success: [file: any];
+  error: [error: any];
+}>();
 
-const fileList = ref<UploadFile[]>([])
+const fileList = ref<UploadFile[]>([]);
 
 watch(
   () => props.modelValue,
-  (val) => {
+  val => {
     if (!val) {
-      fileList.value = []
-      return
+      fileList.value = [];
+      return;
     }
-    
-    const urls = Array.isArray(val) ? val : [val]
+
+    const urls = Array.isArray(val) ? val : [val];
     fileList.value = urls.map((url, index) => ({
       uid: `-${index}`,
-      name: url.split('/').pop() || '',
+      name: url.split("/").pop() || "",
       url,
-      status: 'done'
-    }))
+      status: "done"
+    }));
   },
   { immediate: true }
-)
+);
 
 const handleSuccess = (response: any) => {
   if (response.code === 0 || response.success) {
-    const url = response.data?.url || response.url
+    const url = response.data?.url || response.url;
     if (props.multiple) {
-      const urls = fileList.value
-        .filter(f => f.status === 'done' && f.url)
-        .map(f => f.url)
-      emit('update:modelValue', urls)
+      const urls = fileList.value.filter(f => f.status === "done" && f.url).map(f => f.url);
+      emit("update:modelValue", urls);
     } else {
-      emit('update:modelValue', url)
+      emit("update:modelValue", url);
     }
-    emit('success', response)
-    Message.success('上传成功')
+    emit("success", response);
+    Message.success("上传成功");
   }
-}
+};
 
 const handleError = (error: any) => {
-  Message.error('上传失败')
-  emit('error', error)
-}
+  Message.error("上传失败");
+  emit("error", error);
+};
 
 const handleExceed = () => {
-  Message.warning(`最多只能上传 ${props.limit} 个文件`)
-}
+  Message.warning(`最多只能上传 ${props.limit} 个文件`);
+};
 </script>
 
 <style lang="scss" scoped>

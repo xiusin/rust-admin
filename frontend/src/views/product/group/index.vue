@@ -70,7 +70,7 @@
       >
         <template #status="{ record }">
           <a-tag :color="record.status === '0' ? 'green' : 'red'" bordered size="small">
-            {{ record.status === '0' ? '启用' : '禁用' }}
+            {{ record.status === "0" ? "启用" : "禁用" }}
           </a-tag>
         </template>
         <template #optional="{ record }">
@@ -94,7 +94,14 @@
           <a-textarea v-model="form.description" placeholder="请输入分组描述" :rows="3" allow-clear />
         </a-form-item>
         <a-form-item field="sort" label="排序" validate-trigger="blur">
-          <a-input-number v-model="form.sort" :min="0" :max="9999" :style="{ width: '150px' }" placeholder="请输入排序" mode="button" />
+          <a-input-number
+            v-model="form.sort"
+            :min="0"
+            :max="9999"
+            :style="{ width: '150px' }"
+            placeholder="请输入排序"
+            mode="button"
+          />
         </a-form-item>
         <a-form-item field="status" label="状态" validate-trigger="blur">
           <a-switch type="round" :checked-value="'0'" :unchecked-value="'1'" v-model="form.status">
@@ -105,7 +112,13 @@
       </a-form>
     </a-modal>
 
-    <a-modal v-model:visible="productModalVisible" title="分配商品" :width="800" @ok="onSubmitAssign" @cancel="productModalVisible = false">
+    <a-modal
+      v-model:visible="productModalVisible"
+      title="分配商品"
+      :width="800"
+      @ok="onSubmitAssign"
+      @cancel="productModalVisible = false"
+    >
       <a-transfer
         :data="transferData"
         :target-keys="selectedProductIds"
@@ -118,14 +131,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { productGroupApi, ProductGroupListItem } from '@/api/modules/product/productGroup';
-import { productApi, ProductListItem } from '@/api/modules/product/product';
+import { ref, reactive, onMounted } from "vue";
+import { productGroupApi, ProductGroupListItem } from "@/api/modules/product/productGroup";
+import { productApi, ProductListItem } from "@/api/modules/product/product";
 
 const loading = ref(false);
 const tableData = ref<ProductGroupListItem[]>([]);
 const modalVisible = ref(false);
-const modalTitle = ref('新增分组');
+const modalTitle = ref("新增分组");
 const formRef = ref();
 const selectedIds = ref<string[]>([]);
 const searchFormRef = ref();
@@ -136,20 +149,20 @@ const transferData = ref<{ key: string; label: string }[]>([]);
 const selectedProductIds = ref<string[]>([]);
 
 const searchForm = reactive({
-  name: '',
-  status: null as string | null,
+  name: "",
+  status: null as string | null
 });
 
 const form = reactive({
   id: 0,
-  name: '',
-  description: '',
+  name: "",
+  description: "",
   sort: 0,
-  status: '0',
+  status: "0"
 });
 
 const rules = {
-  name: [{ required: true, message: '请输入分组名称' }],
+  name: [{ required: true, message: "请输入分组名称" }]
 };
 
 const pagination = reactive({
@@ -157,18 +170,18 @@ const pagination = reactive({
   pageSize: 10,
   showPageSize: true,
   showTotal: true,
-  total: 0,
+  total: 0
 });
 
 const columns = [
-  { type: 'selection', width: 60, fixed: 'left' },
-  { title: '分组名称', dataIndex: 'name', width: 200 },
-  { title: '分组描述', dataIndex: 'description', ellipsis: true },
-  { title: '商品数量', dataIndex: 'productCount', width: 100, align: 'center' },
-  { title: '排序', dataIndex: 'sort', width: 80, align: 'center' },
-  { title: '状态', slotName: 'status', width: 100, align: 'center' },
-  { title: '创建时间', dataIndex: 'createdAt', width: 180 },
-  { title: '操作', slotName: 'optional', width: 180, fixed: 'right' },
+  { type: "selection", width: 60, fixed: "left" },
+  { title: "分组名称", dataIndex: "name", width: 200 },
+  { title: "分组描述", dataIndex: "description", ellipsis: true },
+  { title: "商品数量", dataIndex: "productCount", width: 100, align: "center" },
+  { title: "排序", dataIndex: "sort", width: 80, align: "center" },
+  { title: "状态", slotName: "status", width: 100, align: "center" },
+  { title: "创建时间", dataIndex: "createdAt", width: 180 },
+  { title: "操作", slotName: "optional", width: 180, fixed: "right" }
 ];
 
 const getList = async () => {
@@ -178,7 +191,7 @@ const getList = async () => {
       pageNum: pagination.current,
       pageSize: pagination.pageSize,
       name: searchForm.name || undefined,
-      status: searchForm.status || undefined,
+      status: searchForm.status || undefined
     });
     tableData.value = data.list || [];
     pagination.total = data.total || 0;
@@ -193,9 +206,9 @@ const getProductList = async () => {
   try {
     const data = await productApi.list({ pageSize: 100 });
     productList.value = data.list || [];
-    transferData.value = productList.value.map((item) => ({
+    transferData.value = productList.value.map(item => ({
       key: String(item.id),
-      label: item.name,
+      label: item.name
     }));
   } catch (error) {
     console.error(error);
@@ -238,20 +251,20 @@ const handlePageSizeChange = (pageSize: number) => {
 };
 
 const onAdd = () => {
-  modalTitle.value = '新增分组';
+  modalTitle.value = "新增分组";
   form.id = 0;
-  form.name = '';
-  form.description = '';
+  form.name = "";
+  form.description = "";
   form.sort = 0;
-  form.status = '0';
+  form.status = "0";
   modalVisible.value = true;
 };
 
 const onEdit = (record: ProductGroupListItem) => {
-  modalTitle.value = '编辑分组';
+  modalTitle.value = "编辑分组";
   form.id = record.id;
   form.name = record.name;
-  form.description = record.description || '';
+  form.description = record.description || "";
   form.sort = record.sort;
   form.status = record.status;
   modalVisible.value = true;
@@ -260,7 +273,7 @@ const onEdit = (record: ProductGroupListItem) => {
 const onDelete = async (record: ProductGroupListItem) => {
   try {
     await productGroupApi.delete([record.id]);
-    arcoMessage('success', '删除成功');
+    arcoMessage("success", "删除成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -270,8 +283,8 @@ const onDelete = async (record: ProductGroupListItem) => {
 const onBatchDelete = async () => {
   if (selectedIds.value.length === 0) return;
   try {
-    await productGroupApi.delete(selectedIds.value.map((id) => Number(id)));
-    arcoMessage('success', '批量删除成功');
+    await productGroupApi.delete(selectedIds.value.map(id => Number(id)));
+    arcoMessage("success", "批量删除成功");
     selectedIds.value = [];
     getList();
   } catch (error) {
@@ -297,10 +310,10 @@ const onSubmit = async () => {
   try {
     if (form.id) {
       await productGroupApi.edit(form);
-      arcoMessage('success', '修改成功');
+      arcoMessage("success", "修改成功");
     } else {
       await productGroupApi.add(form);
-      arcoMessage('success', '新增成功');
+      arcoMessage("success", "新增成功");
     }
     modalVisible.value = false;
     getList();
@@ -311,8 +324,11 @@ const onSubmit = async () => {
 
 const onSubmitAssign = async () => {
   try {
-    await productGroupApi.assignProducts(currentGroupId.value, selectedProductIds.value.map((id) => Number(id)));
-    arcoMessage('success', '分配成功');
+    await productGroupApi.assignProducts(
+      currentGroupId.value,
+      selectedProductIds.value.map(id => Number(id))
+    );
+    arcoMessage("success", "分配成功");
     productModalVisible.value = false;
     getList();
   } catch (error) {

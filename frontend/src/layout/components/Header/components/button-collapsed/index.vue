@@ -1,6 +1,6 @@
 <template>
   <div class="menu_fold">
-    <a-button  type="text" class="menu_fold_icon" id="system-collapsed" @click="onCollapsed">
+    <a-button type="text" class="menu_fold_icon" id="system-collapsed" @click="onCollapsed">
       <template #icon>
         <icon-menu-fold :size="18" v-if="!collapsed" />
         <icon-menu-unfold :size="18" v-if="collapsed" />

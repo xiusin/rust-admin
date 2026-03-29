@@ -80,7 +80,7 @@
         </template>
         <template #isAlert="{ record }">
           <a-tag :color="record.isAlert ? 'red' : 'green'" bordered size="small">
-            {{ record.isAlert ? '预警' : '正常' }}
+            {{ record.isAlert ? "预警" : "正常" }}
           </a-tag>
         </template>
         <template #optional="{ record }">
@@ -92,7 +92,13 @@
       </a-table>
     </div>
 
-    <a-modal v-model:visible="adjustModalVisible" title="库存调整" :width="500" @ok="onSubmitAdjust" @cancel="adjustModalVisible = false">
+    <a-modal
+      v-model:visible="adjustModalVisible"
+      title="库存调整"
+      :width="500"
+      @ok="onSubmitAdjust"
+      @cancel="adjustModalVisible = false"
+    >
       <a-form :model="adjustForm" auto-label-width layout="vertical">
         <a-form-item label="商品信息">
           <a-input :value="adjustForm.productName" disabled />
@@ -140,7 +146,7 @@
         </template>
         <template #changeNum="{ record }">
           <span :class="['change-num', record.changeNum > 0 ? 'positive' : 'negative']">
-            {{ record.changeNum > 0 ? '+' : '' }}{{ record.changeNum }}
+            {{ record.changeNum > 0 ? "+" : "" }}{{ record.changeNum }}
           </span>
         </template>
       </a-table>
@@ -149,8 +155,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { stockApi, StockListItem, StockLogItem } from '@/api/modules/product/stock';
+import { ref, reactive, onMounted } from "vue";
+import { stockApi, StockListItem, StockLogItem } from "@/api/modules/product/stock";
 
 const loading = ref(false);
 const logLoading = ref(false);
@@ -163,19 +169,19 @@ const searchFormRef = ref();
 const currentSkuId = ref<number>(0);
 
 const searchForm = reactive({
-  productName: '',
-  stockStatus: '',
+  productName: "",
+  stockStatus: ""
 });
 
 const adjustForm = reactive({
   productId: 0,
-  productName: '',
+  productName: "",
   skuId: undefined as number | undefined,
-  skuCode: '',
+  skuCode: "",
   currentStock: 0,
   changeType: 0,
   changeNum: 0,
-  remark: '',
+  remark: ""
 });
 
 const pagination = reactive({
@@ -183,7 +189,7 @@ const pagination = reactive({
   pageSize: 10,
   showPageSize: true,
   showTotal: true,
-  total: 0,
+  total: 0
 });
 
 const logPagination = reactive({
@@ -191,43 +197,43 @@ const logPagination = reactive({
   pageSize: 10,
   showPageSize: true,
   showTotal: true,
-  total: 0,
+  total: 0
 });
 
 const columns = [
-  { type: 'selection', width: 60, fixed: 'left' },
-  { title: '商品图片', dataIndex: 'productImage', slotName: 'productImage', width: 100 },
-  { title: '商品名称', dataIndex: 'productName', width: 200 },
-  { title: 'SKU编码', dataIndex: 'skuCode', width: 130 },
-  { title: '规格', dataIndex: 'specText', width: 150 },
-  { title: '库存', dataIndex: 'stock', slotName: 'stock', width: 100, sortable: true },
-  { title: '销量', dataIndex: 'sales', width: 80, sortable: true },
-  { title: '预警状态', dataIndex: 'isAlert', slotName: 'isAlert', width: 100 },
-  { title: '操作', slotName: 'optional', width: 120, fixed: 'right' },
+  { type: "selection", width: 60, fixed: "left" },
+  { title: "商品图片", dataIndex: "productImage", slotName: "productImage", width: 100 },
+  { title: "商品名称", dataIndex: "productName", width: 200 },
+  { title: "SKU编码", dataIndex: "skuCode", width: 130 },
+  { title: "规格", dataIndex: "specText", width: 150 },
+  { title: "库存", dataIndex: "stock", slotName: "stock", width: 100, sortable: true },
+  { title: "销量", dataIndex: "sales", width: 80, sortable: true },
+  { title: "预警状态", dataIndex: "isAlert", slotName: "isAlert", width: 100 },
+  { title: "操作", slotName: "optional", width: 120, fixed: "right" }
 ];
 
 const logColumns = [
-  { title: '商品', dataIndex: 'productName', width: 150 },
-  { title: 'SKU', dataIndex: 'skuCode', width: 120 },
-  { title: '变动类型', slotName: 'changeType', width: 100 },
-  { title: '变动数量', slotName: 'changeNum', width: 100 },
-  { title: '变动前', dataIndex: 'beforeStock', width: 80 },
-  { title: '变动后', dataIndex: 'afterStock', width: 80 },
-  { title: '订单号', dataIndex: 'orderNo', width: 150, ellipsis: true },
-  { title: '操作人', dataIndex: 'operatorName', width: 100 },
-  { title: '备注', dataIndex: 'remark', width: 150, ellipsis: true },
-  { title: '时间', dataIndex: 'createdAt', width: 180 },
+  { title: "商品", dataIndex: "productName", width: 150 },
+  { title: "SKU", dataIndex: "skuCode", width: 120 },
+  { title: "变动类型", slotName: "changeType", width: 100 },
+  { title: "变动数量", slotName: "changeNum", width: 100 },
+  { title: "变动前", dataIndex: "beforeStock", width: 80 },
+  { title: "变动后", dataIndex: "afterStock", width: 80 },
+  { title: "订单号", dataIndex: "orderNo", width: 150, ellipsis: true },
+  { title: "操作人", dataIndex: "operatorName", width: 100 },
+  { title: "备注", dataIndex: "remark", width: 150, ellipsis: true },
+  { title: "时间", dataIndex: "createdAt", width: 180 }
 ];
 
 const getStockClass = (record: StockListItem) => {
-  if (record.stock === 0) return 'out-of-stock';
-  if (record.isAlert) return 'low-stock';
-  return '';
+  if (record.stock === 0) return "out-of-stock";
+  if (record.isAlert) return "low-stock";
+  return "";
 };
 
 const getChangeTypeColor = (type: number) => {
-  const colors: Record<number, string> = { 0: 'green', 1: 'red', 2: 'blue', 3: 'orange', 4: 'red' };
-  return colors[type] || 'gray';
+  const colors: Record<number, string> = { 0: "green", 1: "red", 2: "blue", 3: "orange", 4: "red" };
+  return colors[type] || "gray";
 };
 
 const getList = async () => {
@@ -237,7 +243,7 @@ const getList = async () => {
       pageNum: pagination.current,
       pageSize: pagination.pageSize,
       productName: searchForm.productName || undefined,
-      stockStatus: searchForm.stockStatus || undefined,
+      stockStatus: searchForm.stockStatus || undefined
     });
     tableData.value = data.list || [];
     pagination.total = data.total || 0;
@@ -254,7 +260,7 @@ const getLogList = async () => {
     const data = await stockApi.logList({
       pageNum: logPagination.current,
       pageSize: logPagination.pageSize,
-      skuId: currentSkuId.value || undefined,
+      skuId: currentSkuId.value || undefined
     });
     logTableData.value = data.list || [];
     logPagination.total = data.total || 0;
@@ -307,18 +313,18 @@ const calculateAfterStock = () => {
 };
 
 const onBatchAdjust = () => {
-  arcoMessage('warning', '请选择要调整的商品');
+  arcoMessage("warning", "请选择要调整的商品");
 };
 
 const onAdjust = (record: StockListItem) => {
   adjustForm.productId = record.productId;
   adjustForm.productName = record.productName;
   adjustForm.skuId = record.skuId;
-  adjustForm.skuCode = record.skuCode || '';
+  adjustForm.skuCode = record.skuCode || "";
   adjustForm.currentStock = record.stock;
   adjustForm.changeType = 0;
   adjustForm.changeNum = 0;
-  adjustForm.remark = '';
+  adjustForm.remark = "";
   adjustModalVisible.value = true;
 };
 
@@ -331,7 +337,7 @@ const onViewLog = (record: StockListItem) => {
 
 const onSubmitAdjust = async () => {
   if (adjustForm.changeNum <= 0) {
-    arcoMessage('warning', '请输入调整数量');
+    arcoMessage("warning", "请输入调整数量");
     return;
   }
   try {
@@ -340,9 +346,9 @@ const onSubmitAdjust = async () => {
       skuId: adjustForm.skuId,
       changeType: adjustForm.changeType,
       changeNum: adjustForm.changeNum,
-      remark: adjustForm.remark,
+      remark: adjustForm.remark
     });
-    arcoMessage('success', '库存调整成功');
+    arcoMessage("success", "库存调整成功");
     adjustModalVisible.value = false;
     getList();
   } catch (error) {

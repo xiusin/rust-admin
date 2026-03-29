@@ -40,7 +40,12 @@
                     <a-input-tag v-model="keywords" placeholder="请输入关键词，回车添加" allow-clear />
                   </a-form-item>
                   <a-form-item field="description" label="摘要">
-                    <a-textarea v-model="form.description" placeholder="请输入摘要" :auto-size="{ minRows: 3, maxRows: 5 }" allow-clear />
+                    <a-textarea
+                      v-model="form.description"
+                      placeholder="请输入摘要"
+                      :auto-size="{ minRows: 3, maxRows: 5 }"
+                      allow-clear
+                    />
                   </a-form-item>
                   <a-form-item field="content" label="内容">
                     <ContentEditor v-model="form.content" />
@@ -104,12 +109,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { contentApi, type ContentAddParams, type ContentEditParams } from '@/api/modules/cms/content';
-import { categoryApi, type CmsCategoryTree } from '@/api/modules/cms/category';
-import { tagApi, type CmsTagItem } from '@/api/modules/cms/tag';
-import ContentEditor from './components/ContentEditor.vue';
+import { ref, reactive, computed, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { contentApi, type ContentAddParams, type ContentEditParams } from "@/api/modules/cms/content";
+import { categoryApi, type CmsCategoryTree } from "@/api/modules/cms/category";
+import { tagApi, type CmsTagItem } from "@/api/modules/cms/tag";
+import ContentEditor from "./components/ContentEditor.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -121,38 +126,38 @@ const tags = ref<CmsTagItem[]>([]);
 
 const contentId = computed(() => Number(route.query.id));
 const modelId = computed(() => Number(route.query.modelId));
-const formTitle = computed(() => (contentId.value ? '编辑内容' : '新增内容'));
+const formTitle = computed(() => (contentId.value ? "编辑内容" : "新增内容"));
 
 const form = reactive({
   id: 0,
   modelId: 0,
   categoryId: null as number | null,
-  title: '',
-  slug: '',
-  keywords: '',
-  description: '',
-  content: '',
-  source: '',
-  thumbnail: '',
+  title: "",
+  slug: "",
+  keywords: "",
+  description: "",
+  content: "",
+  source: "",
+  thumbnail: "",
   sort: 0,
-  publishTime: '',
+  publishTime: "",
   isTop: false,
   isRecommend: false,
   isHot: false,
-  allowComment: true,
+  allowComment: true
 });
 
 const keywords = computed({
-  get: () => form.keywords.split(',').filter(Boolean),
+  get: () => form.keywords.split(",").filter(Boolean),
   set: (val: string[]) => {
-    form.keywords = val.join(',');
-  },
+    form.keywords = val.join(",");
+  }
 });
 
 const tagIds = ref<number[]>([]);
 
 const rules = {
-  title: [{ required: true, message: '请输入标题' }],
+  title: [{ required: true, message: "请输入标题" }]
 };
 
 const goBack = () => {
@@ -187,19 +192,19 @@ const loadContent = async () => {
     form.modelId = data.modelId;
     form.categoryId = data.categoryId || null;
     form.title = data.title;
-    form.slug = data.slug || '';
-    form.keywords = data.keywords || '';
-    form.description = data.description || '';
-    form.content = data.content || '';
-    form.source = data.source || '';
-    form.thumbnail = data.thumbnail || '';
+    form.slug = data.slug || "";
+    form.keywords = data.keywords || "";
+    form.description = data.description || "";
+    form.content = data.content || "";
+    form.source = data.source || "";
+    form.thumbnail = data.thumbnail || "";
     form.sort = data.sort;
-    form.publishTime = data.publishTime || '';
+    form.publishTime = data.publishTime || "";
     form.isTop = data.isTop;
     form.isRecommend = data.isRecommend;
     form.isHot = data.isHot;
     form.allowComment = data.allowComment;
-    tagIds.value = data.tags?.map((t) => t.id) || [];
+    tagIds.value = data.tags?.map(t => t.id) || [];
   } catch (error) {
     console.error(error);
   } finally {
@@ -208,14 +213,14 @@ const loadContent = async () => {
 };
 
 const saveDraft = async () => {
-  await save('draft');
+  await save("draft");
 };
 
 const saveAndPublish = async () => {
-  await save('published');
+  await save("published");
 };
 
-const save = async (status: 'draft' | 'published') => {
+const save = async (status: "draft" | "published") => {
   const state = await formRef.value?.validate();
   if (state) return;
 
@@ -238,15 +243,15 @@ const save = async (status: 'draft' | 'published') => {
       isRecommend: form.isRecommend,
       isHot: form.isHot,
       allowComment: form.allowComment,
-      tagIds: tagIds.value,
+      tagIds: tagIds.value
     };
 
     if (contentId.value) {
       await contentApi.edit({ ...params, id: contentId.value } as ContentEditParams);
-      arcoMessage('success', '保存成功');
+      arcoMessage("success", "保存成功");
     } else {
       await contentApi.add(params as ContentAddParams);
-      arcoMessage('success', '创建成功');
+      arcoMessage("success", "创建成功");
     }
     goBack();
   } catch (error) {

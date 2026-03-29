@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { Message } from '@arco-design/web-vue';
+import axios from "axios";
+import { Message } from "@arco-design/web-vue";
 
 export interface AfterSaleItem {
   order_item_id: number;
@@ -18,7 +18,7 @@ export interface AfterSaleModel {
   order_id: number;
   order_no: string;
   consumer_id: number;
-  type: 'refund_only' | 'return_refund' | 'exchange';
+  type: "refund_only" | "return_refund" | "exchange";
   reason: string;
   description?: string;
   evidence_urls?: string[];
@@ -111,7 +111,7 @@ export interface ApplyAfterSaleParams {
   order_id: number;
   order_no: string;
   consumer_id: number;
-  type: 'refund_only' | 'return_refund' | 'exchange';
+  type: "refund_only" | "return_refund" | "exchange";
   reason: string;
   description?: string;
   evidence_urls?: string[];
@@ -162,83 +162,89 @@ export interface TimeoutConfigModel {
 
 export const afterSaleApi = {
   apply: async (params: ApplyAfterSaleParams) => {
-    const res = await axios.post('/after-sale/apply', params);
-    if (res.data.message !== 'success') {
+    const res = await axios.post("/after-sale/apply", params);
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
   },
 
   audit: async (params: AuditAfterSaleParams) => {
-    const res = await axios.post('/after-sale/audit', params);
-    if (res.data.message !== 'success') {
+    const res = await axios.post("/after-sale/audit", params);
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
   },
 
   getDetail: async (afterSaleId: number) => {
-    const res = await axios.get('/after-sale/detail', { params: { after_sale_id: afterSaleId } });
+    const res = await axios.get("/after-sale/detail", { params: { after_sale_id: afterSaleId } });
     return res.data;
   },
 
   list: async (params: AfterSaleListParams) => {
-    const res = await axios.get('/after-sale/list', { params });
+    const res = await axios.get("/after-sale/list", { params });
     return res.data;
   },
 
   close: async (params: { after_sale_id: number; operator_type: string; operator_id?: number; reason?: string }) => {
-    const res = await axios.post('/after-sale/close', params);
-    if (res.data.message !== 'success') {
+    const res = await axios.post("/after-sale/close", params);
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
   },
 
   createRefund: async (params: CreateRefundParams) => {
-    const res = await axios.post('/after-sale/refund/create', params);
-    if (res.data.message !== 'success') {
+    const res = await axios.post("/after-sale/refund/create", params);
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
   },
 
-  refundCallback: async (params: { refund_no: string; status: string; transaction_id?: string; callback_data?: string; fail_reason?: string }) => {
-    const res = await axios.post('/after-sale/refund/callback', params);
-    if (res.data.message !== 'success') {
+  refundCallback: async (params: {
+    refund_no: string;
+    status: string;
+    transaction_id?: string;
+    callback_data?: string;
+    fail_reason?: string;
+  }) => {
+    const res = await axios.post("/after-sale/refund/callback", params);
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
   },
 
   submitLogistics: async (params: SubmitLogisticsParams) => {
-    const res = await axios.post('/after-sale/logistics/submit', params);
-    if (res.data.message !== 'success') {
+    const res = await axios.post("/after-sale/logistics/submit", params);
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
   },
 
   confirmReceive: async (params: { after_sale_id: number; operator_id: number; operator_name: string }) => {
-    const res = await axios.post('/after-sale/logistics/confirm', params);
-    if (res.data.message !== 'success') {
+    const res = await axios.post("/after-sale/logistics/confirm", params);
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
   },
 
   getLogistics: async (afterSaleId: number) => {
-    const res = await axios.get('/after-sale/logistics/get', { params: { after_sale_id: afterSaleId } });
+    const res = await axios.get("/after-sale/logistics/get", { params: { after_sale_id: afterSaleId } });
     return res.data;
   },
 
   getStatistics: async () => {
-    const res = await axios.get('/after-sale/statistics');
+    const res = await axios.get("/after-sale/statistics");
     return res.data;
   },
 
   getTimeoutConfigs: async () => {
-    const res = await axios.get('/after-sale/timeout-configs');
+    const res = await axios.get("/after-sale/timeout-configs");
     return res.data;
-  },
+  }
 };

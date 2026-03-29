@@ -60,7 +60,9 @@
                 <div class="action-icon"><icon-line-height size="18" /></div>
               </a-tooltip>
               <template #content>
-                <a-doption v-for="item in densityType" :value="item.value" :key="item.value" :disabled="item.value === density">{{ item.label }}</a-doption>
+                <a-doption v-for="item in densityType" :value="item.value" :key="item.value" :disabled="item.value === density">{{
+                  item.label
+                }}</a-doption>
               </template>
             </a-dropdown>
             <a-tooltip content="列设置">
@@ -193,7 +195,11 @@
             <a-textarea v-model="configForm.private_key" placeholder="应用私钥内容" :auto-size="{ minRows: 4, maxRows: 8 }" />
           </a-form-item>
           <a-form-item label="支付宝公钥" required>
-            <a-textarea v-model="configForm.alipay_public_key" placeholder="支付宝公钥内容" :auto-size="{ minRows: 4, maxRows: 8 }" />
+            <a-textarea
+              v-model="configForm.alipay_public_key"
+              placeholder="支付宝公钥内容"
+              :auto-size="{ minRows: 4, maxRows: 8 }"
+            />
           </a-form-item>
           <a-form-item label="回调地址">
             <a-input v-model="configForm.notify_url" placeholder="支付结果回调地址" />
@@ -229,10 +235,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, nextTick } from 'vue';
-import { Message, Modal } from '@arco-design/web-vue';
-import Sortable from 'sortablejs';
-import { deepClone } from '@/utils';
+import { ref, reactive, onMounted, nextTick } from "vue";
+import { Message, Modal } from "@arco-design/web-vue";
+import Sortable from "sortablejs";
+import { deepClone } from "@/utils";
 
 interface ChannelRecord {
   id: number;
@@ -248,10 +254,10 @@ interface ChannelRecord {
 
 const formData = reactive({
   form: {
-    name: '',
+    name: "",
     channel_type: null as string | null,
-    status: null as string | null,
-  },
+    status: null as string | null
+  }
 });
 
 const formRef = ref();
@@ -274,14 +280,14 @@ interface Column {
 
 const columnsShow = ref<Column[]>([]);
 const columns = ref<Column[]>([
-  { title: '渠道名称', dataIndex: 'name', checked: true, width: 180 },
-  { title: '渠道类型', dataIndex: 'channel_type', checked: true, slotName: 'channelType', width: 150 },
-  { title: '渠道标识', dataIndex: 'code', checked: true, width: 150 },
-  { title: '适用场景', dataIndex: 'scene', checked: true, slotName: 'scene', width: 200 },
-  { title: '排序', dataIndex: 'sort', checked: true, width: 80, align: 'center' },
-  { title: '状态', dataIndex: 'status', checked: true, slotName: 'status', width: 100 },
-  { title: '创建时间', dataIndex: 'created_at', checked: true, width: 160 },
-  { title: '操作', slotName: 'optional', align: 'center', checked: true, width: 200 },
+  { title: "渠道名称", dataIndex: "name", checked: true, width: 180 },
+  { title: "渠道类型", dataIndex: "channel_type", checked: true, slotName: "channelType", width: 150 },
+  { title: "渠道标识", dataIndex: "code", checked: true, width: 150 },
+  { title: "适用场景", dataIndex: "scene", checked: true, slotName: "scene", width: 200 },
+  { title: "排序", dataIndex: "sort", checked: true, width: 80, align: "center" },
+  { title: "状态", dataIndex: "status", checked: true, slotName: "status", width: 100 },
+  { title: "创建时间", dataIndex: "created_at", checked: true, width: 160 },
+  { title: "操作", slotName: "optional", align: "center", checked: true, width: 200 }
 ]);
 
 const deepColumns = () => {
@@ -290,13 +296,13 @@ const deepColumns = () => {
 deepColumns();
 
 const densityType = ref([
-  { value: 'mini', label: '迷你' },
-  { value: 'small', label: '偏小' },
-  { value: 'medium', label: '中等' },
-  { value: 'large', label: '偏大' },
+  { value: "mini", label: "迷你" },
+  { value: "small", label: "偏小" },
+  { value: "medium", label: "中等" },
+  { value: "large", label: "偏大" }
 ]);
 
-const density = ref('small');
+const density = ref("small");
 const onDensity = (e: string) => {
   density.value = e;
 };
@@ -312,13 +318,13 @@ const onCheckbox = (checked: any, row: any, index: any) => {
 const popupVisibleChange = (visible: boolean) => {
   if (visible) {
     nextTick(() => {
-      const el = document.getElementById('tableSetting') as HTMLElement;
+      const el = document.getElementById("tableSetting") as HTMLElement;
       new Sortable(el, {
         onEnd(e: any) {
           const { oldIndex, newIndex } = e;
           exchangeArray(columns.value, oldIndex, newIndex);
           exchangeArray(columnsShow.value, oldIndex, newIndex);
-        },
+        }
       });
     });
   }
@@ -332,53 +338,53 @@ const exchangeArray = (cols: Array<any>, oldIndex: number, newIndex: number) => 
 
 const getChannelTypeName = (type: string) => {
   const names: Record<string, string> = {
-    wechat: '微信支付',
-    alipay: '支付宝',
-    unionpay: '银联支付',
-    balance: '余额支付',
+    wechat: "微信支付",
+    alipay: "支付宝",
+    unionpay: "银联支付",
+    balance: "余额支付"
   };
   return names[type] || type;
 };
 
 const getSceneName = (scene: string) => {
   const names: Record<string, string> = {
-    h5: 'H5',
-    app: 'APP',
-    miniapp: '小程序',
-    pc: 'PC',
+    h5: "H5",
+    app: "APP",
+    miniapp: "小程序",
+    pc: "PC"
   };
   return names[scene] || scene;
 };
 
 const modalVisible = ref(false);
-const modalTitle = ref('新增渠道');
+const modalTitle = ref("新增渠道");
 const form = reactive({
   id: 0,
-  name: '',
-  code: '',
-  channel_type: 'wechat',
+  name: "",
+  code: "",
+  channel_type: "wechat",
   scenes: [] as string[],
   sort: 0,
   is_active: true,
-  remark: '',
+  remark: ""
 });
 
 const configVisible = ref(false);
-const configTitle = ref('渠道配置');
-const currentChannel = ref('');
+const configTitle = ref("渠道配置");
+const currentChannel = ref("");
 const currentRecordId = ref(0);
 const configForm = reactive({
-  app_id: '',
-  mch_id: '',
-  api_key: '',
-  api_v3_key: '',
-  cert_serial: '',
-  notify_url: '',
-  private_key: '',
-  alipay_public_key: '',
-  mer_id: '',
-  terminal_id: '',
-  cert_password: '',
+  app_id: "",
+  mch_id: "",
+  api_key: "",
+  api_v3_key: "",
+  cert_serial: "",
+  notify_url: "",
+  private_key: "",
+  alipay_public_key: "",
+  mer_id: "",
+  terminal_id: "",
+  cert_password: ""
 });
 
 const loadData = async () => {
@@ -386,13 +392,76 @@ const loadData = async () => {
   try {
     await new Promise(resolve => setTimeout(resolve, 500));
     tableData.value = [
-      { id: 1, name: '微信支付-小程序', code: 'wechat_miniapp', channel_type: 'wechat', scenes: ['miniapp'], sort: 1, is_active: true, created_at: '2026-01-15 10:00:00' },
-      { id: 2, name: '微信支付-H5', code: 'wechat_h5', channel_type: 'wechat', scenes: ['h5'], sort: 2, is_active: true, created_at: '2026-01-15 10:00:00' },
-      { id: 3, name: '微信支付-APP', code: 'wechat_app', channel_type: 'wechat', scenes: ['app'], sort: 3, is_active: true, created_at: '2026-01-15 10:00:00' },
-      { id: 4, name: '支付宝-H5', code: 'alipay_h5', channel_type: 'alipay', scenes: ['h5'], sort: 4, is_active: true, created_at: '2026-01-15 10:00:00' },
-      { id: 5, name: '支付宝-APP', code: 'alipay_app', channel_type: 'alipay', scenes: ['app'], sort: 5, is_active: true, created_at: '2026-01-15 10:00:00' },
-      { id: 6, name: '银联支付', code: 'unionpay', channel_type: 'unionpay', scenes: ['h5', 'pc'], sort: 6, is_active: false, created_at: '2026-01-15 10:00:00' },
-      { id: 7, name: '余额支付', code: 'balance', channel_type: 'balance', scenes: ['h5', 'app', 'miniapp', 'pc'], sort: 7, is_active: true, created_at: '2026-01-15 10:00:00' },
+      {
+        id: 1,
+        name: "微信支付-小程序",
+        code: "wechat_miniapp",
+        channel_type: "wechat",
+        scenes: ["miniapp"],
+        sort: 1,
+        is_active: true,
+        created_at: "2026-01-15 10:00:00"
+      },
+      {
+        id: 2,
+        name: "微信支付-H5",
+        code: "wechat_h5",
+        channel_type: "wechat",
+        scenes: ["h5"],
+        sort: 2,
+        is_active: true,
+        created_at: "2026-01-15 10:00:00"
+      },
+      {
+        id: 3,
+        name: "微信支付-APP",
+        code: "wechat_app",
+        channel_type: "wechat",
+        scenes: ["app"],
+        sort: 3,
+        is_active: true,
+        created_at: "2026-01-15 10:00:00"
+      },
+      {
+        id: 4,
+        name: "支付宝-H5",
+        code: "alipay_h5",
+        channel_type: "alipay",
+        scenes: ["h5"],
+        sort: 4,
+        is_active: true,
+        created_at: "2026-01-15 10:00:00"
+      },
+      {
+        id: 5,
+        name: "支付宝-APP",
+        code: "alipay_app",
+        channel_type: "alipay",
+        scenes: ["app"],
+        sort: 5,
+        is_active: true,
+        created_at: "2026-01-15 10:00:00"
+      },
+      {
+        id: 6,
+        name: "银联支付",
+        code: "unionpay",
+        channel_type: "unionpay",
+        scenes: ["h5", "pc"],
+        sort: 6,
+        is_active: false,
+        created_at: "2026-01-15 10:00:00"
+      },
+      {
+        id: 7,
+        name: "余额支付",
+        code: "balance",
+        channel_type: "balance",
+        scenes: ["h5", "app", "miniapp", "pc"],
+        sort: 7,
+        is_active: true,
+        created_at: "2026-01-15 10:00:00"
+      }
     ];
   } finally {
     loading.value = false;
@@ -400,13 +469,13 @@ const loadData = async () => {
 };
 
 const handleAdd = () => {
-  modalTitle.value = '新增渠道';
-  Object.assign(form, { id: 0, name: '', code: '', channel_type: 'wechat', scenes: [], sort: 0, is_active: true, remark: '' });
+  modalTitle.value = "新增渠道";
+  Object.assign(form, { id: 0, name: "", code: "", channel_type: "wechat", scenes: [], sort: 0, is_active: true, remark: "" });
   modalVisible.value = true;
 };
 
 const handleEdit = (record: ChannelRecord) => {
-  modalTitle.value = '编辑渠道';
+  modalTitle.value = "编辑渠道";
   Object.assign(form, record);
   modalVisible.value = true;
 };
@@ -416,25 +485,34 @@ const handleConfig = (record: ChannelRecord) => {
   currentChannel.value = record.channel_type;
   currentRecordId.value = record.id;
   Object.assign(configForm, {
-    app_id: '', mch_id: '', api_key: '', api_v3_key: '', cert_serial: '', notify_url: '',
-    private_key: '', alipay_public_key: '', mer_id: '', terminal_id: '', cert_password: '',
+    app_id: "",
+    mch_id: "",
+    api_key: "",
+    api_v3_key: "",
+    cert_serial: "",
+    notify_url: "",
+    private_key: "",
+    alipay_public_key: "",
+    mer_id: "",
+    terminal_id: "",
+    cert_password: ""
   });
   configVisible.value = true;
 };
 
 const handleDelete = (record: ChannelRecord) => {
   Modal.confirm({
-    title: '确认删除',
+    title: "确认删除",
     content: `确定要删除支付渠道"${record.name}"吗？`,
     onOk: () => {
-      Message.success('删除成功');
+      Message.success("删除成功");
       loadData();
-    },
+    }
   });
 };
 
 const handleStatusChange = (record: ChannelRecord) => {
-  Message.success(`${record.name} ${record.is_active ? '已启用' : '已停用'}`);
+  Message.success(`${record.name} ${record.is_active ? "已启用" : "已停用"}`);
 };
 
 const onChannelTypeChange = (value: string) => {
@@ -443,16 +521,16 @@ const onChannelTypeChange = (value: string) => {
 
 const handleSubmit = async () => {
   if (!form.name || !form.code || !form.channel_type || form.scenes.length === 0) {
-    Message.warning('请填写完整信息');
+    Message.warning("请填写完整信息");
     return;
   }
-  Message.success(form.id ? '编辑成功' : '新增成功');
+  Message.success(form.id ? "编辑成功" : "新增成功");
   modalVisible.value = false;
   loadData();
 };
 
 const submitConfig = async () => {
-  Message.success('配置保存成功');
+  Message.success("配置保存成功");
   configVisible.value = false;
 };
 

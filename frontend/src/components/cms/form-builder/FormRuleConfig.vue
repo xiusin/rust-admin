@@ -7,11 +7,11 @@
         添加规则
       </a-button>
     </div>
-    
+
     <div v-if="rules.length === 0" class="empty-rules">
       <a-empty description="暂无表单规则" />
     </div>
-    
+
     <div v-else class="rules-list">
       <div v-for="(rule, index) in rules" :key="index" class="rule-item">
         <a-card size="small">
@@ -28,7 +28,7 @@
               <icon-delete />
             </a-button>
           </template>
-          
+
           <div class="rule-content">
             <a-row :gutter="12">
               <a-col :span="12">
@@ -48,11 +48,11 @@
                 </a-form-item>
               </a-col>
             </a-row>
-            
+
             <a-form-item label="条件表达式">
               <a-input v-model="rule.condition" placeholder="请输入条件表达式" />
             </a-form-item>
-            
+
             <a-form-item label="触发时机">
               <a-checkbox-group v-model="rule.trigger">
                 <a-checkbox value="change">值变化</a-checkbox>
@@ -60,7 +60,7 @@
                 <a-checkbox value="submit">提交</a-checkbox>
               </a-checkbox-group>
             </a-form-item>
-            
+
             <a-form-item label="错误提示">
               <a-input v-model="rule.message" placeholder="请输入错误提示信息" />
             </a-form-item>
@@ -68,9 +68,9 @@
         </a-card>
       </div>
     </div>
-    
+
     <a-divider orientation="left">规则模板</a-divider>
-    
+
     <div class="rule-templates">
       <a-card
         v-for="template in ruleTemplates"
@@ -94,84 +94,84 @@
 
 <script setup lang="ts">
 interface FormRule {
-  type: string
-  sourceField?: string
-  targetField?: string
-  condition?: string
-  trigger?: string[]
-  message?: string
+  type: string;
+  sourceField?: string;
+  targetField?: string;
+  condition?: string;
+  trigger?: string[];
+  message?: string;
 }
 
 interface Props {
-  modelValue: FormRule[]
+  modelValue: FormRule[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: () => []
-})
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: FormRule[]]
-}>()
+  "update:modelValue": [value: FormRule[]];
+}>();
 
-const rules = ref<FormRule[]>([...props.modelValue])
+const rules = ref<FormRule[]>([...props.modelValue]);
 
 watch(
   () => props.modelValue,
-  (val) => {
-    rules.value = [...val]
+  val => {
+    rules.value = [...val];
   },
   { deep: true }
-)
+);
 
 watch(
   rules,
-  (val) => {
-    emit('update:modelValue', val)
+  val => {
+    emit("update:modelValue", val);
   },
   { deep: true }
-)
+);
 
 const handleAddRule = () => {
   rules.value.push({
-    type: 'validate',
-    trigger: ['change']
-  })
-}
+    type: "validate",
+    trigger: ["change"]
+  });
+};
 
 const handleDeleteRule = (index: number) => {
-  rules.value.splice(index, 1)
-}
+  rules.value.splice(index, 1);
+};
 
 const ruleTemplates = [
   {
-    type: 'validate',
-    name: '必填验证',
-    description: '字段值不能为空'
+    type: "validate",
+    name: "必填验证",
+    description: "字段值不能为空"
   },
   {
-    type: 'linkage',
-    name: '字段联动',
-    description: '一个字段值变化影响另一个字段'
+    type: "linkage",
+    name: "字段联动",
+    description: "一个字段值变化影响另一个字段"
   },
   {
-    type: 'async',
-    name: '异步验证',
-    description: '异步校验字段值'
+    type: "async",
+    name: "异步验证",
+    description: "异步校验字段值"
   },
   {
-    type: 'custom',
-    name: '自定义规则',
-    description: '自定义验证逻辑'
+    type: "custom",
+    name: "自定义规则",
+    description: "自定义验证逻辑"
   }
-]
+];
 
 const handleApplyTemplate = (template: { type: string }) => {
   rules.value.push({
     type: template.type,
-    trigger: ['change']
-  })
-}
+    trigger: ["change"]
+  });
+};
 </script>
 
 <style lang="scss" scoped>

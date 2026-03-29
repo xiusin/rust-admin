@@ -28,16 +28,16 @@
               <a-card title="基本信息">
                 <a-descriptions :column="2" bordered>
                   <a-descriptions-item label="标题" :span="2">{{ contentDetail?.title }}</a-descriptions-item>
-                  <a-descriptions-item label="别名">{{ contentDetail?.slug || '-' }}</a-descriptions-item>
+                  <a-descriptions-item label="别名">{{ contentDetail?.slug || "-" }}</a-descriptions-item>
                   <a-descriptions-item label="状态">
                     <a-tag :color="getStatusColor(contentDetail?.status)">
                       {{ getStatusText(contentDetail?.status) }}
                     </a-tag>
                   </a-descriptions-item>
-                  <a-descriptions-item label="分类">{{ contentDetail?.categoryName || '-' }}</a-descriptions-item>
-                  <a-descriptions-item label="来源">{{ contentDetail?.source || '-' }}</a-descriptions-item>
-                  <a-descriptions-item label="关键词" :span="2">{{ contentDetail?.keywords || '-' }}</a-descriptions-item>
-                  <a-descriptions-item label="摘要" :span="2">{{ contentDetail?.description || '-' }}</a-descriptions-item>
+                  <a-descriptions-item label="分类">{{ contentDetail?.categoryName || "-" }}</a-descriptions-item>
+                  <a-descriptions-item label="来源">{{ contentDetail?.source || "-" }}</a-descriptions-item>
+                  <a-descriptions-item label="关键词" :span="2">{{ contentDetail?.keywords || "-" }}</a-descriptions-item>
+                  <a-descriptions-item label="摘要" :span="2">{{ contentDetail?.description || "-" }}</a-descriptions-item>
                 </a-descriptions>
               </a-card>
 
@@ -48,8 +48,8 @@
             <a-col :span="8">
               <a-card title="发布信息">
                 <a-descriptions :column="1" bordered>
-                  <a-descriptions-item label="作者">{{ contentDetail?.authorName || '-' }}</a-descriptions-item>
-                  <a-descriptions-item label="发布时间">{{ contentDetail?.publishTime || '-' }}</a-descriptions-item>
+                  <a-descriptions-item label="作者">{{ contentDetail?.authorName || "-" }}</a-descriptions-item>
+                  <a-descriptions-item label="发布时间">{{ contentDetail?.publishTime || "-" }}</a-descriptions-item>
                   <a-descriptions-item label="创建时间">{{ contentDetail?.createdAt }}</a-descriptions-item>
                   <a-descriptions-item label="更新时间">{{ contentDetail?.updatedAt }}</a-descriptions-item>
                 </a-descriptions>
@@ -72,16 +72,20 @@
               <a-card title="属性设置" class="settings-card">
                 <a-descriptions :column="1" bordered>
                   <a-descriptions-item label="置顶">
-                    <a-tag :color="contentDetail?.isTop ? 'red' : 'gray'">{{ contentDetail?.isTop ? '是' : '否' }}</a-tag>
+                    <a-tag :color="contentDetail?.isTop ? 'red' : 'gray'">{{ contentDetail?.isTop ? "是" : "否" }}</a-tag>
                   </a-descriptions-item>
                   <a-descriptions-item label="推荐">
-                    <a-tag :color="contentDetail?.isRecommend ? 'orange' : 'gray'">{{ contentDetail?.isRecommend ? '是' : '否' }}</a-tag>
+                    <a-tag :color="contentDetail?.isRecommend ? 'orange' : 'gray'">{{
+                      contentDetail?.isRecommend ? "是" : "否"
+                    }}</a-tag>
                   </a-descriptions-item>
                   <a-descriptions-item label="热门">
-                    <a-tag :color="contentDetail?.isHot ? 'arcoblue' : 'gray'">{{ contentDetail?.isHot ? '是' : '否' }}</a-tag>
+                    <a-tag :color="contentDetail?.isHot ? 'arcoblue' : 'gray'">{{ contentDetail?.isHot ? "是" : "否" }}</a-tag>
                   </a-descriptions-item>
                   <a-descriptions-item label="允许评论">
-                    <a-tag :color="contentDetail?.allowComment ? 'green' : 'gray'">{{ contentDetail?.allowComment ? '是' : '否' }}</a-tag>
+                    <a-tag :color="contentDetail?.allowComment ? 'green' : 'gray'">{{
+                      contentDetail?.allowComment ? "是" : "否"
+                    }}</a-tag>
                   </a-descriptions-item>
                   <a-descriptions-item label="排序">{{ contentDetail?.sort }}</a-descriptions-item>
                 </a-descriptions>
@@ -108,10 +112,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { contentApi, type CmsContentDetail, type ContentStatus } from '@/api/modules/cms/content';
-import VersionHistory from './components/VersionHistory.vue';
+import { ref, computed, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { contentApi, type CmsContentDetail, type ContentStatus } from "@/api/modules/cms/content";
+import VersionHistory from "./components/VersionHistory.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -121,27 +125,27 @@ const contentDetail = ref<CmsContentDetail>();
 const contentId = computed(() => Number(route.query.id));
 
 const getStatusColor = (status?: ContentStatus) => {
-  if (!status) return 'gray';
+  if (!status) return "gray";
   const colors: Record<ContentStatus, string> = {
-    draft: 'gray',
-    pending: 'orange',
-    published: 'green',
-    offline: 'gray',
-    rejected: 'red',
-    recycled: 'gray',
+    draft: "gray",
+    pending: "orange",
+    published: "green",
+    offline: "gray",
+    rejected: "red",
+    recycled: "gray"
   };
-  return colors[status] || 'gray';
+  return colors[status] || "gray";
 };
 
 const getStatusText = (status?: ContentStatus) => {
-  if (!status) return '-';
+  if (!status) return "-";
   const texts: Record<ContentStatus, string> = {
-    draft: '草稿',
-    pending: '待审核',
-    published: '已发布',
-    offline: '已下线',
-    rejected: '已拒绝',
-    recycled: '回收站',
+    draft: "草稿",
+    pending: "待审核",
+    published: "已发布",
+    offline: "已下线",
+    rejected: "已拒绝",
+    recycled: "回收站"
   };
   return texts[status] || status;
 };
@@ -152,15 +156,15 @@ const goBack = () => {
 
 const onEdit = () => {
   router.push({
-    path: '/cms/content/form',
-    query: { id: contentId.value, modelId: contentDetail.value?.modelId },
+    path: "/cms/content/form",
+    query: { id: contentId.value, modelId: contentDetail.value?.modelId }
   });
 };
 
 const onRollback = async (versionId: number) => {
   try {
     await contentApi.rollback({ contentId: contentId.value, versionId });
-    arcoMessage('success', '回滚成功');
+    arcoMessage("success", "回滚成功");
     loadContent();
   } catch (error) {
     console.error(error);

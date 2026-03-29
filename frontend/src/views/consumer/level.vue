@@ -14,14 +14,10 @@
               <a-table-column title="等级" data-index="level" :width="80" />
               <a-table-column title="等级名称" data-index="level_name" :width="150" />
               <a-table-column title="经验范围" :width="150">
-                <template #cell="{ record }">
-                  {{ record.min_exp }} - {{ record.max_exp || '∞' }}
-                </template>
+                <template #cell="{ record }"> {{ record.min_exp }} - {{ record.max_exp || "∞" }} </template>
               </a-table-column>
               <a-table-column title="折扣率" data-index="discount_rate" :width="100">
-                <template #cell="{ record }">
-                  {{ (record.discount_rate * 100).toFixed(0) }}%
-                </template>
+                <template #cell="{ record }"> {{ (record.discount_rate * 100).toFixed(0) }}% </template>
               </a-table-column>
               <a-table-column title="图标" data-index="icon" :width="80">
                 <template #cell="{ record }">
@@ -58,7 +54,7 @@
               <a-table-column title="类型" data-index="tag_type" :width="120">
                 <template #cell="{ record }">
                   <a-tag :color="record.tag_type === 'system' ? 'blue' : 'green'">
-                    {{ record.tag_type === 'system' ? '系统' : '自定义' }}
+                    {{ record.tag_type === "system" ? "系统" : "自定义" }}
                   </a-tag>
                 </template>
               </a-table-column>
@@ -103,7 +99,7 @@
               <a-table-column title="禁用类型" data-index="ban_type" :width="120">
                 <template #cell="{ record }">
                   <a-tag :color="record.ban_type === 'permanent' ? 'red' : 'orange'">
-                    {{ record.ban_type === 'permanent' ? '永久' : '临时' }}
+                    {{ record.ban_type === "permanent" ? "永久" : "临时" }}
                   </a-tag>
                 </template>
               </a-table-column>
@@ -111,7 +107,7 @@
               <a-table-column title="状态" data-index="status" :width="100">
                 <template #cell="{ record }">
                   <a-tag :color="record.status === 'active' ? 'red' : 'green'">
-                    {{ record.status === 'active' ? '禁用中' : record.status === 'expired' ? '已过期' : '已解禁' }}
+                    {{ record.status === "active" ? "禁用中" : record.status === "expired" ? "已过期" : "已解禁" }}
                   </a-tag>
                 </template>
               </a-table-column>
@@ -119,7 +115,14 @@
               <a-table-column title="解禁时间" data-index="end_at" :width="180" />
               <a-table-column title="操作" :width="120">
                 <template #cell="{ record }">
-                  <a-button v-if="record.status === 'active'" type="text" size="small" status="success" @click="handleUnban(record)">解禁</a-button>
+                  <a-button
+                    v-if="record.status === 'active'"
+                    type="text"
+                    size="small"
+                    status="success"
+                    @click="handleUnban(record)"
+                    >解禁</a-button
+                  >
                 </template>
               </a-table-column>
             </template>
@@ -221,17 +224,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue';
-import { Message } from '@arco-design/web-vue';
+import { ref, reactive, onMounted, computed } from "vue";
+import { Message } from "@arco-design/web-vue";
 import {
   userExtensionApi,
   LevelConfigModel,
   UserTagModel,
   UserBanModel,
-  ConsumerStatisticsModel,
-} from '@/api/modules/consumer/userExtension';
+  ConsumerStatisticsModel
+} from "@/api/modules/consumer/userExtension";
 
-const activeTab = ref('level');
+const activeTab = ref("level");
 
 const levelLoading = ref(false);
 const levelConfigs = ref<LevelConfigModel[]>([]);
@@ -239,11 +242,11 @@ const levelConfigVisible = ref(false);
 const levelConfigForm = reactive({
   id: 0,
   level: 1,
-  level_name: '',
+  level_name: "",
   min_exp: 0,
   max_exp: 0,
   discount_rate: 1,
-  color: '#1890ff',
+  color: "#1890ff"
 });
 
 const tagLoading = ref(false);
@@ -252,19 +255,19 @@ const tagPagination = ref({ current: 1, pageSize: 10, total: 0 });
 const tagFormVisible = ref(false);
 const tagForm = reactive({
   id: 0,
-  name: '',
-  tag_type: 'custom',
-  category: '',
-  color: '#1890ff',
-  description: '',
+  name: "",
+  tag_type: "custom",
+  category: "",
+  color: "#1890ff",
+  description: ""
 });
 
 const banLoading = ref(false);
 const banList = ref<UserBanModel[]>([]);
 const banPagination = ref({ current: 1, pageSize: 10, total: 0 });
-const banSearch = reactive({ consumer_id: '', status: '' });
+const banSearch = reactive({ consumer_id: "", status: "" });
 const unbanVisible = ref(false);
-const unbanForm = reactive({ consumer_id: 0, unban_reason: '' });
+const unbanForm = reactive({ consumer_id: 0, unban_reason: "" });
 
 const statisticsSearch = reactive({ consumer_id: 0, year: new Date().getFullYear().toString() });
 const consumerStatistics = ref<ConsumerStatisticsModel>({
@@ -272,10 +275,10 @@ const consumerStatistics = ref<ConsumerStatisticsModel>({
   consumer_id: 0,
   year: new Date().getFullYear(),
   total_orders: 0,
-  total_amount: '0',
-  total_refund: '0',
-  total_expense: '0',
-  avg_order_amount: '0',
+  total_amount: "0",
+  total_refund: "0",
+  total_expense: "0",
+  avg_order_amount: "0"
 });
 
 const yearOptions = computed(() => {
@@ -299,11 +302,11 @@ const handleCreateConfig = () => {
   Object.assign(levelConfigForm, {
     id: 0,
     level: 1,
-    level_name: '',
+    level_name: "",
     min_exp: 0,
     max_exp: 0,
     discount_rate: 1,
-    color: '#1890ff',
+    color: "#1890ff"
   });
   levelConfigVisible.value = true;
 };
@@ -321,9 +324,9 @@ const submitLevelConfig = async () => {
       min_exp: levelConfigForm.min_exp,
       max_exp: levelConfigForm.max_exp || undefined,
       discount_rate: levelConfigForm.discount_rate.toString(),
-      color: levelConfigForm.color,
+      color: levelConfigForm.color
     });
-    Message.success('保存成功');
+    Message.success("保存成功");
     levelConfigVisible.value = false;
     loadLevelConfigs();
   } catch (error) {
@@ -336,7 +339,7 @@ const loadTagList = async () => {
   try {
     const res = await userExtensionApi.listTags({
       page_num: tagPagination.value.current,
-      page_size: tagPagination.value.pageSize,
+      page_size: tagPagination.value.pageSize
     });
     tagList.value = res.data?.list || [];
     tagPagination.value.total = res.data?.total || 0;
@@ -355,11 +358,11 @@ const handleTagPageChange = (page: number) => {
 const handleCreateTag = () => {
   Object.assign(tagForm, {
     id: 0,
-    name: '',
-    tag_type: 'custom',
-    category: '',
-    color: '#1890ff',
-    description: '',
+    name: "",
+    tag_type: "custom",
+    category: "",
+    color: "#1890ff",
+    description: ""
   });
   tagFormVisible.value = true;
 };
@@ -377,7 +380,7 @@ const submitTag = async () => {
         name: tagForm.name,
         category: tagForm.category,
         color: tagForm.color,
-        description: tagForm.description,
+        description: tagForm.description
       });
     } else {
       await userExtensionApi.createTag({
@@ -385,10 +388,10 @@ const submitTag = async () => {
         tag_type: tagForm.tag_type,
         category: tagForm.category,
         color: tagForm.color,
-        description: tagForm.description,
+        description: tagForm.description
       });
     }
-    Message.success('保存成功');
+    Message.success("保存成功");
     tagFormVisible.value = false;
     loadTagList();
   } catch (error) {
@@ -399,7 +402,7 @@ const submitTag = async () => {
 const handleDeleteTag = async (record: UserTagModel) => {
   try {
     await userExtensionApi.deleteTag(record.id);
-    Message.success('删除成功');
+    Message.success("删除成功");
     loadTagList();
   } catch (error) {
     console.error(error);
@@ -413,7 +416,7 @@ const loadBanList = async () => {
       page_num: banPagination.value.current,
       page_size: banPagination.value.pageSize,
       consumer_id: banSearch.consumer_id ? parseInt(banSearch.consumer_id) : undefined,
-      status: banSearch.status || undefined,
+      status: banSearch.status || undefined
     });
     banList.value = res.data?.list || [];
     banPagination.value.total = res.data?.total || 0;
@@ -431,7 +434,7 @@ const handleBanPageChange = (page: number) => {
 
 const handleUnban = (record: UserBanModel) => {
   unbanForm.consumer_id = record.consumer_id;
-  unbanForm.unban_reason = '';
+  unbanForm.unban_reason = "";
   unbanVisible.value = true;
 };
 
@@ -439,9 +442,9 @@ const submitUnban = async () => {
   try {
     await userExtensionApi.unbanUser({
       consumer_id: unbanForm.consumer_id,
-      unban_reason: unbanForm.unban_reason,
+      unban_reason: unbanForm.unban_reason
     });
-    Message.success('解禁成功');
+    Message.success("解禁成功");
     unbanVisible.value = false;
     loadBanList();
   } catch (error) {
@@ -451,13 +454,13 @@ const submitUnban = async () => {
 
 const loadStatistics = async () => {
   if (!statisticsSearch.consumer_id) {
-    Message.warning('请输入用户ID');
+    Message.warning("请输入用户ID");
     return;
   }
   try {
     const res = await userExtensionApi.getYearStatistics({
       consumer_id: statisticsSearch.consumer_id,
-      year: statisticsSearch.year,
+      year: statisticsSearch.year
     });
     consumerStatistics.value = res.data || consumerStatistics.value;
   } catch (error) {

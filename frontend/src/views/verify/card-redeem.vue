@@ -9,41 +9,19 @@
         </div>
 
         <a-form ref="formRef" :model="form" layout="vertical" class="redeem-form">
-          <a-form-item
-            field="cardNo"
-            label="卡号"
-            :rules="[{ required: true, message: '请输入卡号' }]"
-          >
-            <a-input
-              v-model="form.cardNo"
-              placeholder="请输入12位卡号"
-              :max-length="20"
-              allow-clear
-            >
+          <a-form-item field="cardNo" label="卡号" :rules="[{ required: true, message: '请输入卡号' }]">
+            <a-input v-model="form.cardNo" placeholder="请输入12位卡号" :max-length="20" allow-clear>
               <template #prefix><icon-id-card /></template>
             </a-input>
           </a-form-item>
 
-          <a-form-item
-            field="cardPwd"
-            label="密码"
-            :rules="[{ required: true, message: '请输入卡密密码' }]"
-          >
-            <a-input-password
-              v-model="form.cardPwd"
-              placeholder="请输入卡密密码"
-              allow-clear
-            >
+          <a-form-item field="cardPwd" label="密码" :rules="[{ required: true, message: '请输入卡密密码' }]">
+            <a-input-password v-model="form.cardPwd" placeholder="请输入卡密密码" allow-clear>
               <template #prefix><icon-lock /></template>
             </a-input-password>
           </a-form-item>
 
-          <a-button
-            type="primary"
-            :loading="checking"
-            long
-            @click="handlePreview"
-          >
+          <a-button type="primary" :loading="checking" long @click="handlePreview">
             <template #icon><icon-preview /></template>
             预览插件信息
           </a-button>
@@ -76,14 +54,7 @@
             </template>
           </a-alert>
 
-          <a-button
-            type="primary"
-            status="success"
-            :loading="redeeming"
-            long
-            style="margin-top: 24px"
-            @click="handleRedeem"
-          >
+          <a-button type="primary" status="success" :loading="redeeming" long style="margin-top: 24px" @click="handleRedeem">
             <template #icon><icon-check-circle /></template>
             确认兑换
           </a-button>
@@ -95,12 +66,7 @@
         </a-alert>
       </a-card>
 
-      <a-modal
-        v-model:visible="successModalVisible"
-        title="兑换成功"
-        :footer="null"
-        :width="500"
-      >
+      <a-modal v-model:visible="successModalVisible" title="兑换成功" :footer="null" :width="500">
         <a-result status="success" title="兑换成功！">
           <template #subtitle>
             <div class="success-details">
@@ -131,10 +97,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
-import { useRouter } from 'vue-router';
-import { card } from '@/api/modules/plugin-market/card';
-import { Message } from '@arco-design/web-vue';
+import { ref, reactive } from "vue";
+import { useRouter } from "vue-router";
+import { card } from "@/api/modules/plugin-market/card";
+import { Message } from "@arco-design/web-vue";
 
 interface PreviewInfo {
   pluginId: number;
@@ -159,55 +125,50 @@ interface OrderInfo {
 const router = useRouter();
 const formRef = ref();
 const form = reactive({
-  cardNo: '',
-  cardPwd: '',
+  cardNo: "",
+  cardPwd: ""
 });
 
 const checking = ref(false);
 const redeeming = ref(false);
 const previewInfo = ref<PreviewInfo | null>(null);
-const errorMessage = ref('');
+const errorMessage = ref("");
 const successModalVisible = ref(false);
 const orderInfo = ref<OrderInfo | null>(null);
 
 const mockPreviewInfo: PreviewInfo = {
   pluginId: 1,
-  pluginName: '智能优惠券',
-  pluginVersion: '2.1.0',
+  pluginName: "智能优惠券",
+  pluginVersion: "2.1.0",
   planId: 2,
-  planName: '专业版',
+  planName: "专业版",
   price: 299,
   periodDays: 30,
-  features: [
-    '多种优惠券类型',
-    '无限优惠券模板',
-    'API调用（10000次/日）',
-    '优先客服支持',
-  ],
+  features: ["多种优惠券类型", "无限优惠券模板", "API调用（10000次/日）", "优先客服支持"]
 };
 
 const handlePreview = async () => {
   try {
-    await formRef.value.validateField('cardNo');
-    await formRef.value.validateField('cardPwd');
+    await formRef.value.validateField("cardNo");
+    await formRef.value.validateField("cardPwd");
   } catch {
     return;
   }
 
   if (form.cardNo.length < 6) {
-    Message.warning('请输入有效的卡号');
+    Message.warning("请输入有效的卡号");
     return;
   }
 
   checking.value = true;
-  errorMessage.value = '';
+  errorMessage.value = "";
   previewInfo.value = null;
 
   try {
     previewInfo.value = mockPreviewInfo;
   } catch (error: any) {
-    errorMessage.value = error?.message || '获取插件信息失败，请检查卡号密码';
-    Message.error('预览失败');
+    errorMessage.value = error?.message || "获取插件信息失败，请检查卡号密码";
+    Message.error("预览失败");
   } finally {
     checking.value = false;
   }
@@ -215,17 +176,17 @@ const handlePreview = async () => {
 
 const handleRedeem = async () => {
   if (!previewInfo.value) {
-    Message.warning('请先预览插件信息');
+    Message.warning("请先预览插件信息");
     return;
   }
 
   redeeming.value = true;
-  errorMessage.value = '';
+  errorMessage.value = "";
 
   try {
     const response = await card.redeem({
       cardNo: form.cardNo,
-      cardPwd: form.cardPwd,
+      cardPwd: form.cardPwd
     });
 
     orderInfo.value = {
@@ -234,17 +195,17 @@ const handleRedeem = async () => {
       planName: previewInfo.value.planName,
       periodDays: previewInfo.value.periodDays,
       redeemTime: new Date().toLocaleString(),
-      licenseKey: response.licenseKey || '',
+      licenseKey: response.licenseKey || ""
     };
 
     successModalVisible.value = true;
-    Message.success('兑换成功');
-    form.cardNo = '';
-    form.cardPwd = '';
+    Message.success("兑换成功");
+    form.cardNo = "";
+    form.cardPwd = "";
     previewInfo.value = null;
   } catch (error: any) {
-    errorMessage.value = error?.message || '兑换失败，请检查卡号密码是否正确';
-    Message.error('兑换失败');
+    errorMessage.value = error?.message || "兑换失败，请检查卡号密码是否正确";
+    Message.error("兑换失败");
   } finally {
     redeeming.value = false;
   }
@@ -252,7 +213,7 @@ const handleRedeem = async () => {
 
 const goToLicense = () => {
   successModalVisible.value = false;
-  router.push('/verify/device');
+  router.push("/verify/device");
 };
 </script>
 

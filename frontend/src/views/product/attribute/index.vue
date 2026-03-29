@@ -70,7 +70,7 @@
       >
         <template #status="{ record }">
           <a-tag :color="record.status === '0' ? 'green' : 'red'" bordered size="small">
-            {{ record.status === '0' ? '启用' : '禁用' }}
+            {{ record.status === "0" ? "启用" : "禁用" }}
           </a-tag>
         </template>
         <template #optional="{ record }">
@@ -105,7 +105,14 @@
           </a-col>
           <a-col :span="12">
             <a-form-item field="sort" label="排序" validate-trigger="blur">
-              <a-input-number v-model="form.sort" :min="0" :max="9999" :style="{ width: '150px' }" placeholder="请输入排序" mode="button" />
+              <a-input-number
+                v-model="form.sort"
+                :min="0"
+                :max="9999"
+                :style="{ width: '150px' }"
+                placeholder="请输入排序"
+                mode="button"
+              />
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -165,9 +172,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { attributeTemplateApi, AttributeTemplateListItem } from '@/api/modules/product/attributeTemplate';
-import { categoryApi } from '@/api/modules/product/category';
+import { ref, reactive, onMounted } from "vue";
+import { attributeTemplateApi, AttributeTemplateListItem } from "@/api/modules/product/attributeTemplate";
+import { categoryApi } from "@/api/modules/product/category";
 
 interface AttributeFormItem {
   id?: number;
@@ -183,28 +190,28 @@ const loading = ref(false);
 const tableData = ref<AttributeTemplateListItem[]>([]);
 const categoryTree = ref<any[]>([]);
 const modalVisible = ref(false);
-const modalTitle = ref('新增模板');
+const modalTitle = ref("新增模板");
 const formRef = ref();
 const selectedIds = ref<string[]>([]);
 const searchFormRef = ref();
 
 const searchForm = reactive({
-  name: '',
-  status: null as string | null,
+  name: "",
+  status: null as string | null
 });
 
 const form = reactive({
   id: 0,
-  name: '',
+  name: "",
   categoryId: 0,
   sort: 0,
-  status: '0',
-  attributes: [] as AttributeFormItem[],
+  status: "0",
+  attributes: [] as AttributeFormItem[]
 });
 
 const rules = {
-  name: [{ required: true, message: '请输入模板名称' }],
-  categoryId: [{ required: true, message: '请选择关联分类' }],
+  name: [{ required: true, message: "请输入模板名称" }],
+  categoryId: [{ required: true, message: "请选择关联分类" }]
 };
 
 const pagination = reactive({
@@ -212,18 +219,18 @@ const pagination = reactive({
   pageSize: 10,
   showPageSize: true,
   showTotal: true,
-  total: 0,
+  total: 0
 });
 
 const columns = [
-  { type: 'selection', width: 60, fixed: 'left' },
-  { title: '模板名称', dataIndex: 'name', width: 200 },
-  { title: '关联分类', dataIndex: 'categoryName', width: 150 },
-  { title: '属性数量', dataIndex: 'attributeCount', width: 100, align: 'center' },
-  { title: '排序', dataIndex: 'sort', width: 80, align: 'center' },
-  { title: '状态', slotName: 'status', width: 100, align: 'center' },
-  { title: '创建时间', dataIndex: 'createdAt', width: 180 },
-  { title: '操作', slotName: 'optional', width: 150, fixed: 'right' },
+  { type: "selection", width: 60, fixed: "left" },
+  { title: "模板名称", dataIndex: "name", width: 200 },
+  { title: "关联分类", dataIndex: "categoryName", width: 150 },
+  { title: "属性数量", dataIndex: "attributeCount", width: 100, align: "center" },
+  { title: "排序", dataIndex: "sort", width: 80, align: "center" },
+  { title: "状态", slotName: "status", width: 100, align: "center" },
+  { title: "创建时间", dataIndex: "createdAt", width: 180 },
+  { title: "操作", slotName: "optional", width: 150, fixed: "right" }
 ];
 
 const getList = async () => {
@@ -233,7 +240,7 @@ const getList = async () => {
       pageNum: pagination.current,
       pageSize: pagination.pageSize,
       name: searchForm.name || undefined,
-      status: searchForm.status || undefined,
+      status: searchForm.status || undefined
     });
     tableData.value = data.list || [];
     pagination.total = data.total || 0;
@@ -279,18 +286,18 @@ const handlePageSizeChange = (pageSize: number) => {
 };
 
 const onAdd = () => {
-  modalTitle.value = '新增属性模板';
+  modalTitle.value = "新增属性模板";
   form.id = 0;
-  form.name = '';
+  form.name = "";
   form.categoryId = 0;
   form.sort = 0;
-  form.status = '0';
+  form.status = "0";
   form.attributes = [];
   modalVisible.value = true;
 };
 
 const onEdit = async (record: AttributeTemplateListItem) => {
-  modalTitle.value = '编辑属性模板';
+  modalTitle.value = "编辑属性模板";
   try {
     const data = await attributeTemplateApi.detail(record.id);
     form.id = data.id;
@@ -305,7 +312,7 @@ const onEdit = async (record: AttributeTemplateListItem) => {
       isRequired: a.isRequired,
       isFilter: a.isFilter,
       sort: a.sort,
-      status: a.status,
+      status: a.status
     }));
     modalVisible.value = true;
   } catch (error) {
@@ -316,7 +323,7 @@ const onEdit = async (record: AttributeTemplateListItem) => {
 const onDelete = async (record: AttributeTemplateListItem) => {
   try {
     await attributeTemplateApi.delete([record.id]);
-    arcoMessage('success', '删除成功');
+    arcoMessage("success", "删除成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -326,8 +333,8 @@ const onDelete = async (record: AttributeTemplateListItem) => {
 const onBatchDelete = async () => {
   if (selectedIds.value.length === 0) return;
   try {
-    await attributeTemplateApi.delete(selectedIds.value.map((id) => Number(id)));
-    arcoMessage('success', '批量删除成功');
+    await attributeTemplateApi.delete(selectedIds.value.map(id => Number(id)));
+    arcoMessage("success", "批量删除成功");
     selectedIds.value = [];
     getList();
   } catch (error) {
@@ -337,12 +344,12 @@ const onBatchDelete = async () => {
 
 const addAttribute = () => {
   form.attributes.push({
-    name: '',
+    name: "",
     attrType: 1,
     isRequired: 0,
     isFilter: 0,
     sort: form.attributes.length,
-    status: '0',
+    status: "0"
   });
 };
 
@@ -356,10 +363,10 @@ const onSubmit = async () => {
   try {
     if (form.id) {
       await attributeTemplateApi.edit(form);
-      arcoMessage('success', '修改成功');
+      arcoMessage("success", "修改成功");
     } else {
       await attributeTemplateApi.add(form);
-      arcoMessage('success', '新增成功');
+      arcoMessage("success", "新增成功");
     }
     modalVisible.value = false;
     getList();

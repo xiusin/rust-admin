@@ -10,7 +10,7 @@
       @filter="handleFilter"
       @action="handleToolbarAction"
     />
-    
+
     <a-table
       ref="tableRef"
       :columns="tableColumns"
@@ -35,59 +35,59 @@
 </template>
 
 <script setup lang="ts">
-import { Message } from '@arco-design/web-vue'
-import TableToolbar from './TableToolbar.vue'
+import { Message } from "@arco-design/web-vue";
+import TableToolbar from "./TableToolbar.vue";
 
 interface TableColumn {
-  field: string
-  title: string
-  width?: number
-  fixed?: 'left' | 'right'
-  sortable?: boolean
-  visible?: boolean
-  render?: string
-  renderType?: string
-  renderConfig?: Record<string, any>
+  field: string;
+  title: string;
+  width?: number;
+  fixed?: "left" | "right";
+  sortable?: boolean;
+  visible?: boolean;
+  render?: string;
+  renderType?: string;
+  renderConfig?: Record<string, any>;
 }
 
 interface SearchConfig {
-  fields: any[]
-  collapsed?: boolean
+  fields: any[];
+  collapsed?: boolean;
 }
 
 interface FilterConfig {
-  fields: any[]
+  fields: any[];
 }
 
 interface TableAction {
-  label: string
-  type: string
-  icon?: string
-  handler?: string
-  condition?: string
+  label: string;
+  type: string;
+  icon?: string;
+  handler?: string;
+  condition?: string;
 }
 
 interface TableSchema {
-  columns: TableColumn[]
-  search?: SearchConfig
-  filters?: FilterConfig
-  toolbarActions?: TableAction[]
-  rowActions?: TableAction[]
-  showIndex?: boolean
-  showSelection?: boolean
-  stripe?: boolean
-  bordered?: boolean
-  size?: 'small' | 'medium' | 'large'
-  pagination?: boolean
-  pageSize?: number
+  columns: TableColumn[];
+  search?: SearchConfig;
+  filters?: FilterConfig;
+  toolbarActions?: TableAction[];
+  rowActions?: TableAction[];
+  showIndex?: boolean;
+  showSelection?: boolean;
+  stripe?: boolean;
+  bordered?: boolean;
+  size?: "small" | "medium" | "large";
+  pagination?: boolean;
+  pageSize?: number;
 }
 
 interface Props {
-  schema: TableSchema
-  data: any[]
-  loading?: boolean
-  total?: number
-  showToolbar?: boolean
+  schema: TableSchema;
+  data: any[];
+  loading?: boolean;
+  total?: number;
+  showToolbar?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -96,47 +96,47 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   total: 0,
   showToolbar: true
-})
+});
 
 const emit = defineEmits<{
-  'search': [params: any]
-  'filter': [filters: any]
-  'page-change': [page: number]
-  'page-size-change': [pageSize: number]
-  'sort-change': [sorter: any]
-  'selection-change': [keys: string[], rows: any[]]
-  'action': [action: string, rows: any[]]
-}>()
+  search: [params: any];
+  filter: [filters: any];
+  "page-change": [page: number];
+  "page-size-change": [pageSize: number];
+  "sort-change": [sorter: any];
+  "selection-change": [keys: string[], rows: any[]];
+  action: [action: string, rows: any[]];
+}>();
 
-const tableRef = ref()
-const selectedKeys = ref<string[]>([])
-const currentPage = ref(1)
-const currentPageSize = ref(props.schema.pageSize || 20)
-const searchParams = ref<Record<string, any>>({})
-const filterParams = ref<Record<string, any>>({})
+const tableRef = ref();
+const selectedKeys = ref<string[]>([]);
+const currentPage = ref(1);
+const currentPageSize = ref(props.schema.pageSize || 20);
+const searchParams = ref<Record<string, any>>({});
+const filterParams = ref<Record<string, any>>({});
 
 const tableColumns = computed(() => {
-  const cols: any[] = []
-  
+  const cols: any[] = [];
+
   if (props.schema.showSelection) {
     cols.push({
-      type: 'checkbox',
-      fixed: 'left'
-    })
+      type: "checkbox",
+      fixed: "left"
+    });
   }
-  
+
   if (props.schema.showIndex) {
     cols.push({
-      title: '序号',
+      title: "序号",
       width: 60,
-      fixed: 'left',
+      fixed: "left",
       render: ({ rowIndex }: any) => {
-        const start = (currentPage.value - 1) * currentPageSize.value
-        return start + rowIndex + 1
+        const start = (currentPage.value - 1) * currentPageSize.value;
+        return start + rowIndex + 1;
       }
-    })
+    });
   }
-  
+
   props.schema.columns
     .filter(col => col.visible !== false)
     .forEach(col => {
@@ -147,47 +147,53 @@ const tableColumns = computed(() => {
         fixed: col.fixed,
         ellipsis: true,
         tooltip: true
-      }
-      
+      };
+
       if (col.sortable) {
         column.sortable = {
-          sortDirections: ['ascend', 'descend']
-        }
+          sortDirections: ["ascend", "descend"]
+        };
       }
-      
+
       if (col.renderType) {
-        column.render = getRenderFunction(col)
+        column.render = getRenderFunction(col);
       }
-      
-      cols.push(column)
-    })
-  
+
+      cols.push(column);
+    });
+
   if (props.schema.rowActions && props.schema.rowActions.length > 0) {
     cols.push({
-      title: '操作',
+      title: "操作",
       width: 150,
-      fixed: 'right',
+      fixed: "right",
       render: ({ record }: any) => {
-        return h('div', { class: 'row-actions' }, 
-          props.schema.rowActions?.map(action => 
-            h('a-button', {
-              type: 'text',
-              size: 'small',
-              onClick: () => handleRowAction(action, record)
-            }, () => action.label)
+        return h(
+          "div",
+          { class: "row-actions" },
+          props.schema.rowActions?.map(action =>
+            h(
+              "a-button",
+              {
+                type: "text",
+                size: "small",
+                onClick: () => handleRowAction(action, record)
+              },
+              () => action.label
+            )
           )
-        )
+        );
       }
-    })
+    });
   }
-  
-  return cols
-})
 
-const tableData = computed(() => props.data)
+  return cols;
+});
+
+const tableData = computed(() => props.data);
 
 const paginationConfig = computed(() => {
-  if (!props.schema.pagination) return false
+  if (!props.schema.pagination) return false;
   return {
     current: currentPage.value,
     pageSize: currentPageSize.value,
@@ -196,111 +202,111 @@ const paginationConfig = computed(() => {
     showJumper: true,
     showPageSize: true,
     pageSizeOptions: [10, 20, 50, 100]
-  }
-})
+  };
+});
 
 const rowSelection = computed(() => {
-  if (!props.schema.showSelection) return undefined
+  if (!props.schema.showSelection) return undefined;
   return {
-    type: 'checkbox',
+    type: "checkbox",
     showCheckedAll: true
-  }
-})
+  };
+});
 
 const scrollConfig = computed(() => {
-  const hasFixed = props.schema.columns.some(col => col.fixed)
+  const hasFixed = props.schema.columns.some(col => col.fixed);
   if (hasFixed) {
-    return { x: 1200 }
+    return { x: 1200 };
   }
-  return undefined
-})
+  return undefined;
+});
 
 const getRenderFunction = (column: TableColumn) => {
   const renderers: Record<string, any> = {
     text: ({ record }: any) => record[column.field],
     image: ({ record }: any) => {
-      const url = record[column.field]
-      if (!url) return '-'
-      return h('img', {
+      const url = record[column.field];
+      if (!url) return "-";
+      return h("img", {
         src: url,
-        style: { width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }
-      })
+        style: { width: "40px", height: "40px", objectFit: "cover", borderRadius: "4px" }
+      });
     },
     tag: ({ record }: any) => {
-      const value = record[column.field]
-      const config = column.renderConfig || {}
-      const colorMap: Record<string, string> = config.colors || {}
-      return h('a-tag', { color: colorMap[value] || 'gray' }, () => value)
+      const value = record[column.field];
+      const config = column.renderConfig || {};
+      const colorMap: Record<string, string> = config.colors || {};
+      return h("a-tag", { color: colorMap[value] || "gray" }, () => value);
     },
     link: ({ record }: any) => {
-      const value = record[column.field]
-      return h('a-link', { href: value, target: '_blank' }, () => value)
+      const value = record[column.field];
+      return h("a-link", { href: value, target: "_blank" }, () => value);
     },
     date: ({ record }: any) => {
-      const value = record[column.field]
-      if (!value) return '-'
-      return new Date(value).toLocaleString()
+      const value = record[column.field];
+      if (!value) return "-";
+      return new Date(value).toLocaleString();
     }
-  }
-  
-  return renderers[column.renderType || 'text'] || renderers.text
-}
+  };
+
+  return renderers[column.renderType || "text"] || renderers.text;
+};
 
 const handleSearch = (params: any) => {
-  searchParams.value = params
-  currentPage.value = 1
-  emit('search', { ...searchParams.value, ...filterParams.value })
-}
+  searchParams.value = params;
+  currentPage.value = 1;
+  emit("search", { ...searchParams.value, ...filterParams.value });
+};
 
 const handleFilter = (filters: any) => {
-  filterParams.value = filters
-  currentPage.value = 1
-  emit('filter', filters)
-  emit('search', { ...searchParams.value, ...filterParams.value })
-}
+  filterParams.value = filters;
+  currentPage.value = 1;
+  emit("filter", filters);
+  emit("search", { ...searchParams.value, ...filterParams.value });
+};
 
 const handlePageChange = (page: number) => {
-  currentPage.value = page
-  emit('page-change', page)
-  emit('search', { ...searchParams.value, ...filterParams.value, page })
-}
+  currentPage.value = page;
+  emit("page-change", page);
+  emit("search", { ...searchParams.value, ...filterParams.value, page });
+};
 
 const handlePageSizeChange = (pageSize: number) => {
-  currentPageSize.value = pageSize
-  currentPage.value = 1
-  emit('page-size-change', pageSize)
-  emit('search', { ...searchParams.value, ...filterParams.value, pageSize })
-}
+  currentPageSize.value = pageSize;
+  currentPage.value = 1;
+  emit("page-size-change", pageSize);
+  emit("search", { ...searchParams.value, ...filterParams.value, pageSize });
+};
 
 const handleSortChange = (sorter: any) => {
-  emit('sort-change', sorter)
-}
+  emit("sort-change", sorter);
+};
 
 const handleSelectionChange = (keys: string[], rows: any[]) => {
-  selectedKeys.value = keys
-  emit('selection-change', keys, rows)
-}
+  selectedKeys.value = keys;
+  emit("selection-change", keys, rows);
+};
 
 const handleToolbarAction = (action: string) => {
-  emit('action', action, [])
-}
+  emit("action", action, []);
+};
 
 const handleRowAction = (action: TableAction, record: any) => {
-  emit('action', action.label, [record])
-}
+  emit("action", action.label, [record]);
+};
 
 const refresh = () => {
-  emit('search', { ...searchParams.value, ...filterParams.value, page: currentPage.value })
-}
+  emit("search", { ...searchParams.value, ...filterParams.value, page: currentPage.value });
+};
 
 const clearSelection = () => {
-  selectedKeys.value = []
-}
+  selectedKeys.value = [];
+};
 
 defineExpose({
   refresh,
   clearSelection
-})
+});
 </script>
 
 <style lang="scss" scoped>

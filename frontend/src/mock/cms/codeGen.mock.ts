@@ -2,7 +2,7 @@ export interface GeneratedFile {
   filePath: string;
   fileName: string;
   content: string;
-  language: 'rust' | 'vue' | 'typescript' | 'javascript' | 'sql' | 'json';
+  language: "rust" | "vue" | "typescript" | "javascript" | "sql" | "json";
   size: number;
   createdAt: string;
 }
@@ -38,8 +38,8 @@ export interface CodeGenConfig {
 
 export const generatedFiles: GeneratedFile[] = [
   {
-    filePath: 'backend/entity/cms_content_article.rs',
-    fileName: 'cms_content_article.rs',
+    filePath: "backend/entity/cms_content_article.rs",
+    fileName: "cms_content_article.rs",
     content: `use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -111,13 +111,13 @@ impl Related<super::cms_category::Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}`,
-    language: 'rust',
+    language: "rust",
     size: 2048,
-    createdAt: '2024-01-01 00:00:00'
+    createdAt: "2024-01-01 00:00:00"
   },
   {
-    filePath: 'backend/model/m_cms_article.rs',
-    fileName: 'm_cms_article.rs',
+    filePath: "backend/model/m_cms_article.rs",
+    fileName: "m_cms_article.rs",
     content: `use serde::{Deserialize, Serialize};
 use sea_orm::FromQueryResult;
 
@@ -168,13 +168,13 @@ pub struct CmsArticleDetail {
     pub created_by: String,
     pub updated_by: String,
 }`,
-    language: 'rust',
+    language: "rust",
     size: 1536,
-    createdAt: '2024-01-01 00:00:00'
+    createdAt: "2024-01-01 00:00:00"
   },
   {
-    filePath: 'backend/args/a_cms_article.rs',
-    fileName: 'a_cms_article.rs',
+    filePath: "backend/args/a_cms_article.rs",
+    fileName: "a_cms_article.rs",
     content: `use serde::{Deserialize, Serialize};
 use validator::Validate;
 
@@ -244,13 +244,13 @@ pub struct CmsArticleSearchReq {
     pub page_num: Option<u32>,
     pub page_size: Option<u32>,
 }`,
-    language: 'rust',
+    language: "rust",
     size: 2560,
-    createdAt: '2024-01-01 00:00:00'
+    createdAt: "2024-01-01 00:00:00"
   },
   {
-    filePath: 'backend/service/cms_article_service.rs',
-    fileName: 'cms_article_service.rs',
+    filePath: "backend/service/cms_article_service.rs",
+    fileName: "cms_article_service.rs",
     content: `use crate::domain::entity::cms_content_article;
 use crate::domain::model::m_cms_article::*;
 use crate::domain::args::a_cms_article::*;
@@ -291,13 +291,13 @@ pub async fn unpublish(id: i64) -> Result<()> {
     // 实现取消发布逻辑
     todo!()
 }`,
-    language: 'rust',
+    language: "rust",
     size: 1024,
-    createdAt: '2024-01-01 00:00:00'
+    createdAt: "2024-01-01 00:00:00"
   },
   {
-    filePath: 'backend/api/cms_article.rs',
-    fileName: 'cms_article.rs',
+    filePath: "backend/api/cms_article.rs",
+    fileName: "cms_article.rs",
     content: `use axum::{
     extract::Query,
     routing::{get, post, put, delete},
@@ -367,13 +367,13 @@ async fn unpublish(id: i64) -> Json<Result<()>> {
         Err(e) => Json(Result::error(e.to_string())),
     }
 }`,
-    language: 'rust',
+    language: "rust",
     size: 2048,
-    createdAt: '2024-01-01 00:00:00'
+    createdAt: "2024-01-01 00:00:00"
   },
   {
-    filePath: 'frontend/api/cms/article.ts',
-    fileName: 'article.ts',
+    filePath: "frontend/api/cms/article.ts",
+    fileName: "article.ts",
     content: `import request from '@/utils/request';
 
 export interface ArticleListParams {
@@ -464,13 +464,13 @@ export function unpublishArticle(id: number) {
     method: 'post'
   });
 }`,
-    language: 'typescript',
+    language: "typescript",
     size: 2048,
-    createdAt: '2024-01-01 00:00:00'
+    createdAt: "2024-01-01 00:00:00"
   },
   {
-    filePath: 'frontend/views/cms/article/list.vue',
-    fileName: 'list.vue',
+    filePath: "frontend/views/cms/article/list.vue",
+    fileName: "list.vue",
     content: `<template>
   <div class="app-container">
     <pro-table
@@ -550,13 +550,13 @@ const handlePublish = async (row: any) => {
   tableRef.value?.refresh();
 };
 </script>`,
-    language: 'vue',
+    language: "vue",
     size: 3072,
-    createdAt: '2024-01-01 00:00:00'
+    createdAt: "2024-01-01 00:00:00"
   },
   {
-    filePath: 'migrations/m20240101_001_cms_article_create_table.sql',
-    fileName: 'm20240101_001_cms_article_create_table.sql',
+    filePath: "migrations/m20240101_001_cms_article_create_table.sql",
+    fileName: "m20240101_001_cms_article_create_table.sql",
     content: `-- 创建文章内容表
 CREATE TABLE \`cms_content_article\` (
   \`id\` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -590,82 +590,82 @@ CREATE TABLE \`cms_content_article\` (
 
 -- ROLLBACK:
 -- DROP TABLE IF EXISTS \`cms_content_article\`;`,
-    language: 'sql',
+    language: "sql",
     size: 2048,
-    createdAt: '2024-01-01 00:00:00'
+    createdAt: "2024-01-01 00:00:00"
   }
 ];
 
 export const fileTree: FileTreeNode = {
-  name: 'generated',
-  path: '',
+  name: "generated",
+  path: "",
   isDir: true,
   children: [
     {
-      name: 'backend',
-      path: 'backend',
+      name: "backend",
+      path: "backend",
       isDir: true,
       children: [
         {
-          name: 'entity',
-          path: 'backend/entity',
+          name: "entity",
+          path: "backend/entity",
           isDir: true,
           children: [
             {
-              name: 'cms_content_article.rs',
-              path: 'backend/entity/cms_content_article.rs',
+              name: "cms_content_article.rs",
+              path: "backend/entity/cms_content_article.rs",
               isDir: false,
               children: null
             }
           ]
         },
         {
-          name: 'model',
-          path: 'backend/model',
+          name: "model",
+          path: "backend/model",
           isDir: true,
           children: [
             {
-              name: 'm_cms_article.rs',
-              path: 'backend/model/m_cms_article.rs',
+              name: "m_cms_article.rs",
+              path: "backend/model/m_cms_article.rs",
               isDir: false,
               children: null
             }
           ]
         },
         {
-          name: 'args',
-          path: 'backend/args',
+          name: "args",
+          path: "backend/args",
           isDir: true,
           children: [
             {
-              name: 'a_cms_article.rs',
-              path: 'backend/args/a_cms_article.rs',
+              name: "a_cms_article.rs",
+              path: "backend/args/a_cms_article.rs",
               isDir: false,
               children: null
             }
           ]
         },
         {
-          name: 'service',
-          path: 'backend/service',
+          name: "service",
+          path: "backend/service",
           isDir: true,
           children: [
             {
-              name: 'cms_article_service.rs',
-              path: 'backend/service/cms_article_service.rs',
+              name: "cms_article_service.rs",
+              path: "backend/service/cms_article_service.rs",
               isDir: false,
               children: null
             }
           ]
         },
         {
-          name: 'api',
-          path: 'backend/api',
+          name: "api",
+          path: "backend/api",
           isDir: true,
           children: [
             {
-              name: 'cms_article.rs',
-              path: 'backend/api/cms_article.rs',
+              name: "cms_article.rs",
+              path: "backend/api/cms_article.rs",
               isDir: false,
               children: null
             }
@@ -674,23 +674,23 @@ export const fileTree: FileTreeNode = {
       ]
     },
     {
-      name: 'frontend',
-      path: 'frontend',
+      name: "frontend",
+      path: "frontend",
       isDir: true,
       children: [
         {
-          name: 'api',
-          path: 'frontend/api',
+          name: "api",
+          path: "frontend/api",
           isDir: true,
           children: [
             {
-              name: 'cms',
-              path: 'frontend/api/cms',
+              name: "cms",
+              path: "frontend/api/cms",
               isDir: true,
               children: [
                 {
-                  name: 'article.ts',
-                  path: 'frontend/api/cms/article.ts',
+                  name: "article.ts",
+                  path: "frontend/api/cms/article.ts",
                   isDir: false,
                   children: null
                 }
@@ -699,23 +699,23 @@ export const fileTree: FileTreeNode = {
           ]
         },
         {
-          name: 'views',
-          path: 'frontend/views',
+          name: "views",
+          path: "frontend/views",
           isDir: true,
           children: [
             {
-              name: 'cms',
-              path: 'frontend/views/cms',
+              name: "cms",
+              path: "frontend/views/cms",
               isDir: true,
               children: [
                 {
-                  name: 'article',
-                  path: 'frontend/views/cms/article',
+                  name: "article",
+                  path: "frontend/views/cms/article",
                   isDir: true,
                   children: [
                     {
-                      name: 'list.vue',
-                      path: 'frontend/views/cms/article/list.vue',
+                      name: "list.vue",
+                      path: "frontend/views/cms/article/list.vue",
                       isDir: false,
                       children: null
                     }
@@ -728,13 +728,13 @@ export const fileTree: FileTreeNode = {
       ]
     },
     {
-      name: 'migrations',
-      path: 'migrations',
+      name: "migrations",
+      path: "migrations",
       isDir: true,
       children: [
         {
-          name: 'm20240101_001_cms_article_create_table.sql',
-          path: 'migrations/m20240101_001_cms_article_create_table.sql',
+          name: "m20240101_001_cms_article_create_table.sql",
+          path: "migrations/m20240101_001_cms_article_create_table.sql",
           isDir: false,
           children: null
         }
@@ -745,8 +745,8 @@ export const fileTree: FileTreeNode = {
 
 export const codeGenConfig: CodeGenConfig = {
   modelId: 1,
-  modelName: '文章',
-  tableName: 'cms_content_article',
+  modelName: "文章",
+  tableName: "cms_content_article",
   generateBackend: true,
   generateFrontend: true,
   backendOptions: {
@@ -761,6 +761,6 @@ export const codeGenConfig: CodeGenConfig = {
     generateViews: true,
     generateComponents: false
   },
-  author: 'xiusin',
-  moduleName: 'cms'
+  author: "xiusin",
+  moduleName: "cms"
 };

@@ -7,13 +7,13 @@
           <a-table-column title="手机号" data-index="phone" />
           <a-table-column title="登录方式" data-index="login_type">
             <template #cell="{ record }">
-              {{ record.login_type === 'phone' ? '手机号' : '微信' }}
+              {{ record.login_type === "phone" ? "手机号" : "微信" }}
             </template>
           </a-table-column>
           <a-table-column title="是否成功" data-index="success">
             <template #cell="{ record }">
               <a-tag :color="record.success ? 'green' : 'red'">
-                {{ record.success ? '成功' : '失败' }}
+                {{ record.success ? "成功" : "失败" }}
               </a-tag>
             </template>
           </a-table-column>
@@ -27,26 +27,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { consumerApi, LoginLog } from '@/api/modules/consumer';
+import { ref, onMounted } from "vue";
+import { consumerApi, LoginLog } from "@/api/modules/consumer";
 
 const logs = ref<LoginLog[]>([]);
 const loading = ref(false);
 const pagination = ref({
   current: 1,
   pageSize: 10,
-  total: 0,
+  total: 0
 });
 
 const loadLogs = async () => {
   loading.value = true;
   try {
-    const stored = localStorage.getItem('consumer_info');
+    const stored = localStorage.getItem("consumer_info");
     const consumer_id = stored ? JSON.parse(stored).id : 0;
     const res = await consumerApi.loginLogs({
       page_num: pagination.value.current,
       page_size: pagination.value.pageSize,
-      consumer_id,
+      consumer_id
     });
     logs.value = res.data?.list || [];
     pagination.value.total = res.data?.total || 0;

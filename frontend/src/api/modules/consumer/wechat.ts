@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 export interface WechatAuthUrlResp {
   url: string;
@@ -30,17 +30,17 @@ export interface MiniLoginParams {
 
 export const wechatApi = {
   getAuthUrl: async (params: AuthUrlParams): Promise<WechatAuthUrlResp> => {
-    const res = await axios.post('/wechat/auth-url', params);
+    const res = await axios.post("/wechat/auth-url", params);
     return res.data;
   },
 
   callback: async (params: CallbackParams): Promise<WechatCallbackResp> => {
-    const res = await axios.get('/wechat/callback', { params });
+    const res = await axios.get("/wechat/callback", { params });
     return res.data;
   },
 
   miniLogin: async (params: MiniLoginParams): Promise<MiniLoginResp> => {
-    const res = await axios.post('/wechat/mini/login', params);
+    const res = await axios.post("/wechat/mini/login", params);
     return res.data;
-  },
+  }
 };

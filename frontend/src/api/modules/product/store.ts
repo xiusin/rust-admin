@@ -83,7 +83,7 @@ interface ListResponse<T> {
 
 const getData = <T>(res: ApiResponse<T>): T => {
   if (res.code !== 200) {
-    throw new Error(res.message || '请求失败');
+    throw new Error(res.message || "请求失败");
   }
   return res.data;
 };
@@ -153,11 +153,14 @@ export const storeApi = {
     getData(res);
   },
 
-  stockList: async (storeId: number, params?: {
-    pageNum?: number;
-    pageSize?: number;
-    productName?: string;
-  }): Promise<ListResponse<StoreStockItem>> => {
+  stockList: async (
+    storeId: number,
+    params?: {
+      pageNum?: number;
+      pageSize?: number;
+      productName?: string;
+    }
+  ): Promise<ListResponse<StoreStockItem>> => {
     const res = await axios.get(`/product/store/stock/${storeId}`, { params });
     return getData(res);
   },
@@ -181,5 +184,5 @@ export const storeApi = {
   statistics: async (): Promise<StoreStatistics> => {
     const res = await axios.get("/product/store/statistics");
     return getData(res);
-  },
+  }
 };

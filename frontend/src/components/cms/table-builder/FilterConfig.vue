@@ -7,11 +7,11 @@
         添加筛选
       </a-button>
     </div>
-    
+
     <div v-if="filters.length === 0" class="empty-filters">
       <a-empty description="暂无筛选条件" />
     </div>
-    
+
     <div v-else class="filters-list">
       <div v-for="(filter, index) in filters" :key="filter.id" class="filter-item">
         <div class="filter-header">
@@ -27,7 +27,7 @@
             <icon-delete />
           </a-button>
         </div>
-        
+
         <div class="filter-content">
           <a-form layout="vertical">
             <a-row :gutter="12">
@@ -42,7 +42,7 @@
                 </a-form-item>
               </a-col>
             </a-row>
-            
+
             <a-form-item v-if="['select', 'checkbox', 'radio'].includes(filter.type)" label="选项配置">
               <div class="options-config">
                 <div v-for="(option, optIndex) in filter.options" :key="optIndex" class="option-row">
@@ -52,12 +52,10 @@
                     <icon-minus />
                   </a-button>
                 </div>
-                <a-button type="dashed" long size="small" @click="handleAddOption(filter)">
-                  <icon-plus /> 添加选项
-                </a-button>
+                <a-button type="dashed" long size="small" @click="handleAddOption(filter)"> <icon-plus /> 添加选项 </a-button>
               </div>
             </a-form-item>
-            
+
             <a-row :gutter="12">
               <a-col :span="12">
                 <a-form-item label="是否多选">
@@ -74,9 +72,9 @@
         </div>
       </div>
     </div>
-    
+
     <a-divider orientation="left">快捷筛选模板</a-divider>
-    
+
     <div class="filter-templates">
       <a-tag
         v-for="template in filterTemplates"
@@ -92,123 +90,123 @@
 </template>
 
 <script setup lang="ts">
-import { Message } from '@arco-design/web-vue'
+import { Message } from "@arco-design/web-vue";
 
 interface FilterOption {
-  label: string
-  value: string
+  label: string;
+  value: string;
 }
 
 interface Filter {
-  id: string
-  field: string
-  label: string
-  type: string
-  defaultValue?: string
-  options?: FilterOption[]
-  multiple?: boolean
-  required?: boolean
+  id: string;
+  field: string;
+  label: string;
+  type: string;
+  defaultValue?: string;
+  options?: FilterOption[];
+  multiple?: boolean;
+  required?: boolean;
 }
 
 interface Props {
-  modelValue: Filter[]
+  modelValue: Filter[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: () => []
-})
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: Filter[]]
-}>()
+  "update:modelValue": [value: Filter[]];
+}>();
 
-const filters = ref<Filter[]>([...props.modelValue])
+const filters = ref<Filter[]>([...props.modelValue]);
 
 watch(
   () => props.modelValue,
-  (val) => {
-    filters.value = [...val]
+  val => {
+    filters.value = [...val];
   },
   { deep: true }
-)
+);
 
 watch(
   filters,
-  (val) => {
-    emit('update:modelValue', val)
+  val => {
+    emit("update:modelValue", val);
   },
   { deep: true }
-)
+);
 
 const handleAddFilter = () => {
   filters.value.push({
     id: `filter_${Date.now()}`,
-    field: '',
-    label: '',
-    type: 'select',
+    field: "",
+    label: "",
+    type: "select",
     options: []
-  })
-}
+  });
+};
 
 const handleDelete = (index: number) => {
-  filters.value.splice(index, 1)
-  Message.success('删除成功')
-}
+  filters.value.splice(index, 1);
+  Message.success("删除成功");
+};
 
 const handleAddOption = (filter: Filter) => {
   if (!filter.options) {
-    filter.options = []
+    filter.options = [];
   }
-  filter.options.push({ label: '', value: '' })
-}
+  filter.options.push({ label: "", value: "" });
+};
 
 const handleDeleteOption = (filter: Filter, index: number) => {
-  filter.options?.splice(index, 1)
-}
+  filter.options?.splice(index, 1);
+};
 
 const filterTemplates = [
   {
-    type: 'status',
-    label: '状态筛选',
+    type: "status",
+    label: "状态筛选",
     filter: {
-      field: 'status',
-      label: '状态',
-      type: 'select',
+      field: "status",
+      label: "状态",
+      type: "select",
       options: [
-        { label: '全部', value: '' },
-        { label: '正常', value: '1' },
-        { label: '禁用', value: '0' }
+        { label: "全部", value: "" },
+        { label: "正常", value: "1" },
+        { label: "禁用", value: "0" }
       ]
     }
   },
   {
-    type: 'date',
-    label: '日期筛选',
+    type: "date",
+    label: "日期筛选",
     filter: {
-      field: 'created_at',
-      label: '创建时间',
-      type: 'date'
+      field: "created_at",
+      label: "创建时间",
+      type: "date"
     }
   },
   {
-    type: 'keyword',
-    label: '关键词筛选',
+    type: "keyword",
+    label: "关键词筛选",
     filter: {
-      field: 'keyword',
-      label: '关键词',
-      type: 'select',
+      field: "keyword",
+      label: "关键词",
+      type: "select",
       multiple: true
     }
   }
-]
+];
 
 const handleApplyTemplate = (template: { filter: Partial<Filter> }) => {
   filters.value.push({
     id: `filter_${Date.now()}`,
     ...template.filter,
     options: template.filter.options ? [...template.filter.options] : []
-  } as Filter)
-}
+  } as Filter);
+};
 </script>
 
 <style lang="scss" scoped>

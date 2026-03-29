@@ -68,28 +68,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted } from "vue";
 
 const statistics = reactive({
-  todayAmount: 15890.50,
+  todayAmount: 15890.5,
   todayCount: 128,
-  todayRefund: 1250.00,
-  pendingRefund: 5,
+  todayRefund: 1250.0,
+  pendingRefund: 5
 });
 
 const methodData = ref([
-  { name: '微信支付', count: 85, amount: '¥10,580.00', percent: 66 },
-  { name: '支付宝', count: 43, amount: '¥5,310.50', percent: 34 },
+  { name: "微信支付", count: 85, amount: "¥10,580.00", percent: 66 },
+  { name: "支付宝", count: 43, amount: "¥5,310.50", percent: 34 }
 ]);
 
 const statusData = ref([
-  { name: '已支付', count: 120, amount: '¥14,640.50', percent: 94, status: 'success' },
-  { name: '待支付', count: 5, amount: '¥750.00', percent: 4, status: 'warning' },
-  { name: '已退款', count: 3, amount: '¥500.00', percent: 2, status: 'danger' },
+  { name: "已支付", count: 120, amount: "¥14,640.50", percent: 94, status: "success" },
+  { name: "待支付", count: 5, amount: "¥750.00", percent: 4, status: "warning" },
+  { name: "已退款", count: 3, amount: "¥500.00", percent: 2, status: "danger" }
 ]);
 
-onMounted(() => {
-});
+onMounted(() => {});
 </script>
 
 <style scoped>

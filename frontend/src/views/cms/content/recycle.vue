@@ -90,9 +90,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { contentApi, type CmsContentList } from '@/api/modules/cms/content';
-import { modelApi, type CmsModel } from '@/api/modules/cms/model';
+import { ref, reactive, onMounted } from "vue";
+import { contentApi, type CmsContentList } from "@/api/modules/cms/content";
+import { modelApi, type CmsModel } from "@/api/modules/cms/model";
 
 const loading = ref(false);
 const tableData = ref<CmsContentList[]>([]);
@@ -102,7 +102,7 @@ const searchFormRef = ref();
 
 const searchForm = reactive({
   modelId: null as number | null,
-  title: '',
+  title: ""
 });
 
 const pagination = reactive({
@@ -110,16 +110,16 @@ const pagination = reactive({
   pageSize: 20,
   showPageSize: true,
   showTotal: true,
-  total: 0,
+  total: 0
 });
 
 const columns = [
-  { title: '标题', dataIndex: 'title', width: 200, ellipsis: true, tooltip: true },
-  { title: '所属模型', dataIndex: 'modelName', width: 120 },
-  { title: '分类', dataIndex: 'categoryName', width: 100 },
-  { title: '状态', dataIndex: 'status', slotName: 'status', width: 80, align: 'center' },
-  { title: '删除时间', dataIndex: 'updatedAt', width: 160 },
-  { title: '操作', slotName: 'optional', width: 150, fixed: 'right', align: 'center' },
+  { title: "标题", dataIndex: "title", width: 200, ellipsis: true, tooltip: true },
+  { title: "所属模型", dataIndex: "modelName", width: 120 },
+  { title: "分类", dataIndex: "categoryName", width: 100 },
+  { title: "状态", dataIndex: "status", slotName: "status", width: 80, align: "center" },
+  { title: "删除时间", dataIndex: "updatedAt", width: 160 },
+  { title: "操作", slotName: "optional", width: 150, fixed: "right", align: "center" }
 ];
 
 const loadModels = async () => {
@@ -141,7 +141,7 @@ const getList = async () => {
     const data = await contentApi.recycleList({
       modelId: searchForm.modelId,
       pageNum: pagination.current,
-      pageSize: pagination.pageSize,
+      pageSize: pagination.pageSize
     });
     tableData.value = data.list || [];
     pagination.total = data.total || 0;
@@ -181,7 +181,7 @@ const handlePageSizeChange = (pageSize: number) => {
 const onRestore = async (record: CmsContentList) => {
   try {
     await contentApi.restore(record.id);
-    arcoMessage('success', '恢复成功');
+    arcoMessage("success", "恢复成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -191,8 +191,8 @@ const onRestore = async (record: CmsContentList) => {
 const onBatchRestore = async () => {
   if (selectedIds.value.length === 0) return;
   try {
-    await Promise.all(selectedIds.value.map((id) => contentApi.restore(id)));
-    arcoMessage('success', '批量恢复成功');
+    await Promise.all(selectedIds.value.map(id => contentApi.restore(id)));
+    arcoMessage("success", "批量恢复成功");
     selectedIds.value = [];
     getList();
   } catch (error) {
@@ -203,7 +203,7 @@ const onBatchRestore = async () => {
 const onClear = async (ids: number[]) => {
   try {
     await contentApi.clearRecycle(ids);
-    arcoMessage('success', '删除成功');
+    arcoMessage("success", "删除成功");
     selectedIds.value = [];
     getList();
   } catch (error) {
@@ -214,19 +214,19 @@ const onClear = async (ids: number[]) => {
 const onBatchClear = async () => {
   if (selectedIds.value.length === 0) return;
   Modal.warning({
-    title: '确认彻底删除',
+    title: "确认彻底删除",
     content: `确定要彻底删除选中的${selectedIds.value.length}条内容吗？此操作不可恢复！`,
     hideCancel: false,
     onOk: async () => {
       await onClear(selectedIds.value);
-    },
+    }
   });
 };
 
 const onClearAll = async () => {
   try {
     await contentApi.clearRecycle();
-    arcoMessage('success', '清空回收站成功');
+    arcoMessage("success", "清空回收站成功");
     selectedIds.value = [];
     getList();
   } catch (error) {

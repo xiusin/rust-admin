@@ -13,37 +13,37 @@
 
 <script setup lang="ts">
 interface SelectOption {
-  label: string
-  value: any
-  disabled?: boolean
+  label: string;
+  value: any;
+  disabled?: boolean;
 }
 
 interface Props {
-  modelValue: any
-  placeholder?: string
-  disabled?: boolean
-  multiple?: boolean
-  allowClear?: boolean
-  allowSearch?: boolean
-  options?: SelectOption[]
+  modelValue: any;
+  placeholder?: string;
+  disabled?: boolean;
+  multiple?: boolean;
+  allowClear?: boolean;
+  allowSearch?: boolean;
+  options?: SelectOption[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
-  placeholder: '请选择',
+  placeholder: "请选择",
   disabled: false,
   multiple: false,
   allowClear: true,
   allowSearch: true,
   options: () => []
-})
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: any]
-}>()
+  "update:modelValue": [value: any];
+}>();
 
 const localValue = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
-})
+  set: val => emit("update:modelValue", val)
+});
 </script>

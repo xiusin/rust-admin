@@ -21,7 +21,7 @@
               ]"
               :validate-trigger="['change', 'input']"
             >
-              <a-input  :style="{ width: '100%' }" v-model="form.name" placeholder="请输入用户名称" allow-clear />
+              <a-input :style="{ width: '100%' }" v-model="form.name" placeholder="请输入用户名称" allow-clear />
             </a-form-item>
             <a-form-item
               field="age"
@@ -31,10 +31,10 @@
                 { type: 'number', max: 200, message: '年龄上限为 200 岁' }
               ]"
             >
-              <a-input-number  v-model="form.age" placeholder="请输入您的年龄" allow-clear />
+              <a-input-number v-model="form.age" placeholder="请输入您的年龄" allow-clear />
             </a-form-item>
             <a-form-item field="section" label="选项" :rules="[{ required: true, message: '选项不能为空' }]">
-              <a-select  v-model="form.section" placeholder="请选择" allow-clear>
+              <a-select v-model="form.section" placeholder="请选择" allow-clear>
                 <a-option value="section one">Section One</a-option>
                 <a-option value="section two">Section Two</a-option>
                 <a-option value="section three">Section Three</a-option>
@@ -52,10 +52,10 @@
               </a-checkbox-group>
             </a-form-item>
             <a-form-item field="date" label="日期">
-              <a-date-picker  v-model="form.date" placeholder="请选择日期" />
+              <a-date-picker v-model="form.date" placeholder="请选择日期" />
             </a-form-item>
             <a-form-item field="time" label="时间">
-              <a-time-picker  v-model="form.time" placeholder="请选择时间" />
+              <a-time-picker v-model="form.time" placeholder="请选择时间" />
             </a-form-item>
             <a-form-item field="radio" label="性别" :rules="[{ required: true, message: '性别不能为空' }]">
               <a-radio-group v-model="form.radio">
@@ -73,7 +73,7 @@
               <a-switch v-model="form.switch" />
             </a-form-item>
             <a-form-item field="multiSelect" label="多选">
-              <a-select  v-model="form.multiSelect" placeholder="请选择" multiple>
+              <a-select v-model="form.multiSelect" placeholder="请选择" multiple>
                 <a-option value="section one">多选一</a-option>
                 <a-option value="section two">多选二</a-option>
                 <a-option value="section three">多选三</a-option>
@@ -84,8 +84,8 @@
             </a-form-item>
             <a-form-item>
               <a-space>
-                <a-button  html-type="submit">提交</a-button>
-                <a-button  @click="onReset">重置</a-button>
+                <a-button html-type="submit">提交</a-button>
+                <a-button @click="onReset">重置</a-button>
               </a-space>
             </a-form-item>
           </a-form>

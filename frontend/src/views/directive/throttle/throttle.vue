@@ -4,7 +4,7 @@
       <div class="my-page">
         <div class="title">自定义节流指令，连续点击按钮，每间隔1s执行一次</div>
         <div class="button-box">
-          <a-button  type="primary" style="width: 100px" v-throttle="onClick">1s节流</a-button>
+          <a-button type="primary" style="width: 100px" v-throttle="onClick">1s节流</a-button>
         </div>
       </div>
     </div>

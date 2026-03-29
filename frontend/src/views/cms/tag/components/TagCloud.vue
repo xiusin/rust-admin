@@ -1,13 +1,7 @@
 <template>
   <div class="tag-cloud">
     <div class="cloud-container">
-      <span
-        v-for="tag in tags"
-        :key="tag.id"
-        class="cloud-tag"
-        :style="getTagStyle(tag)"
-        @click="emit('select', tag)"
-      >
+      <span v-for="tag in tags" :key="tag.id" class="cloud-tag" :style="getTagStyle(tag)" @click="emit('select', tag)">
         {{ tag.name }}
         <span class="tag-count">{{ tag.contentCount }}</span>
       </span>
@@ -19,8 +13,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import type { CmsTagItem } from '@/api/modules/cms/tag';
+import { computed } from "vue";
+import type { CmsTagItem } from "@/api/modules/cms/tag";
 
 interface Props {
   tags: CmsTagItem[];
@@ -34,7 +28,7 @@ const emit = defineEmits<{
 
 const maxCount = computed(() => {
   if (props.tags.length === 0) return 1;
-  return Math.max(...props.tags.map((t) => t.contentCount || 0));
+  return Math.max(...props.tags.map(t => t.contentCount || 0));
 });
 
 const getTagStyle = (tag: CmsTagItem) => {
@@ -44,8 +38,8 @@ const getTagStyle = (tag: CmsTagItem) => {
   return {
     fontSize: `${fontSize}px`,
     opacity,
-    color: tag.color || '#1890ff',
-    borderColor: tag.color || '#1890ff',
+    color: tag.color || "#1890ff",
+    borderColor: tag.color || "#1890ff"
   };
 };
 </script>

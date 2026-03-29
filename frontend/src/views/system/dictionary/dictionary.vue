@@ -62,7 +62,9 @@
                 <div class="action-icon"><icon-line-height size="18" /></div>
               </a-tooltip>
               <template #content>
-                <a-doption v-for="item in densityType" :value="item.value" :key="item.value" :disabled="item.value === density">{{ item.label }}</a-doption>
+                <a-doption v-for="item in densityType" :value="item.value" :key="item.value" :disabled="item.value === density">{{
+                  item.label
+                }}</a-doption>
               </template>
             </a-dropdown>
             <a-tooltip content="列设置">
@@ -154,7 +156,13 @@
                 <template #icon><icon-plus /></template>
                 新增
               </a-button>
-              <a-button type="primary" status="danger" size="small" @click="onBatchDeleteDetail" :disabled="selectedKeysDetail.length === 0">
+              <a-button
+                type="primary"
+                status="danger"
+                size="small"
+                @click="onBatchDeleteDetail"
+                :disabled="selectedKeysDetail.length === 0"
+              >
                 <template #icon><icon-delete /></template>
                 删除
               </a-button>
@@ -170,7 +178,13 @@
                   <div class="action-icon"><icon-line-height size="18" /></div>
                 </a-tooltip>
                 <template #content>
-                  <a-doption v-for="item in densityType" :value="item.value" :key="item.value" :disabled="item.value === densityDetail">{{ item.label }}</a-doption>
+                  <a-doption
+                    v-for="item in densityType"
+                    :value="item.value"
+                    :key="item.value"
+                    :disabled="item.value === densityDetail"
+                    >{{ item.label }}</a-doption
+                  >
                 </template>
               </a-dropdown>
               <a-tooltip content="列设置">
@@ -180,7 +194,9 @@
                     <div id="tableSettingDetail">
                       <div v-for="(item, index) in detailColumns" :key="item.dataIndex" class="setting">
                         <div class="setting-box-icon"><icon-drag-arrow /></div>
-                        <div><a-checkbox v-model="item.checked" @change="onCheckboxDetail($event, item, index)"></a-checkbox></div>
+                        <div>
+                          <a-checkbox v-model="item.checked" @change="onCheckboxDetail($event, item, index)"></a-checkbox>
+                        </div>
                         <div class="title">{{ item.title }}</div>
                       </div>
                     </div>

@@ -13,17 +13,17 @@
             <div>路由：/functions/routing-operation/common-route</div>
           </a-alert>
           <a-space direction="vertical" fill>
-            <a-input  placeholder="请输入路由" allow-clear disabled v-model="connom.path">
+            <a-input placeholder="请输入路由" allow-clear disabled v-model="connom.path">
               <template #prepend> 路由： </template>
             </a-input>
-            <a-input  placeholder="请输入参数" allow-clear v-model="connom.query.name">
+            <a-input placeholder="请输入参数" allow-clear v-model="connom.query.name">
               <template #prepend> 参数： </template>
             </a-input>
-            <a-input  placeholder="请输入参数" allow-clear v-model="connom.query.text">
+            <a-input placeholder="请输入参数" allow-clear v-model="connom.query.text">
               <template #prepend> 参数： </template>
             </a-input>
             <a-space>
-              <a-button  type="primary" @click="onQuery">跳转-query</a-button>
+              <a-button type="primary" @click="onQuery">跳转-query</a-button>
             </a-space>
           </a-space>
         </a-card>
@@ -39,17 +39,17 @@
             <div>路由：/functions/routing-operation/dynamic-route/:name/:text</div>
           </a-alert>
           <a-space direction="vertical" fill>
-            <a-input  placeholder="请输入路由" allow-clear disabled v-model="dynamic.name">
+            <a-input placeholder="请输入路由" allow-clear disabled v-model="dynamic.name">
               <template #prepend> 路由： </template>
             </a-input>
-            <a-input  placeholder="请输入参数" allow-clear v-model="dynamic.params.name">
+            <a-input placeholder="请输入参数" allow-clear v-model="dynamic.params.name">
               <template #prepend> 参数： </template>
             </a-input>
-            <a-input  placeholder="请输入参数" allow-clear v-model="dynamic.params.text">
+            <a-input placeholder="请输入参数" allow-clear v-model="dynamic.params.text">
               <template #prepend> 参数： </template>
             </a-input>
             <a-space>
-              <a-button  type="primary" @click="onParams">跳转-params</a-button>
+              <a-button type="primary" @click="onParams">跳转-params</a-button>
             </a-space>
           </a-space>
         </a-card>

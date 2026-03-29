@@ -39,7 +39,7 @@
         </template>
         <template #expireTime="{ record }">
           <span :class="{ 'text-danger': record.isExpired, 'text-warning': !record.isExpired && record.daysRemaining <= 7 }">
-            {{ record.expireTime || '永久有效' }}
+            {{ record.expireTime || "永久有效" }}
           </span>
           <span v-if="!record.isExpired && record.daysRemaining <= 7" class="expire-tip">
             ({{ record.daysRemaining }}天后到期)
@@ -91,19 +91,15 @@
         <a-descriptions-item label="自动续费">
           <a-switch v-model="currentRecord.autoRenew" size="small" disabled />
         </a-descriptions-item>
-        <a-descriptions-item label="开始时间">{{ currentRecord.startTime || '-' }}</a-descriptions-item>
-        <a-descriptions-item label="到期时间">{{ currentRecord.expireTime || '永久有效' }}</a-descriptions-item>
+        <a-descriptions-item label="开始时间">{{ currentRecord.startTime || "-" }}</a-descriptions-item>
+        <a-descriptions-item label="到期时间">{{ currentRecord.expireTime || "永久有效" }}</a-descriptions-item>
         <a-descriptions-item label="剩余天数">
-          <span :class="{ 'text-danger': currentRecord.isExpired }">
-            {{ currentRecord.daysRemaining || 0 }} 天
-          </span>
+          <span :class="{ 'text-danger': currentRecord.isExpired }"> {{ currentRecord.daysRemaining || 0 }} 天 </span>
         </a-descriptions-item>
         <a-descriptions-item label="已使用设备">
-          {{ currentRecord.usedDevices || 0 }} / {{ currentRecord.maxDevices === -1 ? '无限制' : currentRecord.maxDevices }}
+          {{ currentRecord.usedDevices || 0 }} / {{ currentRecord.maxDevices === -1 ? "无限制" : currentRecord.maxDevices }}
         </a-descriptions-item>
-        <a-descriptions-item label="下次扣款金额" :span="2">
-          ¥{{ currentRecord.nextRenewalAmount || 0 }}
-        </a-descriptions-item>
+        <a-descriptions-item label="下次扣款金额" :span="2"> ¥{{ currentRecord.nextRenewalAmount || 0 }} </a-descriptions-item>
       </a-descriptions>
       <a-divider />
       <a-space style="display: flex; justify-content: flex-end">
@@ -144,7 +140,7 @@
     <a-modal v-model:visible="upgradeVisible" title="变更订阅方案" :footer="null" :width="700">
       <div class="change-plan-content">
         <a-alert class="change-tip">
-          {{ upgradeType === 'upgrade' ? '升级后将立即生效，按剩余时间折算抵扣' : '降级将在当前周期结束后生效' }}
+          {{ upgradeType === "upgrade" ? "升级后将立即生效，按剩余时间折算抵扣" : "降级将在当前周期结束后生效" }}
         </a-alert>
         <a-radio-group v-model="upgradeType" class="change-type" @change="handleChangeTypeChange">
           <a-radio value="upgrade">升级</a-radio>
@@ -157,7 +153,7 @@
               :class="{
                 selected: changeForm.planId === item.id,
                 current: item.id === currentRecord.planId,
-                disabled: upgradeType === 'upgrade' && item.sort <= currentRecord.planSort,
+                disabled: upgradeType === 'upgrade' && item.sort <= currentRecord.planSort
               }"
             >
               <a-radio
@@ -187,9 +183,7 @@
         </a-list>
         <div class="change-actions">
           <a-button @click="upgradeVisible = false">取消</a-button>
-          <a-button type="primary" @click="submitChangePlan">
-            确认{{ upgradeType === 'upgrade' ? '升级' : '降级' }}
-          </a-button>
+          <a-button type="primary" @click="submitChangePlan"> 确认{{ upgradeType === "upgrade" ? "升级" : "降级" }} </a-button>
         </div>
       </div>
     </a-modal>
@@ -221,8 +215,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { Message } from '@arco-design/web-vue';
+import { ref, reactive, onMounted } from "vue";
+import { Message } from "@arco-design/web-vue";
 
 interface SubscriptionRecord {
   id: number;
@@ -269,183 +263,183 @@ const upgradeVisible = ref(false);
 const reminderVisible = ref(false);
 const currentRecord = ref<SubscriptionRecord>({} as SubscriptionRecord);
 const changePlans = ref<PlanItem[]>([]);
-const upgradeType = ref<'upgrade' | 'downgrade'>('upgrade');
+const upgradeType = ref<"upgrade" | "downgrade">("upgrade");
 
 const pagination = ref({ current: 1, pageSize: 10, total: 0 });
 
 const renewForm = reactive({
   extendDays: 30,
-  autoRenew: true,
+  autoRenew: true
 });
 
 const changeForm = reactive({
-  planId: 0,
+  planId: 0
 });
 
 const reminderForm = reactive({
-  methods: ['system'] as string[],
-  days: 7,
+  methods: ["system"] as string[],
+  days: 7
 });
 
 const columns = [
-  { title: '插件名称', dataIndex: 'pluginName', width: 180 },
-  { title: '订阅方案', dataIndex: 'planName', width: 120 },
-  { title: '状态', slotName: 'status', width: 100 },
-  { title: '自动续费', slotName: 'autoRenew', width: 100 },
-  { title: '到期时间', slotName: 'expireTime', width: 180 },
-  { title: '操作', slotName: 'optional', width: 160, fixed: 'right' },
+  { title: "插件名称", dataIndex: "pluginName", width: 180 },
+  { title: "订阅方案", dataIndex: "planName", width: 120 },
+  { title: "状态", slotName: "status", width: 100 },
+  { title: "自动续费", slotName: "autoRenew", width: 100 },
+  { title: "到期时间", slotName: "expireTime", width: 180 },
+  { title: "操作", slotName: "optional", width: 160, fixed: "right" }
 ];
 
 const mockData: SubscriptionRecord[] = [
   {
     id: 1,
     pluginId: 1,
-    pluginName: '智能优惠券',
+    pluginName: "智能优惠券",
     planId: 2,
-    planName: '专业版',
+    planName: "专业版",
     planSort: 2,
-    startTime: '2024-03-20 10:35:00',
-    expireTime: '2025-03-25 10:35:00',
+    startTime: "2024-03-20 10:35:00",
+    expireTime: "2025-03-25 10:35:00",
     isExpired: false,
     daysRemaining: 361,
     autoRenew: true,
     status: 1,
-    statusName: '有效',
+    statusName: "有效",
     maxDevices: 5,
     usedDevices: 2,
-    nextRenewalAmount: 299,
+    nextRenewalAmount: 299
   },
   {
     id: 2,
     pluginId: 2,
-    pluginName: '限时秒杀',
+    pluginName: "限时秒杀",
     planId: 1,
-    planName: '基础版',
+    planName: "基础版",
     planSort: 1,
-    startTime: '2024-02-15 14:20:00',
-    expireTime: '2024-03-15 14:20:00',
+    startTime: "2024-02-15 14:20:00",
+    expireTime: "2024-03-15 14:20:00",
     isExpired: true,
     daysRemaining: 0,
     autoRenew: false,
     status: 0,
-    statusName: '已过期',
+    statusName: "已过期",
     maxDevices: 1,
     usedDevices: 0,
-    nextRenewalAmount: 0,
+    nextRenewalAmount: 0
   },
   {
     id: 3,
     pluginId: 3,
-    pluginName: '数据统计分析',
+    pluginName: "数据统计分析",
     planId: 3,
-    planName: '企业版',
+    planName: "企业版",
     planSort: 3,
-    startTime: '2024-01-10 09:00:00',
-    expireTime: '2025-01-10 09:00:00',
+    startTime: "2024-01-10 09:00:00",
+    expireTime: "2025-01-10 09:00:00",
     isExpired: false,
     daysRemaining: 293,
     autoRenew: true,
     status: 1,
-    statusName: '有效',
+    statusName: "有效",
     maxDevices: -1,
     usedDevices: 3,
-    nextRenewalAmount: 799,
+    nextRenewalAmount: 799
   },
   {
     id: 4,
     pluginId: 4,
-    pluginName: 'AI智能客服',
+    pluginName: "AI智能客服",
     planId: 2,
-    planName: '高级版',
+    planName: "高级版",
     planSort: 2,
-    startTime: '2023-12-01 08:30:00',
-    expireTime: '2024-12-01 08:30:00',
+    startTime: "2023-12-01 08:30:00",
+    expireTime: "2024-12-01 08:30:00",
     isExpired: false,
     daysRemaining: 3,
     autoRenew: false,
     status: 1,
-    statusName: '有效',
+    statusName: "有效",
     maxDevices: 5,
     usedDevices: 1,
-    nextRenewalAmount: 0,
-  },
+    nextRenewalAmount: 0
+  }
 ];
 
 const mockPlans: PlanItem[] = [
   {
     id: 1,
     pluginId: 1,
-    name: '基础版',
-    description: '适合个人开发者或小型店铺使用',
+    name: "基础版",
+    description: "适合个人开发者或小型店铺使用",
     periodType: 0,
-    periodTypeName: '月付',
+    periodTypeName: "月付",
     periodDays: 30,
     price: 99,
     originalPrice: 99,
     features: [
-      { code: 'basic', name: '基础功能', included: true },
-      { code: 'template', name: '5个优惠券模板', included: true },
+      { code: "basic", name: "基础功能", included: true },
+      { code: "template", name: "5个优惠券模板", included: true }
     ],
     maxDevices: 1,
     sort: 1,
-    status: 1,
+    status: 1
   },
   {
     id: 2,
     pluginId: 1,
-    name: '专业版',
-    description: '适合中型商家使用',
+    name: "专业版",
+    description: "适合中型商家使用",
     periodType: 0,
-    periodTypeName: '月付',
+    periodTypeName: "月付",
     periodDays: 30,
     price: 299,
     originalPrice: 399,
     features: [
-      { code: 'basic', name: '基础功能', included: true },
-      { code: 'template', name: '无限优惠券模板', included: true },
-      { code: 'api', name: 'API调用', included: true },
+      { code: "basic", name: "基础功能", included: true },
+      { code: "template", name: "无限优惠券模板", included: true },
+      { code: "api", name: "API调用", included: true }
     ],
     maxDevices: 5,
     sort: 2,
-    status: 1,
+    status: 1
   },
   {
     id: 3,
     pluginId: 1,
-    name: '企业版',
-    description: '适合大型企业使用',
+    name: "企业版",
+    description: "适合大型企业使用",
     periodType: 0,
-    periodTypeName: '月付',
+    periodTypeName: "月付",
     periodDays: 30,
     price: 799,
     originalPrice: 999,
     features: [
-      { code: 'basic', name: '基础功能', included: true },
-      { code: 'template', name: '无限优惠券模板', included: true },
-      { code: 'api', name: '无限API调用', included: true },
-      { code: 'priority', name: '专属客服', included: true },
+      { code: "basic", name: "基础功能", included: true },
+      { code: "template", name: "无限优惠券模板", included: true },
+      { code: "api", name: "无限API调用", included: true },
+      { code: "priority", name: "专属客服", included: true }
     ],
     maxDevices: -1,
     sort: 3,
-    status: 1,
-  },
+    status: 1
+  }
 ];
 
 const getStatusType = (status: number) => {
   switch (status) {
     case 1:
-      return 'success';
+      return "success";
     case 0:
-      return 'danger';
+      return "danger";
     default:
-      return 'default';
+      return "default";
   }
 };
 
 const loadData = async () => {
   loading.value = true;
   try {
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 500));
     tableData.value = mockData;
     pagination.value.total = mockData.length;
   } finally {
@@ -459,11 +453,11 @@ const handlePageChange = (page: number) => {
 };
 
 const handleGlobalAutoRenewChange = (checked: boolean | number | string) => {
-  Message.info(`全局自动续费已${checked ? '开启' : '关闭'}`);
+  Message.info(`全局自动续费已${checked ? "开启" : "关闭"}`);
 };
 
 const handleAutoRenewChange = (record: SubscriptionRecord) => {
-  Message.success(`${record.pluginName} 自动续费已${record.autoRenew ? '开启' : '关闭'}`);
+  Message.success(`${record.pluginName} 自动续费已${record.autoRenew ? "开启" : "关闭"}`);
 };
 
 const handleDetail = (record: SubscriptionRecord) => {
@@ -481,23 +475,23 @@ const handleRenew = (record: SubscriptionRecord) => {
 
 const submitRenew = async () => {
   if (!renewForm.extendDays) {
-    Message.warning('请选择续费时长');
+    Message.warning("请选择续费时长");
     return;
   }
   try {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    Message.success('续费成功');
+    await new Promise(resolve => setTimeout(resolve, 500));
+    Message.success("续费成功");
     renewVisible.value = false;
     loadData();
   } catch {
-    Message.error('续费失败，请重试');
+    Message.error("续费失败，请重试");
   }
 };
 
 const handleUpgrade = (record: SubscriptionRecord) => {
   currentRecord.value = record;
   changePlans.value = mockPlans;
-  upgradeType.value = 'upgrade';
+  upgradeType.value = "upgrade";
   changeForm.planId = record.planId;
   upgradeVisible.value = true;
   detailVisible.value = false;
@@ -506,7 +500,7 @@ const handleUpgrade = (record: SubscriptionRecord) => {
 const handleDowngrade = (record: SubscriptionRecord) => {
   currentRecord.value = record;
   changePlans.value = mockPlans;
-  upgradeType.value = 'downgrade';
+  upgradeType.value = "downgrade";
   changeForm.planId = record.planId;
   upgradeVisible.value = true;
   detailVisible.value = false;
@@ -518,16 +512,16 @@ const handleChangeTypeChange = () => {
 
 const submitChangePlan = async () => {
   if (!changeForm.planId || changeForm.planId === currentRecord.value.planId) {
-    Message.warning(`请选择要${upgradeType.value === 'upgrade' ? '升级' : '降级'}的方案`);
+    Message.warning(`请选择要${upgradeType.value === "upgrade" ? "升级" : "降级"}的方案`);
     return;
   }
   try {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    Message.success(`${upgradeType.value === 'upgrade' ? '升级' : '降级'}成功`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+    Message.success(`${upgradeType.value === "upgrade" ? "升级" : "降级"}成功`);
     upgradeVisible.value = false;
     loadData();
   } catch {
-    Message.error(`${upgradeType.value === 'upgrade' ? '升级' : '降级'}失败，请重试`);
+    Message.error(`${upgradeType.value === "upgrade" ? "升级" : "降级"}失败，请重试`);
   }
 };
 
@@ -537,7 +531,7 @@ const handleCancelAutoRenew = (record: SubscriptionRecord) => {
 };
 
 const handleCancel = () => {
-  Message.warning('取消订阅功能开发中');
+  Message.warning("取消订阅功能开发中");
 };
 
 onMounted(() => {

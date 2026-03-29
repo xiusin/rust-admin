@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted } from "vue";
 
 interface TrackRecord {
   id: number;
@@ -63,26 +63,26 @@ const loading = ref(false);
 const tableData = ref<TrackRecord[]>([]);
 const pagination = ref({ current: 1, pageSize: 10, total: 0 });
 const searchForm = reactive({
-  keyword: '',
-  status: '',
+  keyword: "",
+  status: ""
 });
 const detailVisible = ref(false);
 const currentTraces = ref<{ time: string; context: string }[]>([]);
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
-    in_transit: 'blue',
-    delivered: 'green',
-    exception: 'red',
+    in_transit: "blue",
+    delivered: "green",
+    exception: "red"
   };
-  return colors[status] || 'gray';
+  return colors[status] || "gray";
 };
 
 const getStatusText = (status: string) => {
   const texts: Record<string, string> = {
-    in_transit: '运输中',
-    delivered: '已签收',
-    exception: '异常',
+    in_transit: "运输中",
+    delivered: "已签收",
+    exception: "异常"
   };
   return texts[status] || status;
 };
@@ -92,8 +92,26 @@ const loadData = async () => {
   try {
     await new Promise(resolve => setTimeout(resolve, 500));
     tableData.value = [
-      { id: 1, order_no: 'ORD2026032200001', company_name: '顺丰速运', tracking_no: 'SF1234567890', receiver: '张三', address: '北京市朝阳区xxx街道xxx小区', status: 'in_transit', ship_time: '2026-03-22 14:00:00' },
-      { id: 2, order_no: 'ORD2026032200002', company_name: '圆通快递', tracking_no: 'YTO9876543210', receiver: '李四', address: '上海市浦东新区xxx路xxx号', status: 'delivered', ship_time: '2026-03-21 10:00:00' },
+      {
+        id: 1,
+        order_no: "ORD2026032200001",
+        company_name: "顺丰速运",
+        tracking_no: "SF1234567890",
+        receiver: "张三",
+        address: "北京市朝阳区xxx街道xxx小区",
+        status: "in_transit",
+        ship_time: "2026-03-22 14:00:00"
+      },
+      {
+        id: 2,
+        order_no: "ORD2026032200002",
+        company_name: "圆通快递",
+        tracking_no: "YTO9876543210",
+        receiver: "李四",
+        address: "上海市浦东新区xxx路xxx号",
+        status: "delivered",
+        ship_time: "2026-03-21 10:00:00"
+      }
     ];
     pagination.value.total = 2;
   } finally {
@@ -113,11 +131,11 @@ const handlePageChange = (page: number) => {
 
 const handleDetail = (record: TrackRecord) => {
   currentTraces.value = [
-    { time: '2026-03-22 18:30:00', context: '【北京市】快件已到达 北京朝阳区营业点' },
-    { time: '2026-03-22 16:00:00', context: '【北京市】快件已发出，下一站：北京朝阳区营业点' },
-    { time: '2026-03-22 14:30:00', context: '【北京市】快件已到达 北京转运中心' },
-    { time: '2026-03-22 10:00:00', context: '【上海市】快件已发出，下一站：北京转运中心' },
-    { time: '2026-03-22 08:00:00', context: '【上海市】快件已揽收' },
+    { time: "2026-03-22 18:30:00", context: "【北京市】快件已到达 北京朝阳区营业点" },
+    { time: "2026-03-22 16:00:00", context: "【北京市】快件已发出，下一站：北京朝阳区营业点" },
+    { time: "2026-03-22 14:30:00", context: "【北京市】快件已到达 北京转运中心" },
+    { time: "2026-03-22 10:00:00", context: "【上海市】快件已发出，下一站：北京转运中心" },
+    { time: "2026-03-22 08:00:00", context: "【上海市】快件已揽收" }
   ];
   detailVisible.value = true;
 };

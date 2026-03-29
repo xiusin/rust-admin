@@ -71,12 +71,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { tableApi, type TableConfigItem } from '@/api/modules/cms/table';
-import { modelApi, type CmsModel } from '@/api/modules/cms/model';
-import ConfigCard from './components/ConfigCard.vue';
-import PreviewModal from './components/PreviewModal.vue';
+import { ref, reactive, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { tableApi, type TableConfigItem } from "@/api/modules/cms/table";
+import { modelApi, type CmsModel } from "@/api/modules/cms/model";
+import ConfigCard from "./components/ConfigCard.vue";
+import PreviewModal from "./components/PreviewModal.vue";
 
 const router = useRouter();
 const loading = ref(false);
@@ -87,7 +87,7 @@ const previewConfig = ref<TableConfigItem | null>(null);
 const searchFormRef = ref();
 
 const searchForm = reactive({
-  modelId: null as number | null,
+  modelId: null as number | null
 });
 
 const loadModels = async () => {
@@ -132,22 +132,22 @@ const refresh = () => {
 
 const onAdd = () => {
   router.push({
-    path: '/cms/table-config/builder',
-    query: { modelId: searchForm.modelId },
+    path: "/cms/table-config/builder",
+    query: { modelId: searchForm.modelId }
   });
 };
 
 const onEdit = (record: TableConfigItem) => {
   router.push({
-    path: '/cms/table-config/builder',
-    query: { id: record.id, modelId: searchForm.modelId },
+    path: "/cms/table-config/builder",
+    query: { id: record.id, modelId: searchForm.modelId }
   });
 };
 
 const onDelete = async (record: TableConfigItem) => {
   try {
     await tableApi.delete(record.id);
-    arcoMessage('success', '删除成功');
+    arcoMessage("success", "删除成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -166,7 +166,7 @@ const onPreview = async (record: TableConfigItem) => {
 const onSetDefault = async (record: TableConfigItem) => {
   try {
     await tableApi.setDefault(record.id);
-    arcoMessage('success', '设置成功');
+    arcoMessage("success", "设置成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -176,7 +176,7 @@ const onSetDefault = async (record: TableConfigItem) => {
 const onCopy = async (record: TableConfigItem) => {
   try {
     await tableApi.copy(record.id);
-    arcoMessage('success', '复制成功');
+    arcoMessage("success", "复制成功");
     getList();
   } catch (error) {
     console.error(error);

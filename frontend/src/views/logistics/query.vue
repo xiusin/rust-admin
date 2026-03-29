@@ -47,43 +47,43 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
-import { Message } from '@arco-design/web-vue';
+import { ref, reactive } from "vue";
+import { Message } from "@arco-design/web-vue";
 
 const searchForm = reactive({
-  company: '',
-  tracking_no: '',
+  company: "",
+  tracking_no: ""
 });
 
 const trackingInfo = reactive({
-  tracking_no: '',
-  company_name: '',
-  ship_time: '',
-  estimated_time: '',
-  status: '',
-  address: '',
-  traces: [] as { time: string; context: string }[],
+  tracking_no: "",
+  company_name: "",
+  ship_time: "",
+  estimated_time: "",
+  status: "",
+  address: "",
+  traces: [] as { time: string; context: string }[]
 });
 
 const handleSearch = async () => {
   if (!searchForm.company || !searchForm.tracking_no) {
-    Message.warning('请选择快递公司并输入快递单号');
+    Message.warning("请选择快递公司并输入快递单号");
     return;
   }
   Object.assign(trackingInfo, {
     tracking_no: searchForm.tracking_no,
-    company_name: '顺丰速运',
-    ship_time: '2026-03-22 14:00:00',
-    estimated_time: '2026-03-24 18:00:00',
-    status: '运输中',
-    address: '北京市朝阳区xxx街道xxx小区',
+    company_name: "顺丰速运",
+    ship_time: "2026-03-22 14:00:00",
+    estimated_time: "2026-03-24 18:00:00",
+    status: "运输中",
+    address: "北京市朝阳区xxx街道xxx小区",
     traces: [
-      { time: '2026-03-22 18:30:00', context: '【北京市】快件已到达 北京朝阳区营业点' },
-      { time: '2026-03-22 16:00:00', context: '【北京市】快件已发出，下一站：北京朝阳区营业点' },
-      { time: '2026-03-22 14:30:00', context: '【北京市】快件已到达 北京转运中心' },
-      { time: '2026-03-22 10:00:00', context: '【上海市】快件已发出，下一站：北京转运中心' },
-      { time: '2026-03-22 08:00:00', context: '【上海市】快件已揽收' },
-    ],
+      { time: "2026-03-22 18:30:00", context: "【北京市】快件已到达 北京朝阳区营业点" },
+      { time: "2026-03-22 16:00:00", context: "【北京市】快件已发出，下一站：北京朝阳区营业点" },
+      { time: "2026-03-22 14:30:00", context: "【北京市】快件已到达 北京转运中心" },
+      { time: "2026-03-22 10:00:00", context: "【上海市】快件已发出，下一站：北京转运中心" },
+      { time: "2026-03-22 08:00:00", context: "【上海市】快件已揽收" }
+    ]
   });
 };
 </script>

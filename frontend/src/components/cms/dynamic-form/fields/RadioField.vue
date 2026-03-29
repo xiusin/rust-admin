@@ -1,11 +1,5 @@
 <template>
-  <a-radio-group
-    v-model="localValue"
-    :disabled="disabled"
-    :type="type"
-    :direction="direction"
-    v-bind="$attrs"
-  >
+  <a-radio-group v-model="localValue" :disabled="disabled" :type="type" :direction="direction" v-bind="$attrs">
     <component
       :is="type === 'button' ? 'a-radio' : 'a-radio'"
       v-for="option in options"
@@ -20,33 +14,33 @@
 
 <script setup lang="ts">
 interface RadioOption {
-  label: string
-  value: any
-  disabled?: boolean
+  label: string;
+  value: any;
+  disabled?: boolean;
 }
 
 interface Props {
-  modelValue: any
-  disabled?: boolean
-  type?: 'radio' | 'button'
-  direction?: 'horizontal' | 'vertical'
-  options?: RadioOption[]
+  modelValue: any;
+  disabled?: boolean;
+  type?: "radio" | "button";
+  direction?: "horizontal" | "vertical";
+  options?: RadioOption[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: undefined,
   disabled: false,
-  type: 'radio',
-  direction: 'horizontal',
+  type: "radio",
+  direction: "horizontal",
   options: () => []
-})
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: any]
-}>()
+  "update:modelValue": [value: any];
+}>();
 
 const localValue = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val)
-})
+  set: val => emit("update:modelValue", val)
+});
 </script>

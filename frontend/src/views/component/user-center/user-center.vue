@@ -11,8 +11,8 @@
         </div>
       </div>
       <div class="btn-box">
-        <a-button  type="outline" style="width: 100px">转发</a-button>
-        <a-button  type="primary" style="width: 100px" color="#00aeec">关注</a-button>
+        <a-button type="outline" style="width: 100px">转发</a-button>
+        <a-button type="primary" style="width: 100px" color="#00aeec">关注</a-button>
       </div>
     </div>
   </div>

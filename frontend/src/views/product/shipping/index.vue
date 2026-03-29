@@ -73,7 +73,7 @@
         </template>
         <template #status="{ record }">
           <a-tag :color="record.status === '0' ? 'green' : 'red'" bordered size="small">
-            {{ record.status === '0' ? '启用' : '禁用' }}
+            {{ record.status === "0" ? "启用" : "禁用" }}
           </a-tag>
         </template>
         <template #optional="{ record }">
@@ -127,7 +127,7 @@
             <a-table-column title="配送区域" data-index="regionNames">
               <template #cell="{ record }">
                 <a-button size="small" @click="openRegionSelector(record)">
-                  {{ record.regionNames || '选择区域' }}
+                  {{ record.regionNames || "选择区域" }}
                 </a-button>
               </template>
             </a-table-column>
@@ -165,7 +165,13 @@
       </a-form>
     </a-modal>
 
-    <a-modal v-model:visible="regionModalVisible" title="选择配送区域" :width="600" @ok="confirmRegion" @cancel="regionModalVisible = false">
+    <a-modal
+      v-model:visible="regionModalVisible"
+      title="选择配送区域"
+      :width="600"
+      @ok="confirmRegion"
+      @cancel="regionModalVisible = false"
+    >
       <a-checkbox-group v-model="selectedRegionIds">
         <a-row>
           <a-col :span="8" v-for="province in provinceList" :key="province.code">
@@ -178,13 +184,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { shippingTemplateApi, ShippingTemplateListItem, ShippingRegionItem } from '@/api/modules/product/shippingTemplate';
+import { ref, reactive, onMounted } from "vue";
+import { shippingTemplateApi, ShippingTemplateListItem, ShippingRegionItem } from "@/api/modules/product/shippingTemplate";
 
 const loading = ref(false);
 const tableData = ref<ShippingTemplateListItem[]>([]);
 const modalVisible = ref(false);
-const modalTitle = ref('新增模板');
+const modalTitle = ref("新增模板");
 const formRef = ref();
 const selectedIds = ref<string[]>([]);
 const searchFormRef = ref();
@@ -193,35 +199,55 @@ const currentRegion = ref<ShippingRegionItem | null>(null);
 const selectedRegionIds = ref<string[]>([]);
 
 const searchForm = reactive({
-  name: '',
-  status: null as string | null,
+  name: "",
+  status: null as string | null
 });
 
 const form = reactive({
   id: 0,
-  name: '',
+  name: "",
   chargeType: 0,
   isFree: 0,
-  status: '0',
-  regions: [] as ShippingRegionItem[],
+  status: "0",
+  regions: [] as ShippingRegionItem[]
 });
 
 const provinceList = [
-  { code: '110000', name: '北京市' }, { code: '120000', name: '天津市' }, { code: '130000', name: '河北省' },
-  { code: '140000', name: '山西省' }, { code: '150000', name: '内蒙古' }, { code: '210000', name: '辽宁省' },
-  { code: '220000', name: '吉林省' }, { code: '230000', name: '黑龙江省' }, { code: '310000', name: '上海市' },
-  { code: '320000', name: '江苏省' }, { code: '330000', name: '浙江省' }, { code: '340000', name: '安徽省' },
-  { code: '350000', name: '福建省' }, { code: '360000', name: '江西省' }, { code: '370000', name: '山东省' },
-  { code: '410000', name: '河南省' }, { code: '420000', name: '湖北省' }, { code: '430000', name: '湖南省' },
-  { code: '440000', name: '广东省' }, { code: '450000', name: '广西省' }, { code: '460000', name: '海南省' },
-  { code: '500000', name: '重庆市' }, { code: '510000', name: '四川省' }, { code: '520000', name: '贵州省' },
-  { code: '530000', name: '云南省' }, { code: '540000', name: '西藏省' }, { code: '610000', name: '陕西省' },
-  { code: '620000', name: '甘肃省' }, { code: '630000', name: '青海省' }, { code: '640000', name: '宁夏省' },
-  { code: '650000', name: '新疆省' },
+  { code: "110000", name: "北京市" },
+  { code: "120000", name: "天津市" },
+  { code: "130000", name: "河北省" },
+  { code: "140000", name: "山西省" },
+  { code: "150000", name: "内蒙古" },
+  { code: "210000", name: "辽宁省" },
+  { code: "220000", name: "吉林省" },
+  { code: "230000", name: "黑龙江省" },
+  { code: "310000", name: "上海市" },
+  { code: "320000", name: "江苏省" },
+  { code: "330000", name: "浙江省" },
+  { code: "340000", name: "安徽省" },
+  { code: "350000", name: "福建省" },
+  { code: "360000", name: "江西省" },
+  { code: "370000", name: "山东省" },
+  { code: "410000", name: "河南省" },
+  { code: "420000", name: "湖北省" },
+  { code: "430000", name: "湖南省" },
+  { code: "440000", name: "广东省" },
+  { code: "450000", name: "广西省" },
+  { code: "460000", name: "海南省" },
+  { code: "500000", name: "重庆市" },
+  { code: "510000", name: "四川省" },
+  { code: "520000", name: "贵州省" },
+  { code: "530000", name: "云南省" },
+  { code: "540000", name: "西藏省" },
+  { code: "610000", name: "陕西省" },
+  { code: "620000", name: "甘肃省" },
+  { code: "630000", name: "青海省" },
+  { code: "640000", name: "宁夏省" },
+  { code: "650000", name: "新疆省" }
 ];
 
 const rules = {
-  name: [{ required: true, message: '请输入模板名称' }],
+  name: [{ required: true, message: "请输入模板名称" }]
 };
 
 const pagination = reactive({
@@ -229,22 +255,22 @@ const pagination = reactive({
   pageSize: 10,
   showPageSize: true,
   showTotal: true,
-  total: 0,
+  total: 0
 });
 
 const columns = [
-  { type: 'selection', width: 60, fixed: 'left' },
-  { title: '模板名称', dataIndex: 'name', width: 200 },
-  { title: '计费方式', slotName: 'chargeType', width: 120 },
-  { title: '是否包邮', dataIndex: 'isFree', width: 100 },
-  { title: '状态', slotName: 'status', width: 100 },
-  { title: '创建时间', dataIndex: 'createdAt', width: 180 },
-  { title: '操作', slotName: 'optional', width: 180, fixed: 'right' },
+  { type: "selection", width: 60, fixed: "left" },
+  { title: "模板名称", dataIndex: "name", width: 200 },
+  { title: "计费方式", slotName: "chargeType", width: 120 },
+  { title: "是否包邮", dataIndex: "isFree", width: 100 },
+  { title: "状态", slotName: "status", width: 100 },
+  { title: "创建时间", dataIndex: "createdAt", width: 180 },
+  { title: "操作", slotName: "optional", width: 180, fixed: "right" }
 ];
 
 const getChargeTypeColor = (type: number) => {
-  const colors: Record<number, string> = { 0: 'blue', 1: 'green', 2: 'orange' };
-  return colors[type] || 'gray';
+  const colors: Record<number, string> = { 0: "blue", 1: "green", 2: "orange" };
+  return colors[type] || "gray";
 };
 
 const getList = async () => {
@@ -254,7 +280,7 @@ const getList = async () => {
       pageNum: pagination.current,
       pageSize: pagination.pageSize,
       name: searchForm.name || undefined,
-      status: searchForm.status || undefined,
+      status: searchForm.status || undefined
     });
     tableData.value = data.list || [];
     pagination.total = data.total || 0;
@@ -291,18 +317,18 @@ const handlePageSizeChange = (pageSize: number) => {
 };
 
 const onAdd = () => {
-  modalTitle.value = '新增运费模板';
+  modalTitle.value = "新增运费模板";
   form.id = 0;
-  form.name = '';
+  form.name = "";
   form.chargeType = 0;
   form.isFree = 0;
-  form.status = '0';
+  form.status = "0";
   form.regions = [];
   modalVisible.value = true;
 };
 
 const onEdit = async (record: ShippingTemplateListItem) => {
-  modalTitle.value = '编辑运费模板';
+  modalTitle.value = "编辑运费模板";
   try {
     const data = await shippingTemplateApi.detail(record.id);
     form.id = data.id;
@@ -321,12 +347,12 @@ const onCopy = async (record: ShippingTemplateListItem) => {
   try {
     const data = await shippingTemplateApi.detail(record.id);
     form.id = 0;
-    form.name = data.name + '(复制)';
+    form.name = data.name + "(复制)";
     form.chargeType = data.chargeType;
     form.isFree = data.isFree;
-    form.status = '0';
+    form.status = "0";
     form.regions = (data.regions || []).map((r: any) => ({ ...r, id: 0 }));
-    modalTitle.value = '新增运费模板';
+    modalTitle.value = "新增运费模板";
     modalVisible.value = true;
   } catch (error) {
     console.error(error);
@@ -336,7 +362,7 @@ const onCopy = async (record: ShippingTemplateListItem) => {
 const onDelete = async (record: ShippingTemplateListItem) => {
   try {
     await shippingTemplateApi.delete([record.id]);
-    arcoMessage('success', '删除成功');
+    arcoMessage("success", "删除成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -346,8 +372,8 @@ const onDelete = async (record: ShippingTemplateListItem) => {
 const onBatchDelete = async () => {
   if (selectedIds.value.length === 0) return;
   try {
-    await shippingTemplateApi.delete(selectedIds.value.map((id) => Number(id)));
-    arcoMessage('success', '批量删除成功');
+    await shippingTemplateApi.delete(selectedIds.value.map(id => Number(id)));
+    arcoMessage("success", "批量删除成功");
     selectedIds.value = [];
     getList();
   } catch (error) {
@@ -360,14 +386,14 @@ const addRegion = () => {
     id: 0,
     templateId: form.id,
     regionType: 1,
-    regionIds: '',
-    regionNames: '',
+    regionIds: "",
+    regionNames: "",
     firstUnit: 1,
     firstFee: 0,
     continueUnit: 1,
     continueFee: 0,
     isFree: 0,
-    freeConditionValue: 0,
+    freeConditionValue: 0
   });
 };
 
@@ -377,18 +403,18 @@ const removeRegion = (index: number) => {
 
 const openRegionSelector = (record: ShippingRegionItem) => {
   currentRegion.value = record;
-  selectedRegionIds.value = record.regionIds ? record.regionIds.split(',') : [];
+  selectedRegionIds.value = record.regionIds ? record.regionIds.split(",") : [];
   regionModalVisible.value = true;
 };
 
 const confirmRegion = () => {
   if (currentRegion.value) {
     const names = selectedRegionIds.value
-      .map((code) => provinceList.find((p) => p.code === code)?.name)
+      .map(code => provinceList.find(p => p.code === code)?.name)
       .filter(Boolean)
-      .join(',');
-    currentRegion.value.regionIds = selectedRegionIds.value.join(',');
-    currentRegion.value.regionNames = names || '指定区域';
+      .join(",");
+    currentRegion.value.regionIds = selectedRegionIds.value.join(",");
+    currentRegion.value.regionNames = names || "指定区域";
   }
   regionModalVisible.value = false;
 };
@@ -399,10 +425,10 @@ const onSubmit = async () => {
   try {
     if (form.id) {
       await shippingTemplateApi.edit(form);
-      arcoMessage('success', '修改成功');
+      arcoMessage("success", "修改成功");
     } else {
       await shippingTemplateApi.add(form);
-      arcoMessage('success', '新增成功');
+      arcoMessage("success", "新增成功");
     }
     modalVisible.value = false;
     getList();

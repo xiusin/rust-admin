@@ -78,7 +78,7 @@
         </template>
         <template #status="{ record }">
           <a-tag :color="record.status === '0' ? 'green' : 'red'" bordered size="small">
-            {{ record.status === '0' ? '启用' : '禁用' }}
+            {{ record.status === "0" ? "启用" : "禁用" }}
           </a-tag>
         </template>
         <template #level="{ record }">
@@ -119,7 +119,14 @@
             <a-input v-model="form.icon" placeholder="请输入分类图标" allow-clear />
           </a-form-item>
           <a-form-item field="sort" label="排序" validate-trigger="blur">
-            <a-input-number v-model="form.sort" :min="0" :max="9999" :style="{ width: '150px' }" placeholder="请输入排序" mode="button" />
+            <a-input-number
+              v-model="form.sort"
+              :min="0"
+              :max="9999"
+              :style="{ width: '150px' }"
+              placeholder="请输入排序"
+              mode="button"
+            />
           </a-form-item>
           <a-form-item field="status" label="状态" validate-trigger="blur">
             <a-switch type="round" :checked-value="'0'" :unchecked-value="'1'" v-model="form.status">
@@ -137,35 +144,35 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { categoryApi, CategoryListItem } from '@/api/modules/product/category';
+import { ref, reactive, onMounted } from "vue";
+import { categoryApi, CategoryListItem } from "@/api/modules/product/category";
 
 const loading = ref(false);
 const tableData = ref<CategoryListItem[]>([]);
 const categoryTree = ref<any[]>([]);
 const modalVisible = ref(false);
-const modalTitle = ref('新增分类');
+const modalTitle = ref("新增分类");
 const formRef = ref();
 const selectedIds = ref<string[]>([]);
 const searchFormRef = ref();
 
 const searchForm = reactive({
-  name: '',
-  status: null as string | null,
+  name: "",
+  status: null as string | null
 });
 
 const form = reactive({
   id: 0,
   parentId: 0,
-  name: '',
-  icon: '',
+  name: "",
+  icon: "",
   sort: 0,
-  status: '0',
-  description: '',
+  status: "0",
+  description: ""
 });
 
 const rules = {
-  name: [{ required: true, message: '请输入分类名称' }],
+  name: [{ required: true, message: "请输入分类名称" }]
 };
 
 const pagination = reactive({
@@ -173,28 +180,28 @@ const pagination = reactive({
   pageSize: 10,
   showPageSize: true,
   showTotal: true,
-  total: 0,
+  total: 0
 });
 
 const columns = [
-  { type: 'selection', width: 60, fixed: 'left' },
-  { title: '分类名称', dataIndex: 'name', width: 150 },
-  { title: '图标', dataIndex: 'icon', slotName: 'icon', width: 80 },
-  { title: '排序', dataIndex: 'sort', width: 80, align: 'center' },
-  { title: '层级', dataIndex: 'level', slotName: 'level', width: 100, align: 'center' },
-  { title: '状态', dataIndex: 'status', slotName: 'status', width: 100, align: 'center' },
-  { title: '创建时间', dataIndex: 'createdAt', width: 180 },
-  { title: '操作', slotName: 'optional', width: 200, fixed: 'right', align: 'center' },
+  { type: "selection", width: 60, fixed: "left" },
+  { title: "分类名称", dataIndex: "name", width: 150 },
+  { title: "图标", dataIndex: "icon", slotName: "icon", width: 80 },
+  { title: "排序", dataIndex: "sort", width: 80, align: "center" },
+  { title: "层级", dataIndex: "level", slotName: "level", width: 100, align: "center" },
+  { title: "状态", dataIndex: "status", slotName: "status", width: 100, align: "center" },
+  { title: "创建时间", dataIndex: "createdAt", width: 180 },
+  { title: "操作", slotName: "optional", width: 200, fixed: "right", align: "center" }
 ];
 
 const getLevelColor = (level: number) => {
-  const colors: Record<number, string> = { 1: 'blue', 2: 'green', 3: 'orange' };
-  return colors[level] || 'gray';
+  const colors: Record<number, string> = { 1: "blue", 2: "green", 3: "orange" };
+  return colors[level] || "gray";
 };
 
 const getLevelText = (level: number) => {
-  const texts: Record<number, string> = { 1: '一级', 2: '二级', 3: '三级' };
-  return texts[level] || '未知';
+  const texts: Record<number, string> = { 1: "一级", 2: "二级", 3: "三级" };
+  return texts[level] || "未知";
 };
 
 const getList = async () => {
@@ -204,7 +211,7 @@ const getList = async () => {
       pageNum: pagination.current,
       pageSize: pagination.pageSize,
       name: searchForm.name || undefined,
-      status: searchForm.status || undefined,
+      status: searchForm.status || undefined
     });
     tableData.value = data.list || [];
     pagination.total = data.total || 0;
@@ -250,33 +257,33 @@ const handlePageSizeChange = (pageSize: number) => {
 };
 
 const onAdd = (parentId: number) => {
-  modalTitle.value = '新增分类';
+  modalTitle.value = "新增分类";
   form.id = 0;
   form.parentId = parentId;
-  form.name = '';
-  form.icon = '';
+  form.name = "";
+  form.icon = "";
   form.sort = 0;
-  form.status = '0';
-  form.description = '';
+  form.status = "0";
+  form.description = "";
   modalVisible.value = true;
 };
 
 const onEdit = (record: CategoryListItem) => {
-  modalTitle.value = '编辑分类';
+  modalTitle.value = "编辑分类";
   form.id = record.id;
   form.parentId = record.parentId;
   form.name = record.name;
-  form.icon = record.icon || '';
+  form.icon = record.icon || "";
   form.sort = record.sort;
   form.status = record.status;
-  form.description = record.description || '';
+  form.description = record.description || "";
   modalVisible.value = true;
 };
 
 const onDelete = async (record: CategoryListItem) => {
   try {
     await categoryApi.delete([record.id]);
-    arcoMessage('success', '删除成功');
+    arcoMessage("success", "删除成功");
     getList();
     getTree();
   } catch (error) {
@@ -287,8 +294,8 @@ const onDelete = async (record: CategoryListItem) => {
 const onBatchDelete = async () => {
   if (selectedIds.value.length === 0) return;
   try {
-    await categoryApi.delete(selectedIds.value.map((id) => Number(id)));
-    arcoMessage('success', '批量删除成功');
+    await categoryApi.delete(selectedIds.value.map(id => Number(id)));
+    arcoMessage("success", "批量删除成功");
     selectedIds.value = [];
     getList();
     getTree();
@@ -303,10 +310,10 @@ const onSubmit = async () => {
   try {
     if (form.id) {
       await categoryApi.edit(form);
-      arcoMessage('success', '修改成功');
+      arcoMessage("success", "修改成功");
     } else {
       await categoryApi.add(form);
-      arcoMessage('success', '新增成功');
+      arcoMessage("success", "新增成功");
     }
     modalVisible.value = false;
     getList();

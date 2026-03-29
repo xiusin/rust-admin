@@ -17,61 +17,59 @@
         </a-button>
       </div>
     </div>
-    
+
     <div class="viewer-content">
       <div class="line-numbers">
         <span v-for="line in lineCount" :key="line" class="line-number">{{ line }}</span>
       </div>
       <pre class="code-content"><code :class="`language-${language}`">{{ code }}</code></pre>
     </div>
-    
+
     <div class="viewer-footer">
-      <span class="code-stats">
-        共 {{ lineCount }} 行 | {{ codeLength }} 字符
-      </span>
+      <span class="code-stats"> 共 {{ lineCount }} 行 | {{ codeLength }} 字符 </span>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Message } from '@arco-design/web-vue'
+import { Message } from "@arco-design/web-vue";
 
 interface Props {
-  code: string
-  language?: string
-  filename?: string
+  code: string;
+  language?: string;
+  filename?: string;
 }
 
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 
 const lineCount = computed(() => {
-  if (!props.code) return 0
-  return props.code.split('\n').length
-})
+  if (!props.code) return 0;
+  return props.code.split("\n").length;
+});
 
 const codeLength = computed(() => {
-  return props.code?.length || 0
-})
+  return props.code?.length || 0;
+});
 
 const handleCopy = async () => {
   try {
-    await navigator.clipboard.writeText(props.code)
-    Message.success('复制成功')
+    await navigator.clipboard.writeText(props.code);
+    Message.success("复制成功");
   } catch {
-    Message.error('复制失败')
+    Message.error("复制失败");
   }
-}
+};
 
 const handleSelectAll = () => {
-  const selection = window.getSelection()
-  const range = document.createRange()
-  const codeElement = document.querySelector('.code-content')
+  const selection = window.getSelection();
+  const range = document.createRange();
+  const codeElement = document.querySelector(".code-content");
   if (codeElement && selection) {
-    range.selectNodeContents(codeElement)
-    selection.removeAllRanges()
-    selection.addRange(range)
+    range.selectNodeContents(codeElement);
+    selection.removeAllRanges();
+    selection.addRange(range);
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -120,7 +118,7 @@ const handleSelectAll = () => {
     .line-numbers {
       flex-shrink: 0;
       padding: 16px 12px;
-      font-family: 'Consolas', 'Monaco', monospace;
+      font-family: "Consolas", "Monaco", monospace;
       font-size: 13px;
       line-height: 1.6;
       color: #858585;
@@ -139,7 +137,7 @@ const handleSelectAll = () => {
       margin: 0;
       padding: 16px;
       overflow-x: auto;
-      font-family: 'Consolas', 'Monaco', monospace;
+      font-family: "Consolas", "Monaco", monospace;
       font-size: 13px;
       line-height: 1.6;
       color: #d4d4d4;

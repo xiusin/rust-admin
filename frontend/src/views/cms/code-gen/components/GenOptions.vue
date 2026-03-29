@@ -31,8 +31,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import type { CodeGenOptions } from '@/api/modules/cms/codeGen';
+import { computed } from "vue";
+import type { CodeGenOptions } from "@/api/modules/cms/codeGen";
 
 interface Props {
   modelValue: CodeGenOptions;
@@ -42,11 +42,11 @@ interface Props {
 const props = defineProps<Props>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: CodeGenOptions];
+  "update:modelValue": [value: CodeGenOptions];
 }>();
 
 const modelValue = computed({
   get: () => props.modelValue,
-  set: (val) => emit('update:modelValue', val),
+  set: val => emit("update:modelValue", val)
 });
 </script>

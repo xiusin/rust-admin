@@ -27,8 +27,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import type { CmsCategoryTree } from '@/api/modules/cms/category';
+import { ref } from "vue";
+import type { CmsCategoryTree } from "@/api/modules/cms/category";
 
 interface Props {
   data: CmsCategoryTree[];
@@ -52,7 +52,7 @@ const expandAll = () => {
 };
 
 const onSelect = (keys: (string | number)[]) => {
-  emit('select', keys as number[]);
+  emit("select", keys as number[]);
 };
 
 const onDrop = (info: { dragNode: any; dropNode: any; dropPosition: number }) => {
@@ -66,11 +66,11 @@ const onDrop = (info: { dragNode: any; dropNode: any; dropPosition: number }) =>
     targetParentId = dropNode.parentId || null;
   }
 
-  emit('move', dragId, targetParentId);
+  emit("move", dragId, targetParentId);
 };
 
 defineExpose({
-  expandAll,
+  expandAll
 });
 </script>
 

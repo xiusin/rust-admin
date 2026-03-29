@@ -1,10 +1,10 @@
-import axios from 'axios';
-import { Message } from '@arco-design/web-vue';
+import axios from "axios";
+import { Message } from "@arco-design/web-vue";
 
 export interface FreightTemplate {
   id: number;
   name: string;
-  calculation_type: 'by_weight' | 'by_distance';
+  calculation_type: "by_weight" | "by_distance";
   first_weight?: string;
   first_price?: string;
   additional_weight?: string;
@@ -54,26 +54,26 @@ export interface PageParams {
 
 export const freightApi = {
   calculate: async (params: CalculateParams): Promise<FreightCalculateResp> => {
-    const res = await axios.post('/freight/calculate', params);
+    const res = await axios.post("/freight/calculate", params);
     return res.data;
   },
 
   createTemplate: async (params: CreateTemplateParams) => {
-    const res = await axios.post('/freight/template', params);
-    if (res.data.message !== 'success') {
+    const res = await axios.post("/freight/template", params);
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
   },
 
   listTemplates: async (params: PageParams) => {
-    const res = await axios.get('/freight/templates', { params });
+    const res = await axios.get("/freight/templates", { params });
     return res.data;
   },
 
   updateTemplate: async (id: number, params: Partial<CreateTemplateParams>) => {
     const res = await axios.put(`/freight/template/${id}`, params);
-    if (res.data.message !== 'success') {
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
@@ -81,9 +81,9 @@ export const freightApi = {
 
   deleteTemplate: async (id: number) => {
     const res = await axios.delete(`/freight/template/${id}`);
-    if (res.data.message !== 'success') {
+    if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
     return res.data;
-  },
+  }
 };

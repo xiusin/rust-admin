@@ -71,32 +71,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted } from "vue";
 
 const statistics = reactive({
   usedStorage: 125.6,
   usedPercent: 62,
   totalFiles: 15680,
   monthTraffic: 856.3,
-  monthRequests: 1256800,
+  monthRequests: 1256800
 });
 
 const storageData = ref([
-  { type: '图片', count: 12500, size: '85.2GB', percent: 68 },
-  { type: '视频', count: 280, size: '32.5GB', percent: 26 },
-  { type: '文档', count: 2900, size: '7.9GB', percent: 6 },
+  { type: "图片", count: 12500, size: "85.2GB", percent: 68 },
+  { type: "视频", count: 280, size: "32.5GB", percent: 26 },
+  { type: "文档", count: 2900, size: "7.9GB", percent: 6 }
 ]);
 
 const hotFiles = ref([
-  { name: 'banner_home_2026.png', size: '512KB', views: 125680, traffic: '62.5GB' },
-  { name: 'product_001.jpg', size: '256KB', views: 89560, traffic: '22.4GB' },
-  { name: 'intro_video.mp4', size: '15.2MB', views: 45230, traffic: '687GB' },
-  { name: 'product_002.jpg', size: '198KB', views: 38920, traffic: '7.6GB' },
-  { name: 'category_icon.png', size: '32KB', views: 35680, traffic: '1.1GB' },
+  { name: "banner_home_2026.png", size: "512KB", views: 125680, traffic: "62.5GB" },
+  { name: "product_001.jpg", size: "256KB", views: 89560, traffic: "22.4GB" },
+  { name: "intro_video.mp4", size: "15.2MB", views: 45230, traffic: "687GB" },
+  { name: "product_002.jpg", size: "198KB", views: 38920, traffic: "7.6GB" },
+  { name: "category_icon.png", size: "32KB", views: 35680, traffic: "1.1GB" }
 ]);
 
-onMounted(() => {
-});
+onMounted(() => {});
 </script>
 
 <style scoped>

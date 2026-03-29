@@ -67,22 +67,22 @@ defineProps<{
 }>();
 
 defineEmits<{
-  (e: 'click'): void;
+  (e: "click"): void;
 }>();
 
 const getTagColor = (tag: string) => {
   const colorMap: Record<string, string> = {
-    '官方': 'blue',
-    '热门': 'red',
-    '稳定': 'green',
-    'AI': 'purple',
-    '智能': 'purple',
-    '免费': 'cyan',
-    '实用': 'orange',
-    '高评分': 'pink',
-    '高性价比': 'gold',
+    官方: "blue",
+    热门: "red",
+    稳定: "green",
+    AI: "purple",
+    智能: "purple",
+    免费: "cyan",
+    实用: "orange",
+    高评分: "pink",
+    高性价比: "gold"
   };
-  return colorMap[tag] || 'default';
+  return colorMap[tag] || "default";
 };
 
 const formatCount = (count: number) => {

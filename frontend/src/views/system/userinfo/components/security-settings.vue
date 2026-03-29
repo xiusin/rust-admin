@@ -8,15 +8,15 @@
               <a-input-password v-model="form.password" placeholder="请输入登录密码" allow-clear />
             </a-form-item>
             <a-form-item field="phone" label="手机号">
-              <a-input  v-model="form.phone" placeholder="请输入手机号" allow-clear>
+              <a-input v-model="form.phone" placeholder="请输入手机号" allow-clear>
                 <template #prepend> +86 </template>
               </a-input>
             </a-form-item>
             <a-form-item field="email" label="邮箱">
-              <a-input  v-model="form.email" placeholder="请输入邮箱" allow-clear />
+              <a-input v-model="form.email" placeholder="请输入邮箱" allow-clear />
             </a-form-item>
             <a-form-item>
-              <a-button  type="primary" html-type="submit">提交</a-button>
+              <a-button type="primary" html-type="submit">提交</a-button>
             </a-form-item>
           </a-form>
         </a-card>

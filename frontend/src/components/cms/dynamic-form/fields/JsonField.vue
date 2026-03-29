@@ -28,77 +28,77 @@
 </template>
 
 <script setup lang="ts">
-import { Message } from '@arco-design/web-vue'
+import { Message } from "@arco-design/web-vue";
 
 interface Props {
-  modelValue: any
-  placeholder?: string
-  disabled?: boolean
+  modelValue: any;
+  placeholder?: string;
+  disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: '',
-  placeholder: '请输入JSON数据',
+  modelValue: "",
+  placeholder: "请输入JSON数据",
   disabled: false
-})
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: any]
-}>()
+  "update:modelValue": [value: any];
+}>();
 
-const error = ref('')
+const error = ref("");
 
 const localValue = computed({
   get: () => {
-    if (typeof props.modelValue === 'object') {
-      return JSON.stringify(props.modelValue, null, 2)
+    if (typeof props.modelValue === "object") {
+      return JSON.stringify(props.modelValue, null, 2);
     }
-    return props.modelValue || ''
+    return props.modelValue || "";
   },
-  set: (val) => {
-    emit('update:modelValue', val)
+  set: val => {
+    emit("update:modelValue", val);
   }
-})
+});
 
 const handleValidate = () => {
-  error.value = ''
-  if (!localValue.value) return
-  
+  error.value = "";
+  if (!localValue.value) return;
+
   try {
-    JSON.parse(localValue.value)
+    JSON.parse(localValue.value);
   } catch (e: any) {
-    error.value = 'JSON格式错误'
+    error.value = "JSON格式错误";
   }
-}
+};
 
 const handleFormat = () => {
   try {
-    const obj = JSON.parse(localValue.value)
-    localValue.value = JSON.stringify(obj, null, 2)
-    error.value = ''
-    Message.success('格式化成功')
+    const obj = JSON.parse(localValue.value);
+    localValue.value = JSON.stringify(obj, null, 2);
+    error.value = "";
+    Message.success("格式化成功");
   } catch {
-    error.value = 'JSON格式错误，无法格式化'
-    Message.error('JSON格式错误')
+    error.value = "JSON格式错误，无法格式化";
+    Message.error("JSON格式错误");
   }
-}
+};
 
 const handleCompress = () => {
   try {
-    const obj = JSON.parse(localValue.value)
-    localValue.value = JSON.stringify(obj)
-    error.value = ''
-    Message.success('压缩成功')
+    const obj = JSON.parse(localValue.value);
+    localValue.value = JSON.stringify(obj);
+    error.value = "";
+    Message.success("压缩成功");
   } catch {
-    error.value = 'JSON格式错误，无法压缩'
-    Message.error('JSON格式错误')
+    error.value = "JSON格式错误，无法压缩";
+    Message.error("JSON格式错误");
   }
-}
+};
 
 const handleClear = () => {
-  localValue.value = ''
-  error.value = ''
-}
+  localValue.value = "";
+  error.value = "";
+};
 </script>
 
 <style lang="scss" scoped>
@@ -116,7 +116,7 @@ const handleClear = () => {
   }
 
   :deep(.arco-textarea) {
-    font-family: 'Consolas', 'Monaco', monospace;
+    font-family: "Consolas", "Monaco", monospace;
     font-size: 13px;
   }
 }

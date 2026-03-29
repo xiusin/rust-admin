@@ -60,7 +60,7 @@ interface ListResponse<T> {
 
 const getData = <T>(res: ApiResponse<T>): T => {
   if (res.code !== 200) {
-    throw new Error(res.message || '请求失败');
+    throw new Error(res.message || "请求失败");
   }
   return res.data;
 };
@@ -135,5 +135,5 @@ export const attributeTemplateApi = {
   byCategory: async (categoryId: number): Promise<AttributeTemplateSimple[]> => {
     const res = await axios.get(`/product/attribute/byCategory/${categoryId}`);
     return getData(res);
-  },
+  }
 };

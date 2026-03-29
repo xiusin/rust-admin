@@ -6,9 +6,9 @@ export interface TableColumn {
   fieldName: string;
   width?: number;
   minWidth?: number;
-  fixed?: 'left' | 'right';
-  align?: 'left' | 'center' | 'right';
-  sortable?: boolean | 'custom';
+  fixed?: "left" | "right";
+  align?: "left" | "center" | "right";
+  sortable?: boolean | "custom";
   filterable?: boolean;
   showOverflowTooltip?: boolean;
   hidden?: boolean;
@@ -28,7 +28,7 @@ export interface SearchField {
   fieldId: number;
   fieldCode: string;
   fieldName: string;
-  operator: 'eq' | 'neq' | 'like' | 'gt' | 'gte' | 'lt' | 'lte' | 'in' | 'between' | 'isNull';
+  operator: "eq" | "neq" | "like" | "gt" | "gte" | "lt" | "lte" | "in" | "between" | "isNull";
   defaultValue?: any;
   placeholder?: string;
   span?: number;
@@ -43,7 +43,7 @@ export interface FilterField {
   fieldId: number;
   fieldCode: string;
   fieldName: string;
-  type: 'select' | 'checkbox' | 'radio' | 'date' | 'daterange';
+  type: "select" | "checkbox" | "radio" | "date" | "daterange";
   options?: Array<{ label: string; value: any }>;
   multiple?: boolean;
   defaultValue?: any;
@@ -52,9 +52,9 @@ export interface FilterField {
 export interface TableAction {
   key: string;
   label: string;
-  type?: 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'default';
+  type?: "primary" | "success" | "warning" | "danger" | "info" | "default";
   icon?: string;
-  action: 'edit' | 'detail' | 'delete' | 'custom';
+  action: "edit" | "detail" | "delete" | "custom";
   handler?: string;
   confirm?: string;
   show?: string;
@@ -64,9 +64,9 @@ export interface TableAction {
 export interface BatchAction {
   key: string;
   label: string;
-  type?: 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'default';
+  type?: "primary" | "success" | "warning" | "danger" | "info" | "default";
   icon?: string;
-  action: 'delete' | 'publish' | 'offline' | 'move' | 'export' | 'custom';
+  action: "delete" | "publish" | "offline" | "move" | "export" | "custom";
   handler?: string;
   confirm?: string;
   show?: string;
@@ -76,9 +76,9 @@ export interface BatchAction {
 export interface ToolbarAction {
   key: string;
   label: string;
-  type?: 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'default';
+  type?: "primary" | "success" | "warning" | "danger" | "info" | "default";
   icon?: string;
-  action: 'add' | 'import' | 'export' | 'refresh' | 'columns' | 'search' | 'custom';
+  action: "add" | "import" | "export" | "refresh" | "columns" | "search" | "custom";
   handler?: string;
   show?: string;
 }
@@ -176,7 +176,7 @@ interface ApiResponse<T = any> {
 
 const getData = <T>(res: ApiResponse<T>): T => {
   if (res.code !== 200) {
-    throw new Error(res.message || '请求失败');
+    throw new Error(res.message || "请求失败");
   }
   return res.data;
 };
@@ -233,20 +233,20 @@ export const tableApi = {
   },
 
   exportData: async (modelId: number, params?: Record<string, any>): Promise<Blob> => {
-    const res = await axios.get("/cms/table/export", { 
+    const res = await axios.get("/cms/table/export", {
       params: { modelId, ...params },
-      responseType: 'blob'
+      responseType: "blob"
     });
     return res as unknown as Blob;
   },
 
   importData: async (modelId: number, file: File): Promise<{ success: number; failed: number; errors?: string[] }> => {
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('modelId', String(modelId));
+    formData.append("file", file);
+    formData.append("modelId", String(modelId));
     const res = await axios.post("/cms/table/import", formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
+      headers: { "Content-Type": "multipart/form-data" }
     });
     return getData(res);
-  },
+  }
 };

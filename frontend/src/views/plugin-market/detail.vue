@@ -43,13 +43,7 @@
                 <div class="screenshots" v-if="pluginDetail.screenshots?.length">
                   <h3>截图预览</h3>
                   <a-row :gutter="16">
-                    <a-col
-                      v-for="(screenshot, index) in pluginDetail.screenshots"
-                      :key="index"
-                      :xs="24"
-                      :sm="12"
-                      :md="8"
-                    >
+                    <a-col v-for="(screenshot, index) in pluginDetail.screenshots" :key="index" :xs="24" :sm="12" :md="8">
                       <a-image-preview>
                         <img :src="screenshot" :alt="`截图${index + 1}`" class="screenshot-img" />
                       </a-image-preview>
@@ -187,9 +181,7 @@
                 <template #icon><icon-shopping-cart /></template>
                 加入购物车
               </a-button>
-              <a-button type="outline" size="large" long @click="handleBuyNow">
-                立即购买
-              </a-button>
+              <a-button type="outline" size="large" long @click="handleBuyNow"> 立即购买 </a-button>
             </div>
 
             <div class="plugin-stats">
@@ -228,10 +220,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { Message } from '@arco-design/web-vue';
-import { market, plan, review } from '@/api/modules/plugin-market/market';
+import { ref, computed, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { Message } from "@arco-design/web-vue";
+import { market, plan, review } from "@/api/modules/plugin-market/market";
 
 interface PluginDetail {
   id: number;
@@ -306,19 +298,19 @@ interface ReviewStats {
 const route = useRoute();
 const router = useRouter();
 
-const activeTab = ref('basic');
+const activeTab = ref("basic");
 const pluginDetail = ref<PluginDetail | null>(null);
 const planList = ref<Plan[]>([]);
 const reviewList = ref<Review[]>([]);
 const reviewStats = ref<ReviewStats | null>(null);
 const selectedPlanId = ref<number | null>(null);
-const selectedPeriod = ref('monthly');
+const selectedPeriod = ref("monthly");
 
 const changelogList = ref([
-  { version: '2.1.0', date: '2024-03-15', content: '新增多种优惠券模板，支持自定义背景图' },
-  { version: '2.0.5', date: '2024-02-28', content: '修复已知问题，优化性能' },
-  { version: '2.0.0', date: '2024-01-20', content: '全新改版，支持更多营销场景' },
-  { version: '1.5.0', date: '2023-12-10', content: '新增满减券功能' },
+  { version: "2.1.0", date: "2024-03-15", content: "新增多种优惠券模板，支持自定义背景图" },
+  { version: "2.0.5", date: "2024-02-28", content: "修复已知问题，优化性能" },
+  { version: "2.0.0", date: "2024-01-20", content: "全新改版，支持更多营销场景" },
+  { version: "1.5.0", date: "2023-12-10", content: "新增满减券功能" }
 ]);
 
 const selectedPlan = computed(() => {
@@ -327,21 +319,21 @@ const selectedPlan = computed(() => {
 
 const getTagColor = (tag: string) => {
   const colorMap: Record<string, string> = {
-    '官方': 'blue',
-    '热门': 'red',
-    '稳定': 'green',
-    'AI': 'purple',
-    '智能': 'purple',
-    '免费': 'cyan',
-    '实用': 'orange',
-    '高评分': 'pink',
-    '高性价比': 'gold',
+    官方: "blue",
+    热门: "red",
+    稳定: "green",
+    AI: "purple",
+    智能: "purple",
+    免费: "cyan",
+    实用: "orange",
+    高评分: "pink",
+    高性价比: "gold"
   };
-  return colorMap[tag] || 'default';
+  return colorMap[tag] || "default";
 };
 
 const getPlanPrice = (plan: Plan) => {
-  if (selectedPeriod.value === 'permanent') {
+  if (selectedPeriod.value === "permanent") {
     return plan.originalPrice;
   }
   return plan.price;
@@ -349,31 +341,30 @@ const getPlanPrice = (plan: Plan) => {
 
 const getPeriodName = (periodType: number) => {
   const periodMap: Record<string, string> = {
-    'monthly': '月',
-    'quarterly': '季',
-    'yearly': '年',
-    'permanent': '永久',
+    monthly: "月",
+    quarterly: "季",
+    yearly: "年",
+    permanent: "永久"
   };
-  return periodMap[selectedPeriod.value] || '月';
+  return periodMap[selectedPeriod.value] || "月";
 };
 
-const handlePeriodChange = () => {
-};
+const handlePeriodChange = () => {};
 
 const handleAddToCart = () => {
   if (!selectedPlanId.value) {
-    Message.warning('请选择套餐');
+    Message.warning("请选择套餐");
     return;
   }
-  Message.success('已加入购物车');
+  Message.success("已加入购物车");
 };
 
 const handleBuyNow = () => {
   if (!selectedPlanId.value) {
-    Message.warning('请选择套餐');
+    Message.warning("请选择套餐");
     return;
   }
-  router.push({ path: '/plugin-market/order', query: { planId: String(selectedPlanId.value) } });
+  router.push({ path: "/plugin-market/order", query: { planId: String(selectedPlanId.value) } });
 };
 
 const loadPluginDetail = async () => {

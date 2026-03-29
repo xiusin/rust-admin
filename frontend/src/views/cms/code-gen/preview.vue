@@ -57,9 +57,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { codeGenApi, type GeneratedFile, type FileTreeNode } from '@/api/modules/cms/codeGen';
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { codeGenApi, type GeneratedFile, type FileTreeNode } from "@/api/modules/cms/codeGen";
 
 const router = useRouter();
 const route = useRoute();
@@ -71,12 +71,12 @@ const selectedFile = ref<string[]>([]);
 const modelId = computed(() => Number(route.query.modelId));
 
 const goBack = () => {
-  router.push('/cms/code-gen/index');
+  router.push("/cms/code-gen/index");
 };
 
 const onFileSelect = (keys: string[]) => {
   if (keys.length > 0) {
-    const file = generatedFiles.value.find((f) => f.filePath === keys[0]);
+    const file = generatedFiles.value.find(f => f.filePath === keys[0]);
     currentFile.value = file || null;
     selectedFile.value = keys;
   }
@@ -86,17 +86,17 @@ const copyCurrentCode = async () => {
   if (!currentFile.value?.content) return;
   try {
     await navigator.clipboard.writeText(currentFile.value.content);
-    arcoMessage('success', '复制成功');
+    arcoMessage("success", "复制成功");
   } catch (error) {
     console.error(error);
   }
 };
 
 const copyAllCode = async () => {
-  const allCode = generatedFiles.value.map((f) => `// ${f.filePath}\n${f.content}`).join('\n\n');
+  const allCode = generatedFiles.value.map(f => `// ${f.filePath}\n${f.content}`).join("\n\n");
   try {
     await navigator.clipboard.writeText(allCode);
-    arcoMessage('success', '复制成功');
+    arcoMessage("success", "复制成功");
   } catch (error) {
     console.error(error);
   }
@@ -107,7 +107,7 @@ const downloadZip = async () => {
   try {
     const blob = await codeGenApi.download(modelId.value);
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `code_${modelId.value}.zip`;
     a.click();
@@ -213,7 +213,7 @@ onMounted(() => {
           line-height: 1.6;
 
           code {
-            font-family: 'Fira Code', monospace;
+            font-family: "Fira Code", monospace;
           }
         }
       }

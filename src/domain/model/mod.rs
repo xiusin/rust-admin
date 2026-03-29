@@ -62,3 +62,12 @@ pub mod m_cms_tag;
 pub mod m_form_config;
 pub mod m_table_config;
 pub mod m_code_gen;
+
+// PPT Models
+pub mod m_ppt;
+pub mod m_style;
+pub mod m_template_market;
+pub mod m_ppt_subscription;
+
+// Document Models
+pub mod m_document;

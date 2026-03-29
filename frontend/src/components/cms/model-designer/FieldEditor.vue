@@ -22,7 +22,7 @@
               </a-form-item>
             </a-col>
           </a-row>
-          
+
           <a-row :gutter="16">
             <a-col :span="12">
               <a-form-item label="字段类型" field="type" :rules="[{ required: true, message: '请选择字段类型' }]">
@@ -43,7 +43,7 @@
               </a-form-item>
             </a-col>
           </a-row>
-          
+
           <a-row :gutter="16">
             <a-col :span="12">
               <a-form-item label="默认值">
@@ -56,7 +56,7 @@
               </a-form-item>
             </a-col>
           </a-row>
-          
+
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="是否必填">
@@ -74,13 +74,13 @@
               </a-form-item>
             </a-col>
           </a-row>
-          
+
           <a-form-item label="字段描述">
             <a-textarea v-model="formData.description" placeholder="请输入字段描述" :auto-size="{ minRows: 2 }" />
           </a-form-item>
         </a-form>
       </a-tab-pane>
-      
+
       <a-tab-pane key="form" title="表单配置">
         <a-form :model="formData.formConfig" layout="vertical">
           <a-row :gutter="16">
@@ -104,7 +104,7 @@
               </a-form-item>
             </a-col>
           </a-row>
-          
+
           <a-row :gutter="16">
             <a-col :span="12">
               <a-form-item label="是否显示">
@@ -117,7 +117,7 @@
               </a-form-item>
             </a-col>
           </a-row>
-          
+
           <a-form-item label="选项配置" v-if="['select', 'radio', 'checkbox'].includes(formData.formConfig.component)">
             <a-textarea
               v-model="formData.formConfig.optionsJson"
@@ -125,7 +125,7 @@
               :auto-size="{ minRows: 3 }"
             />
           </a-form-item>
-          
+
           <a-form-item label="联动配置">
             <a-textarea
               v-model="formData.formConfig.linkageJson"
@@ -135,7 +135,7 @@
           </a-form-item>
         </a-form>
       </a-tab-pane>
-      
+
       <a-tab-pane key="table" title="表格配置">
         <a-form :model="formData.tableConfig" layout="vertical">
           <a-row :gutter="16">
@@ -150,7 +150,7 @@
               </a-form-item>
             </a-col>
           </a-row>
-          
+
           <a-row :gutter="16">
             <a-col :span="8">
               <a-form-item label="显示列">
@@ -168,7 +168,7 @@
               </a-form-item>
             </a-col>
           </a-row>
-          
+
           <a-form-item label="渲染器">
             <a-select v-model="formData.tableConfig.renderer" placeholder="请选择渲染器">
               <a-option value="text">文本</a-option>
@@ -179,7 +179,7 @@
               <a-option value="date">日期</a-option>
             </a-select>
           </a-form-item>
-          
+
           <a-form-item label="自定义渲染">
             <a-textarea
               v-model="formData.tableConfig.customRender"
@@ -189,7 +189,7 @@
           </a-form-item>
         </a-form>
       </a-tab-pane>
-      
+
       <a-tab-pane key="validation" title="验证规则">
         <ValidationRules v-model="formData.validationRules" />
       </a-tab-pane>
@@ -198,77 +198,77 @@
 </template>
 
 <script setup lang="ts">
-import { Message } from '@arco-design/web-vue'
-import FieldTypeSelect from './FieldTypeSelect.vue'
-import ValidationRules from './ValidationRules.vue'
+import { Message } from "@arco-design/web-vue";
+import FieldTypeSelect from "./FieldTypeSelect.vue";
+import ValidationRules from "./ValidationRules.vue";
 
 interface ModelField {
-  id: string
-  name: string
-  label: string
-  type: string
-  required: boolean
-  unique?: boolean
-  searchable?: boolean
-  defaultValue?: string
-  placeholder?: string
-  description?: string
-  dbType?: string
+  id: string;
+  name: string;
+  label: string;
+  type: string;
+  required: boolean;
+  unique?: boolean;
+  searchable?: boolean;
+  defaultValue?: string;
+  placeholder?: string;
+  description?: string;
+  dbType?: string;
   formConfig?: {
-    component?: string
-    tooltip?: string
-    visible?: boolean
-    disabled?: boolean
-    optionsJson?: string
-    linkageJson?: string
-  }
+    component?: string;
+    tooltip?: string;
+    visible?: boolean;
+    disabled?: boolean;
+    optionsJson?: string;
+    linkageJson?: string;
+  };
   tableConfig?: {
-    width?: number
-    minWidth?: number
-    visible?: boolean
-    sortable?: boolean
-    fixed?: boolean
-    renderer?: string
-    customRender?: string
-  }
-  validationRules?: any[]
-  sort: number
+    width?: number;
+    minWidth?: number;
+    visible?: boolean;
+    sortable?: boolean;
+    fixed?: boolean;
+    renderer?: string;
+    customRender?: string;
+  };
+  validationRules?: any[];
+  sort: number;
 }
 
 interface Props {
-  visible: boolean
-  field: ModelField | null
-  mode: 'add' | 'edit'
+  visible: boolean;
+  field: ModelField | null;
+  mode: "add" | "edit";
 }
 
 const props = withDefaults(defineProps<Props>(), {
   visible: false,
   field: null,
-  mode: 'add'
-})
+  mode: "add"
+});
 
 const emit = defineEmits<{
-  'update:visible': [value: boolean]
-  'save': [field: ModelField]
-}>()
+  "update:visible": [value: boolean];
+  save: [field: ModelField];
+}>();
 
 const modalVisible = computed({
   get: () => props.visible,
-  set: (val) => emit('update:visible', val)
-})
+  set: val => emit("update:visible", val)
+});
 
-const activeTab = ref('basic')
+const activeTab = ref("basic");
 
 const defaultFormData = (): ModelField => ({
-  id: '',
-  name: '',
-  label: '',
-  type: 'text',
+  id: "",
+  name: "",
+  label: "",
+  type: "text",
   required: false,
   unique: false,
   searchable: false,
   formConfig: {
-    component: 'input',
+    component: "input",
     visible: true,
     disabled: false
   },
@@ -276,49 +276,49 @@ const defaultFormData = (): ModelField => ({
     visible: true,
     sortable: false,
     fixed: false,
-    renderer: 'text'
+    renderer: "text"
   },
   validationRules: [],
   sort: 0
-})
+});
 
-const formData = ref<ModelField>(defaultFormData())
+const formData = ref<ModelField>(defaultFormData());
 
 watch(
   () => props.visible,
-  (val) => {
+  val => {
     if (val) {
       if (props.field) {
-        formData.value = { ...defaultFormData(), ...props.field }
+        formData.value = { ...defaultFormData(), ...props.field };
       } else {
-        formData.value = defaultFormData()
+        formData.value = defaultFormData();
       }
-      activeTab.value = 'basic'
+      activeTab.value = "basic";
     }
   }
-)
+);
 
 const handleCancel = () => {
-  modalVisible.value = false
-}
+  modalVisible.value = false;
+};
 
 const handleOk = () => {
   if (!formData.value.name) {
-    Message.warning('请输入字段名称')
-    return
+    Message.warning("请输入字段名称");
+    return;
   }
   if (!formData.value.label) {
-    Message.warning('请输入显示名称')
-    return
+    Message.warning("请输入显示名称");
+    return;
   }
   if (!formData.value.type) {
-    Message.warning('请选择字段类型')
-    return
+    Message.warning("请选择字段类型");
+    return;
   }
-  
-  emit('save', formData.value)
-  modalVisible.value = false
-}
+
+  emit("save", formData.value);
+  modalVisible.value = false;
+};
 </script>
 
 <style lang="scss" scoped>

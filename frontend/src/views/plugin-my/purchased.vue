@@ -25,7 +25,7 @@
                 <div class="plugin-version">v{{ item.pluginVersion }}</div>
               </div>
               <a-tag :color="item.isExpired ? 'red' : 'green'" class="status-tag">
-                {{ item.isExpired ? '已过期' : '有效' }}
+                {{ item.isExpired ? "已过期" : "有效" }}
               </a-tag>
             </div>
 
@@ -39,7 +39,7 @@
               <div class="info-row">
                 <span class="label">到期时间</span>
                 <span class="value" :class="{ 'text-danger': item.isExpired }">
-                  {{ item.expireTime || '永久有效' }}
+                  {{ item.expireTime || "永久有效" }}
                 </span>
               </div>
               <div class="info-row" v-if="!item.isExpired">
@@ -52,27 +52,15 @@
 
             <div class="card-footer">
               <a-space>
-                <a-button
-                  v-if="item.isExpired"
-                  type="primary"
-                  size="small"
-                  @click.stop="handleRenew(item)"
-                >
+                <a-button v-if="item.isExpired" type="primary" size="small" @click.stop="handleRenew(item)">
                   <template #icon><icon-refresh /></template>
                   续费
                 </a-button>
-                <a-button
-                  v-if="!item.isExpired"
-                  type="outline"
-                  size="small"
-                  @click.stop="handleUpgrade(item)"
-                >
+                <a-button v-if="!item.isExpired" type="outline" size="small" @click.stop="handleUpgrade(item)">
                   <template #icon><icon-up-circle /></template>
                   升级
                 </a-button>
-                <a-button type="text" size="small" @click.stop="handleDetail(item)">
-                  详情
-                </a-button>
+                <a-button type="text" size="small" @click.stop="handleDetail(item)"> 详情 </a-button>
               </a-space>
             </div>
           </a-card>
@@ -97,15 +85,13 @@
         <a-descriptions-item label="订阅方案">{{ currentRecord.planName }}</a-descriptions-item>
         <a-descriptions-item label="状态">
           <a-tag :color="currentRecord.isExpired ? 'red' : 'green'">
-            {{ currentRecord.isExpired ? '已过期' : '有效' }}
+            {{ currentRecord.isExpired ? "已过期" : "有效" }}
           </a-tag>
         </a-descriptions-item>
-        <a-descriptions-item label="开始时间">{{ currentRecord.startTime || '-' }}</a-descriptions-item>
-        <a-descriptions-item label="到期时间">{{ currentRecord.expireTime || '永久有效' }}</a-descriptions-item>
+        <a-descriptions-item label="开始时间">{{ currentRecord.startTime || "-" }}</a-descriptions-item>
+        <a-descriptions-item label="到期时间">{{ currentRecord.expireTime || "永久有效" }}</a-descriptions-item>
         <a-descriptions-item label="剩余天数" :span="2">
-          <span :class="{ 'text-danger': currentRecord.isExpired }">
-            {{ currentRecord.daysRemaining || 0 }} 天
-          </span>
+          <span :class="{ 'text-danger': currentRecord.isExpired }"> {{ currentRecord.daysRemaining || 0 }} 天 </span>
         </a-descriptions-item>
       </a-descriptions>
       <a-divider />
@@ -142,17 +128,11 @@
 
     <a-modal v-model:visible="upgradeVisible" title="升级方案" :footer="null" :width="700">
       <div v-if="currentRecord.pluginName" class="upgrade-content">
-        <a-alert class="upgrade-tip">
-          升级后将立即生效，按剩余时间折算抵扣
-        </a-alert>
+        <a-alert class="upgrade-tip"> 升级后将立即生效，按剩余时间折算抵扣 </a-alert>
         <a-list :data="upgradePlans" :bordered="false" class="plan-list">
           <template #item="{ item }">
             <a-list-item class="plan-item" :class="{ selected: upgradeForm.planId === item.id }">
-              <a-radio
-                :value="item.id"
-                :disabled="item.sort <= currentRecord.planSort"
-                @change="upgradeForm.planId = item.id"
-              >
+              <a-radio :value="item.id" :disabled="item.sort <= currentRecord.planSort" @change="upgradeForm.planId = item.id">
                 <div class="plan-content">
                   <div class="plan-header">
                     <span class="plan-name">{{ item.name }}</span>
@@ -180,8 +160,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { Message } from '@arco-design/web-vue';
+import { ref, reactive, onMounted } from "vue";
+import { Message } from "@arco-design/web-vue";
 
 interface SubscriptionRecord {
   id: number;
@@ -217,7 +197,7 @@ interface PlanItem {
 }
 
 const loading = ref(false);
-const activeTab = ref('all');
+const activeTab = ref("all");
 const tableData = ref<SubscriptionRecord[]>([]);
 const detailVisible = ref(false);
 const renewVisible = ref(false);
@@ -227,154 +207,154 @@ const upgradePlans = ref<PlanItem[]>([]);
 
 const renewForm = reactive({
   subscriptionId: 0,
-  extendDays: 30,
+  extendDays: 30
 });
 
 const upgradeForm = reactive({
-  planId: 0,
+  planId: 0
 });
 
 const mockData: SubscriptionRecord[] = [
   {
     id: 1,
     pluginId: 1,
-    pluginName: '智能优惠券',
-    pluginCover: 'https://picsum.photos/200/150?random=1',
-    pluginVersion: '2.1.0',
+    pluginName: "智能优惠券",
+    pluginCover: "https://picsum.photos/200/150?random=1",
+    pluginVersion: "2.1.0",
     planId: 2,
-    planName: '专业版',
+    planName: "专业版",
     planSort: 2,
-    startTime: '2024-03-20 10:35:00',
-    expireTime: '2025-03-25 10:35:00',
+    startTime: "2024-03-20 10:35:00",
+    expireTime: "2025-03-25 10:35:00",
     isExpired: false,
     daysRemaining: 361,
     status: 1,
-    statusName: '有效',
+    statusName: "有效"
   },
   {
     id: 2,
     pluginId: 2,
-    pluginName: '限时秒杀',
-    pluginCover: 'https://picsum.photos/200/150?random=2',
-    pluginVersion: '1.5.0',
+    pluginName: "限时秒杀",
+    pluginCover: "https://picsum.photos/200/150?random=2",
+    pluginVersion: "1.5.0",
     planId: 1,
-    planName: '基础版',
+    planName: "基础版",
     planSort: 1,
-    startTime: '2024-02-15 14:20:00',
-    expireTime: '2024-03-15 14:20:00',
+    startTime: "2024-02-15 14:20:00",
+    expireTime: "2024-03-15 14:20:00",
     isExpired: true,
     daysRemaining: 0,
     status: 0,
-    statusName: '已过期',
+    statusName: "已过期"
   },
   {
     id: 3,
     pluginId: 3,
-    pluginName: '数据统计分析',
-    pluginCover: 'https://picsum.photos/200/150?random=5',
-    pluginVersion: '2.0.0',
+    pluginName: "数据统计分析",
+    pluginCover: "https://picsum.photos/200/150?random=5",
+    pluginVersion: "2.0.0",
     planId: 3,
-    planName: '企业版',
+    planName: "企业版",
     planSort: 3,
-    startTime: '2024-01-10 09:00:00',
-    expireTime: '2025-01-10 09:00:00',
+    startTime: "2024-01-10 09:00:00",
+    expireTime: "2025-01-10 09:00:00",
     isExpired: false,
     daysRemaining: 293,
     status: 1,
-    statusName: '有效',
+    statusName: "有效"
   },
   {
     id: 4,
     pluginId: 4,
-    pluginName: 'AI智能客服',
-    pluginCover: 'https://picsum.photos/200/150?random=6',
-    pluginVersion: '1.0.0',
+    pluginName: "AI智能客服",
+    pluginCover: "https://picsum.photos/200/150?random=6",
+    pluginVersion: "1.0.0",
     planId: 2,
-    planName: '高级版',
+    planName: "高级版",
     planSort: 2,
-    startTime: '2023-12-01 08:30:00',
-    expireTime: '2024-12-01 08:30:00',
+    startTime: "2023-12-01 08:30:00",
+    expireTime: "2024-12-01 08:30:00",
     isExpired: true,
     daysRemaining: 0,
     status: 0,
-    statusName: '已过期',
-  },
+    statusName: "已过期"
+  }
 ];
 
 const mockPlans: PlanItem[] = [
   {
     id: 1,
     pluginId: 1,
-    name: '基础版',
-    description: '适合个人开发者或小型店铺使用',
+    name: "基础版",
+    description: "适合个人开发者或小型店铺使用",
     periodType: 0,
-    periodTypeName: '月付',
+    periodTypeName: "月付",
     periodDays: 30,
     price: 99,
     originalPrice: 99,
     features: [
-      { code: 'basic', name: '基础功能', included: true },
-      { code: 'template', name: '5个优惠券模板', included: true },
+      { code: "basic", name: "基础功能", included: true },
+      { code: "template", name: "5个优惠券模板", included: true }
     ],
     maxDevices: 1,
     sort: 1,
-    status: 1,
+    status: 1
   },
   {
     id: 2,
     pluginId: 1,
-    name: '专业版',
-    description: '适合中型商家使用',
+    name: "专业版",
+    description: "适合中型商家使用",
     periodType: 0,
-    periodTypeName: '月付',
+    periodTypeName: "月付",
     periodDays: 30,
     price: 299,
     originalPrice: 399,
     features: [
-      { code: 'basic', name: '基础功能', included: true },
-      { code: 'template', name: '无限优惠券模板', included: true },
-      { code: 'api', name: 'API调用', included: true },
+      { code: "basic", name: "基础功能", included: true },
+      { code: "template", name: "无限优惠券模板", included: true },
+      { code: "api", name: "API调用", included: true }
     ],
     maxDevices: 5,
     sort: 2,
-    status: 1,
+    status: 1
   },
   {
     id: 3,
     pluginId: 1,
-    name: '企业版',
-    description: '适合大型企业使用',
+    name: "企业版",
+    description: "适合大型企业使用",
     periodType: 0,
-    periodTypeName: '月付',
+    periodTypeName: "月付",
     periodDays: 30,
     price: 799,
     originalPrice: 999,
     features: [
-      { code: 'basic', name: '基础功能', included: true },
-      { code: 'template', name: '无限优惠券模板', included: true },
-      { code: 'api', name: '无限API调用', included: true },
-      { code: 'priority', name: '专属客服', included: true },
+      { code: "basic", name: "基础功能", included: true },
+      { code: "template", name: "无限优惠券模板", included: true },
+      { code: "api", name: "无限API调用", included: true },
+      { code: "priority", name: "专属客服", included: true }
     ],
     maxDevices: -1,
     sort: 3,
-    status: 1,
-  },
+    status: 1
+  }
 ];
 
 const filterData = (tab: string) => {
-  if (tab === 'all') {
+  if (tab === "all") {
     tableData.value = mockData;
-  } else if (tab === 'active') {
-    tableData.value = mockData.filter((item) => !item.isExpired);
+  } else if (tab === "active") {
+    tableData.value = mockData.filter(item => !item.isExpired);
   } else {
-    tableData.value = mockData.filter((item) => item.isExpired);
+    tableData.value = mockData.filter(item => item.isExpired);
   }
 };
 
 const loadData = async () => {
   loading.value = true;
   try {
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 500));
     filterData(activeTab.value);
   } finally {
     loading.value = false;
@@ -404,16 +384,16 @@ const handleRenew = (record: SubscriptionRecord) => {
 
 const submitRenew = async () => {
   if (!renewForm.extendDays) {
-    Message.warning('请选择续费时长');
+    Message.warning("请选择续费时长");
     return;
   }
   try {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    Message.success('续费成功');
+    await new Promise(resolve => setTimeout(resolve, 500));
+    Message.success("续费成功");
     renewVisible.value = false;
     loadData();
   } catch {
-    Message.error('续费失败，请重试');
+    Message.error("续费失败，请重试");
   }
 };
 
@@ -427,16 +407,16 @@ const handleUpgrade = (record: SubscriptionRecord) => {
 
 const submitUpgrade = async () => {
   if (!upgradeForm.planId || upgradeForm.planId === currentRecord.value.planId) {
-    Message.warning('请选择要升级的方案');
+    Message.warning("请选择要升级的方案");
     return;
   }
   try {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    Message.success('升级成功');
+    await new Promise(resolve => setTimeout(resolve, 500));
+    Message.success("升级成功");
     upgradeVisible.value = false;
     loadData();
   } catch {
-    Message.error('升级失败，请重试');
+    Message.error("升级失败，请重试");
   }
 };
 

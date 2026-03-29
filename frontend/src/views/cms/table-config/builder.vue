@@ -188,9 +188,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import { tableApi, type TableColumnConfig, type TableConfigDetail } from '@/api/modules/cms/table';
+import { ref, reactive, computed, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { tableApi, type TableColumnConfig, type TableConfigDetail } from "@/api/modules/cms/table";
 
 const router = useRouter();
 const route = useRoute();
@@ -202,36 +202,36 @@ const draggedColumn = ref<TableColumnConfig | null>(null);
 
 const tableId = computed(() => Number(route.query.id));
 const modelId = computed(() => Number(route.query.modelId));
-const formTitle = computed(() => (tableId.value ? '编辑表格配置' : '新增表格配置'));
+const formTitle = computed(() => (tableId.value ? "编辑表格配置" : "新增表格配置"));
 
 const columns = ref<TableColumnConfig[]>([]);
 const previewData = ref<any[]>([]);
 
 const tableConfig = reactive({
-  name: '',
-  code: '',
-  selectionType: '' as '' | 'checkbox' | 'radio',
+  name: "",
+  code: "",
+  selectionType: "" as "" | "checkbox" | "radio",
   bordered: true,
   striped: false,
   pagination: true,
-  pageSize: 20,
+  pageSize: 20
 });
 
 const previewColumns = computed(() => {
   return columns.value
-    .filter((c) => c.visible)
-    .map((c) => ({
+    .filter(c => c.visible)
+    .map(c => ({
       title: c.title,
       dataIndex: c.dataIndex,
       width: c.width,
       fixed: c.fixed || undefined,
       align: c.align,
-      sortable: c.sortable ? { sortDirections: ['ascend', 'descend'] } : undefined,
+      sortable: c.sortable ? { sortDirections: ["ascend", "descend"] } : undefined
     }));
 });
 
 const goBack = () => {
-  router.push('/cms/table-config/list');
+  router.push("/cms/table-config/list");
 };
 
 const selectColumn = (column: TableColumnConfig) => {
@@ -241,14 +241,14 @@ const selectColumn = (column: TableColumnConfig) => {
 const addColumn = () => {
   const newColumn: TableColumnConfig = {
     id: Date.now(),
-    title: '新列',
+    title: "新列",
     dataIndex: `column_${columns.value.length + 1}`,
     width: 100,
     visible: true,
     sortable: false,
     filterable: false,
-    renderType: 'text',
-    align: 'left',
+    renderType: "text",
+    align: "left"
   };
   columns.value.push(newColumn);
   currentColumn.value = newColumn;
@@ -260,8 +260,8 @@ const onDragStart = (e: DragEvent, column: TableColumnConfig) => {
 
 const onDrop = (e: DragEvent, targetColumn: TableColumnConfig) => {
   if (!draggedColumn.value || draggedColumn.value.id === targetColumn.id) return;
-  const draggedIndex = columns.value.findIndex((c) => c.id === draggedColumn.value!.id);
-  const targetIndex = columns.value.findIndex((c) => c.id === targetColumn.id);
+  const draggedIndex = columns.value.findIndex(c => c.id === draggedColumn.value!.id);
+  const targetIndex = columns.value.findIndex(c => c.id === targetColumn.id);
   columns.value.splice(draggedIndex, 1);
   columns.value.splice(targetIndex, 0, draggedColumn.value);
 };
@@ -269,7 +269,7 @@ const onDrop = (e: DragEvent, targetColumn: TableColumnConfig) => {
 const handlePreview = () => {
   previewData.value = Array.from({ length: 5 }, (_, i) => {
     const row: any = { id: i + 1 };
-    columns.value.forEach((c) => {
+    columns.value.forEach(c => {
       row[c.dataIndex] = `示例数据 ${i + 1}`;
     });
     return row;
@@ -291,15 +291,15 @@ const handleSave = async () => {
         striped: tableConfig.striped,
         pagination: tableConfig.pagination,
         pageSize: tableConfig.pageSize,
-        columns: columns.value,
-      },
+        columns: columns.value
+      }
     };
     if (tableId.value) {
       await tableApi.edit(params);
-      arcoMessage('success', '保存成功');
+      arcoMessage("success", "保存成功");
     } else {
       await tableApi.add(params);
-      arcoMessage('success', '创建成功');
+      arcoMessage("success", "创建成功");
     }
     goBack();
   } catch (error) {
@@ -312,11 +312,11 @@ const handleSave = async () => {
 const handleExport = () => {
   const config = {
     ...tableConfig,
-    columns: columns.value,
+    columns: columns.value
   };
-  const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify(config, null, 2)], { type: "application/json" });
   const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
   a.download = `table-config-${Date.now()}.json`;
   a.click();
@@ -330,7 +330,7 @@ const loadTable = async () => {
     const data = await tableApi.detail(tableId.value);
     tableConfig.name = data.name;
     tableConfig.code = data.code;
-    tableConfig.selectionType = data.config?.selectionType || '';
+    tableConfig.selectionType = data.config?.selectionType || "";
     tableConfig.bordered = data.config?.bordered ?? true;
     tableConfig.striped = data.config?.striped ?? false;
     tableConfig.pagination = data.config?.pagination ?? true;

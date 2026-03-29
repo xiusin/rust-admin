@@ -58,18 +58,18 @@
               <a-descriptions :column="2" bordered>
                 <a-descriptions-item label="分类名称">{{ currentCategory.name }}</a-descriptions-item>
                 <a-descriptions-item label="分类编码">{{ currentCategory.code }}</a-descriptions-item>
-                <a-descriptions-item label="别名">{{ currentCategory.slug || '-' }}</a-descriptions-item>
-                <a-descriptions-item label="所属模型">{{ currentCategory.modelName || '-' }}</a-descriptions-item>
-                <a-descriptions-item label="父级分类">{{ currentCategory.parentName || '无' }}</a-descriptions-item>
+                <a-descriptions-item label="别名">{{ currentCategory.slug || "-" }}</a-descriptions-item>
+                <a-descriptions-item label="所属模型">{{ currentCategory.modelName || "-" }}</a-descriptions-item>
+                <a-descriptions-item label="父级分类">{{ currentCategory.parentName || "无" }}</a-descriptions-item>
                 <a-descriptions-item label="状态">
                   <a-tag :color="currentCategory.status ? 'green' : 'red'" size="small">
-                    {{ currentCategory.status ? '启用' : '禁用' }}
+                    {{ currentCategory.status ? "启用" : "禁用" }}
                   </a-tag>
                 </a-descriptions-item>
                 <a-descriptions-item label="排序">{{ currentCategory.sort }}</a-descriptions-item>
                 <a-descriptions-item label="内容数量">{{ currentCategory.contentCount || 0 }}</a-descriptions-item>
-                <a-descriptions-item label="描述" :span="2">{{ currentCategory.description || '-' }}</a-descriptions-item>
-                <a-descriptions-item label="关键词" :span="2">{{ currentCategory.keywords || '-' }}</a-descriptions-item>
+                <a-descriptions-item label="描述" :span="2">{{ currentCategory.description || "-" }}</a-descriptions-item>
+                <a-descriptions-item label="关键词" :span="2">{{ currentCategory.keywords || "-" }}</a-descriptions-item>
               </a-descriptions>
             </div>
             <div v-else class="empty-category">
@@ -129,18 +129,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue';
-import { categoryApi, type CmsCategoryItem, type CmsCategoryTree, type CategoryAddParams, type CategoryEditParams } from '@/api/modules/cms/category';
-import { modelApi, type CmsModel } from '@/api/modules/cms/model';
-import CategoryTree from './components/CategoryTree.vue';
+import { ref, reactive, computed, onMounted } from "vue";
+import {
+  categoryApi,
+  type CmsCategoryItem,
+  type CmsCategoryTree,
+  type CategoryAddParams,
+  type CategoryEditParams
+} from "@/api/modules/cms/category";
+import { modelApi, type CmsModel } from "@/api/modules/cms/model";
+import CategoryTree from "./components/CategoryTree.vue";
 
 const treeRef = ref();
 const treeData = ref<CmsCategoryTree[]>([]);
 const selectedKeys = ref<number[]>([]);
 const currentCategory = ref<CmsCategoryItem | null>(null);
-const searchKeyword = ref('');
+const searchKeyword = ref("");
 const modalVisible = ref(false);
-const modalTitle = ref('新增分类');
+const modalTitle = ref("新增分类");
 const formRef = ref();
 const models = ref<CmsModel[]>([]);
 
@@ -148,18 +154,18 @@ const form = reactive({
   id: 0,
   parentId: null as number | null,
   modelId: null as number | null,
-  name: '',
-  code: '',
-  slug: '',
-  icon: '',
+  name: "",
+  code: "",
+  slug: "",
+  icon: "",
   sort: 0,
   status: true,
-  description: '',
+  description: ""
 });
 
 const rules = {
-  name: [{ required: true, message: '请输入分类名称' }],
-  code: [{ required: true, message: '请输入分类编码' }],
+  name: [{ required: true, message: "请输入分类名称" }],
+  code: [{ required: true, message: "请输入分类编码" }]
 };
 
 const filteredTreeData = computed(() => {
@@ -218,44 +224,44 @@ const onSelectTree = (keys: number[]) => {
 };
 
 const onAdd = (parentId: number | null) => {
-  modalTitle.value = '新增分类';
+  modalTitle.value = "新增分类";
   form.id = 0;
   form.parentId = parentId;
   form.modelId = null;
-  form.name = '';
-  form.code = '';
-  form.slug = '';
-  form.icon = '';
+  form.name = "";
+  form.code = "";
+  form.slug = "";
+  form.icon = "";
   form.sort = 0;
   form.status = true;
-  form.description = '';
+  form.description = "";
   modalVisible.value = true;
 };
 
 const onEdit = (record: CmsCategoryItem) => {
-  modalTitle.value = '编辑分类';
+  modalTitle.value = "编辑分类";
   form.id = record.id;
   form.parentId = record.parentId || null;
   form.modelId = record.modelId || null;
   form.name = record.name;
   form.code = record.code;
-  form.slug = record.slug || '';
-  form.icon = record.icon || '';
+  form.slug = record.slug || "";
+  form.icon = record.icon || "";
   form.sort = record.sort;
   form.status = record.status;
-  form.description = record.description || '';
+  form.description = record.description || "";
   modalVisible.value = true;
 };
 
 const onDelete = async (record: CmsCategoryItem) => {
   Modal.warning({
-    title: '确认删除',
+    title: "确认删除",
     content: `确定要删除分类"${record.name}"吗？`,
     hideCancel: false,
     onOk: async () => {
       try {
         await categoryApi.delete(record.id);
-        arcoMessage('success', '删除成功');
+        arcoMessage("success", "删除成功");
         loadTree();
         if (currentCategory.value?.id === record.id) {
           currentCategory.value = null;
@@ -264,14 +270,14 @@ const onDelete = async (record: CmsCategoryItem) => {
       } catch (error) {
         console.error(error);
       }
-    },
+    }
   });
 };
 
 const onMove = async (id: number, parentId: number | null) => {
   try {
     await categoryApi.move(id, parentId || undefined);
-    arcoMessage('success', '移动成功');
+    arcoMessage("success", "移动成功");
     loadTree();
   } catch (error) {
     console.error(error);
@@ -284,10 +290,10 @@ const onSubmit = async () => {
   try {
     if (form.id) {
       await categoryApi.edit(form as CategoryEditParams);
-      arcoMessage('success', '修改成功');
+      arcoMessage("success", "修改成功");
     } else {
       await categoryApi.add(form as CategoryAddParams);
-      arcoMessage('success', '新增成功');
+      arcoMessage("success", "新增成功");
     }
     modalVisible.value = false;
     loadTree();

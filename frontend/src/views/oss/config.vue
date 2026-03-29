@@ -63,7 +63,7 @@
         </template>
         <template #is_default="{ record }">
           <a-tag :color="record.is_default === 1 ? 'green' : 'gray'">
-            {{ record.is_default === 1 ? '默认' : '否' }}
+            {{ record.is_default === 1 ? "默认" : "否" }}
           </a-tag>
         </template>
         <template #status="{ record }">
@@ -121,9 +121,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { Message, Modal } from '@arco-design/web-vue';
-import axios from '@/api';
+import { ref, reactive, onMounted } from "vue";
+import { Message, Modal } from "@arco-design/web-vue";
+import axios from "@/api";
 
 interface OssRecord {
   id: number;
@@ -143,9 +143,9 @@ interface OssRecord {
 
 const formData = reactive({
   form: {
-    name: '',
-    storage_type: null as string | null,
-  },
+    name: "",
+    storage_type: null as string | null
+  }
 });
 
 const formRef = ref();
@@ -158,47 +158,47 @@ const loading = ref(false);
 const tableData = ref<OssRecord[]>([]);
 
 const columns = [
-  { title: '配置名称', dataIndex: 'name', width: 150 },
-  { title: '存储类型', dataIndex: 'storage_type', slotName: 'storage_type', width: 120 },
-  { title: 'Endpoint', dataIndex: 'endpoint', width: 200, ellipsis: true },
-  { title: 'Bucket', dataIndex: 'bucket', width: 150 },
-  { title: '默认', dataIndex: 'is_default', slotName: 'is_default', width: 80 },
-  { title: '状态', dataIndex: 'status', slotName: 'status', width: 100 },
-  { title: '创建时间', dataIndex: 'created_at', width: 160 },
-  { title: '操作', slotName: 'optional', align: 'center', width: 150 },
+  { title: "配置名称", dataIndex: "name", width: 150 },
+  { title: "存储类型", dataIndex: "storage_type", slotName: "storage_type", width: 120 },
+  { title: "Endpoint", dataIndex: "endpoint", width: 200, ellipsis: true },
+  { title: "Bucket", dataIndex: "bucket", width: 150 },
+  { title: "默认", dataIndex: "is_default", slotName: "is_default", width: 80 },
+  { title: "状态", dataIndex: "status", slotName: "status", width: 100 },
+  { title: "创建时间", dataIndex: "created_at", width: 160 },
+  { title: "操作", slotName: "optional", align: "center", width: 150 }
 ];
 
 const getStorageTypeName = (type: string) => {
   const names: Record<string, string> = {
-    aliyun: '阿里云OSS',
-    tencent: '腾讯云COS',
-    qiniu: '七牛云',
-    minio: 'MinIO',
+    aliyun: "阿里云OSS",
+    tencent: "腾讯云COS",
+    qiniu: "七牛云",
+    minio: "MinIO"
   };
   return names[type] || type;
 };
 
 const modalVisible = ref(false);
-const modalTitle = ref('新增配置');
+const modalTitle = ref("新增配置");
 const form = reactive({
   id: 0,
-  name: '',
-  storage_type: 'aliyun',
-  endpoint: '',
-  bucket: '',
-  access_key: '',
-  secret_key: '',
-  region: '',
-  domain: '',
+  name: "",
+  storage_type: "aliyun",
+  endpoint: "",
+  bucket: "",
+  access_key: "",
+  secret_key: "",
+  region: "",
+  domain: "",
   is_default: false,
-  is_active: true,
+  is_active: true
 });
 
 const loadData = async () => {
   loading.value = true;
   try {
-    const { data } = await axios.get('/oss-config/list');
-    if (data.message === 'success') {
+    const { data } = await axios.get("/oss-config/list");
+    if (data.message === "success") {
       tableData.value = data.data || [];
     }
   } catch (e) {
@@ -209,40 +209,52 @@ const loadData = async () => {
 };
 
 const handleAdd = () => {
-  modalTitle.value = '新增配置';
-  Object.assign(form, { id: 0, name: '', storage_type: 'aliyun', endpoint: '', bucket: '', access_key: '', secret_key: '', region: '', domain: '', is_default: false, is_active: true });
+  modalTitle.value = "新增配置";
+  Object.assign(form, {
+    id: 0,
+    name: "",
+    storage_type: "aliyun",
+    endpoint: "",
+    bucket: "",
+    access_key: "",
+    secret_key: "",
+    region: "",
+    domain: "",
+    is_default: false,
+    is_active: true
+  });
   modalVisible.value = true;
 };
 
 const handleEdit = (record: OssRecord) => {
-  modalTitle.value = '编辑配置';
+  modalTitle.value = "编辑配置";
   Object.assign(form, {
     ...record,
     is_default: record.is_default === 1,
-    is_active: record.status === 1,
+    is_active: record.status === 1
   });
   modalVisible.value = true;
 };
 
 const handleDelete = (record: OssRecord) => {
   Modal.confirm({
-    title: '确认删除',
+    title: "确认删除",
     content: `确定要删除配置"${record.name}"吗？`,
     onOk: async () => {
       try {
-        await axios.delete('/oss-config/del', { params: { id: record.id } });
-        Message.success('删除成功');
+        await axios.delete("/oss-config/del", { params: { id: record.id } });
+        Message.success("删除成功");
         loadData();
       } catch (e) {
         console.error(e);
       }
-    },
+    }
   });
 };
 
 const handleStatusChange = async (record: OssRecord) => {
   try {
-    await axios.put('/oss-config/toggle', null, { params: { id: record.id } });
+    await axios.put("/oss-config/toggle", null, { params: { id: record.id } });
     Message.success(`${record.name} 状态已切换`);
     loadData();
   } catch (e) {
@@ -252,7 +264,7 @@ const handleStatusChange = async (record: OssRecord) => {
 
 const handleSubmit = async () => {
   if (!form.name || !form.storage_type || !form.endpoint || !form.bucket || !form.access_key || !form.secret_key) {
-    Message.warning('请填写完整信息');
+    Message.warning("请填写完整信息");
     return;
   }
   try {
@@ -266,15 +278,15 @@ const handleSubmit = async () => {
       region: form.region || null,
       domain: form.domain || null,
       is_default: form.is_default ? 1 : 0,
-      status: form.is_active ? 1 : 0,
+      status: form.is_active ? 1 : 0
     };
 
     if (form.id) {
-      await axios.put('/oss-config/edit', { ...submitData, id: form.id });
-      Message.success('编辑成功');
+      await axios.put("/oss-config/edit", { ...submitData, id: form.id });
+      Message.success("编辑成功");
     } else {
-      await axios.post('/oss-config/add', submitData);
-      Message.success('新增成功');
+      await axios.post("/oss-config/add", submitData);
+      Message.success("新增成功");
     }
     modalVisible.value = false;
     loadData();

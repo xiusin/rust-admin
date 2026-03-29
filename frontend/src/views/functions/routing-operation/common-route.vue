@@ -5,7 +5,7 @@
         <a-space direction="vertical" fill>
           <div>路由：{{ route.path }}</div>
           <div>参数：{{ JSON.stringify(route.query) }}</div>
-          <a-input  :style="{ width: '320px' }" placeholder="请输入内容测试页面缓存" allow-clear v-model="form" />
+          <a-input :style="{ width: '320px' }" placeholder="请输入内容测试页面缓存" allow-clear v-model="form" />
         </a-space>
       </a-card>
     </div>

@@ -80,7 +80,7 @@
         </template>
         <template #status="{ record }">
           <a-tag :color="record.status === '0' ? 'green' : 'red'" bordered size="small">
-            {{ record.status === '0' ? '营业中' : '已停业' }}
+            {{ record.status === "0" ? "营业中" : "已停业" }}
           </a-tag>
         </template>
         <template #optional="{ record }">
@@ -120,7 +120,14 @@
           </a-col>
           <a-col :span="12">
             <a-form-item field="sort" label="排序" validate-trigger="blur">
-              <a-input-number v-model="form.sort" :min="0" :max="9999" :style="{ width: '150px' }" placeholder="请输入排序" mode="button" />
+              <a-input-number
+                v-model="form.sort"
+                :min="0"
+                :max="9999"
+                :style="{ width: '150px' }"
+                placeholder="请输入排序"
+                mode="button"
+              />
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -190,7 +197,13 @@
       </a-table>
     </a-modal>
 
-    <a-modal v-model:visible="adjustStockModalVisible" title="库存调整" :width="500" @ok="onSubmitAdjustStock" @cancel="adjustStockModalVisible = false">
+    <a-modal
+      v-model:visible="adjustStockModalVisible"
+      title="库存调整"
+      :width="500"
+      @ok="onSubmitAdjustStock"
+      @cancel="adjustStockModalVisible = false"
+    >
       <a-form :model="adjustStockForm" auto-label-width layout="vertical">
         <a-form-item label="商品">
           <a-input :value="adjustStockForm.productName" disabled />
@@ -213,15 +226,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { storeApi, StoreListItem, StoreStockItem } from '@/api/modules/product/store';
+import { ref, reactive, onMounted } from "vue";
+import { storeApi, StoreListItem, StoreStockItem } from "@/api/modules/product/store";
 
 const loading = ref(false);
 const stockLoading = ref(false);
 const tableData = ref<StoreListItem[]>([]);
 const stockTableData = ref<StoreStockItem[]>([]);
 const modalVisible = ref(false);
-const modalTitle = ref('新增门店');
+const modalTitle = ref("新增门店");
 const formRef = ref();
 const selectedIds = ref<string[]>([]);
 const searchFormRef = ref();
@@ -230,39 +243,39 @@ const adjustStockModalVisible = ref(false);
 const currentStoreId = ref(0);
 
 const searchForm = reactive({
-  name: '',
-  status: null as string | null,
+  name: "",
+  status: null as string | null
 });
 
 const form = reactive({
   id: 0,
-  name: '',
-  logo: '',
-  contactName: '',
-  contactPhone: '',
-  province: '',
-  city: '',
-  district: '',
-  address: '',
-  businessHours: '',
-  description: '',
+  name: "",
+  logo: "",
+  contactName: "",
+  contactPhone: "",
+  province: "",
+  city: "",
+  district: "",
+  address: "",
+  businessHours: "",
+  description: "",
   sort: 0,
-  status: '0',
+  status: "0"
 });
 
 const adjustStockForm = reactive({
   storeId: 0,
   productId: 0,
   skuId: undefined as number | undefined,
-  productName: '',
-  skuCode: '',
+  productName: "",
+  skuCode: "",
   currentStock: 0,
   changeNum: 0,
-  remark: '',
+  remark: ""
 });
 
 const rules = {
-  name: [{ required: true, message: '请输入门店名称' }],
+  name: [{ required: true, message: "请输入门店名称" }]
 };
 
 const pagination = reactive({
@@ -270,7 +283,7 @@ const pagination = reactive({
   pageSize: 10,
   showPageSize: true,
   showTotal: true,
-  total: 0,
+  total: 0
 });
 
 const stockPagination = reactive({
@@ -278,30 +291,30 @@ const stockPagination = reactive({
   pageSize: 10,
   showPageSize: true,
   showTotal: true,
-  total: 0,
+  total: 0
 });
 
 const columns = [
-  { type: 'selection', width: 60, fixed: 'left' },
-  { title: '门店Logo', dataIndex: 'logo', slotName: 'logo', width: 100 },
-  { title: '门店名称', dataIndex: 'name', width: 150 },
-  { title: '联系人', dataIndex: 'contactName', width: 100 },
-  { title: '联系电话', dataIndex: 'contactPhone', width: 130 },
-  { title: '地址', dataIndex: 'address', width: 250 },
-  { title: '排序', dataIndex: 'sort', width: 80, align: 'center' },
-  { title: '状态', dataIndex: 'status', slotName: 'status', width: 100, align: 'center' },
-  { title: '创建时间', dataIndex: 'createdAt', width: 180 },
-  { title: '操作', slotName: 'optional', width: 180, fixed: 'right' },
+  { type: "selection", width: 60, fixed: "left" },
+  { title: "门店Logo", dataIndex: "logo", slotName: "logo", width: 100 },
+  { title: "门店名称", dataIndex: "name", width: 150 },
+  { title: "联系人", dataIndex: "contactName", width: 100 },
+  { title: "联系电话", dataIndex: "contactPhone", width: 130 },
+  { title: "地址", dataIndex: "address", width: 250 },
+  { title: "排序", dataIndex: "sort", width: 80, align: "center" },
+  { title: "状态", dataIndex: "status", slotName: "status", width: 100, align: "center" },
+  { title: "创建时间", dataIndex: "createdAt", width: 180 },
+  { title: "操作", slotName: "optional", width: 180, fixed: "right" }
 ];
 
 const stockColumns = [
-  { title: '商品图片', slotName: 'productImage', width: 100 },
-  { title: '商品名称', dataIndex: 'productName', width: 180 },
-  { title: 'SKU编码', dataIndex: 'skuCode', width: 130 },
-  { title: '规格', dataIndex: 'specText', width: 120 },
-  { title: '库存', dataIndex: 'stock', width: 80 },
-  { title: '预警值', dataIndex: 'alertStock', width: 80 },
-  { title: '操作', slotName: 'optional', width: 80 },
+  { title: "商品图片", slotName: "productImage", width: 100 },
+  { title: "商品名称", dataIndex: "productName", width: 180 },
+  { title: "SKU编码", dataIndex: "skuCode", width: 130 },
+  { title: "规格", dataIndex: "specText", width: 120 },
+  { title: "库存", dataIndex: "stock", width: 80 },
+  { title: "预警值", dataIndex: "alertStock", width: 80 },
+  { title: "操作", slotName: "optional", width: 80 }
 ];
 
 const getList = async () => {
@@ -311,7 +324,7 @@ const getList = async () => {
       pageNum: pagination.current,
       pageSize: pagination.pageSize,
       name: searchForm.name || undefined,
-      status: searchForm.status || undefined,
+      status: searchForm.status || undefined
     });
     tableData.value = data.list || [];
     pagination.total = data.total || 0;
@@ -327,7 +340,7 @@ const getStoreStockList = async () => {
   try {
     const data = await storeApi.stockList(currentStoreId.value, {
       pageNum: stockPagination.current,
-      pageSize: stockPagination.pageSize,
+      pageSize: stockPagination.pageSize
     });
     stockTableData.value = data.list || [];
     stockPagination.total = data.total || 0;
@@ -374,38 +387,38 @@ const handleStockPageSizeChange = (pageSize: number) => {
 };
 
 const onAdd = () => {
-  modalTitle.value = '新增门店';
+  modalTitle.value = "新增门店";
   form.id = 0;
-  form.name = '';
-  form.logo = '';
-  form.contactName = '';
-  form.contactPhone = '';
-  form.province = '';
-  form.city = '';
-  form.district = '';
-  form.address = '';
-  form.businessHours = '';
-  form.description = '';
+  form.name = "";
+  form.logo = "";
+  form.contactName = "";
+  form.contactPhone = "";
+  form.province = "";
+  form.city = "";
+  form.district = "";
+  form.address = "";
+  form.businessHours = "";
+  form.description = "";
   form.sort = 0;
-  form.status = '0';
+  form.status = "0";
   modalVisible.value = true;
 };
 
 const onEdit = async (record: StoreListItem) => {
-  modalTitle.value = '编辑门店';
+  modalTitle.value = "编辑门店";
   try {
     const data = await storeApi.detail(record.id);
     form.id = data.id;
     form.name = data.name;
-    form.logo = data.logo || '';
-    form.contactName = data.contactName || '';
-    form.contactPhone = data.contactPhone || '';
-    form.province = data.province || '';
-    form.city = data.city || '';
-    form.district = data.district || '';
-    form.address = data.address || '';
-    form.businessHours = data.businessHours || '';
-    form.description = data.description || '';
+    form.logo = data.logo || "";
+    form.contactName = data.contactName || "";
+    form.contactPhone = data.contactPhone || "";
+    form.province = data.province || "";
+    form.city = data.city || "";
+    form.district = data.district || "";
+    form.address = data.address || "";
+    form.businessHours = data.businessHours || "";
+    form.description = data.description || "";
     form.sort = data.sort;
     form.status = data.status;
     modalVisible.value = true;
@@ -417,7 +430,7 @@ const onEdit = async (record: StoreListItem) => {
 const onDelete = async (record: StoreListItem) => {
   try {
     await storeApi.delete([record.id]);
-    arcoMessage('success', '删除成功');
+    arcoMessage("success", "删除成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -427,8 +440,8 @@ const onDelete = async (record: StoreListItem) => {
 const onBatchDelete = async () => {
   if (selectedIds.value.length === 0) return;
   try {
-    await storeApi.delete(selectedIds.value.map((id) => Number(id)));
-    arcoMessage('success', '批量删除成功');
+    await storeApi.delete(selectedIds.value.map(id => Number(id)));
+    arcoMessage("success", "批量删除成功");
     selectedIds.value = [];
     getList();
   } catch (error) {
@@ -442,10 +455,10 @@ const onSubmit = async () => {
   try {
     if (form.id) {
       await storeApi.edit(form);
-      arcoMessage('success', '修改成功');
+      arcoMessage("success", "修改成功");
     } else {
       await storeApi.add(form);
-      arcoMessage('success', '新增成功');
+      arcoMessage("success", "新增成功");
     }
     modalVisible.value = false;
     getList();
@@ -471,10 +484,10 @@ const onAdjustStock = (record: StoreStockItem) => {
   adjustStockForm.productId = record.productId;
   adjustStockForm.skuId = record.skuId;
   adjustStockForm.productName = record.productName;
-  adjustStockForm.skuCode = record.skuCode || '';
+  adjustStockForm.skuCode = record.skuCode || "";
   adjustStockForm.currentStock = record.stock;
   adjustStockForm.changeNum = 0;
-  adjustStockForm.remark = '';
+  adjustStockForm.remark = "";
   adjustStockModalVisible.value = true;
 };
 
@@ -485,9 +498,9 @@ const onSubmitAdjustStock = async () => {
       productId: adjustStockForm.productId,
       skuId: adjustStockForm.skuId,
       changeNum: adjustStockForm.changeNum,
-      remark: adjustStockForm.remark,
+      remark: adjustStockForm.remark
     });
-    arcoMessage('success', '库存调整成功');
+    arcoMessage("success", "库存调整成功");
     adjustStockModalVisible.value = false;
     getStoreStockList();
   } catch (error) {

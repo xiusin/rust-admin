@@ -87,14 +87,24 @@
           <a-space>
             <a-button type="text" size="mini" @click="onView(record)">查看</a-button>
             <a-button v-if="record.status === 'pending'" type="text" size="mini" @click="onAudit(record)">审核</a-button>
-            <a-button v-if="record.status === 'onshelves'" type="text" size="mini" @click="onShelves(record, 'offshelves')">下架</a-button>
-            <a-button v-if="record.status === 'offshelves'" type="text" size="mini" @click="onShelves(record, 'onshelves')">上架</a-button>
+            <a-button v-if="record.status === 'onshelves'" type="text" size="mini" @click="onShelves(record, 'offshelves')"
+              >下架</a-button
+            >
+            <a-button v-if="record.status === 'offshelves'" type="text" size="mini" @click="onShelves(record, 'onshelves')"
+              >上架</a-button
+            >
           </a-space>
         </template>
       </a-table>
     </div>
 
-    <a-modal v-model:visible="auditModalVisible" title="商品审核" :width="600" @ok="onSubmitAudit" @cancel="auditModalVisible = false">
+    <a-modal
+      v-model:visible="auditModalVisible"
+      title="商品审核"
+      :width="600"
+      @ok="onSubmitAudit"
+      @cancel="auditModalVisible = false"
+    >
       <a-form :model="auditForm" auto-label-width layout="vertical">
         <a-form-item label="商品信息">
           <a-input :value="auditForm.productName" disabled />
@@ -127,17 +137,17 @@
         <a-descriptions-item label="商品状态">
           <a-tag :color="getStatusColor(currentRecord.status)" bordered size="small">{{ currentRecord.statusName }}</a-tag>
         </a-descriptions-item>
-        <a-descriptions-item label="商品描述" :span="2">{{ currentRecord.description || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="商品描述" :span="2">{{ currentRecord.description || "-" }}</a-descriptions-item>
         <a-descriptions-item label="创建时间">{{ currentRecord.createdAt }}</a-descriptions-item>
-        <a-descriptions-item label="审核时间">{{ currentRecord.auditAt || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="审核时间">{{ currentRecord.auditAt || "-" }}</a-descriptions-item>
       </a-descriptions>
     </a-modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { productApi, ProductListItem } from '@/api/modules/product/product';
+import { ref, reactive, onMounted } from "vue";
+import { productApi, ProductListItem } from "@/api/modules/product/product";
 
 const loading = ref(false);
 const tableData = ref<ProductListItem[]>([]);
@@ -150,15 +160,15 @@ const detailModalVisible = ref(false);
 const currentRecord = ref<ProductListItem | null>(null);
 
 const searchForm = reactive({
-  productName: '',
-  status: null as string | null,
+  productName: "",
+  status: null as string | null
 });
 
 const auditForm = reactive({
   productId: 0,
-  productName: '',
+  productName: "",
   auditStatus: 1,
-  auditRemark: '',
+  auditRemark: ""
 });
 
 const pagination = reactive({
@@ -166,30 +176,30 @@ const pagination = reactive({
   pageSize: 10,
   showPageSize: true,
   showTotal: true,
-  total: 0,
+  total: 0
 });
 
 const columns = [
-  { type: 'selection', width: 60, fixed: 'left' },
-  { title: '商品图片', dataIndex: 'productImage', slotName: 'productImage', width: 100 },
-  { title: '商品名称', dataIndex: 'name', width: 200, ellipsis: true },
-  { title: '价格', slotName: 'price', width: 100 },
-  { title: '库存', dataIndex: 'stock', width: 80 },
-  { title: '销量', dataIndex: 'sales', width: 80 },
-  { title: '状态', slotName: 'status', width: 100 },
-  { title: '创建时间', dataIndex: 'createdAt', width: 180 },
-  { title: '操作', slotName: 'optional', width: 180, fixed: 'right' },
+  { type: "selection", width: 60, fixed: "left" },
+  { title: "商品图片", dataIndex: "productImage", slotName: "productImage", width: 100 },
+  { title: "商品名称", dataIndex: "name", width: 200, ellipsis: true },
+  { title: "价格", slotName: "price", width: 100 },
+  { title: "库存", dataIndex: "stock", width: 80 },
+  { title: "销量", dataIndex: "sales", width: 80 },
+  { title: "状态", slotName: "status", width: 100 },
+  { title: "创建时间", dataIndex: "createdAt", width: 180 },
+  { title: "操作", slotName: "optional", width: 180, fixed: "right" }
 ];
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
-    draft: 'default',
-    pending: 'orange',
-    onshelves: 'green',
-    offshelves: 'gray',
-    rejected: 'red',
+    draft: "default",
+    pending: "orange",
+    onshelves: "green",
+    offshelves: "gray",
+    rejected: "red"
   };
-  return colors[status] || 'default';
+  return colors[status] || "default";
 };
 
 const getList = async () => {
@@ -199,7 +209,7 @@ const getList = async () => {
       pageNum: pagination.current,
       pageSize: pagination.pageSize,
       productName: searchForm.productName || undefined,
-      status: searchForm.status || undefined,
+      status: searchForm.status || undefined
     });
     tableData.value = data.list || [];
     pagination.total = data.total || 0;
@@ -244,18 +254,18 @@ const onAudit = (record: ProductListItem) => {
   auditForm.productId = record.id;
   auditForm.productName = record.name;
   auditForm.auditStatus = 1;
-  auditForm.auditRemark = '';
+  auditForm.auditRemark = "";
   auditModalVisible.value = true;
 };
 
 const onShelves = async (record: ProductListItem, action: string) => {
   try {
-    if (action === 'onshelves') {
-      await productApi.updateStatus(record.id, 'onshelves');
-      arcoMessage('success', '上架成功');
+    if (action === "onshelves") {
+      await productApi.updateStatus(record.id, "onshelves");
+      arcoMessage("success", "上架成功");
     } else {
-      await productApi.updateStatus(record.id, 'offshelves');
-      arcoMessage('success', '下架成功');
+      await productApi.updateStatus(record.id, "offshelves");
+      arcoMessage("success", "下架成功");
     }
     getList();
   } catch (error) {
@@ -265,7 +275,7 @@ const onShelves = async (record: ProductListItem, action: string) => {
 
 const onBatchAudit = () => {
   if (selectedIds.value.length === 0) return;
-  arcoMessage('warning', '请选择一个商品进行审核');
+  arcoMessage("warning", "请选择一个商品进行审核");
 };
 
 const onSubmitAudit = async () => {
@@ -273,9 +283,9 @@ const onSubmitAudit = async () => {
     await productApi.audit({
       productId: auditForm.productId,
       auditStatus: auditForm.auditStatus,
-      auditRemark: auditForm.auditRemark,
+      auditRemark: auditForm.auditRemark
     });
-    arcoMessage('success', '审核成功');
+    arcoMessage("success", "审核成功");
     auditModalVisible.value = false;
     getList();
   } catch (error) {

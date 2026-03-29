@@ -45,14 +45,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from "vue";
 
-const modelValue = defineModel<string>({ default: '' });
+const modelValue = defineModel<string>({ default: "" });
 const showEditor = ref(false);
 const previewVisible = ref(false);
 
 const insertText = () => {
-  modelValue.value += '<p>示例文本</p>';
+  modelValue.value += "<p>示例文本</p>";
 };
 
 const insertImage = () => {

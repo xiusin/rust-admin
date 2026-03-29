@@ -24,7 +24,7 @@ export const useUserStore = defineStore("user", {
     userInfo: null as UserInfo | null
   }),
   getters: {
-    account: (state) => state.userInfo,
+    account: state => state.userInfo
   },
   actions: {
     async login(loginForm: any) {
@@ -71,10 +71,10 @@ export const useUserStore = defineStore("user", {
         const permissions = data.permissions || userData.permissions || [];
 
         this.userInfo = {
-          username: userData.username || userData.user_name || '',
-          nickname: userData.nickname || userData.nick_name || '',
-          email: userData.email || '',
-          phone: userData.phone || userData.phonenumber || '',
+          username: userData.username || userData.user_name || "",
+          nickname: userData.nickname || userData.nick_name || "",
+          email: userData.email || "",
+          phone: userData.phone || userData.phonenumber || "",
           token: this.token,
           did: parseInt(userData.did || userData.dept_id || 0) || 0,
           rid: parseInt(userData.rid || userData.role_id || 0) || 0,

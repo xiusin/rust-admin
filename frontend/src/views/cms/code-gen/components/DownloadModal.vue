@@ -23,8 +23,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue';
-import { codeGenApi } from '@/api/modules/cms/codeGen';
+import { ref, reactive, computed } from "vue";
+import { codeGenApi } from "@/api/modules/cms/codeGen";
 
 interface Props {
   modelId: number | null;
@@ -36,8 +36,8 @@ const modelValue = defineModel<boolean>({ default: false });
 const downloading = ref(false);
 
 const form = reactive({
-  format: 'zip',
-  outputPath: '',
+  format: "zip",
+  outputPath: ""
 });
 
 const handleDownload = async () => {
@@ -46,12 +46,12 @@ const handleDownload = async () => {
   try {
     const blob = await codeGenApi.download(props.modelId);
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `code_${props.modelId}.${form.format}`;
     a.click();
     window.URL.revokeObjectURL(url);
-    arcoMessage('success', '下载成功');
+    arcoMessage("success", "下载成功");
     modelValue.value = false;
   } catch (error) {
     console.error(error);

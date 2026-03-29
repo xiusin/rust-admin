@@ -42,7 +42,7 @@
             </a-typography-paragraph>
           </a-typography>
         </div>
-        <a-button  type="primary" @click="onPrint">打印</a-button>
+        <a-button type="primary" @click="onPrint">打印</a-button>
         <div>采用开源打印库：<a-link href="https://printjs.crabbly.com/" target="_blank">printjs</a-link></div>
       </a-space>
     </div>

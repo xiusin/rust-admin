@@ -35,8 +35,8 @@ export interface TagListParams {
   name?: string;
   code?: string;
   status?: boolean;
-  orderBy?: 'sort' | 'contentCount' | 'createdAt';
-  orderDirection?: 'asc' | 'desc';
+  orderBy?: "sort" | "contentCount" | "createdAt";
+  orderDirection?: "asc" | "desc";
 }
 
 export interface TagAddParams {
@@ -81,7 +81,7 @@ interface ListResponse<T> {
 
 const getData = <T>(res: ApiResponse<T>): T => {
   if (res.code !== 200) {
-    throw new Error(res.message || '请求失败');
+    throw new Error(res.message || "请求失败");
   }
   return res.data;
 };
@@ -155,5 +155,5 @@ export const tagApi = {
   getByContent: async (contentId: number): Promise<CmsTagItem[]> => {
     const res = await axios.get(`/cms/tag/byContent/${contentId}`);
     return getData(res);
-  },
+  }
 };

@@ -101,7 +101,7 @@ interface ListResponse<T> {
 
 const getData = <T>(res: ApiResponse<T>): T => {
   if (res.code !== 200) {
-    throw new Error(res.message || '请求失败');
+    throw new Error(res.message || "请求失败");
   }
   return res.data;
 };
@@ -150,5 +150,5 @@ export const modelApi = {
   simpleList: async (params?: { name?: string; isEnabled?: boolean }): Promise<CmsModel[]> => {
     const res = await axios.get("/cms/model/simpleList", { params });
     return getData(res);
-  },
+  }
 };

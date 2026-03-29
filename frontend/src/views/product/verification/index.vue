@@ -90,7 +90,13 @@
       </a-table>
     </div>
 
-    <a-modal v-model:visible="verifyModalVisible" title="核销" :width="500" @ok="onSubmitVerify" @cancel="verifyModalVisible = false">
+    <a-modal
+      v-model:visible="verifyModalVisible"
+      title="核销"
+      :width="500"
+      @ok="onSubmitVerify"
+      @cancel="verifyModalVisible = false"
+    >
       <a-form :model="verifyForm" auto-label-width layout="vertical">
         <a-form-item field="code" label="核销码" :rules="[{ required: true, message: '请输入核销码' }]">
           <a-input v-model="verifyForm.code" placeholder="请输入或扫描核销码" allow-clear />
@@ -140,21 +146,28 @@
             </div>
           </a-image-preview>
         </a-descriptions-item>
-        <a-descriptions-item label="SKU编码">{{ currentRecord.skuCode || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="SKU编码">{{ currentRecord.skuCode || "-" }}</a-descriptions-item>
         <a-descriptions-item label="订单号">{{ currentRecord.orderNo }}</a-descriptions-item>
-        <a-descriptions-item label="核销门店">{{ currentRecord.storeName || '-' }}</a-descriptions-item>
-        <a-descriptions-item label="总/已用/剩余">{{ currentRecord.totalCount }} / {{ currentRecord.usedCount }} / {{ currentRecord.remainCount }}</a-descriptions-item>
-        <a-descriptions-item label="过期时间">{{ currentRecord.expireAt || '永久有效' }}</a-descriptions-item>
-        <a-descriptions-item label="创建时间">{{ currentRecord.createdAt || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="核销门店">{{ currentRecord.storeName || "-" }}</a-descriptions-item>
+        <a-descriptions-item label="总/已用/剩余"
+          >{{ currentRecord.totalCount }} / {{ currentRecord.usedCount }} / {{ currentRecord.remainCount }}</a-descriptions-item
+        >
+        <a-descriptions-item label="过期时间">{{ currentRecord.expireAt || "永久有效" }}</a-descriptions-item>
+        <a-descriptions-item label="创建时间">{{ currentRecord.createdAt || "-" }}</a-descriptions-item>
       </a-descriptions>
     </a-modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { verificationApi, VerificationCodeListItem, VerificationResult, VerificationQueryResult } from '@/api/modules/product/verification';
-import { storeApi } from '@/api/modules/product/store';
+import { ref, reactive, onMounted } from "vue";
+import {
+  verificationApi,
+  VerificationCodeListItem,
+  VerificationResult,
+  VerificationQueryResult
+} from "@/api/modules/product/verification";
+import { storeApi } from "@/api/modules/product/store";
 
 const loading = ref(false);
 const tableData = ref<VerificationCodeListItem[]>([]);
@@ -170,18 +183,18 @@ const verifyResult = ref<VerificationResult | null>(null);
 const queryResult = ref<VerificationQueryResult | null>(null);
 
 const searchForm = reactive({
-  code: '',
-  status: undefined as number | undefined,
+  code: "",
+  status: undefined as number | undefined
 });
 
 const verifyForm = reactive({
-  code: '',
+  code: "",
   storeId: undefined as number | undefined,
-  remark: '',
+  remark: ""
 });
 
 const queryForm = reactive({
-  code: '',
+  code: ""
 });
 
 const pagination = reactive({
@@ -189,25 +202,25 @@ const pagination = reactive({
   pageSize: 10,
   showPageSize: true,
   showTotal: true,
-  total: 0,
+  total: 0
 });
 
 const columns = [
-  { title: '核销码', dataIndex: 'code', width: 150, fixed: 'left' },
-  { title: '商品图片', dataIndex: 'productImage', slotName: 'productImage', width: 100 },
-  { title: '商品名称', dataIndex: 'productName', width: 180, ellipsis: true },
-  { title: '订单号', dataIndex: 'orderNo', width: 150 },
-  { title: '状态', slotName: 'status', width: 100 },
-  { title: '剩余次数', dataIndex: 'remainCount', width: 100 },
-  { title: '核销门店', dataIndex: 'storeName', width: 120 },
-  { title: '过期时间', dataIndex: 'expireAt', width: 180 },
-  { title: '创建时间', dataIndex: 'createdAt', width: 180 },
-  { title: '操作', slotName: 'optional', width: 120, fixed: 'right' },
+  { title: "核销码", dataIndex: "code", width: 150, fixed: "left" },
+  { title: "商品图片", dataIndex: "productImage", slotName: "productImage", width: 100 },
+  { title: "商品名称", dataIndex: "productName", width: 180, ellipsis: true },
+  { title: "订单号", dataIndex: "orderNo", width: 150 },
+  { title: "状态", slotName: "status", width: 100 },
+  { title: "剩余次数", dataIndex: "remainCount", width: 100 },
+  { title: "核销门店", dataIndex: "storeName", width: 120 },
+  { title: "过期时间", dataIndex: "expireAt", width: 180 },
+  { title: "创建时间", dataIndex: "createdAt", width: 180 },
+  { title: "操作", slotName: "optional", width: 120, fixed: "right" }
 ];
 
 const getStatusColor = (status: number) => {
-  const colors: Record<number, string> = { 0: 'blue', 1: 'green', 2: 'red', 3: 'gray' };
-  return colors[status] || 'gray';
+  const colors: Record<number, string> = { 0: "blue", 1: "green", 2: "red", 3: "gray" };
+  return colors[status] || "gray";
 };
 
 const getList = async () => {
@@ -217,7 +230,7 @@ const getList = async () => {
       pageNum: pagination.current,
       pageSize: pagination.pageSize,
       code: searchForm.code || undefined,
-      status: searchForm.status,
+      status: searchForm.status
     });
     tableData.value = data.list || [];
     pagination.total = data.total || 0;
@@ -243,7 +256,7 @@ const search = () => {
 };
 
 const reset = () => {
-  searchForm.code = '';
+  searchForm.code = "";
   searchForm.status = undefined;
   pagination.current = 1;
   getList();
@@ -264,15 +277,15 @@ const handlePageSizeChange = (pageSize: number) => {
 };
 
 const openVerifyModal = () => {
-  verifyForm.code = '';
+  verifyForm.code = "";
   verifyForm.storeId = undefined;
-  verifyForm.remark = '';
+  verifyForm.remark = "";
   verifyResult.value = null;
   verifyModalVisible.value = true;
 };
 
 const openQueryModal = () => {
-  queryForm.code = '';
+  queryForm.code = "";
   queryResult.value = null;
   queryModalVisible.value = true;
 };
@@ -280,28 +293,28 @@ const openQueryModal = () => {
 const onVerify = (record: VerificationCodeListItem) => {
   verifyForm.code = record.code;
   verifyForm.storeId = undefined;
-  verifyForm.remark = '';
+  verifyForm.remark = "";
   verifyResult.value = null;
   verifyModalVisible.value = true;
 };
 
 const onSubmitVerify = async () => {
   if (!verifyForm.code) {
-    arcoMessage('warning', '请输入核销码');
+    arcoMessage("warning", "请输入核销码");
     return;
   }
   try {
     const result = await verificationApi.verify({
       code: verifyForm.code,
       storeId: verifyForm.storeId,
-      remark: verifyForm.remark,
+      remark: verifyForm.remark
     });
     verifyResult.value = result;
     if (result.success) {
-      arcoMessage('success', '核销成功');
+      arcoMessage("success", "核销成功");
       getList();
     } else {
-      arcoMessage('error', result.message);
+      arcoMessage("error", result.message);
     }
   } catch (error) {
     console.error(error);
@@ -310,7 +323,7 @@ const onSubmitVerify = async () => {
 
 const onQuery = async () => {
   if (!queryForm.code) {
-    arcoMessage('warning', '请输入核销码');
+    arcoMessage("warning", "请输入核销码");
     return;
   }
   queryLoading.value = true;

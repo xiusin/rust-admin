@@ -4,19 +4,19 @@
       <a-form-item label="输出目录">
         <a-input v-model="configData.outputDir" placeholder="/src" style="width: 200px" />
       </a-form-item>
-      
+
       <a-form-item label="覆盖已存在">
         <a-switch v-model="configData.overwrite" />
       </a-form-item>
-      
+
       <a-form-item label="生成测试">
         <a-switch v-model="configData.generateTests" />
       </a-form-item>
-      
+
       <a-form-item label="生成文档">
         <a-switch v-model="configData.generateDocs" />
       </a-form-item>
-      
+
       <a-form-item>
         <a-button type="primary" @click="handleGenerate">
           <template #icon><icon-thunderbolt /></template>
@@ -24,16 +24,11 @@
         </a-button>
       </a-form-item>
     </a-form>
-    
-    <a-modal
-      v-model:visible="configModalVisible"
-      title="高级配置"
-      :width="600"
-      @ok="handleConfigSave"
-    >
+
+    <a-modal v-model:visible="configModalVisible" title="高级配置" :width="600" @ok="handleConfigSave">
       <a-form :model="configData" layout="vertical">
         <a-divider orientation="left">后端配置</a-divider>
-        
+
         <a-row :gutter="16">
           <a-col :span="12">
             <a-form-item label="模块名称">
@@ -46,7 +41,7 @@
             </a-form-item>
           </a-col>
         </a-row>
-        
+
         <a-row :gutter="16">
           <a-col :span="12">
             <a-form-item label="作者">
@@ -59,9 +54,9 @@
             </a-form-item>
           </a-col>
         </a-row>
-        
+
         <a-divider orientation="left">前端配置</a-divider>
-        
+
         <a-row :gutter="16">
           <a-col :span="12">
             <a-form-item label="API路径">
@@ -74,9 +69,9 @@
             </a-form-item>
           </a-col>
         </a-row>
-        
+
         <a-divider orientation="left">生成选项</a-divider>
-        
+
         <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="生成Entity">
@@ -94,7 +89,7 @@
             </a-form-item>
           </a-col>
         </a-row>
-        
+
         <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="生成Vue页面">
@@ -112,7 +107,7 @@
             </a-form-item>
           </a-col>
         </a-row>
-        
+
         <a-form-item label="模板选择">
           <a-select v-model="configData.template" placeholder="选择代码模板">
             <a-option value="default">默认模板</a-option>
@@ -126,87 +121,87 @@
 </template>
 
 <script setup lang="ts">
-import { Message } from '@arco-design/web-vue'
+import { Message } from "@arco-design/web-vue";
 
 interface GenConfigData {
-  outputDir: string
-  overwrite: boolean
-  generateTests: boolean
-  generateDocs: boolean
-  moduleName?: string
-  packagePath?: string
-  author?: string
-  version?: string
-  apiPath?: string
-  viewPath?: string
-  genEntity?: boolean
-  genService?: boolean
-  genController?: boolean
-  genVue?: boolean
-  genApi?: boolean
-  genRouter?: boolean
-  template?: string
+  outputDir: string;
+  overwrite: boolean;
+  generateTests: boolean;
+  generateDocs: boolean;
+  moduleName?: string;
+  packagePath?: string;
+  author?: string;
+  version?: string;
+  apiPath?: string;
+  viewPath?: string;
+  genEntity?: boolean;
+  genService?: boolean;
+  genController?: boolean;
+  genVue?: boolean;
+  genApi?: boolean;
+  genRouter?: boolean;
+  template?: string;
 }
 
 interface Props {
-  modelValue: GenConfigData
+  modelValue: GenConfigData;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: () => ({
-    outputDir: '/src',
+    outputDir: "/src",
     overwrite: false,
     generateTests: false,
     generateDocs: false,
-    moduleName: '',
-    packagePath: '',
-    author: '',
-    version: '1.0.0',
-    apiPath: '/api',
-    viewPath: '/views',
+    moduleName: "",
+    packagePath: "",
+    author: "",
+    version: "1.0.0",
+    apiPath: "/api",
+    viewPath: "/views",
     genEntity: true,
     genService: true,
     genController: true,
     genVue: true,
     genApi: true,
     genRouter: true,
-    template: 'default'
+    template: "default"
   })
-})
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: GenConfigData]
-  'generate': [value: GenConfigData]
-}>()
+  "update:modelValue": [value: GenConfigData];
+  generate: [value: GenConfigData];
+}>();
 
-const configData = ref<GenConfigData>({ ...props.modelValue })
-const configModalVisible = ref(false)
+const configData = ref<GenConfigData>({ ...props.modelValue });
+const configModalVisible = ref(false);
 
 watch(
   () => props.modelValue,
-  (val) => {
-    configData.value = { ...val }
+  val => {
+    configData.value = { ...val };
   },
   { deep: true }
-)
+);
 
 watch(
   configData,
-  (val) => {
-    emit('update:modelValue', val)
+  val => {
+    emit("update:modelValue", val);
   },
   { deep: true }
-)
+);
 
 const handleGenerate = () => {
-  emit('generate', configData.value)
-  Message.success('代码生成成功')
-}
+  emit("generate", configData.value);
+  Message.success("代码生成成功");
+};
 
 const handleConfigSave = () => {
-  configModalVisible.value = false
-  Message.success('配置已保存')
-}
+  configModalVisible.value = false;
+  Message.success("配置已保存");
+};
 </script>
 
 <style lang="scss" scoped>

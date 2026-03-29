@@ -128,14 +128,7 @@
               <span class="value text-danger">¥{{ totalPrice }}</span>
             </div>
 
-            <a-button
-              type="primary"
-              size="large"
-              long
-              :disabled="!canPay"
-              :loading="paying"
-              @click="handlePayNow"
-            >
+            <a-button type="primary" size="large" long :disabled="!canPay" :loading="paying" @click="handlePayNow">
               <template #icon><icon-check-circle /></template>
               立即支付
             </a-button>
@@ -171,12 +164,8 @@
           </div>
         </div>
         <div class="qrcode-actions">
-          <a-button v-if="!paymentCompleted" type="primary" long @click="handleCheckPayment">
-            我已支付
-          </a-button>
-          <a-button v-else type="primary" long status="success" @click="handlePaymentSuccess">
-            支付成功
-          </a-button>
+          <a-button v-if="!paymentCompleted" type="primary" long @click="handleCheckPayment"> 我已支付 </a-button>
+          <a-button v-else type="primary" long status="success" @click="handlePaymentSuccess"> 支付成功 </a-button>
         </div>
       </div>
     </a-modal>
@@ -202,10 +191,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue';
-import { Message, Modal } from '@arco-design/web-vue';
-import { useRouter, useRoute } from 'vue-router';
-import { order } from '@/api/modules/plugin-market/order';
+import { ref, reactive, computed, onMounted } from "vue";
+import { Message, Modal } from "@arco-design/web-vue";
+import { useRouter, useRoute } from "vue-router";
+import { order } from "@/api/modules/plugin-market/order";
 
 interface OrderItem {
   id: number;
@@ -229,14 +218,14 @@ const router = useRouter();
 const route = useRoute();
 
 const orderItems = ref<OrderItem[]>([]);
-const paymentMethod = ref('wechat');
-const couponCode = ref('');
+const paymentMethod = ref("wechat");
+const couponCode = ref("");
 const appliedCoupon = ref<Coupon | null>(null);
 const agreedToTerms = ref(false);
 const paying = ref(false);
 const qrCodeVisible = ref(false);
-const qrCodeUrl = ref('');
-const qrCodeTip = ref('请使用微信扫码支付');
+const qrCodeUrl = ref("");
+const qrCodeTip = ref("请使用微信扫码支付");
 const paymentCompleted = ref(false);
 const showTermsModal = ref(false);
 const showPrivacyModal = ref(false);
@@ -257,50 +246,50 @@ const canPay = computed(() => {
 
 const handleApplyCoupon = async () => {
   if (!couponCode.value) {
-    Message.warning('请输入优惠码');
+    Message.warning("请输入优惠码");
     return;
   }
-  if (couponCode.value === 'DISCOUNT10') {
+  if (couponCode.value === "DISCOUNT10") {
     appliedCoupon.value = {
       id: 1,
-      name: '新人专享优惠',
+      name: "新人专享优惠",
       code: couponCode.value,
-      discount: 10,
+      discount: 10
     };
-    Message.success('优惠码已应用');
-  } else if (couponCode.value === 'SAVE20') {
+    Message.success("优惠码已应用");
+  } else if (couponCode.value === "SAVE20") {
     appliedCoupon.value = {
       id: 2,
-      name: '限时8折优惠',
+      name: "限时8折优惠",
       code: couponCode.value,
-      discount: 20,
+      discount: 20
     };
-    Message.success('优惠码已应用');
+    Message.success("优惠码已应用");
   } else {
-    Message.error('无效的优惠码');
+    Message.error("无效的优惠码");
   }
 };
 
 const handleRemoveCoupon = () => {
   appliedCoupon.value = null;
-  couponCode.value = '';
-  Message.success('已移除优惠');
+  couponCode.value = "";
+  Message.success("已移除优惠");
 };
 
 const generateQrCode = async () => {
-  qrCodeUrl.value = '';
-  qrCodeTip.value = `请使用${paymentMethod.value === 'wechat' ? '微信' : '支付宝'}扫码支付`;
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  qrCodeUrl.value = "";
+  qrCodeTip.value = `请使用${paymentMethod.value === "wechat" ? "微信" : "支付宝"}扫码支付`;
+  await new Promise(resolve => setTimeout(resolve, 500));
   qrCodeUrl.value = `data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2ZmZiIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjMzMzIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiPkPhnJ7lm7B+RlRJTUU8L3RleHQ+PC9zdmc+`;
 };
 
 const handlePayNow = async () => {
   if (!agreedToTerms.value) {
-    Message.warning('请先阅读并同意服务条款和隐私政策');
+    Message.warning("请先阅读并同意服务条款和隐私政策");
     return;
   }
   if (orderItems.value.length === 0) {
-    Message.warning('订单信息为空');
+    Message.warning("订单信息为空");
     return;
   }
 
@@ -311,7 +300,7 @@ const handlePayNow = async () => {
       pluginId: firstItem.pluginId,
       planId: firstItem.planId,
       couponId: appliedCoupon.value?.id,
-      paymentMethod: getPaymentMethodCode(paymentMethod.value),
+      paymentMethod: getPaymentMethodCode(paymentMethod.value)
     });
 
     if (res.data?.id) {
@@ -336,7 +325,7 @@ const getPaymentMethodCode = (method: string): number => {
     wechat: 1,
     alipay: 2,
     card: 3,
-    balance: 4,
+    balance: 4
   };
   return map[method] || 1;
 };
@@ -345,17 +334,17 @@ const handleCheckPayment = async () => {
   try {
     await order.pay(currentOrderId.value!);
     paymentCompleted.value = true;
-    Message.success('支付成功');
+    Message.success("支付成功");
   } catch (error) {
     Modal.confirm({
-      title: '确认支付状态',
+      title: "确认支付状态",
       content: '如果已完成支付，请点击"支付成功"确认；如未支付，请关闭此窗口继续支付。',
-      okText: '支付成功',
-      cancelText: '未支付',
+      okText: "支付成功",
+      cancelText: "未支付",
       onOk: () => {
         paymentCompleted.value = true;
         handlePaymentSuccess();
-      },
+      }
     });
   }
 };
@@ -363,12 +352,12 @@ const handleCheckPayment = async () => {
 const handlePaymentSuccess = () => {
   qrCodeVisible.value = false;
   Modal.success({
-    title: '支付成功',
-    content: '您的订单已支付成功，我们将尽快为您发货。',
-    okText: '查看订单',
+    title: "支付成功",
+    content: "您的订单已支付成功，我们将尽快为您发货。",
+    okText: "查看订单",
     onOk: () => {
-      router.push('/order/list');
-    },
+      router.push("/order/list");
+    }
   });
 };
 
@@ -382,10 +371,10 @@ const loadOrderItems = () => {
         pluginId: item.pluginId,
         pluginName: item.pluginName || `插件${item.pluginId}`,
         pluginCode: item.pluginCode || `plugin_${item.pluginId}`,
-        pluginIcon: '',
+        pluginIcon: "",
         planId: item.planId,
         planName: item.planName || getDefaultPlanName(item.planId),
-        price: item.price || getDefaultPrice(item.planId),
+        price: item.price || getDefaultPrice(item.planId)
       }));
     } catch (e) {
       orderItems.value = getMockItems();
@@ -399,39 +388,39 @@ const getMockItems = (): OrderItem[] => [
   {
     id: 1,
     pluginId: 1,
-    pluginName: 'VIP会员插件',
-    pluginCode: 'vip-member',
-    pluginIcon: '',
+    pluginName: "VIP会员插件",
+    pluginCode: "vip-member",
+    pluginIcon: "",
     planId: 2,
-    planName: '年度套餐',
-    price: 299,
+    planName: "年度套餐",
+    price: 299
   },
   {
     id: 2,
     pluginId: 2,
-    pluginName: '高级数据分析',
-    pluginCode: 'advanced-analytics',
-    pluginIcon: '',
+    pluginName: "高级数据分析",
+    pluginCode: "advanced-analytics",
+    pluginIcon: "",
     planId: 2,
-    planName: '专业版',
-    price: 399,
-  },
+    planName: "专业版",
+    price: 399
+  }
 ];
 
 const getDefaultPlanName = (planId: number): string => {
   const plans: Record<number, string> = {
-    1: '月度套餐',
-    2: '年度套餐',
-    3: '终身套餐',
+    1: "月度套餐",
+    2: "年度套餐",
+    3: "终身套餐"
   };
-  return plans[planId] || '默认套餐';
+  return plans[planId] || "默认套餐";
 };
 
 const getDefaultPrice = (planId: number): number => {
   const prices: Record<number, number> = {
     1: 29.9,
     2: 299,
-    3: 999,
+    3: 999
   };
   return prices[planId] || 99;
 };

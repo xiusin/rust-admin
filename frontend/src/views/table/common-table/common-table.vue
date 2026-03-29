@@ -5,34 +5,34 @@
         <a-row :gutter="16">
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="6" :xxl="6">
             <a-form-item field="name" label="姓名">
-              <a-input  v-model="formData.form.name" placeholder="请输入姓名" allow-clear />
+              <a-input v-model="formData.form.name" placeholder="请输入姓名" allow-clear />
             </a-form-item>
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="6" :xxl="6">
             <a-form-item field="phone" label="手机号">
-              <a-input  v-model="formData.form.phone" placeholder="请输入手机号" allow-clear />
+              <a-input v-model="formData.form.phone" placeholder="请输入手机号" allow-clear />
             </a-form-item>
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="6" :xxl="6">
             <a-form-item field="email" label="邮箱">
-              <a-input  v-model="formData.form.email" placeholder="请输入邮箱" allow-clear />
+              <a-input v-model="formData.form.email" placeholder="请输入邮箱" allow-clear />
             </a-form-item>
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="6" :xxl="6">
             <a-space class="search-btn">
-              <a-button  type="primary" @click="getCommonTableList">
+              <a-button type="primary" @click="getCommonTableList">
                 <template #icon>
                   <icon-search />
                 </template>
                 <template #default>查询</template>
               </a-button>
-              <a-button  @click="onReset">
+              <a-button @click="onReset">
                 <template #icon>
                   <icon-refresh />
                 </template>
                 <template #default>重置</template>
               </a-button>
-              <a-button  type="text" @click="formData.search = !formData.search">
+              <a-button type="text" @click="formData.search = !formData.search">
                 <template #icon>
                   <icon-up v-if="formData.search" />
                   <icon-down v-else />
@@ -45,12 +45,12 @@
         <a-row :gutter="16" v-if="formData.search">
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="6" :xxl="6">
             <a-form-item field="address" label="地址">
-              <a-input  v-model="formData.form.address" placeholder="请输入地址" allow-clear />
+              <a-input v-model="formData.form.address" placeholder="请输入地址" allow-clear />
             </a-form-item>
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="6" :xxl="6">
             <a-form-item field="status" label="用户状态">
-              <a-select  v-model="formData.form.status" placeholder="请选择用户状态" allow-clear>
+              <a-select v-model="formData.form.status" placeholder="请选择用户状态" allow-clear>
                 <a-option value="1">停用</a-option>
                 <a-option value="2">启用</a-option>
               </a-select>
@@ -93,10 +93,10 @@
         </template>
         <template #optional>
           <a-space>
-            <a-button   type="primary">详情</a-button>
-            <a-button  >修改</a-button>
+            <a-button type="primary">详情</a-button>
+            <a-button>修改</a-button>
             <a-popconfirm content="确定删除这条数据吗?" type="warning">
-              <a-button   type="primary" status="danger">删除</a-button>
+              <a-button type="primary" status="danger">删除</a-button>
             </a-popconfirm>
           </a-space>
         </template>

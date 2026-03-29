@@ -54,3 +54,15 @@ pub use super::sys_user_dept::Entity as SysUserDept;
 pub use super::sys_user_post::Entity as SysUserPost;
 pub use super::sys_user_role::Entity as SysUserRole;
 pub use super::sys_white_jwt::Entity as SysWhiteJwt;
+
+pub use super::ppt_project::Entity as PptProject;
+pub use super::ppt_page::Entity as PptPage;
+pub use super::page_element::Entity as PageElement;
+pub use super::style_template::Entity as StyleTemplate;
+pub use super::ai_generation_log::Entity as AiGenerationLog;
+pub use super::ppt_subscription_plan::Entity as PptSubscriptionPlan;
+pub use super::ppt_user_subscription::Entity as PptUserSubscription;
+pub use super::ppt_payment_order::Entity as PptPaymentOrder;
+pub use super::ppt_credit_record::Entity as PptCreditRecord;
+pub use super::ppt_api_key::Entity as PptApiKey;
+pub use super::ppt_api_usage_log::Entity as PptApiUsageLog;

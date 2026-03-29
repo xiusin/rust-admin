@@ -52,7 +52,11 @@
           </a-select>
         </a-form-item>
         <a-form-item label="模板内容" required>
-          <a-textarea v-model="form.content" placeholder="请输入模板内容，变量用${变量名}表示" :auto-size="{ minRows: 4, maxRows: 8 }" />
+          <a-textarea
+            v-model="form.content"
+            placeholder="请输入模板内容，变量用${变量名}表示"
+            :auto-size="{ minRows: 4, maxRows: 8 }"
+          />
         </a-form-item>
         <a-form-item label="状态">
           <a-radio-group v-model="form.status">
@@ -66,9 +70,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { Message, Modal } from '@arco-design/web-vue';
-import axios from '@/api';
+import { ref, reactive, onMounted } from "vue";
+import { Message, Modal } from "@arco-design/web-vue";
+import axios from "@/api";
 
 interface TemplateRecord {
   id: number;
@@ -86,31 +90,31 @@ const loading = ref(false);
 const tableData = ref<TemplateRecord[]>([]);
 
 const modalVisible = ref(false);
-const modalTitle = ref('新增模板');
+const modalTitle = ref("新增模板");
 const form = reactive({
   id: 0,
-  template_code: '',
-  name: '',
-  template_type: 'verification',
-  content: '',
+  template_code: "",
+  name: "",
+  template_type: "verification",
+  content: "",
   params: null as any,
-  status: 1,
+  status: 1
 });
 
 const getTypeColor = (type: string) => {
   const colors: Record<string, string> = {
-    verification: 'blue',
-    notification: 'green',
-    marketing: 'orange',
+    verification: "blue",
+    notification: "green",
+    marketing: "orange"
   };
-  return colors[type] || 'gray';
+  return colors[type] || "gray";
 };
 
 const getTypeName = (type: string) => {
   const names: Record<string, string> = {
-    verification: '验证码',
-    notification: '通知',
-    marketing: '营销',
+    verification: "验证码",
+    notification: "通知",
+    marketing: "营销"
   };
   return names[type] || type;
 };
@@ -118,8 +122,8 @@ const getTypeName = (type: string) => {
 const loadData = async () => {
   loading.value = true;
   try {
-    const { data } = await axios.get('/sms-template/list');
-    if (data.message === 'success') {
+    const { data } = await axios.get("/sms-template/list");
+    if (data.message === "success") {
       tableData.value = data.data || [];
     }
   } catch (e) {
@@ -130,36 +134,44 @@ const loadData = async () => {
 };
 
 const handleAdd = () => {
-  modalTitle.value = '新增模板';
-  Object.assign(form, { id: 0, template_code: '', name: '', template_type: 'verification', content: '', params: null, status: 1 });
+  modalTitle.value = "新增模板";
+  Object.assign(form, {
+    id: 0,
+    template_code: "",
+    name: "",
+    template_type: "verification",
+    content: "",
+    params: null,
+    status: 1
+  });
   modalVisible.value = true;
 };
 
 const handleEdit = (record: TemplateRecord) => {
-  modalTitle.value = '编辑模板';
+  modalTitle.value = "编辑模板";
   Object.assign(form, record);
   modalVisible.value = true;
 };
 
 const handleDelete = (record: TemplateRecord) => {
   Modal.confirm({
-    title: '确认删除',
+    title: "确认删除",
     content: `确定要删除模板"${record.name}"吗？`,
     onOk: async () => {
       try {
-        await axios.delete('/sms-template/del', { params: { id: record.id } });
-        Message.success('删除成功');
+        await axios.delete("/sms-template/del", { params: { id: record.id } });
+        Message.success("删除成功");
         loadData();
       } catch (e) {
         console.error(e);
       }
-    },
+    }
   });
 };
 
 const handleSubmit = async () => {
   if (!form.template_code || !form.name || !form.template_type || !form.content) {
-    Message.warning('请填写完整信息');
+    Message.warning("请填写完整信息");
     return;
   }
   try {
@@ -169,15 +181,15 @@ const handleSubmit = async () => {
       template_type: form.template_type,
       content: form.content,
       params: form.params,
-      status: form.status,
+      status: form.status
     };
 
     if (form.id) {
-      await axios.put('/sms-template/edit', { ...submitData, id: form.id });
-      Message.success('编辑成功');
+      await axios.put("/sms-template/edit", { ...submitData, id: form.id });
+      Message.success("编辑成功");
     } else {
-      await axios.post('/sms-template/add', submitData);
-      Message.success('新增成功');
+      await axios.post("/sms-template/add", submitData);
+      Message.success("新增成功");
     }
     modalVisible.value = false;
     loadData();

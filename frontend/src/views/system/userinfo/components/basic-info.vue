@@ -4,10 +4,10 @@
       <a-card title="基本信息">
         <a-form :model="form" :rules="rules" :layout="layoutMode" :style="{ maxWidth: '600px' }" @submit="onSubmit">
           <a-form-item field="userName" label="用户名">
-            <a-input  v-model="form.userName" placeholder="请输入用户名" allow-clear />
+            <a-input v-model="form.userName" placeholder="请输入用户名" allow-clear />
           </a-form-item>
           <a-form-item field="nickName" label="用户昵称">
-            <a-input  v-model="form.nickName" placeholder="请输入用户昵称" allow-clear />
+            <a-input v-model="form.nickName" placeholder="请输入用户昵称" allow-clear />
           </a-form-item>
           <a-form-item field="sex" label="性别" validate-trigger="blur">
             <a-radio-group v-model="form.sex" :options="sexOption">
@@ -17,11 +17,11 @@
             </a-radio-group>
           </a-form-item>
           <a-form-item field="description" label="描述">
-            <a-textarea  placeholder="请输入描述" v-model="form.description" allow-clear />
+            <a-textarea placeholder="请输入描述" v-model="form.description" allow-clear />
           </a-form-item>
           <a-form-item>
             <a-space>
-              <a-button  type="primary" html-type="submit">提交</a-button>
+              <a-button type="primary" html-type="submit">提交</a-button>
             </a-space>
           </a-form-item>
         </a-form>

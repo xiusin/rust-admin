@@ -6,7 +6,7 @@
     <div class="prompt">
       <div class="title">401</div>
       <div class="text">抱歉，暂无访问权限~</div>
-      <a-button  type="primary" @click="onBack">立即返回</a-button>
+      <a-button type="primary" @click="onBack">立即返回</a-button>
     </div>
   </div>
 </template>

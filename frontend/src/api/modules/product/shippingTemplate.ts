@@ -77,7 +77,7 @@ interface ListResponse<T> {
 
 const getData = <T>(res: ApiResponse<T>): T => {
   if (res.code !== 200) {
-    throw new Error(res.message || '请求失败');
+    throw new Error(res.message || "请求失败");
   }
   return res.data;
 };
@@ -139,5 +139,5 @@ export const shippingTemplateApi = {
   simpleList: async (): Promise<ShippingTemplateSimple[]> => {
     const res = await axios.get("/product/shipping/simpleList");
     return getData(res);
-  },
+  }
 };

@@ -7,11 +7,11 @@
         添加
       </a-button>
     </div>
-    
+
     <div v-if="fields.length === 0" class="empty-fields">
       <a-empty description="暂无搜索字段" />
     </div>
-    
+
     <div v-else class="fields-list">
       <div v-for="(field, index) in fields" :key="field.id" class="field-item">
         <a-row :gutter="12">
@@ -38,7 +38,7 @@
             </a-form-item>
           </a-col>
         </a-row>
-        
+
         <a-row :gutter="12">
           <a-col :span="12">
             <a-form-item label="占位符">
@@ -62,17 +62,15 @@
             </a-form-item>
           </a-col>
         </a-row>
-        
+
         <div class="field-actions">
-          <a-button type="text" status="danger" size="small" @click="handleDelete(index)">
-            <icon-delete /> 删除
-          </a-button>
+          <a-button type="text" status="danger" size="small" @click="handleDelete(index)"> <icon-delete /> 删除 </a-button>
         </div>
       </div>
     </div>
-    
+
     <a-divider orientation="left">搜索布局</a-divider>
-    
+
     <a-form layout="vertical">
       <a-form-item label="每行字段数">
         <a-select v-model="layoutConfig.columns">
@@ -81,11 +79,11 @@
           <a-option :value="4">4列</a-option>
         </a-select>
       </a-form-item>
-      
+
       <a-form-item label="默认展开">
         <a-switch v-model="layoutConfig.collapsed" />
       </a-form-item>
-      
+
       <a-form-item label="折叠显示数量">
         <a-input-number v-model="layoutConfig.showCount" :min="1" :max="10" />
       </a-form-item>
@@ -94,72 +92,72 @@
 </template>
 
 <script setup lang="ts">
-import { Message } from '@arco-design/web-vue'
+import { Message } from "@arco-design/web-vue";
 
 interface SearchField {
-  id: string
-  field: string
-  label: string
-  type: string
-  placeholder?: string
-  operator?: string
+  id: string;
+  field: string;
+  label: string;
+  type: string;
+  placeholder?: string;
+  operator?: string;
 }
 
 interface LayoutConfig {
-  columns: number
-  collapsed: boolean
-  showCount: number
+  columns: number;
+  collapsed: boolean;
+  showCount: number;
 }
 
 interface Props {
-  modelValue: SearchField[]
+  modelValue: SearchField[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: () => []
-})
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: SearchField[]]
-}>()
+  "update:modelValue": [value: SearchField[]];
+}>();
 
-const fields = ref<SearchField[]>([...props.modelValue])
+const fields = ref<SearchField[]>([...props.modelValue]);
 const layoutConfig = ref<LayoutConfig>({
   columns: 3,
   collapsed: false,
   showCount: 3
-})
+});
 
 watch(
   () => props.modelValue,
-  (val) => {
-    fields.value = [...val]
+  val => {
+    fields.value = [...val];
   },
   { deep: true }
-)
+);
 
 watch(
   fields,
-  (val) => {
-    emit('update:modelValue', val)
+  val => {
+    emit("update:modelValue", val);
   },
   { deep: true }
-)
+);
 
 const handleAddField = () => {
   fields.value.push({
     id: `search_${Date.now()}`,
-    field: '',
-    label: '',
-    type: 'input',
-    operator: '='
-  })
-}
+    field: "",
+    label: "",
+    type: "input",
+    operator: "="
+  });
+};
 
 const handleDelete = (index: number) => {
-  fields.value.splice(index, 1)
-  Message.success('删除成功')
-}
+  fields.value.splice(index, 1);
+  Message.success("删除成功");
+};
 </script>
 
 <style lang="scss" scoped>

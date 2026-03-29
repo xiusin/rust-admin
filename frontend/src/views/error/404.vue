@@ -6,7 +6,7 @@
     <div class="prompt">
       <div class="title">404</div>
       <div class="text">抱歉，访问的页面不存在~</div>
-      <a-button  type="primary" @click="onBack">立即返回</a-button>
+      <a-button type="primary" @click="onBack">立即返回</a-button>
     </div>
   </div>
 </template>

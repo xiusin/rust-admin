@@ -2,7 +2,7 @@
   <div class="header_setting" :class="isMobile && 'head-absolute-fix'">
     <!-- 国际化 -->
     <a-dropdown trigger="hover" @select="onLange">
-      <a-button  type="text" class="icon_btn" id="system-language">
+      <a-button type="text" class="icon_btn" id="system-language">
         <template #icon>
           <icon-language :size="18" />
         </template>
@@ -14,7 +14,7 @@
     </a-dropdown>
     <!-- 切换黑夜模式 -->
     <a-tooltip :content="$t(`system.${!darkMode ? 'switch-to-night-mode' : 'switch-to-daytime-mode'}`)">
-      <a-button  type="text" class="icon_btn" id="system-dark" @click="onNightMode">
+      <a-button type="text" class="icon_btn" id="system-dark" @click="onNightMode">
         <template #icon>
           <icon-sun-fill :size="18" v-if="!darkMode" />
           <icon-moon-fill :size="18" v-else />
@@ -23,7 +23,7 @@
     </a-tooltip>
     <!-- 通知 -->
     <a-popover position="bottom" trigger="click">
-      <a-button  type="text" class="icon_btn notice" id="system-notice">
+      <a-button type="text" class="icon_btn notice" id="system-notice">
         <template #icon>
           <icon-notification :size="18" />
         </template>
@@ -32,7 +32,7 @@
     </a-popover>
     <!-- 全屏 -->
     <a-tooltip :content="$t(`system.${fullScreen ? 'full-screen' : 'exit-full-screen'}`)">
-      <a-button  type="text" class="icon_btn" id="system-fullscreen" @click="onFullScreen">
+      <a-button type="text" class="icon_btn" id="system-fullscreen" @click="onFullScreen">
         <template #icon>
           <icon-fullscreen :size="18" v-if="fullScreen" />
           <icon-fullscreen-exit :size="18" v-else />
@@ -41,7 +41,7 @@
     </a-tooltip>
     <!-- 系统设置 -->
     <a-tooltip :content="$t(`system.system-settings`)">
-      <a-button  type="text" class="icon_btn" id="system-settings" @click="onSystemSetting">
+      <a-button type="text" class="icon_btn" id="system-settings" @click="onSystemSetting">
         <template #icon>
           <icon-settings :size="18" />
         </template>
@@ -49,7 +49,7 @@
     </a-tooltip>
     <!-- 主题设置 -->
     <a-tooltip :content="$t(`system.theme-settings`)">
-      <a-button  type="text" class="icon_btn" id="system-theme" @click="onThemeSetting">
+      <a-button type="text" class="icon_btn" id="system-theme" @click="onThemeSetting">
         <template #icon>
           <icon-skin :size="18" />
         </template>

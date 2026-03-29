@@ -34,7 +34,7 @@
               <div class="version-content">
                 <div class="version-desc">
                   <div class="desc-label">版本说明：</div>
-                  <div class="desc-content">{{ item.changelog || '暂无版本说明' }}</div>
+                  <div class="desc-content">{{ item.changelog || "暂无版本说明" }}</div>
                 </div>
                 <div class="version-meta">
                   <span><icon-hammer /> {{ item.fileSize }}</span>
@@ -46,7 +46,9 @@
                 <a-button type="text" size="small" @click="onViewDetail(item)">详情</a-button>
                 <a-button v-if="item.status === 1" type="text" size="small" @click="onSetDefault(item)">设为默认</a-button>
                 <a-button v-if="item.status === 2" type="text" size="small" @click="onEnable(item)">启用</a-button>
-                <a-button v-if="item.status === 1" type="text" size="small" status="warning" @click="onDisable(item)">停用</a-button>
+                <a-button v-if="item.status === 1" type="text" size="small" status="warning" @click="onDisable(item)"
+                  >停用</a-button
+                >
                 <a-button type="text" size="small" status="danger" @click="onDelete(item)">删除</a-button>
               </div>
             </div>
@@ -70,7 +72,13 @@
       </a-card>
     </div>
 
-    <a-modal v-model:visible="releaseModalVisible" title="发布新版本" :width="700" @ok="onSubmitRelease" @cancel="releaseModalVisible = false">
+    <a-modal
+      v-model:visible="releaseModalVisible"
+      title="发布新版本"
+      :width="700"
+      @ok="onSubmitRelease"
+      @cancel="releaseModalVisible = false"
+    >
       <a-form ref="releaseFormRef" :model="releaseForm" layout="vertical">
         <a-form-item field="version" label="版本号" :rules="[{ required: true, message: '请输入版本号' }]">
           <a-input v-model="releaseForm.version" placeholder="请输入版本号，如 1.0.0" />
@@ -112,7 +120,7 @@
           <a-tag v-else>否</a-tag>
         </a-descriptions-item>
         <a-descriptions-item label="下载量">{{ currentVersion.downloadCount }} 次</a-descriptions-item>
-        <a-descriptions-item label="文件大小">{{ currentVersion.fileSize || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="文件大小">{{ currentVersion.fileSize || "-" }}</a-descriptions-item>
         <a-descriptions-item label="下载链接" :span="2">
           <a-link v-if="currentVersion.downloadUrl" :href="currentVersion.downloadUrl" target="_blank">
             {{ currentVersion.downloadUrl }}
@@ -124,24 +132,30 @@
           <span v-else>-</span>
         </a-descriptions-item>
         <a-descriptions-item label="更新日志" :span="2">
-          <div style="white-space: pre-wrap">{{ currentVersion.changelog || '暂无' }}</div>
+          <div style="white-space: pre-wrap">{{ currentVersion.changelog || "暂无" }}</div>
         </a-descriptions-item>
         <a-descriptions-item label="创建时间">{{ currentVersion.createdAt }}</a-descriptions-item>
-        <a-descriptions-item label="发布时间">{{ currentVersion.publishedAt || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="发布时间">{{ currentVersion.publishedAt || "-" }}</a-descriptions-item>
       </a-descriptions>
     </a-modal>
 
-    <a-modal v-model:visible="deleteModalVisible" title="删除确认" :width="400" @ok="onConfirmDelete" @cancel="deleteModalVisible = false">
+    <a-modal
+      v-model:visible="deleteModalVisible"
+      title="删除确认"
+      :width="400"
+      @ok="onConfirmDelete"
+      @cancel="deleteModalVisible = false"
+    >
       <a-result status="warning" title="确定要删除此版本吗？" subtitle="删除后无法恢复，请谨慎操作" />
     </a-modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { version, developer } from '@/api/modules/plugin-market/market';
-import { Message } from '@arco-design/web-vue';
+import { ref, reactive, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import { version, developer } from "@/api/modules/plugin-market/market";
+import { Message } from "@arco-design/web-vue";
 
 interface VersionItem {
   id: number;
@@ -172,69 +186,70 @@ const pluginId = ref<number>(0);
 const statsData = reactive({
   totalVersions: 0,
   totalDownloads: 0,
-  currentVersion: '-',
+  currentVersion: "-"
 });
 
 const releaseForm = reactive({
-  version: '',
-  changelog: '',
-  downloadUrl: '',
-  fileHash: '',
-  fileSize: '',
-  isLatest: true,
+  version: "",
+  changelog: "",
+  downloadUrl: "",
+  fileHash: "",
+  fileSize: "",
+  isLatest: true
 });
 
 const versionListMock: VersionItem[] = [
   {
     id: 3,
-    version: '2.1.0',
-    changelog: '1. 新增多场景优惠券发放功能\n2. 支持满减、折扣、现金券等多种类型\n3. 优化核销流程，提升用户体验\n4. 修复已知的bug',
-    downloadUrl: 'https://example.com/plugin/v2.1.0.zip',
-    fileHash: 'a1b2c3d4e5f6789012345678901234567890abcd',
-    fileSize: '2.5MB',
+    version: "2.1.0",
+    changelog:
+      "1. 新增多场景优惠券发放功能\n2. 支持满减、折扣、现金券等多种类型\n3. 优化核销流程，提升用户体验\n4. 修复已知的bug",
+    downloadUrl: "https://example.com/plugin/v2.1.0.zip",
+    fileHash: "a1b2c3d4e5f6789012345678901234567890abcd",
+    fileSize: "2.5MB",
     downloadCount: 1256,
     status: 1,
-    statusName: '已发布',
+    statusName: "已发布",
     isLatest: true,
     isDefault: true,
-    createdAt: '2024-03-15 10:30:00',
-    publishedAt: '2024-03-15 10:35:00',
+    createdAt: "2024-03-15 10:30:00",
+    publishedAt: "2024-03-15 10:35:00"
   },
   {
     id: 2,
-    version: '2.0.0',
-    changelog: '1. 全新UI设计\n2. 支持自动发放和手动发放两种模式\n3. 新增数据统计功能',
-    downloadUrl: 'https://example.com/plugin/v2.0.0.zip',
-    fileHash: 'b2c3d4e5f6789012345678901234567890abcde',
-    fileSize: '2.2MB',
+    version: "2.0.0",
+    changelog: "1. 全新UI设计\n2. 支持自动发放和手动发放两种模式\n3. 新增数据统计功能",
+    downloadUrl: "https://example.com/plugin/v2.0.0.zip",
+    fileHash: "b2c3d4e5f6789012345678901234567890abcde",
+    fileSize: "2.2MB",
     downloadCount: 2580,
     status: 1,
-    statusName: '已发布',
+    statusName: "已发布",
     isLatest: false,
     isDefault: false,
-    createdAt: '2024-01-20 14:20:00',
-    publishedAt: '2024-01-20 14:25:00',
+    createdAt: "2024-01-20 14:20:00",
+    publishedAt: "2024-01-20 14:25:00"
   },
   {
     id: 1,
-    version: '1.0.0',
-    changelog: '初始版本发布',
-    downloadUrl: 'https://example.com/plugin/v1.0.0.zip',
-    fileHash: 'c3d4e5f6789012345678901234567890abcdef',
-    fileSize: '1.8MB',
+    version: "1.0.0",
+    changelog: "初始版本发布",
+    downloadUrl: "https://example.com/plugin/v1.0.0.zip",
+    fileHash: "c3d4e5f6789012345678901234567890abcdef",
+    fileSize: "1.8MB",
     downloadCount: 890,
     status: 2,
-    statusName: '停用',
+    statusName: "停用",
     isLatest: false,
     isDefault: false,
-    createdAt: '2023-12-01 09:00:00',
-    publishedAt: '2023-12-01 09:10:00',
-  },
+    createdAt: "2023-12-01 09:00:00",
+    publishedAt: "2023-12-01 09:10:00"
+  }
 ];
 
 const getStatusColor = (status: number) => {
-  const colors: Record<number, string> = { 1: 'green', 2: 'gray', 3: 'red' };
-  return colors[status] || 'default';
+  const colors: Record<number, string> = { 1: "green", 2: "gray", 3: "red" };
+  return colors[status] || "default";
 };
 
 const getList = async () => {
@@ -248,8 +263,8 @@ const getList = async () => {
     }
     statsData.totalVersions = versionList.value.length;
     statsData.totalDownloads = versionList.value.reduce((sum, v) => sum + v.downloadCount, 0);
-    const latest = versionList.value.find((v) => v.isLatest);
-    statsData.currentVersion = latest ? `v${latest.version}` : '-';
+    const latest = versionList.value.find(v => v.isLatest);
+    statsData.currentVersion = latest ? `v${latest.version}` : "-";
   } catch (error) {
     console.error(error);
     versionList.value = versionListMock;
@@ -265,11 +280,11 @@ const refresh = () => {
 };
 
 const onReleaseVersion = () => {
-  releaseForm.version = '';
-  releaseForm.changelog = '';
-  releaseForm.downloadUrl = '';
-  releaseForm.fileHash = '';
-  releaseForm.fileSize = '';
+  releaseForm.version = "";
+  releaseForm.changelog = "";
+  releaseForm.downloadUrl = "";
+  releaseForm.fileHash = "";
+  releaseForm.fileSize = "";
   releaseForm.isLatest = true;
   releaseModalVisible.value = true;
 };
@@ -279,9 +294,9 @@ const onSubmitRelease = async () => {
     await releaseFormRef.value?.validate();
     await developer.versionAdd({
       pluginId: pluginId.value,
-      ...releaseForm,
+      ...releaseForm
     });
-    Message.success('发布成功');
+    Message.success("发布成功");
     releaseModalVisible.value = false;
     getList();
   } catch (error) {
@@ -299,9 +314,9 @@ const onSetDefault = async (item: VersionItem) => {
     await developer.versionAdd({
       pluginId: pluginId.value,
       versionId: item.id,
-      isLatest: true,
+      isLatest: true
     });
-    Message.success('设置成功');
+    Message.success("设置成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -313,9 +328,9 @@ const onEnable = async (item: VersionItem) => {
     await developer.versionAdd({
       pluginId: pluginId.value,
       versionId: item.id,
-      status: 1,
+      status: 1
     });
-    Message.success('启用成功');
+    Message.success("启用成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -327,9 +342,9 @@ const onDisable = async (item: VersionItem) => {
     await developer.versionAdd({
       pluginId: pluginId.value,
       versionId: item.id,
-      status: 2,
+      status: 2
     });
-    Message.success('停用成功');
+    Message.success("停用成功");
     getList();
   } catch (error) {
     console.error(error);
@@ -344,7 +359,7 @@ const onDelete = (item: VersionItem) => {
 const onConfirmDelete = async () => {
   if (!currentVersion.value) return;
   try {
-    Message.success('删除成功');
+    Message.success("删除成功");
     deleteModalVisible.value = false;
     getList();
   } catch (error) {

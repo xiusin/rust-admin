@@ -17,9 +17,7 @@
           </div>
         </div>
       </a-doption>
-      <a-doption v-if="versions.length === 0" disabled>
-        暂无历史版本
-      </a-doption>
+      <a-doption v-if="versions.length === 0" disabled> 暂无历史版本 </a-doption>
     </template>
   </a-dropdown>
 
@@ -29,22 +27,20 @@
         <a-descriptions-item label="标题" :span="2">{{ currentVersion?.title }}</a-descriptions-item>
         <a-descriptions-item label="操作者">{{ currentVersion?.operatorName }}</a-descriptions-item>
         <a-descriptions-item label="操作时间">{{ currentVersion?.createdAt }}</a-descriptions-item>
-        <a-descriptions-item label="备注" :span="2">{{ currentVersion?.remark || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="备注" :span="2">{{ currentVersion?.remark || "-" }}</a-descriptions-item>
       </a-descriptions>
       <a-divider>内容预览</a-divider>
       <div class="preview-content" v-html="currentVersion?.content || '暂无内容'"></div>
       <div class="preview-actions">
-        <a-button type="primary" @click="handleRollback">
-          回滚到此版本
-        </a-button>
+        <a-button type="primary" @click="handleRollback"> 回滚到此版本 </a-button>
       </div>
     </div>
   </a-modal>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { contentApi, type ContentVersion } from '@/api/modules/cms/content';
+import { ref, onMounted } from "vue";
+import { contentApi, type ContentVersion } from "@/api/modules/cms/content";
 
 interface Props {
   contentId: number;
@@ -70,7 +66,7 @@ const loadVersions = async () => {
 };
 
 const onSelect = (versionId: string | number | Record<string, any> | undefined) => {
-  const version = versions.value.find((v) => v.id === versionId);
+  const version = versions.value.find(v => v.id === versionId);
   if (version) {
     currentVersion.value = version;
     previewVisible.value = true;
@@ -80,13 +76,13 @@ const onSelect = (versionId: string | number | Record<string, any> | undefined) 
 const handleRollback = () => {
   if (currentVersion.value) {
     Modal.warning({
-      title: '确认回滚',
+      title: "确认回滚",
       content: `确定要回滚到版本 v${currentVersion.value.version} 吗？`,
       hideCancel: false,
       onOk: () => {
-        emit('rollback', currentVersion.value!.id);
+        emit("rollback", currentVersion.value!.id);
         previewVisible.value = false;
-      },
+      }
     });
   }
 };

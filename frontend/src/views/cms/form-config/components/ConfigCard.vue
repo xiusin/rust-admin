@@ -7,7 +7,7 @@
       </div>
       <div class="card-status">
         <a-tag :color="data.status ? 'green' : 'red'" size="small">
-          {{ data.status ? '启用' : '禁用' }}
+          {{ data.status ? "启用" : "禁用" }}
         </a-tag>
       </div>
     </div>
@@ -42,15 +42,9 @@
             <template #icon><icon-more /></template>
           </a-button>
           <template #content>
-            <a-doption v-if="!data.isDefault" @click="emit('set-default', data)">
-              <icon-star /> 设为默认
-            </a-doption>
-            <a-doption @click="emit('copy', data)">
-              <icon-copy /> 复制
-            </a-doption>
-            <a-doption @click="handleDelete">
-              <icon-delete /> 删除
-            </a-doption>
+            <a-doption v-if="!data.isDefault" @click="emit('set-default', data)"> <icon-star /> 设为默认 </a-doption>
+            <a-doption @click="emit('copy', data)"> <icon-copy /> 复制 </a-doption>
+            <a-doption @click="handleDelete"> <icon-delete /> 删除 </a-doption>
           </template>
         </a-dropdown>
       </a-space>
@@ -59,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import type { FormConfigItem, FormType } from '@/api/modules/cms/form';
+import type { FormConfigItem, FormType } from "@/api/modules/cms/form";
 
 interface Props {
   data: FormConfigItem;
@@ -72,27 +66,27 @@ const emit = defineEmits<{
   preview: [record: FormConfigItem];
   delete: [record: FormConfigItem];
   copy: [record: FormConfigItem];
-  'set-default': [record: FormConfigItem];
+  "set-default": [record: FormConfigItem];
 }>();
 
 const getFormTypeText = (type: FormType) => {
   const texts: Record<FormType, string> = {
-    create: '新增表单',
-    edit: '编辑表单',
-    detail: '详情表单',
-    search: '搜索表单',
+    create: "新增表单",
+    edit: "编辑表单",
+    detail: "详情表单",
+    search: "搜索表单"
   };
   return texts[type] || type;
 };
 
 const handleDelete = () => {
   Modal.warning({
-    title: '确认删除',
+    title: "确认删除",
     content: `确定要删除表单配置"${props.data.name}"吗？`,
     hideCancel: false,
     onOk: () => {
-      emit('delete', props.data);
-    },
+      emit("delete", props.data);
+    }
   });
 };
 </script>

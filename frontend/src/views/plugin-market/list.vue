@@ -5,11 +5,7 @@
         <a-col :xs="24" :sm="24" :md="6" :lg="5" class="filter-sidebar">
           <a-card title="分类筛选" :bordered="false">
             <div class="category-filter">
-              <div
-                class="category-item"
-                :class="{ active: selectedCategoryId === 0 }"
-                @click="handleCategorySelect(0)"
-              >
+              <div class="category-item" :class="{ active: selectedCategoryId === 0 }" @click="handleCategorySelect(0)">
                 全部插件
               </div>
               <div
@@ -43,11 +39,7 @@
             </div>
             <a-space>
               <span class="sort-label">排序：</span>
-              <a-select
-                v-model="sortType"
-                style="width: 140px"
-                @change="handleSortChange"
-              >
+              <a-select v-model="sortType" style="width: 140px" @change="handleSortChange">
                 <a-option :value="0">综合排序</a-option>
                 <a-option :value="1">最新发布</a-option>
                 <a-option :value="2">下载最多</a-option>
@@ -83,10 +75,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { market, category } from '@/api/modules/plugin-market/market';
-import PluginCard from './components/plugin-card.vue';
+import { ref, reactive, onMounted, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { market, category } from "@/api/modules/plugin-market/market";
+import PluginCard from "./components/plugin-card.vue";
 
 interface Plugin {
   id: number;
@@ -136,7 +128,7 @@ const sortType = ref(0);
 const pagination = reactive({
   current: 1,
   pageSize: 12,
-  total: 0,
+  total: 0
 });
 
 const loadCategories = async () => {
@@ -157,7 +149,7 @@ const loadPluginList = async () => {
       pageSize: pagination.pageSize,
       categoryId: selectedCategoryId.value || undefined,
       priceType: priceType.value || undefined,
-      sortType: sortType.value || undefined,
+      sortType: sortType.value || undefined
     });
     if (res.code === 200) {
       pluginList.value = res.data?.list || [];
@@ -172,7 +164,7 @@ const handleCategorySelect = (categoryId: number) => {
   selectedCategoryId.value = categoryId;
   pagination.current = 1;
   router.replace({
-    query: categoryId ? { categoryId: String(categoryId) } : {},
+    query: categoryId ? { categoryId: String(categoryId) } : {}
   });
   loadPluginList();
 };
@@ -199,7 +191,7 @@ const handlePageSizeChange = (pageSize: number) => {
 };
 
 const goToDetail = (id: number) => {
-  router.push({ path: '/plugin-market/detail', query: { id: String(id) } });
+  router.push({ path: "/plugin-market/detail", query: { id: String(id) } });
 };
 
 onMounted(() => {
@@ -212,7 +204,7 @@ onMounted(() => {
 
 watch(
   () => route.query.categoryId,
-  (newVal) => {
+  newVal => {
     if (newVal) {
       selectedCategoryId.value = Number(newVal);
     } else {

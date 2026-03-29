@@ -1,31 +1,31 @@
 import axios from "@/api";
 
-export type FieldType = 
-  | 'text' 
-  | 'textarea' 
-  | 'editor' 
-  | 'number' 
-  | 'decimal' 
-  | 'date' 
-  | 'datetime' 
-  | 'time' 
-  | 'select' 
-  | 'multiSelect' 
-  | 'radio' 
-  | 'checkbox' 
-  | 'switch' 
-  | 'image' 
-  | 'images' 
-  | 'file' 
-  | 'files' 
-  | 'video' 
-  | 'audio' 
-  | 'color' 
-  | 'icon' 
-  | 'link' 
-  | 'json' 
-  | 'relation' 
-  | 'custom';
+export type FieldType =
+  | "text"
+  | "textarea"
+  | "editor"
+  | "number"
+  | "decimal"
+  | "date"
+  | "datetime"
+  | "time"
+  | "select"
+  | "multiSelect"
+  | "radio"
+  | "checkbox"
+  | "switch"
+  | "image"
+  | "images"
+  | "file"
+  | "files"
+  | "video"
+  | "audio"
+  | "color"
+  | "icon"
+  | "link"
+  | "json"
+  | "relation"
+  | "custom";
 
 export interface FormFieldConfig {
   inputType: string;
@@ -56,8 +56,8 @@ export interface FormFieldConfig {
 export interface TableFieldConfig {
   width?: number;
   minWidth?: number;
-  fixed?: 'left' | 'right' | boolean;
-  align?: 'left' | 'center' | 'right';
+  fixed?: "left" | "right" | boolean;
+  align?: "left" | "center" | "right";
   sortable?: boolean;
   filterable?: boolean;
   showOverflowTooltip?: boolean;
@@ -77,7 +77,7 @@ export interface ValidationRules {
 
 export interface CustomRule {
   validator: string;
-  trigger: 'blur' | 'change';
+  trigger: "blur" | "change";
   message?: string;
 }
 
@@ -94,13 +94,13 @@ export interface UploadConfig {
   maxCount?: number;
   multiple?: boolean;
   drag?: boolean;
-  listType?: 'text' | 'picture' | 'picture-card';
+  listType?: "text" | "picture" | "picture-card";
 }
 
 export interface EditorConfig {
   height?: number;
   placeholder?: string;
-  mode?: 'simple' | 'classic' | 'full';
+  mode?: "simple" | "classic" | "full";
   toolbar?: string[];
 }
 
@@ -183,7 +183,7 @@ interface ApiResponse<T = any> {
 
 const getData = <T>(res: ApiResponse<T>): T => {
   if (res.code !== 200) {
-    throw new Error(res.message || '请求失败');
+    throw new Error(res.message || "请求失败");
   }
   return res.data;
 };
@@ -227,5 +227,5 @@ export const fieldApi = {
   getFieldTypes: async (): Promise<{ value: FieldType; label: string; dbTypes: string[] }[]> => {
     const res = await axios.get("/cms/field/fieldTypes");
     return getData(res);
-  },
+  }
 };

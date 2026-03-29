@@ -7,11 +7,11 @@
         添加操作
       </a-button>
     </div>
-    
+
     <div v-if="actions.length === 0" class="empty-actions">
       <a-empty description="暂无操作按钮" />
     </div>
-    
+
     <div v-else class="actions-list">
       <div v-for="(action, index) in actions" :key="action.id" class="action-item">
         <div class="action-header">
@@ -32,7 +32,7 @@
             <icon-delete />
           </a-button>
         </div>
-        
+
         <div class="action-content">
           <a-form layout="vertical">
             <a-row :gutter="12">
@@ -47,7 +47,7 @@
                 </a-form-item>
               </a-col>
             </a-row>
-            
+
             <a-form-item label="操作类型">
               <a-radio-group v-model="action.actionType">
                 <a-radio value="modal">弹窗</a-radio>
@@ -57,30 +57,26 @@
                 <a-radio value="custom">自定义</a-radio>
               </a-radio-group>
             </a-form-item>
-            
+
             <a-form-item v-if="action.actionType === 'modal' || action.actionType === 'drawer'" label="表单配置">
               <a-select v-model="action.formId" placeholder="选择表单">
                 <a-option value="form1">表单1</a-option>
                 <a-option value="form2">表单2</a-option>
               </a-select>
             </a-form-item>
-            
+
             <a-form-item v-if="action.actionType === 'link'" label="跳转路径">
               <a-input v-model="action.linkPath" placeholder="/path/:id" />
             </a-form-item>
-            
+
             <a-form-item v-if="action.actionType === 'api'" label="接口地址">
               <a-input v-model="action.apiUrl" placeholder="/api/xxx" />
             </a-form-item>
-            
+
             <a-form-item v-if="action.actionType === 'custom'" label="处理函数">
-              <a-textarea
-                v-model="action.handler"
-                placeholder="请输入处理函数代码"
-                :auto-size="{ minRows: 3 }"
-              />
+              <a-textarea v-model="action.handler" placeholder="请输入处理函数代码" :auto-size="{ minRows: 3 }" />
             </a-form-item>
-            
+
             <a-row :gutter="12">
               <a-col :span="8">
                 <a-form-item label="显示条件">
@@ -102,17 +98,12 @@
         </div>
       </div>
     </div>
-    
+
     <a-divider orientation="left">快捷操作模板</a-divider>
-    
+
     <div class="action-templates">
       <a-space wrap>
-        <a-button
-          v-for="template in actionTemplates"
-          :key="template.type"
-          size="small"
-          @click="handleApplyTemplate(template)"
-        >
+        <a-button v-for="template in actionTemplates" :key="template.type" size="small" @click="handleApplyTemplate(template)">
           {{ template.label }}
         </a-button>
       </a-space>
@@ -121,126 +112,126 @@
 </template>
 
 <script setup lang="ts">
-import { Message } from '@arco-design/web-vue'
+import { Message } from "@arco-design/web-vue";
 
 interface TableAction {
-  id: string
-  label: string
-  type: string
-  status?: string
-  icon?: string
-  permission?: string
-  actionType: string
-  formId?: string
-  linkPath?: string
-  apiUrl?: string
-  handler?: string
-  condition?: string
-  confirmText?: string
-  sort: number
+  id: string;
+  label: string;
+  type: string;
+  status?: string;
+  icon?: string;
+  permission?: string;
+  actionType: string;
+  formId?: string;
+  linkPath?: string;
+  apiUrl?: string;
+  handler?: string;
+  condition?: string;
+  confirmText?: string;
+  sort: number;
 }
 
 interface Props {
-  modelValue: TableAction[]
+  modelValue: TableAction[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: () => []
-})
+});
 
 const emit = defineEmits<{
-  'update:modelValue': [value: TableAction[]]
-}>()
+  "update:modelValue": [value: TableAction[]];
+}>();
 
-const actions = ref<TableAction[]>([...props.modelValue])
+const actions = ref<TableAction[]>([...props.modelValue]);
 
 watch(
   () => props.modelValue,
-  (val) => {
-    actions.value = [...val]
+  val => {
+    actions.value = [...val];
   },
   { deep: true }
-)
+);
 
 watch(
   actions,
-  (val) => {
-    emit('update:modelValue', val)
+  val => {
+    emit("update:modelValue", val);
   },
   { deep: true }
-)
+);
 
 const handleAddAction = () => {
   actions.value.push({
     id: `action_${Date.now()}`,
-    label: '',
-    type: 'text',
-    actionType: 'modal',
+    label: "",
+    type: "text",
+    actionType: "modal",
     sort: actions.value.length
-  })
-}
+  });
+};
 
 const handleDelete = (index: number) => {
-  actions.value.splice(index, 1)
-  Message.success('删除成功')
-}
+  actions.value.splice(index, 1);
+  Message.success("删除成功");
+};
 
 const actionTemplates = [
   {
-    type: 'edit',
-    label: '编辑',
+    type: "edit",
+    label: "编辑",
     action: {
-      label: '编辑',
-      type: 'text',
-      icon: 'icon-edit',
-      actionType: 'modal',
-      permission: 'edit'
+      label: "编辑",
+      type: "text",
+      icon: "icon-edit",
+      actionType: "modal",
+      permission: "edit"
     }
   },
   {
-    type: 'delete',
-    label: '删除',
+    type: "delete",
+    label: "删除",
     action: {
-      label: '删除',
-      type: 'text',
-      status: 'danger',
-      icon: 'icon-delete',
-      actionType: 'api',
-      confirmText: '确定要删除吗？',
-      permission: 'delete'
+      label: "删除",
+      type: "text",
+      status: "danger",
+      icon: "icon-delete",
+      actionType: "api",
+      confirmText: "确定要删除吗？",
+      permission: "delete"
     }
   },
   {
-    type: 'view',
-    label: '查看',
+    type: "view",
+    label: "查看",
     action: {
-      label: '查看',
-      type: 'text',
-      icon: 'icon-eye',
-      actionType: 'drawer',
-      permission: 'view'
+      label: "查看",
+      type: "text",
+      icon: "icon-eye",
+      actionType: "drawer",
+      permission: "view"
     }
   },
   {
-    type: 'enable',
-    label: '启用/禁用',
+    type: "enable",
+    label: "启用/禁用",
     action: {
-      label: '启用',
-      type: 'text',
-      icon: 'icon-check',
-      actionType: 'api',
-      permission: 'status'
+      label: "启用",
+      type: "text",
+      icon: "icon-check",
+      actionType: "api",
+      permission: "status"
     }
   }
-]
+];
 
 const handleApplyTemplate = (template: { action: Partial<TableAction> }) => {
   actions.value.push({
     id: `action_${Date.now()}`,
     ...template.action,
     sort: actions.value.length
-  } as TableAction)
-}
+  } as TableAction);
+};
 </script>
 
 <style lang="scss" scoped>

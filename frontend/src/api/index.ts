@@ -19,10 +19,10 @@ const mockService = axiosMock.create({
 const redirectToLogin = () => {
   if (isRedirectingToLogin) return;
   isRedirectingToLogin = true;
-  
+
   removeToken();
   Message.error("登录状态已过期，请重新登录");
-  
+
   // 延迟跳转，避免消息提示被立即清除
   setTimeout(() => {
     router.push("/login");
@@ -88,7 +88,7 @@ service.interceptors.response.use(
       redirectToLogin();
       return Promise.reject(error);
     }
-    
+
     // 其他错误直接返回
     return Promise.reject(error);
   }
