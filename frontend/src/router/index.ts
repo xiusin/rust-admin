@@ -53,6 +53,31 @@ const routes: RouteRecordRaw[] = [
     path: '/permission-categories',
     name: 'PermissionCategoryList',
     component: () => import('../views/PermissionCategoryList.vue')
+  },
+  {
+    path: '/menus',
+    name: 'MenuList',
+    component: () => import('../views/MenuList.vue')
+  },
+  {
+    path: '/login-logs',
+    name: 'LoginLog',
+    component: () => import('../views/LoginLog.vue')
+  },
+  {
+    path: '/operation-logs',
+    name: 'OperationLog',
+    component: () => import('../views/OperationLog.vue')
+  },
+  {
+    path: '/server-info',
+    name: 'ServerInfo',
+    component: () => import('../views/ServerInfo.vue')
+  },
+  {
+    path: '/jobs',
+    name: 'JobList',
+    component: () => import('../views/JobList.vue')
   }
 ]
 
