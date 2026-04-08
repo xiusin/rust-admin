@@ -12,6 +12,7 @@ pub mod sys_login_info;
 pub mod sys_menu;
 pub mod sys_notice;
 pub mod sys_oper_log;
+pub mod sys_permission_category;
 pub mod sys_post;
 pub mod sys_role;
 pub mod sys_role_api;

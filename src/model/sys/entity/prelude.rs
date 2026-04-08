@@ -10,6 +10,7 @@ pub use super::sys_login_info::Entity as SysLoginInfo;
 pub use super::sys_menu::Entity as SysMenu;
 pub use super::sys_notice::Entity as SysNotice;
 pub use super::sys_oper_log::Entity as SysOperLog;
+pub use super::sys_permission_category::Entity as SysPermissionCategory;
 pub use super::sys_post::Entity as SysPost;
 pub use super::sys_role::Entity as SysRole;
 pub use super::sys_role_api::Entity as SysRoleApi;

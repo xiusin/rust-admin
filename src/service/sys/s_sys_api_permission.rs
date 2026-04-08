@@ -1,7 +1,6 @@
 use crate::api::web_path::WebPath;
-use crate::model::sys::model::msys_api_permission::{
-    ApiPermissionAdd, ApiPermissionEdit, ApiPermissionSearch, SysApiPermissionModel,
-};
+use crate::model::sys::model::msys_api_permission::{ApiPermissionAdd, ApiPermissionEdit, ApiPermissionSearch, SysApiPermissionModel};
+use crate::model::sys::entity::sys_api_permission;
 use crate::service::prelude::*;
 pub async fn list(
     VQuery(arg): VQuery<PageParams>,
@@ -11,9 +10,46 @@ pub async fn list(
     ApiResponse::from_result(rlist)
 }
 
+pub async fn add(VJson(arg): VJson<ApiPermissionAdd>) -> impl IntoResponse {
+    let db = DB().await.begin().await;
+    match db {
+        Ok(mut tx) => {
+            let result = SysApiPermissionModel::add_or_update(arg, &mut tx).await;
+            match result {
+                Ok(api) => {
+                    tx.commit().await.unwrap();
+                    ApiResponse::ok(api)
+                }
+                Err(e) => {
+                    tx.rollback().await.unwrap();
+                    ApiResponse::bad_request(e.to_string())
+                }
+            }
+        }
+        Err(e) => ApiResponse::bad_request(e.to_string()),
+    }
+}
+
 pub async fn edit(VJson(arg): VJson<ApiPermissionEdit>) -> impl IntoResponse {
     let r = SysApiPermissionModel::edit(arg).await;
     ApiResponse::from_result(r)
+}
+
+pub async fn delete(path: axum::extract::Path<i64>) -> impl IntoResponse {
+    let id = path.0;
+    let db = DB().await;
+    let result = sys_api_permission::Entity::delete_by_id(id).exec(db).await;
+    match result {
+        Ok(_) => ApiResponse::ok("Success"),
+        Err(e) => ApiResponse::bad_request(e.to_string()),
+    }
+}
+
+pub async fn update_all() -> impl IntoResponse {
+    let web_paths = crate::api::web_path::get_all_web_paths();
+    let webstr = serde_json::to_string(&web_paths).unwrap();
+    let result = update_all_api(webstr).await;
+    ApiResponse::from_result(result)
 }
 
 pub async fn update_all_api(webstr: String) -> Result<String> {

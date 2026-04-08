@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use axum::routing::MethodRouter;
 use serde::{Deserialize, Serialize};
 use tracing::info;
-#[derive(Debug, Default, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Default, Serialize, Deserialize, PartialEq, Clone)]
 pub enum WebPathType {
     #[default]
     None,
@@ -108,4 +108,23 @@ impl WebPathType {
             WebPathType::Delete => "Delete",
         }
     }
+}
+
+pub fn get_all_web_paths() -> Vec<WebPath> {
+    use super::sys_controll::router_sys;
+    
+    let root_path = router_sys();
+    let root_path = root_path.final_to_path();
+    let last_level_paths = root_path.get_last_level_paths();
+    
+    last_level_paths
+        .into_iter()
+        .map(|path| WebPath {
+            final_path: path.final_path.clone(),
+            webmethod: path.webmethod.clone(),
+            apiname: path.apiname.clone(),
+            method_router: None,
+            sub_paths: HashMap::new(),
+        })
+        .collect()
 }

@@ -22,6 +22,7 @@ pub fn router_sys() -> WebPath {
             .nest("/job", sys_job())
             .nest("/jobinfo", sys_job_info())
             .nest("/apipermission", sys_api_permission())
+            .nest("/permission_category", sys_permission_category())
             .nest("/dashboard", sys_dashboard())
             .nest("/setting", sys_setting())
             .nest("/operationlog", sys_operation_log())
@@ -461,10 +462,56 @@ fn sys_api_permission() -> WebPath {
             get(s_sys_api_permission::list),
         )
         .route(
+            "/add",
+            WebPathType::Post,
+            Some("添加api权限"),
+            post(s_sys_api_permission::add),
+        )
+        .route(
             "/edit",
             WebPathType::Put,
             Some("编辑api权限"),
             put(s_sys_api_permission::edit),
+        )
+        .route(
+            "/delete/:id",
+            WebPathType::Delete,
+            Some("删除api权限"),
+            delete(s_sys_api_permission::delete),
+        )
+        .route(
+            "/update_all",
+            WebPathType::Post,
+            Some("更新所有api权限"),
+            post(s_sys_api_permission::update_all),
+        )
+}
+
+fn sys_permission_category() -> WebPath {
+    WebPath::new()
+        .route(
+            "/list",
+            WebPathType::Get,
+            Some("获取权限分类列表"),
+            get(s_sys_permission_category::list),
+        )
+        .route(
+            "/add",
+            WebPathType::Post,
+            Some("添加权限分类"),
+            post(s_sys_permission_category::add),
+        )
+        .route(
+            "/edit",
+            WebPathType::Put,
+            Some("编辑权限分类"),
+            put(s_sys_permission_category::edit),
+        )
+        .route(
+            "/delete/:id",
+            WebPathType::Delete,
+            Some("删除权限分类"),
+            delete(s_sys_permission_category::delete),
         )
 }
 

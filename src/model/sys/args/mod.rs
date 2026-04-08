@@ -7,6 +7,7 @@ pub mod asys_dept;
 pub mod asys_role;
 pub mod asys_role_api;
 pub mod asys_white_jwt;
+pub mod asys_permission_category;
 pub mod asys_login_info;
 pub mod asys_dict_data;
 pub mod asys_dict_type;

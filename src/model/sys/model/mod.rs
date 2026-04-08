@@ -10,6 +10,7 @@ pub mod msys_user_dept;
 pub mod msys_role_api;
 pub mod msys_login_info;
 pub mod msys_white_jwt;
+pub mod msys_permission_category;
 pub mod msys_job;
 pub mod msys_job_log;
 pub mod msys_dict_data;
