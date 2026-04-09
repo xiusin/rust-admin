@@ -1,0 +1,18 @@
+import { VChartArcoThemeHelper } from "./theme-helper";
+
+export * from "./common";
+
+export * from "./interface";
+
+export * from "./theme-helper";
+
+export * from "./theme-map";
+
+export * from "./light";
+
+export * from "./dark";
+
+export const initVChartArcoTheme = options => {
+    const helper = new VChartArcoThemeHelper(null != options ? options : {});
+    return helper.init(), helper;
+};

@@ -1,67 +1,169 @@
-/* global css transition */
 @use "@/style/var/index" as *;
 
-// Transition过渡动画
+@mixin transition-base($duration: 0.3s, $easing: cubic-bezier(0.4, 0, 0.2, 1)) {
+  transition: all $duration $easing;
+}
 
-/* 轻过渡 */
-// 进入
+@mixin animation-base($name, $duration: 0.3s, $easing: cubic-bezier(0.4, 0, 0.2, 1), $fill-mode: both) {
+  animation: $name $duration $easing $fill-mode;
+}
+
 .fadeInOut-enter-active {
-  animation: slide-enter-right 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  @include animation-base(fadeInOut-enter, 0.3s, cubic-bezier(0.25, 0.46, 0.45, 0.94));
 }
 
-@keyframes slide-enter-right {
-  0% {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes slide-enter-right {
-  0% {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-// 离开
 .fadeInOut-leave-active {
-  animation: slide-leave-right 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  @include animation-base(fadeInOut-leave, 0.25s, cubic-bezier(0.25, 0.46, 0.45, 0.94));
 }
 
-@keyframes slide-leave-right {
+@keyframes fadeInOut-enter {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInOut-leave {
   0% {
     opacity: 1;
     transform: translateX(0);
   }
   100% {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateX(30px);
   }
 }
 
-@keyframes slide-leave-right {
+.slideLeftRight-enter-active {
+  @include animation-base(slideLeftRight-enter, 0.4s, cubic-bezier(0.25, 0.46, 0.45, 0.94));
+}
+
+.slideLeftRight-leave-active {
+  @include animation-base(slideLeftRight-leave, 0.3s, cubic-bezier(0.25, 0.46, 0.45, 0.94));
+}
+
+@keyframes slideLeftRight-enter {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideLeftRight-leave {
   0% {
     opacity: 1;
     transform: translateX(0);
   }
   100% {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateX(-100%);
   }
 }
 
-/* 卡片 */
-// 进入
+.slideUpDown-enter-active {
+  @include animation-base(slideUpDown-enter, 0.4s, cubic-bezier(0.25, 0.46, 0.45, 0.94));
+}
+
+.slideUpDown-leave-active {
+  @include animation-base(slideUpDown-leave, 0.3s, cubic-bezier(0.25, 0.46, 0.45, 0.94));
+}
+
+@keyframes slideUpDown-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUpDown-leave {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
+.zoomInOut-enter-active {
+  @include animation-base(zoomInOut-enter, 0.35s, cubic-bezier(0.175, 0.885, 0.32, 1.275));
+}
+
+.zoomInOut-leave-active {
+  @include animation-base(zoomInOut-leave, 0.25s, cubic-bezier(0.6, -0.28, 0.735, 0.045));
+}
+
+@keyframes zoomInOut-enter {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes zoomInOut-leave {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
+.rotateInOut-enter-active {
+  @include animation-base(rotateInOut-enter, 0.4s, cubic-bezier(0.175, 0.885, 0.32, 1.275));
+}
+
+.rotateInOut-leave-active {
+  @include animation-base(rotateInOut-leave, 0.3s, cubic-bezier(0.6, -0.28, 0.735, 0.045));
+}
+
+@keyframes rotateInOut-enter {
+  0% {
+    opacity: 0;
+    transform: rotateY(-30deg) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: rotateY(0) scale(1);
+  }
+}
+
+@keyframes rotateInOut-leave {
+  0% {
+    opacity: 1;
+    transform: rotateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotateY(30deg) scale(0.9);
+  }
+}
+
 .cardInOut-enter-active {
-  animation: swing-in-top-fwd 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  @include animation-base(swing-in-top-fwd, 0.4s, cubic-bezier(0.175, 0.885, 0.32, 1.275));
+}
+
+.cardInOut-leave-active {
+  @include animation-base(swing-out-top-bck, 0.3s, cubic-bezier(0.6, -0.28, 0.735, 0.045));
 }
 
 @keyframes swing-in-top-fwd {
@@ -77,11 +179,6 @@
   }
 }
 
-// 离开
-.cardInOut-leave-active {
-  animation: swing-out-top-bck 0.25s cubic-bezier(0.6, -0.28, 0.735, 0.045) both;
-}
-
 @keyframes swing-out-top-bck {
   0% {
     opacity: 1;
@@ -95,10 +192,12 @@
   }
 }
 
-/* 渐退 */
-// 进入
 .fadeOut-enter-active {
-  animation: fade-in 0.25s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+  @include animation-base(fade-in, 0.3s, cubic-bezier(0.39, 0.575, 0.565, 1));
+}
+
+.fadeOut-leave-active {
+  @include animation-base(fade-out, 0.25s, ease-out);
 }
 
 @keyframes fade-in {
@@ -110,16 +209,81 @@
   }
 }
 
-// 离开
-.fadeOut-leave-active {
-  animation: fade-out 0.25s ease-out both;
-}
-
 @keyframes fade-out {
   0% {
     opacity: 1;
   }
   100% {
     opacity: 0;
+  }
+}
+
+.flipInOut-enter-active {
+  @include animation-base(flip-in-hor-bottom, 0.45s, cubic-bezier(0.25, 0.46, 0.45, 0.94));
+}
+
+.flipInOut-leave-active {
+  @include animation-base(flip-out-hor-top, 0.35s, cubic-bezier(0.55, 0.085, 0.68, 0.53));
+}
+
+@keyframes flip-in-hor-bottom {
+  0% {
+    opacity: 0;
+    transform: rotateX(80deg);
+  }
+  100% {
+    opacity: 1;
+    transform: rotateX(0);
+  }
+}
+
+@keyframes flip-out-hor-top {
+  0% {
+    opacity: 1;
+    transform: rotateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: rotateX(70deg);
+  }
+}
+
+.bounceInOut-enter-active {
+  @include animation-base(bounce-in, 0.5s, cubic-bezier(0.175, 0.885, 0.32, 1.275));
+}
+
+.bounceInOut-leave-active {
+  @include animation-base(bounce-out, 0.4s, cubic-bezier(0.6, -0.28, 0.735, 0.045));
+}
+
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.3);
   }
 }

@@ -1,0 +1,282 @@
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@visactor/vchart')) :
+    typeof define === 'function' && define.amd ? define(['exports', '@visactor/vchart'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["vchart-theme"] = {}, global.vchart));
+})(this, (function (exports, vchart) { 'use strict';
+
+    const getTokenValue = (token, defaultValue, chartContainer) => {
+        const value = token
+            ? getComputedStyle(chartContainer !== null && chartContainer !== void 0 ? chartContainer : document.body).getPropertyValue(token) || defaultValue
+            : defaultValue;
+        if (value && !isNaN(value[0])) {
+            return `rgba(${value})`;
+        }
+        return value;
+    };
+
+    const observeAttribute = (element, attribute, callback) => {
+        const observer = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+                if (mutation.attributeName === attribute) {
+                    callback(mutation);
+                }
+            });
+        });
+        observer.observe(element, { attributes: true });
+    };
+
+    const isNil = (value) => {
+        return value === null || value === undefined;
+    };
+
+    const isValid = (value) => {
+        return value !== null && value !== undefined;
+    };
+
+    const isType = (value, type) => Object.prototype.toString.call(value) === `[object ${type}]`;
+
+    const isString = (value, fuzzy = false) => {
+        const type = typeof value;
+        if (fuzzy) {
+            return type === 'string';
+        }
+        return type === 'string' || isType(value, 'String');
+    };
+
+    const isArray = (value) => {
+        return Array.isArray ? Array.isArray(value) : isType(value, 'Array');
+    };
+
+    const isArrayLike = function (value) {
+        return value !== null && typeof value !== 'function' && Number.isFinite(value.length);
+    };
+
+    const get = (obj, path, defaultValue) => {
+        const paths = isString(path) ? path.split('.') : path;
+        for (let p = 0; p < paths.length; p++) {
+            obj = obj ? obj[paths[p]] : undefined;
+        }
+        return obj === undefined ? defaultValue : obj;
+    };
+
+    function array(arr) {
+        if (isValid(arr)) {
+            return isArray(arr) ? arr : [arr];
+        }
+        return [];
+    }
+    function last(val) {
+        if (isArrayLike(val)) {
+            const arr = val;
+            return arr[arr.length - 1];
+        }
+        return undefined;
+    }
+    const span = (arr) => {
+        if (arr.length <= 1) {
+            return 0;
+        }
+        return last(arr) - arr[0];
+    };
+    const maxInArray = (arr, compareFn) => {
+        var _a;
+        if (arr.length === 0) {
+            return undefined;
+        }
+        let max = arr[0];
+        for (let i = 1; i < arr.length; i++) {
+            const value = arr[i];
+            if ((_a = compareFn === null || compareFn === void 0 ? void 0 : compareFn(value, max)) !== null && _a !== void 0 ? _a : value - max > 0) {
+                max = value;
+            }
+        }
+        return max;
+    };
+    const minInArray = (arr, compareFn) => {
+        var _a;
+        if (arr.length === 0) {
+            return undefined;
+        }
+        let min = arr[0];
+        for (let i = 1; i < arr.length; i++) {
+            const value = arr[i];
+            if ((_a = compareFn === null || compareFn === void 0 ? void 0 : compareFn(value, min)) !== null && _a !== void 0 ? _a : value - min < 0) {
+                min = value;
+            }
+        }
+        return min;
+    };
+    function arrayEqual(a, b) {
+        if (!isArray(a) || !isArray(b)) {
+            return false;
+        }
+        if (a.length !== b.length) {
+            return false;
+        }
+        for (let i = 0; i < a.length; i++) {
+            if (a[i] !== b[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+    function uniqArray(arr) {
+        if (!arr || !isArray(arr)) {
+            return arr;
+        }
+        return Array.from(new Set(array(arr)));
+    }
+    function shuffleArray(arr, random = Math.random) {
+        let j;
+        let x;
+        let i = arr.length;
+        while (i) {
+            j = Math.floor(random() * i);
+            x = arr[--i];
+            arr[i] = arr[j];
+            arr[j] = x;
+        }
+        return arr;
+    }
+    function flattenArray(arr) {
+        if (!isArray(arr)) {
+            return [arr];
+        }
+        const result = [];
+        for (const value of arr) {
+            result.push(...flattenArray(value));
+        }
+        return result;
+    }
+
+    const setProperty = (target, path, value) => {
+        if (isNil(path)) {
+            return target;
+        }
+        const key = path[0];
+        if (isNil(key)) {
+            return target;
+        }
+        if (path.length === 1) {
+            target[key] = value;
+            return target;
+        }
+        if (isNil(target[key])) {
+            if (typeof path[1] === 'number') {
+                target[key] = [];
+            }
+            else {
+                target[key] = {};
+            }
+        }
+        return setProperty(target[key], path.slice(1), value);
+    };
+    const getProperty = (target, path, defaultValue) => {
+        if (isNil(path)) {
+            return undefined;
+        }
+        return get(target, path, defaultValue);
+    };
+
+    const generateDataScheme = (mode, tokenMap, baseDataScheme, chartContainer) => {
+        var _a;
+        return ((_a = tokenMap === null || tokenMap === void 0 ? void 0 : tokenMap.map((item, i) => {
+            const { scheme } = baseDataScheme[i];
+            return Object.assign(Object.assign({}, item), { scheme: item.scheme.map((token, j) => {
+                    return getTokenValue(typeof token === 'object' ? token[mode] : token, scheme === null || scheme === void 0 ? void 0 : scheme[j], chartContainer);
+                }) });
+        })) !== null && _a !== void 0 ? _a : baseDataScheme);
+    };
+    const generatePalette = (mode, tokenMap, basePalette, chartContainer) => {
+        if (tokenMap) {
+            const newPalette = {};
+            Object.keys(tokenMap).forEach(key => {
+                const token = typeof tokenMap[key] === 'object' ? tokenMap[key][mode] : tokenMap[key];
+                newPalette[key] = getTokenValue(token, basePalette[key], chartContainer);
+            });
+            return newPalette;
+        }
+        return basePalette;
+    };
+
+    class VChartExtendThemeHelper {
+        getCurrentMode() {
+            return document.body.hasAttribute(this.themeModeAttribute) &&
+                document.body.getAttribute(this.themeModeAttribute) === 'dark'
+                ? 'dark'
+                : 'light';
+        }
+        generateThemeName(option) {
+            var _a;
+            const mode = (_a = option === null || option === void 0 ? void 0 : option.mode) !== null && _a !== void 0 ? _a : this.getCurrentMode();
+            return `${this.themeNamePrefix}${mode[0].toUpperCase()}${mode.slice(1)}`;
+        }
+        generateTheme(option, chartContainer) {
+            var _a;
+            const mode = (_a = option === null || option === void 0 ? void 0 : option.mode) !== null && _a !== void 0 ? _a : this.getCurrentMode();
+            const baseTheme = this.baseTheme[mode];
+            const { dataScheme, palette } = baseTheme.colorScheme.default;
+            const colorScheme = {
+                default: {
+                    dataScheme: generateDataScheme(mode, this.tokenMap.dataScheme, dataScheme, chartContainer),
+                    palette: generatePalette(mode, this.tokenMap.palette, palette, chartContainer)
+                }
+            };
+            return Object.assign(Object.assign({}, baseTheme), { colorScheme });
+        }
+        constructor(options) {
+            var _a;
+            this.options = options;
+            this.themeManager = (_a = options.themeManager) !== null && _a !== void 0 ? _a : vchart.ThemeManager;
+        }
+        init() {
+            var _a;
+            const { defaultMode, isWatchingMode = true } = (_a = this.options) !== null && _a !== void 0 ? _a : {};
+            this.switchVChartTheme(false, {
+                mode: defaultMode
+            });
+            if (isWatchingMode) {
+                observeAttribute(document.body, this.themeModeAttribute, () => this.switchVChartTheme());
+            }
+        }
+        switchVChartTheme(force, option, theme) {
+            const themeName = this.generateThemeName(option);
+            if (!force && this.themeManager.getCurrentTheme() === themeName) {
+                return;
+            }
+            else if (force) {
+                this.themeManager.removeTheme(themeName);
+            }
+            if (!this.themeManager.themeExist(themeName)) {
+                const newTheme = theme !== null && theme !== void 0 ? theme : this.generateTheme(option);
+                this.themeManager.registerTheme(themeName, newTheme);
+            }
+            this.themeManager.setCurrentTheme(themeName);
+        }
+    }
+
+    exports.VChartExtendThemeHelper = VChartExtendThemeHelper;
+    exports.array = array;
+    exports.arrayEqual = arrayEqual;
+    exports.flattenArray = flattenArray;
+    exports.generateDataScheme = generateDataScheme;
+    exports.generatePalette = generatePalette;
+    exports.get = get;
+    exports.getProperty = getProperty;
+    exports.getTokenValue = getTokenValue;
+    exports.isArray = isArray;
+    exports.isArrayLike = isArrayLike;
+    exports.isNil = isNil;
+    exports.isString = isString;
+    exports.isType = isType;
+    exports.isValid = isValid;
+    exports.last = last;
+    exports.maxInArray = maxInArray;
+    exports.minInArray = minInArray;
+    exports.observeAttribute = observeAttribute;
+    exports.setProperty = setProperty;
+    exports.shuffleArray = shuffleArray;
+    exports.span = span;
+    exports.uniqArray = uniqArray;
+
+}));

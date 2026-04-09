@@ -1,0 +1,53 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: !0
+}), exports.VChartExtendThemeHelper = void 0;
+
+const vchart_1 = require("@visactor/vchart"), generator_1 = require("./generator"), utils_1 = require("./utils");
+
+class VChartExtendThemeHelper {
+    getCurrentMode() {
+        return document.body.hasAttribute(this.themeModeAttribute) && "dark" === document.body.getAttribute(this.themeModeAttribute) ? "dark" : "light";
+    }
+    generateThemeName(option) {
+        var _a;
+        const mode = null !== (_a = null == option ? void 0 : option.mode) && void 0 !== _a ? _a : this.getCurrentMode();
+        return `${this.themeNamePrefix}${mode[0].toUpperCase()}${mode.slice(1)}`;
+    }
+    generateTheme(option, chartContainer) {
+        var _a;
+        const mode = null !== (_a = null == option ? void 0 : option.mode) && void 0 !== _a ? _a : this.getCurrentMode(), baseTheme = this.baseTheme[mode], {dataScheme: dataScheme, palette: palette} = baseTheme.colorScheme.default, colorScheme = {
+            default: {
+                dataScheme: (0, generator_1.generateDataScheme)(mode, this.tokenMap.dataScheme, dataScheme, chartContainer),
+                palette: (0, generator_1.generatePalette)(mode, this.tokenMap.palette, palette, chartContainer)
+            }
+        };
+        return Object.assign(Object.assign({}, baseTheme), {
+            colorScheme: colorScheme
+        });
+    }
+    constructor(options) {
+        var _a;
+        this.options = options, this.themeManager = null !== (_a = options.themeManager) && void 0 !== _a ? _a : vchart_1.ThemeManager;
+    }
+    init() {
+        var _a;
+        const {defaultMode: defaultMode, isWatchingMode: isWatchingMode = !0} = null !== (_a = this.options) && void 0 !== _a ? _a : {};
+        this.switchVChartTheme(!1, {
+            mode: defaultMode
+        }), isWatchingMode && (0, utils_1.observeAttribute)(document.body, this.themeModeAttribute, (() => this.switchVChartTheme()));
+    }
+    switchVChartTheme(force, option, theme) {
+        const themeName = this.generateThemeName(option);
+        if (force || this.themeManager.getCurrentTheme() !== themeName) {
+            if (force && this.themeManager.removeTheme(themeName), !this.themeManager.themeExist(themeName)) {
+                const newTheme = null != theme ? theme : this.generateTheme(option);
+                this.themeManager.registerTheme(themeName, newTheme);
+            }
+            this.themeManager.setCurrentTheme(themeName);
+        }
+    }
+}
+
+exports.VChartExtendThemeHelper = VChartExtendThemeHelper;

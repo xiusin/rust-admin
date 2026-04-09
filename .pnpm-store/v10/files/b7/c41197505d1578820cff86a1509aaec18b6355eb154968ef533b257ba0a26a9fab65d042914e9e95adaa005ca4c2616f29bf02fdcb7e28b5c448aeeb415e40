@@ -1,0 +1,49 @@
+import { ThemeManager } from "@visactor/vchart";
+
+import { generateDataScheme, generatePalette } from "./generator";
+
+import { observeAttribute } from "./utils";
+
+export class VChartExtendThemeHelper {
+    getCurrentMode() {
+        return document.body.hasAttribute(this.themeModeAttribute) && "dark" === document.body.getAttribute(this.themeModeAttribute) ? "dark" : "light";
+    }
+    generateThemeName(option) {
+        var _a;
+        const mode = null !== (_a = null == option ? void 0 : option.mode) && void 0 !== _a ? _a : this.getCurrentMode();
+        return `${this.themeNamePrefix}${mode[0].toUpperCase()}${mode.slice(1)}`;
+    }
+    generateTheme(option, chartContainer) {
+        var _a;
+        const mode = null !== (_a = null == option ? void 0 : option.mode) && void 0 !== _a ? _a : this.getCurrentMode(), baseTheme = this.baseTheme[mode], {dataScheme: dataScheme, palette: palette} = baseTheme.colorScheme.default, colorScheme = {
+            default: {
+                dataScheme: generateDataScheme(mode, this.tokenMap.dataScheme, dataScheme, chartContainer),
+                palette: generatePalette(mode, this.tokenMap.palette, palette, chartContainer)
+            }
+        };
+        return Object.assign(Object.assign({}, baseTheme), {
+            colorScheme: colorScheme
+        });
+    }
+    constructor(options) {
+        var _a;
+        this.options = options, this.themeManager = null !== (_a = options.themeManager) && void 0 !== _a ? _a : ThemeManager;
+    }
+    init() {
+        var _a;
+        const {defaultMode: defaultMode, isWatchingMode: isWatchingMode = !0} = null !== (_a = this.options) && void 0 !== _a ? _a : {};
+        this.switchVChartTheme(!1, {
+            mode: defaultMode
+        }), isWatchingMode && observeAttribute(document.body, this.themeModeAttribute, (() => this.switchVChartTheme()));
+    }
+    switchVChartTheme(force, option, theme) {
+        const themeName = this.generateThemeName(option);
+        if (force || this.themeManager.getCurrentTheme() !== themeName) {
+            if (force && this.themeManager.removeTheme(themeName), !this.themeManager.themeExist(themeName)) {
+                const newTheme = null != theme ? theme : this.generateTheme(option);
+                this.themeManager.registerTheme(themeName, newTheme);
+            }
+            this.themeManager.setCurrentTheme(themeName);
+        }
+    }
+}

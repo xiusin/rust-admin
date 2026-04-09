@@ -1,0 +1,41 @@
+export const getPaletteTokenMap = prefix => {
+    const prefixStr = prefix ? `${prefix}${"-" === prefix[prefix.length - 1] ? "" : "-"}` : "";
+    return {
+        backgroundColor: `--${prefixStr}color-bg-1`,
+        borderColor: `--${prefixStr}color-border`,
+        hoverBackgroundColor: `--${prefixStr}color-secondary-hover`,
+        sliderRailColor: `--${prefixStr}color-fill-3`,
+        sliderHandleColor: `--${prefixStr}color-bg-2`,
+        sliderTrackColor: "--primary-6",
+        popupBackgroundColor: `--${prefixStr}color-bg-popup`,
+        primaryFontColor: `--${prefixStr}color-text-1`,
+        secondaryFontColor: `--${prefixStr}color-text-2`,
+        tertiaryFontColor: `--${prefixStr}color-text-3`,
+        axisLabelFontColor: `--${prefixStr}color-text-3`,
+        disableFontColor: `--${prefixStr}color-text-4`,
+        axisMarkerFontColor: `--${prefixStr}color-bg-1`,
+        axisGridColor: `--${prefixStr}color-border`,
+        axisDomainColor: `--${prefixStr}color-neutral-3`,
+        dataZoomHandlerStrokeColor: `--${prefixStr}color-neutral-5`,
+        dataZoomChartColor: `--${prefixStr}color-fill-4`,
+        playerControllerColor: "--primary-6",
+        axisMarkerBackgroundColor: `--${prefixStr}color-text-1`,
+        markLabelBackgroundColor: `--${prefixStr}color-border`,
+        markLineStrokeColor: `--${prefixStr}color-text-2`,
+        dangerColor: "--danger-6",
+        warningColor: "--warning-6",
+        successColor: "--success-6",
+        infoColor: "--arcoblue-6"
+    };
+};
+
+export const getDataSchemeTokenMap = prefix => {
+    const prefixStr = prefix ? `${prefix}${"-" === prefix[prefix.length - 1] ? "" : "-"}` : "";
+    return [ {
+        maxDomainLength: 10,
+        scheme: [ `--${prefixStr}color-data-1`, `--${prefixStr}color-data-3`, `--${prefixStr}color-data-5`, `--${prefixStr}color-data-7`, `--${prefixStr}color-data-9`, `--${prefixStr}color-data-11`, `--${prefixStr}color-data-13`, `--${prefixStr}color-data-15`, `--${prefixStr}color-data-17`, `--${prefixStr}color-data-19` ]
+    }, {
+        scheme: [ `--${prefixStr}color-data-1`, `--${prefixStr}color-data-2`, `--${prefixStr}color-data-3`, `--${prefixStr}color-data-4`, `--${prefixStr}color-data-5`, `--${prefixStr}color-data-6`, `--${prefixStr}color-data-7`, `--${prefixStr}color-data-8`, `--${prefixStr}color-data-9`, `--${prefixStr}color-data-10`, `--${prefixStr}color-data-11`, `--${prefixStr}color-data-12`, `--${prefixStr}color-data-13`, `--${prefixStr}color-data-14`, `--${prefixStr}color-data-15`, `--${prefixStr}color-data-16`, `--${prefixStr}color-data-17`, `--${prefixStr}color-data-18`, `--${prefixStr}color-data-19`, `--${prefixStr}color-data-20` ]
+    } ];
+};
+//# sourceMappingURL=token-map.js.map

@@ -1,0 +1,36 @@
+import { dataScheme } from "../common/data-scheme";
+
+export const colorScheme = {
+    default: {
+        dataScheme: dataScheme,
+        palette: {
+            backgroundColor: "rgba(255,255,255,1)",
+            borderColor: "rgba(229,230,235,1)",
+            shadowColor: "rgba(0,0,0,0.1)",
+            hoverBackgroundColor: "rgba(229,230,235,1)",
+            sliderRailColor: "rgba(229,230,235,1)",
+            sliderHandleColor: "rgba(255,255,255,1)",
+            sliderTrackColor: "rgba(22,93,255,1)",
+            popupBackgroundColor: "rgba(255,255,255,1)",
+            primaryFontColor: "rgba(29,33,41,1)",
+            secondaryFontColor: "rgba(78,89,105,1)",
+            tertiaryFontColor: "rgba(134,144,156,1)",
+            axisLabelFontColor: "rgba(134,144,156,1)",
+            disableFontColor: "rgba(201,205,212,1)",
+            axisMarkerFontColor: "rgba(255,255,255,1)",
+            axisGridColor: "rgba(229,230,235,1)",
+            axisDomainColor: "rgba(229,230,235,1)",
+            dataZoomHandleStrokeColor: "rgba(169,174,184,1)",
+            dataZoomChartColor: "rgba(201,205,212,1)",
+            playerControllerColor: "rgba(22,93,255,1)",
+            axisMarkerBackgroundColor: "rgba(29,33,41,1)",
+            markLabelBackgroundColor: "rgba(229,230,235,1)",
+            markLineStrokeColor: "rgba(78,89,105,1)",
+            dangerColor: "rgba(245,63,63,1)",
+            warningColor: "rgba(255,125,0,1)",
+            successColor: "rgba(0,180,42,1)",
+            infoColor: "rgba(22,93,255,1)"
+        }
+    }
+};
+//# sourceMappingURL=color-scheme.js.map

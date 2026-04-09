@@ -1,0 +1,16 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: !0
+}), exports.arcoDesignLight = void 0;
+
+const color_scheme_1 = require("./color-scheme"), token_1 = require("../common/token");
+
+exports.arcoDesignLight = {
+    name: "arcoDesignLight",
+    description: "Arco Design - light",
+    type: "light",
+    token: token_1.token,
+    colorScheme: color_scheme_1.colorScheme
+};
+//# sourceMappingURL=index.js.map

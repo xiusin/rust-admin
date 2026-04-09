@@ -1,0 +1,8 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: !0
+}), exports.token = void 0, exports.token = {
+    fontFamily: "Inter,-apple-system,BlinkMacSystemFont,PingFang SC,Hiragino Sans GB,noto sans,Microsoft YaHei,Helvetica Neue,Helvetica,Arial,sans-serif"
+};
+//# sourceMappingURL=token.js.map

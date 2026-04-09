@@ -1,0 +1,31 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: !0
+}), exports.generatePalette = exports.generateDataScheme = void 0;
+
+const utils_1 = require("./utils"), generateDataScheme = (mode, tokenMap, baseDataScheme, chartContainer) => {
+    var _a;
+    return null !== (_a = null == tokenMap ? void 0 : tokenMap.map(((item, i) => {
+        const {scheme: scheme} = baseDataScheme[i];
+        return Object.assign(Object.assign({}, item), {
+            scheme: item.scheme.map(((token, j) => (0, utils_1.getTokenValue)("object" == typeof token ? token[mode] : token, null == scheme ? void 0 : scheme[j], chartContainer)))
+        });
+    }))) && void 0 !== _a ? _a : baseDataScheme;
+};
+
+exports.generateDataScheme = generateDataScheme;
+
+const generatePalette = (mode, tokenMap, basePalette, chartContainer) => {
+    if (tokenMap) {
+        const newPalette = {};
+        return Object.keys(tokenMap).forEach((key => {
+            const token = "object" == typeof tokenMap[key] ? tokenMap[key][mode] : tokenMap[key];
+            newPalette[key] = (0, utils_1.getTokenValue)(token, basePalette[key], chartContainer);
+        })), newPalette;
+    }
+    return basePalette;
+};
+
+exports.generatePalette = generatePalette;
+//# sourceMappingURL=generator.js.map

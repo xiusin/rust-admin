@@ -1,0 +1,20 @@
+import type { ITheme } from '@visactor/vchart';
+import { ThemeManager } from '@visactor/vchart';
+import type { DataSchemeTokenMap, PaletteTokenMap, ThemeMode, IInitThemeOption, IThemeQueryOption } from './interface';
+export declare abstract class VChartExtendThemeHelper {
+    abstract themeModeAttribute: string;
+    abstract themeNamePrefix: string;
+    abstract baseTheme: Record<ThemeMode, ITheme>;
+    abstract tokenMap: {
+        dataScheme?: DataSchemeTokenMap;
+        palette?: PaletteTokenMap;
+    };
+    getCurrentMode(): "light" | "dark";
+    generateThemeName(option?: IThemeQueryOption): string;
+    generateTheme(option?: IThemeQueryOption, chartContainer?: HTMLElement): ITheme;
+    options: IInitThemeOption;
+    themeManager: typeof ThemeManager;
+    constructor(options: IInitThemeOption);
+    init(): void;
+    switchVChartTheme(force?: boolean, option?: IThemeQueryOption, theme?: ITheme): void;
+}

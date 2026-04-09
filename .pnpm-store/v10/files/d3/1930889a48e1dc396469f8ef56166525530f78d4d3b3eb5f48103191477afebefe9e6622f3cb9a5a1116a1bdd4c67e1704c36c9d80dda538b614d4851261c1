@@ -1,0 +1,2 @@
+import type { DataSchemeItem, ProgressiveDataScheme } from '@visactor/vchart';
+export declare const dataScheme: ProgressiveDataScheme<DataSchemeItem>;

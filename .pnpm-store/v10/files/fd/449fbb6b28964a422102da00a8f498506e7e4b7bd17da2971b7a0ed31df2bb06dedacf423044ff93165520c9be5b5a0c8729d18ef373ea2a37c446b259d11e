@@ -1,0 +1,13 @@
+import type { ProgressiveDataScheme, BuiltinColorPalette, ThemeManager } from '@visactor/vchart';
+export type DataSchemeTokenMap = ProgressiveDataScheme<Token>;
+export type PaletteTokenMap = Record<keyof BuiltinColorPalette, Token>;
+export type ThemeMode = 'light' | 'dark';
+export type Token = string | Partial<Record<ThemeMode, string>>;
+export interface IInitThemeOption {
+    defaultMode?: ThemeMode;
+    isWatchingMode?: boolean;
+    themeManager?: typeof ThemeManager;
+}
+export interface IThemeQueryOption {
+    mode?: ThemeMode;
+}

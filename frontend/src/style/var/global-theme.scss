@@ -1,85 +1,342 @@
-/* global css theme */
+/* =============================================
+   现代电商 SaaS 设计系统 - 全局主题变量
+   ============================================= */
 
-$margin: 14px; // 盒子间距
-$margin-text: 8px; // 文字间距-行内
-$padding: 16px; // 盒子和内容的间距
-$icon-box: 24px; // icon盒子通用大小
-$icon-size: 18px; // icon通用大小
+// =============================================
+// 间距系统 (Spacing System) - 4px 基准网格
+// =============================================
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 12px;
+$spacing-lg: 16px;
+$spacing-xl: 24px;
+$spacing-2xl: 32px;
+$spacing-3xl: 48px;
 
-$radius-box-1: 4px; // 边框圆角-迷你-用于icon、按钮等一些细微的圆角
-$radius-box-2: 6px; // 边框圆角-小型
-$radius-box-3: 8px; // 边框圆角-中型
-$radius-box-4: 10px; // 边框圆角-大型
-$radius-box-5: 12px; // 边框圆角-极大
+$margin: $spacing-lg;
+$margin-text: $spacing-sm;
+$padding: $spacing-lg;
+$icon-box: 24px;
+$icon-size: 18px;
 
-// 边框宽度
-$border-1: 1px; // 常规-主要
-$border-2: 2px; // 较粗
-$border-3: 3px; // 粗
+// =============================================
+// 圆角系统 (Border Radius)
+// =============================================
+$radius-xs: 2px;
+$radius-sm: 4px;
+$radius-md: 6px;
+$radius-lg: 8px;
+$radius-xl: 12px;
+$radius-2xl: 16px;
+$radius-full: 9999px;
 
-// 边框色
-$color-border-1: var(--color-border-1); // 浅色
-$color-border-2: var(--color-border-2); // 常规-主要边框色
-$color-border-3: var(--color-border-3); // 深/悬浮
-$color-border-4: var(--color-border-4); // 重/按钮描边
+$radius-box-1: $radius-xs;
+$radius-box-2: $radius-sm;
+$radius-box-3: $radius-md;
+$radius-box-4: $radius-lg;
+$radius-box-5: $radius-xl;
 
-// 默认不占位边框
-$shadow-border-1: inset 0 0 0 1px red;
-$shadow-border-2: inset 0 0 0 1px cyan;
-$shadow-border-3: inset 0 0 0 1px blue;
-$shadow-border-4: inset 0 0 0 1px gold;
-$shadow-border-5: inset 0 0 0 1px violet;
-$shadow-border-6: inset 0 0 0 1px green;
+// =============================================
+// 边框系统 (Border)
+// =============================================
+$border-width-xs: 0.5px;
+$border-width-sm: 1px;
+$border-width-md: 2px;
+$border-width-lg: 3px;
 
-// 填充色
-$color-fill-1: var(--color-fill-1); // 浅/禁用-main背景色
-$color-fill-2: var(--color-fill-2); // 常规填充色/灰底悬浮
-$color-fill-3: var(--color-fill-3); // 深/灰底悬浮
-$color-fill-4: var(--color-fill-4); // 重/特殊场景
+$border-1: $border-width-sm;
+$border-2: $border-width-md;
+$border-3: $border-width-lg;
 
-// 设置全局主题色：https://arco.design/vue/docs/token
-$color-primary: rgb(var(--primary-6)); // 主题色-主要
-$color-success: rgb(var(--success-6)); // 成功色
-$color-warning: rgb(var(--warning-6)); // 警示色
-$color-danger: rgb(var(--danger-6)); // 错误色
-$color-link: rgb(var(--link-6)); // 链接色
+// =============================================
+// 色彩系统 (Color System) - 现代商业软件配色
+// =============================================
 
-// 字体色
-$color-text-1: var(--color-text-1); // 标题、重点字体颜色 强调/正文标题
-$color-text-2: var(--color-text-2); // 默认字体色 次强调/正文标题
-$color-text-3: var(--color-text-3); // 次要信息 二级字体色
-$color-text-4: var(--color-text-4); // 置灰信息
+// 主色调 - 专业蓝紫色系 (适合电商 SaaS)
+$primary-1: #f0f5ff;
+$primary-2: #d6e4ff;
+$primary-3: #adc6ff;
+$primary-4: #85a5ff;
+$primary-5: #597ef7;
+$primary-6: #4080ff;
+$primary-7: #165dff;
+$primary-8: #0e42d2;
+$primary-9: #0a2ca5;
+$primary-10: #061178;
 
-// 背景色
-$color-bg-1: var(--color-bg-1); // 整体背景色-可用于main窗口卡片背景
-$color-bg-2: var(--color-bg-2); // 一级容器背景
-$color-bg-3: var(--color-bg-3); // 二级容器背景
-$color-bg-4: var(--color-bg-4); // 三级容器背景
-$color-bg-5: var(--color-bg-5); // 下拉弹出框、Tooltip 背景颜色
-$color-bg-white: var(--color-bg-white); // 白色背景
+// 成功色 - 清新绿色
+$success-1: #e8ffea;
+$success-2: #cff7d3;
+$success-3: #a9f2b1;
+$success-4: #73e183;
+$success-5: #49c75e;
+$success-6: #23a33c;
+$success-7: #0f8626;
+$success-8: #056b18;
+$success-9: #015311;
+$success-10: #003c0a;
 
-// 阴影
-$shadow-special: 0 0 1px rgb(0 0 0 / 30%); // 特殊阴影
-$shadow1-center: 0 -2px 5px rgb(0 0 0 / 10%); // 阴影样式1
-$shadow2-center: 0 0 10px rgb(0 0 0 / 10%); // 阴影样式2
-$shadow3-center: 0 0 20px rgb(0 0 0 / 10%); // 阴影样式3
+// 警告色 - 温暖橙色
+$warning-1: #fff7e8;
+$warning-2: #ffe7ba;
+$warning-3: #ffd591;
+$warning-4: #ffc069;
+$warning-5: #ffa540;
+$warning-6: #ff7d00;
+$warning-7: #d45d00;
+$warning-8: #aa4500;
+$warning-9: #803000;
+$warning-10: #551f00;
 
-// 常规大小为字体对应的首选项
+// 错误色 - 柔和红色
+$danger-1: #fff1f0;
+$danger-2: #ffccc7;
+$danger-3: #ffa39e;
+$danger-4: #ff7875;
+$danger-5: #ff4d4f;
+$danger-6: #f53f3f;
+$danger-7: #cf1322;
+$danger-8: #a8071a;
+$danger-9: #820014;
+$danger-10: #5c0011;
+
+// 中性色 - 灰度系统
+$gray-1: #f7f8fa;
+$gray-2: #e5e6eb;
+$gray-3: #c9cdd4;
+$gray-4: #86909c;
+$gray-5: #4e5969;
+$gray-6: #272e3b;
+$gray-7: #1d2129;
+$gray-8: #0a0c10;
+$gray-9: #000000;
+
+// 白色系
+$white: #ffffff;
+$white-soft: #fbfbfc;
+
+// =============================================
+// 语义化色彩变量 (Semantic Colors)
+// =============================================
+
+// 主色
+$color-primary: $primary-6;
+$color-primary-light: $primary-3;
+$color-primary-dark: $primary-8;
+$color-primary-bg: $primary-1;
+
+// 功能色
+$color-success: $success-6;
+$color-success-light: $success-3;
+$color-success-dark: $success-8;
+$color-success-bg: $success-1;
+
+$color-warning: $warning-6;
+$color-warning-light: $warning-3;
+$color-warning-dark: $warning-8;
+$color-warning-bg: $warning-1;
+
+$color-danger: $danger-6;
+$color-danger-light: $danger-3;
+$color-danger-dark: $danger-8;
+$color-danger-bg: $danger-1;
+
+$color-link: $primary-6;
+$color-link-hover: $primary-7;
+
+// =============================================
+// 文字颜色 (Text Colors)
+// =============================================
+$color-text-1: $gray-7;
+$color-text-2: $gray-5;
+$color-text-3: $gray-4;
+$color-text-4: $gray-3;
+$color-text-white: $white;
+
+// =============================================
+// 边框颜色 (Border Colors)
+// =============================================
+$color-border-1: $gray-2;
+$color-border-2: $gray-3;
+$color-border-3: $gray-4;
+$color-border-4: $gray-5;
+
+// =============================================
+// 填充颜色 (Fill Colors)
+// =============================================
+$color-fill-1: $gray-1;
+$color-fill-2: $gray-2;
+$color-fill-3: $gray-3;
+$color-fill-4: $gray-4;
+
+// =============================================
+// 背景颜色 (Background Colors)
+// =============================================
+$color-bg-1: $gray-1;
+$color-bg-2: $white;
+$color-bg-3: $white-soft;
+$color-bg-4: $gray-1;
+$color-bg-5: $white;
+$color-bg-white: $white;
+$color-bg-dark: $gray-8;
+
+// =============================================
+// 阴影系统 (Shadow System) - 现代分层阴影
+// =============================================
+$shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+$shadow-sm: 0 1px 4px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.10), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+$shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.12);
+
+$shadow-special: $shadow-xs;
+$shadow1-center: $shadow-sm;
+$shadow2-center: $shadow-md;
+$shadow3-center: $shadow-lg;
+
+// 内阴影
+$shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+$shadow-inset-focus: inset 0 0 0 2px $primary-3;
+
+// =============================================
+// 字体层级系统 (Typography System)
+// =============================================
+
+// 基础字体设置
+$font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+$font-family-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+
 // 字体大小
-$font-size-body-3: 14px; // 默认大小-正文-常规
-$font-size-body-2: 13px; // 小号字体
-$font-size-body-1: 12px; // 说明描述-辅助文案/次要文案
-// 标题
-$font-size-title-1: 16px; // h3-标题-小
-$font-size-title-2: 20px; // 常规-h2-标题-中
-$font-size-title-3: 24px; // h1-标题-大
-$font-size-title-4: 28px; // h1-标题-巨大
-$font-size-title-5: 32px; // h1-标题-极大
-// 运营标题
-$font-size-display-1: 36px; // 运营标题-小
-$font-size-display-2: 48px; // 常规-运营标题-中
-$font-size-display-3: 56px; // 运营标题-大
+$font-size-xs: 11px;
+$font-size-sm: 12px;
+$font-size-md: 13px;
+$font-size-lg: 14px;
+$font-size-xl: 16px;
+$font-size-2xl: 18px;
+$font-size-3xl: 20px;
+$font-size-4xl: 24px;
+$font-size-5xl: 28px;
+$font-size-6xl: 32px;
+$font-size-7xl: 36px;
+$font-size-8xl: 48px;
+$font-size-9xl: 56px;
 
-// icon的衬线类型
-$stroke-width-3: 3; // 衬线-3 轻线
-$stroke-width-4: 4; // 默认-衬线-4 重线
+// 正文字体
+$font-size-body-1: $font-size-sm;
+$font-size-body-2: $font-size-md;
+$font-size-body-3: $font-size-lg;
+
+// 标题字体
+$font-size-title-1: $font-size-xl;
+$font-size-title-2: $font-size-3xl;
+$font-size-title-3: $font-size-4xl;
+$font-size-title-4: $font-size-5xl;
+$font-size-title-5: $font-size-6xl;
+
+// 展示字体
+$font-size-display-1: $font-size-7xl;
+$font-size-display-2: $font-size-8xl;
+$font-size-display-3: $font-size-9xl;
+
+// 字体粗细
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// 行高
+$line-height-tight: 1.25;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.75;
+
+// =============================================
+// 过渡动画 (Transitions)
+// =============================================
+$transition-fast: 0.15s ease;
+$transition-normal: 0.2s ease;
+$transition-slow: 0.3s ease;
+$transition-slower: 0.5s ease;
+
+// =============================================
+// Z-index 层级
+// =============================================
+$z-dropdown: 1000;
+$z-sticky: 1020;
+$z-fixed: 1030;
+$z-modal-backdrop: 1040;
+$z-modal: 1050;
+$z-popover: 1060;
+$z-tooltip: 1070;
+
+// =============================================
+// 兼容 Arco Design CSS 变量
+// =============================================
+:root {
+  --primary-1: #{$primary-1};
+  --primary-2: #{$primary-2};
+  --primary-3: #{$primary-3};
+  --primary-4: #{$primary-4};
+  --primary-5: #{$primary-5};
+  --primary-6: #{$primary-6};
+  --primary-7: #{$primary-7};
+  --primary-8: #{$primary-8};
+  --primary-9: #{$primary-9};
+  --primary-10: #{$primary-10};
+
+  --success-1: #{$success-1};
+  --success-2: #{$success-2};
+  --success-3: #{$success-3};
+  --success-4: #{$success-4};
+  --success-5: #{$success-5};
+  --success-6: #{$success-6};
+  --success-7: #{$success-7};
+  --success-8: #{$success-8};
+  --success-9: #{$success-9};
+  --success-10: #{$success-10};
+
+  --warning-1: #{$warning-1};
+  --warning-2: #{$warning-2};
+  --warning-3: #{$warning-3};
+  --warning-4: #{$warning-4};
+  --warning-5: #{$warning-5};
+  --warning-6: #{$warning-6};
+  --warning-7: #{$warning-7};
+  --warning-8: #{$warning-8};
+  --warning-9: #{$warning-9};
+  --warning-10: #{$warning-10};
+
+  --danger-1: #{$danger-1};
+  --danger-2: #{$danger-2};
+  --danger-3: #{$danger-3};
+  --danger-4: #{$danger-4};
+  --danger-5: #{$danger-5};
+  --danger-6: #{$danger-6};
+  --danger-7: #{$danger-7};
+  --danger-8: #{$danger-8};
+  --danger-9: #{$danger-9};
+  --danger-10: #{$danger-10};
+
+  --color-border-1: #{$color-border-1};
+  --color-border-2: #{$color-border-2};
+  --color-border-3: #{$color-border-3};
+  --color-border-4: #{$color-border-4};
+
+  --color-fill-1: #{$color-fill-1};
+  --color-fill-2: #{$color-fill-2};
+  --color-fill-3: #{$color-fill-3};
+  --color-fill-4: #{$color-fill-4};
+
+  --color-text-1: #{$color-text-1};
+  --color-text-2: #{$color-text-2};
+  --color-text-3: #{$color-text-3};
+  --color-text-4: #{$color-text-4};
+
+  --color-bg-1: #{$color-bg-1};
+  --color-bg-2: #{$color-bg-2};
+  --color-bg-3: #{$color-bg-3};
+  --color-bg-4: #{$color-bg-4};
+  --color-bg-5: #{$color-bg-5};
+  --color-bg-white: #{$color-bg-white};
+}

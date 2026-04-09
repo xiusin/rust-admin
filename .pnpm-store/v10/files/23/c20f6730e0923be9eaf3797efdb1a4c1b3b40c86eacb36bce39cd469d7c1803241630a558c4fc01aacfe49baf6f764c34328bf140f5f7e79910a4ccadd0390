@@ -1,0 +1,17 @@
+import type { IInitVChartArcoThemeOption } from './interface';
+import type { DataSchemeTokenMap, PaletteTokenMap, ThemeMode } from '@visactor/vchart-theme-utils';
+import { VChartExtendThemeHelper } from '@visactor/vchart-theme-utils';
+import type { ITheme } from '@visactor/vchart';
+export declare class VChartArcoThemeHelper extends VChartExtendThemeHelper {
+    static themeModeAttribute: string;
+    static themeNamePrefix: string;
+    themeModeAttribute: string;
+    themeNamePrefix: string;
+    baseTheme: Record<ThemeMode, ITheme>;
+    tokenMap: {
+        dataScheme?: DataSchemeTokenMap;
+        palette?: PaletteTokenMap;
+    };
+    options: IInitVChartArcoThemeOption;
+    constructor(options: IInitVChartArcoThemeOption);
+}
