@@ -121,8 +121,8 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
-import { ElMessage } from 'element-plus';
-import { get, post } from '../api/request';
+import { ElMessage, ElMessageBox } from 'element-plus';
+import { request } from '../api/request';
 
 // 搜索表单
 const searchForm = reactive({
@@ -173,7 +173,7 @@ const cronValidationResult = ref<any>(null);
 // 获取任务列表
 const getJobList = async () => {
   try {
-    const response = await post('/api/sys/job/list', {
+    const response = await request.post('/api/sys/job/list', {
       page: pagination.currentPage,
       page_size: pagination.pageSize,
       ...searchForm
@@ -251,7 +251,7 @@ const handleDelete = (row: any) => {
     type: 'warning'
   }).then(async () => {
     try {
-      const response = await post('/api/sys/job/delete', {
+      const response = await request.post('/api/sys/job/delete', {
         job_ids: [row.job_id]
       });
       if (response.code === 200) {
@@ -276,7 +276,7 @@ const handleExecute = (row: any) => {
     type: 'info'
   }).then(async () => {
     try {
-      const response = await post('/api/sys/job/hand_execute_job', {
+      const response = await request.post('/api/sys/job/hand_execute_job', {
         job_id: row.job_id
       });
       if (response.code === 200) {
@@ -299,7 +299,7 @@ const validateCron = async () => {
     return;
   }
   try {
-    const response = await post('/api/sys/job/validate_cron', {
+    const response = await request.post('/api/sys/job/validate_cron', {
       cron_expression: form.cron_expression
     });
     if (response.code === 200) {
@@ -319,7 +319,7 @@ const handleSubmit = async () => {
         let response;
         if (form.job_id === 0) {
           // 新增
-          response = await post('/api/sys/job/add', {
+          response = await request.post('/api/sys/job/add', {
             job_name: form.job_name,
             job_group: form.job_group,
             cron_expression: form.cron_expression,
@@ -329,7 +329,7 @@ const handleSubmit = async () => {
           });
         } else {
           // 编辑
-          response = await post('/api/sys/job/edit', {
+          response = await request.post('/api/sys/job/edit', {
             job_id: form.job_id,
             job_name: form.job_name,
             job_group: form.job_group,
