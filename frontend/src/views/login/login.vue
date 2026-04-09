@@ -64,57 +64,46 @@ const title = import.meta.env.VITE_GLOB_APP_TITLE;
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 1200px;
-  padding: 24px;
+  max-width: 900px;
+  padding: 16px;
 }
 
 .login-card {
   position: relative;
   background: rgba(255, 255, 255, 0.95);
-  border-radius: 24px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(15px);
 }
 
 .login-content {
   display: flex;
-  min-height: 600px;
-}
-
-.login-left {
-  flex: 1;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  position: relative;
-  overflow: hidden;
+  min-height: 400px;
 }
 
 .login-right {
-  width: 480px;
-  padding: 60px 50px;
+  width: 360px;
+  padding: 32px 24px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-.login-box {
-  width: 100%;
-}
-
 .login-header {
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
 .logo-section {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 8px;
+  margin-bottom: 16px;
   color: #667eea;
 }
 
 .app-title {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: 700;
   margin: 0;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -124,14 +113,14 @@ const title = import.meta.env.VITE_GLOB_APP_TITLE;
 }
 
 .welcome-text {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 700;
   color: #1d2129;
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
 }
 
 .welcome-desc {
-  font-size: 15px;
+  font-size: 12px;
   color: #86909c;
   margin: 0;
 }

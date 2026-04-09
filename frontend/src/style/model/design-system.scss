@@ -161,25 +161,25 @@
 
 .ds-card {
   background: $color-bg-white;
-  border-radius: $radius-lg;
-  box-shadow: $shadow-sm;
+  border-radius: $radius-sm;
+  box-shadow: $shadow-xs;
   border: 1px solid $color-border-1;
-  padding: $spacing-lg;
+  padding: $spacing-md;
   transition: all $transition-normal;
 }
 
 .ds-card:hover {
-  box-shadow: $shadow-md;
+  box-shadow: $shadow-sm;
 }
 
 .ds-card-header {
-  padding-bottom: $spacing-md;
-  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-sm;
+  margin-bottom: $spacing-sm;
   border-bottom: 1px solid $color-border-1;
 }
 
 .ds-card-title {
-  font-size: $font-size-lg;
+  font-size: $font-size-md;
   font-weight: $font-weight-semibold;
   color: $color-text-1;
 }

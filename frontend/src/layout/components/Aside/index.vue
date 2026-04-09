@@ -5,8 +5,8 @@
       :collapsed="collapsed" 
       breakpoint="xl" 
       class="layout_side" 
-      :width="240"
-      :collapsed-width="64"
+      :width="180"
+      :collapsed-width="48"
     >
       <a-scrollbar class="menu-scrollbar">
         <Menu :route-tree="routeTree" />
@@ -81,20 +81,20 @@ const { routeTree } = storeToRefs(routerStore);
   padding: $spacing-sm;
 }
 
-:deep(.arco-menu-vertical) {
-  .arco-menu-item,
-  .arco-menu-pop-header,
-  .arco-menu-inline-header {
-    height: 44px;
-    line-height: 44px;
-    margin: $spacing-xs 0;
-    border-radius: $radius-md;
-    transition: all $transition-fast;
+:deep(.arco-menu-vertical {
+    .arco-menu-item,
+    .arco-menu-pop-header,
+    .arco-menu-inline-header {
+      height: 32px;
+      line-height: 32px;
+      margin: $spacing-xs 0;
+      border-radius: $radius-sm;
+      transition: all $transition-fast;
 
-    &:hover {
-      background: rgba($color-primary, 0.06);
+      &:hover {
+        background: rgba($color-primary, 0.06);
+      }
     }
-  }
 
   .arco-menu-item-selected {
     background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%) !important;

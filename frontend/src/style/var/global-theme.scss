@@ -5,19 +5,19 @@
 // =============================================
 // 间距系统 (Spacing System) - 4px 基准网格
 // =============================================
-$spacing-xs: 4px;
-$spacing-sm: 8px;
-$spacing-md: 12px;
-$spacing-lg: 16px;
-$spacing-xl: 24px;
-$spacing-2xl: 32px;
-$spacing-3xl: 48px;
+$spacing-xs: 2px;
+$spacing-sm: 4px;
+$spacing-md: 6px;
+$spacing-lg: 8px;
+$spacing-xl: 12px;
+$spacing-2xl: 16px;
+$spacing-3xl: 24px;
 
-$margin: $spacing-lg;
-$margin-text: $spacing-sm;
-$padding: $spacing-lg;
-$icon-box: 24px;
-$icon-size: 18px;
+$margin: $spacing-md;
+$margin-text: $spacing-xs;
+$padding: $spacing-md;
+$icon-box: 20px;
+$icon-size: 14px;
 
 // =============================================
 // 圆角系统 (Border Radius)
@@ -207,37 +207,37 @@ $shadow-inset-focus: inset 0 0 0 2px $primary-3;
 $font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 $font-family-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
 
-// 字体大小
-$font-size-xs: 11px;
-$font-size-sm: 12px;
-$font-size-md: 13px;
-$font-size-lg: 14px;
-$font-size-xl: 16px;
-$font-size-2xl: 18px;
-$font-size-3xl: 20px;
-$font-size-4xl: 24px;
-$font-size-5xl: 28px;
-$font-size-6xl: 32px;
-$font-size-7xl: 36px;
-$font-size-8xl: 48px;
-$font-size-9xl: 56px;
+// 字体大小 - 紧凑版本
+$font-size-xs: 9px;
+$font-size-sm: 10px;
+$font-size-md: 11px;
+$font-size-lg: 12px;
+$font-size-xl: 14px;
+$font-size-2xl: 16px;
+$font-size-3xl: 18px;
+$font-size-4xl: 20px;
+$font-size-5xl: 22px;
+$font-size-6xl: 24px;
+$font-size-7xl: 28px;
+$font-size-8xl: 32px;
+$font-size-9xl: 36px;
 
 // 正文字体
-$font-size-body-1: $font-size-sm;
-$font-size-body-2: $font-size-md;
-$font-size-body-3: $font-size-lg;
+$font-size-body-1: $font-size-xs;
+$font-size-body-2: $font-size-sm;
+$font-size-body-3: $font-size-md;
 
 // 标题字体
-$font-size-title-1: $font-size-xl;
-$font-size-title-2: $font-size-3xl;
-$font-size-title-3: $font-size-4xl;
-$font-size-title-4: $font-size-5xl;
-$font-size-title-5: $font-size-6xl;
+$font-size-title-1: $font-size-lg;
+$font-size-title-2: $font-size-xl;
+$font-size-title-3: $font-size-2xl;
+$font-size-title-4: $font-size-3xl;
+$font-size-title-5: $font-size-4xl;
 
 // 展示字体
-$font-size-display-1: $font-size-7xl;
-$font-size-display-2: $font-size-8xl;
-$font-size-display-3: $font-size-9xl;
+$font-size-display-1: $font-size-5xl;
+$font-size-display-2: $font-size-6xl;
+$font-size-display-3: $font-size-7xl;
 
 // 字体粗细
 $font-weight-light: 300;
