@@ -15,6 +15,10 @@ pub enum SyncTaskType {
     AfterSaleSync,
     InventorySync,
     PromotionSync,
+    TaobaoKeSync,
+    PromotionLinkSync,
+    ShippingAlertSync,
+    CommissionSync,
 }
 
 // 任务状态
@@ -149,6 +153,10 @@ impl SyncScheduler {
             SyncTaskType::AfterSaleSync => self.sync_after_sales(task.platform_id).await,
             SyncTaskType::InventorySync => self.sync_inventory(task.platform_id).await,
             SyncTaskType::PromotionSync => self.sync_promotions(task.platform_id).await,
+            SyncTaskType::TaobaoKeSync => self.sync_taobao_ke(task.platform_id).await,
+            SyncTaskType::PromotionLinkSync => self.sync_promotion_links(task.platform_id).await,
+            SyncTaskType::ShippingAlertSync => self.sync_shipping_alerts(task.platform_id).await,
+            SyncTaskType::CommissionSync => self.sync_commissions(task.platform_id).await,
         };
 
         // 更新任务状态
@@ -448,6 +456,184 @@ impl SyncScheduler {
         Ok(())
     }
 
+    // 同步淘宝客商品
+    async fn sync_taobao_ke(&self, platform_id: i64) -> Result<(), EcommerceError> {
+        // 实现淘宝客商品同步逻辑
+        let platforms = self.platforms.lock().await;
+        for platform in platforms.iter() {
+            // 检查速率限制
+            let mut rate_limits = self.rate_limits.lock().await;
+            if let Some(rate_limit) = rate_limits.get_mut(platform.platform_name()) {
+                rate_limit.check_and_wait();
+            }
+            drop(rate_limits);
+            
+            // 实现具体的淘宝客商品同步逻辑
+            let taobao_ke_service = platform.taobao_ke_service();
+            
+            // 添加重试逻辑
+            let mut retries = 0;
+            while retries < 3 {
+                // 再次检查速率限制
+                let mut rate_limits = self.rate_limits.lock().await;
+                if let Some(rate_limit) = rate_limits.get_mut(platform.platform_name()) {
+                    rate_limit.check_and_wait();
+                }
+                drop(rate_limits);
+                
+                match taobao_ke_service.pull_promotion_products(None, 1, 100) {
+                    Ok(products) => {
+                        // 处理同步到数据库的逻辑
+                        println!("Synced {} Taobao Ke products from {}", products.len(), platform.platform_name());
+                        break;
+                    }
+                    Err(e) => {
+                        retries += 1;
+                        if retries >= 3 {
+                            return Err(e);
+                        }
+                        tokio::time::sleep(tokio::time::Duration::from_secs(5 * retries)).await;
+                    }
+                }
+            }
+        }
+        Ok(())
+    }
+
+    // 同步推广链接
+    async fn sync_promotion_links(&self, platform_id: i64) -> Result<(), EcommerceError> {
+        // 实现推广链接同步逻辑
+        let platforms = self.platforms.lock().await;
+        for platform in platforms.iter() {
+            // 检查速率限制
+            let mut rate_limits = self.rate_limits.lock().await;
+            if let Some(rate_limit) = rate_limits.get_mut(platform.platform_name()) {
+                rate_limit.check_and_wait();
+            }
+            drop(rate_limits);
+            
+            // 实现具体的推广链接同步逻辑
+            let promotion_link_service = platform.promotion_link_service();
+            
+            // 添加重试逻辑
+            let mut retries = 0;
+            while retries < 3 {
+                // 再次检查速率限制
+                let mut rate_limits = self.rate_limits.lock().await;
+                if let Some(rate_limit) = rate_limits.get_mut(platform.platform_name()) {
+                    rate_limit.check_and_wait();
+                }
+                drop(rate_limits);
+                
+                match promotion_link_service.get_promotion_links(None, None) {
+                    Ok(links) => {
+                        // 处理同步到数据库的逻辑
+                        println!("Synced {} promotion links from {}", links.len(), platform.platform_name());
+                        break;
+                    }
+                    Err(e) => {
+                        retries += 1;
+                        if retries >= 3 {
+                            return Err(e);
+                        }
+                        tokio::time::sleep(tokio::time::Duration::from_secs(5 * retries)).await;
+                    }
+                }
+            }
+        }
+        Ok(())
+    }
+
+    // 同步发货超时预警
+    async fn sync_shipping_alerts(&self, platform_id: i64) -> Result<(), EcommerceError> {
+        // 实现发货超时预警同步逻辑
+        let platforms = self.platforms.lock().await;
+        for platform in platforms.iter() {
+            // 检查速率限制
+            let mut rate_limits = self.rate_limits.lock().await;
+            if let Some(rate_limit) = rate_limits.get_mut(platform.platform_name()) {
+                rate_limit.check_and_wait();
+            }
+            drop(rate_limits);
+            
+            // 实现具体的发货超时预警同步逻辑
+            let shipping_alert_service = platform.shipping_alert_service();
+            
+            // 添加重试逻辑
+            let mut retries = 0;
+            while retries < 3 {
+                // 再次检查速率限制
+                let mut rate_limits = self.rate_limits.lock().await;
+                if let Some(rate_limit) = rate_limits.get_mut(platform.platform_name()) {
+                    rate_limit.check_and_wait();
+                }
+                drop(rate_limits);
+                
+                match shipping_alert_service.generate_shipping_alerts() {
+                    Ok(alerts) => {
+                        // 处理同步到数据库的逻辑
+                        println!("Generated {} shipping timeout alerts from {}", alerts.len(), platform.platform_name());
+                        break;
+                    }
+                    Err(e) => {
+                        retries += 1;
+                        if retries >= 3 {
+                            return Err(e);
+                        }
+                        tokio::time::sleep(tokio::time::Duration::from_secs(5 * retries)).await;
+                    }
+                }
+            }
+        }
+        Ok(())
+    }
+
+    // 同步佣金记录
+    async fn sync_commissions(&self, platform_id: i64) -> Result<(), EcommerceError> {
+        // 实现佣金记录同步逻辑
+        let platforms = self.platforms.lock().await;
+        for platform in platforms.iter() {
+            // 检查速率限制
+            let mut rate_limits = self.rate_limits.lock().await;
+            if let Some(rate_limit) = rate_limits.get_mut(platform.platform_name()) {
+                rate_limit.check_and_wait();
+            }
+            drop(rate_limits);
+            
+            // 实现具体的佣金记录同步逻辑
+            let taobao_ke_service = platform.taobao_ke_service();
+            let start_date = chrono::Local::now().sub_days(30).format("%Y-%m-%d").to_string();
+            let end_date = chrono::Local::now().format("%Y-%m-%d").to_string();
+            
+            // 添加重试逻辑
+            let mut retries = 0;
+            while retries < 3 {
+                // 再次检查速率限制
+                let mut rate_limits = self.rate_limits.lock().await;
+                if let Some(rate_limit) = rate_limits.get_mut(platform.platform_name()) {
+                    rate_limit.check_and_wait();
+                }
+                drop(rate_limits);
+                
+                match taobao_ke_service.get_commission_records(&start_date, &end_date) {
+                    Ok(records) => {
+                        // 处理同步到数据库的逻辑
+                        println!("Synced {} commission records from {}", records.len(), platform.platform_name());
+                        break;
+                    }
+                    Err(e) => {
+                        retries += 1;
+                        if retries >= 3 {
+                            return Err(e);
+                        }
+                        tokio::time::sleep(tokio::time::Duration::from_secs(5 * retries)).await;
+                    }
+                }
+            }
+        }
+        Ok(())
+    }
+
     // 获取任务列表
     pub async fn get_tasks(&self) -> Vec<SyncTask> {
         let tasks = self.tasks.lock().await;
@@ -480,6 +666,51 @@ impl SyncScheduler {
             loop {
                 interval.tick().await;
                 // 执行库存同步
+            }
+        });
+
+        // 启动推广同步定时任务
+        tokio::spawn(async move {
+            let mut interval = time::interval(Duration::from_hours(4));
+            loop {
+                interval.tick().await;
+                // 执行推广同步
+            }
+        });
+
+        // 启动淘宝客商品同步定时任务
+        tokio::spawn(async move {
+            let mut interval = time::interval(Duration::from_hours(6));
+            loop {
+                interval.tick().await;
+                // 执行淘宝客商品同步
+            }
+        });
+
+        // 启动推广链接同步定时任务
+        tokio::spawn(async move {
+            let mut interval = time::interval(Duration::from_hours(8));
+            loop {
+                interval.tick().await;
+                // 执行推广链接同步
+            }
+        });
+
+        // 启动发货超时预警定时任务
+        tokio::spawn(async move {
+            let mut interval = time::interval(Duration::from_hours(1));
+            loop {
+                interval.tick().await;
+                // 执行发货超时预警同步
+            }
+        });
+
+        // 启动佣金记录同步定时任务
+        tokio::spawn(async move {
+            let mut interval = time::interval(Duration::from_hours(12));
+            loop {
+                interval.tick().await;
+                // 执行佣金记录同步
             }
         });
     }

@@ -199,6 +199,64 @@ pub struct PromotionEffect {
     pub end_date: String,
 }
 
+// 发货超时预警结构体
+#[derive(Debug, Clone)]
+pub struct ShippingTimeoutAlert {
+    pub order_id: String,
+    pub platform_order_id: String,
+    pub order_status: OrderStatus,
+    pub created_at: String,
+    pub expected_shipping_time: String,
+    pub alert_time: String,
+    pub alert_level: String,
+}
+
+// 淘宝客商品结构体
+#[derive(Debug, Clone)]
+pub struct TaobaoKeProduct {
+    pub id: String,
+    pub platform_product_id: String,
+    pub name: String,
+    pub description: String,
+    pub price: f64,
+    pub commission_rate: f64,
+    pub commission_amount: f64,
+    pub sales_volume: i32,
+    pub images: Vec<String>,
+    pub coupon_info: Option<String>,
+    pub start_time: String,
+    pub end_time: String,
+    pub status: String,
+}
+
+// 推广链接结构体
+#[derive(Debug, Clone)]
+pub struct PromotionLink {
+    pub id: String,
+    pub platform: String,
+    pub original_link: String,
+    pub converted_link: String,
+    pub commission_rate: f64,
+    pub created_at: String,
+    pub expires_at: Option<String>,
+    pub status: String,
+}
+
+// 佣金记录结构体
+#[derive(Debug, Clone)]
+pub struct CommissionRecord {
+    pub id: String,
+    pub order_id: String,
+    pub promotion_link_id: String,
+    pub platform: String,
+    pub amount: f64,
+    pub commission_rate: f64,
+    pub commission_amount: f64,
+    pub status: String,
+    pub created_at: String,
+    pub settled_at: Option<String>,
+}
+
 // 获取商品参数
 #[derive(Debug)]
 pub struct GetProductsParams {
@@ -289,6 +347,15 @@ pub trait EcommercePlatform {
     
     // 库存相关操作
     fn inventory_service(&self) -> Box<dyn InventoryService>;
+    
+    // 淘宝客相关操作
+    fn taobao_ke_service(&self) -> Box<dyn TaobaoKeService>;
+    
+    // 推广链接相关操作
+    fn promotion_link_service(&self) -> Box<dyn PromotionLinkService>;
+    
+    // 发货超时预警相关操作
+    fn shipping_alert_service(&self) -> Box<dyn ShippingAlertService>;
 }
 
 // 商品服务接口
@@ -366,4 +433,49 @@ pub trait InventoryService {
     
     // 获取库存
     fn get_inventory(&self, product_id: &str, sku_id: Option<&str>) -> Result<i32, EcommerceError>;
+}
+
+// 淘宝客服务接口
+pub trait TaobaoKeService {
+    // 获取淘宝客商品列表
+    fn get_taobao_ke_products(&self, keyword: &str, page: i32, page_size: i32) -> Result<Vec<TaobaoKeProduct>, EcommerceError>;
+    
+    // 获取淘宝客商品详情
+    fn get_taobao_ke_product(&self, product_id: &str) -> Result<TaobaoKeProduct, EcommerceError>;
+    
+    // 获取佣金记录
+    fn get_commission_records(&self, start_date: &str, end_date: &str) -> Result<Vec<CommissionRecord>, EcommerceError>;
+    
+    // 拉取推广商品
+    fn pull_promotion_products(&self, category_id: Option<&str>, page: i32, page_size: i32) -> Result<Vec<TaobaoKeProduct>, EcommerceError>;
+}
+
+// 推广链接服务接口
+pub trait PromotionLinkService {
+    // 创建推广链接
+    fn create_promotion_link(&self, original_link: &str, platform: &str) -> Result<PromotionLink, EcommerceError>;
+    
+    // 获取推广链接列表
+    fn get_promotion_links(&self, platform: Option<&str>, status: Option<&str>) -> Result<Vec<PromotionLink>, EcommerceError>;
+    
+    // 兑换推广链接
+    fn exchange_promotion_link(&self, original_link: &str) -> Result<PromotionLink, EcommerceError>;
+    
+    // 获取推广链接效果
+    fn get_promotion_link_effect(&self, link_id: &str) -> Result<PromotionEffect, EcommerceError>;
+}
+
+// 发货超时预警服务接口
+pub trait ShippingAlertService {
+    // 获取发货超时预警列表
+    fn get_shipping_timeout_alerts(&self, days: i32) -> Result<Vec<ShippingTimeoutAlert>, EcommerceError>;
+    
+    // 处理发货超时预警
+    fn handle_shipping_alert(&self, alert_id: &str, action: &str) -> Result<(), EcommerceError>;
+    
+    // 生成发货超时预警
+    fn generate_shipping_alerts(&self) -> Result<Vec<ShippingTimeoutAlert>, EcommerceError>;
+    
+    // 配置发货超时规则
+    fn configure_shipping_rules(&self, max_days: i32, alert_levels: Vec<(i32, String)>) -> Result<(), EcommerceError>;
 }
