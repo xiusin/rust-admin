@@ -1,5 +1,6 @@
 pub mod cms;
 pub mod consumer;
+pub mod ecommerce;
 pub mod payment;
 pub mod plugin_market;
 pub mod product;
@@ -27,6 +28,7 @@ impl WebApi {
         webpath = webpath.merge(product::router_product());
         webpath = webpath.merge(plugin_market::router::router_plugin_market());
         webpath = webpath.merge(cms::router_cms());
+        webpath = webpath.merge(ecommerce::router_ecommerce());
         webpath = webpath.merge(ppt::router_ppt());
 
         webpath = webpath.final_to_path();
