@@ -1,0 +1,23 @@
+import { getTokenValue } from "./utils";
+
+export const generateDataScheme = (mode, tokenMap, baseDataScheme, chartContainer) => {
+    var _a;
+    return null !== (_a = null == tokenMap ? void 0 : tokenMap.map(((item, i) => {
+        const {scheme: scheme} = baseDataScheme[i];
+        return Object.assign(Object.assign({}, item), {
+            scheme: item.scheme.map(((token, j) => getTokenValue("object" == typeof token ? token[mode] : token, null == scheme ? void 0 : scheme[j], chartContainer)))
+        });
+    }))) && void 0 !== _a ? _a : baseDataScheme;
+};
+
+export const generatePalette = (mode, tokenMap, basePalette, chartContainer) => {
+    if (tokenMap) {
+        const newPalette = {};
+        return Object.keys(tokenMap).forEach((key => {
+            const token = "object" == typeof tokenMap[key] ? tokenMap[key][mode] : tokenMap[key];
+            newPalette[key] = getTokenValue(token, basePalette[key], chartContainer);
+        })), newPalette;
+    }
+    return basePalette;
+};
+//# sourceMappingURL=generator.js.map

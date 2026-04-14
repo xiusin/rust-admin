@@ -1,0 +1,6 @@
+import { arcoDesignLight } from "./light";
+
+import { arcoDesignDark } from "./dark";
+
+export const allThemeMap = new Map([ [ arcoDesignLight.name, arcoDesignLight ], [ arcoDesignDark.name, arcoDesignDark ] ]);
+//# sourceMappingURL=theme-map.js.map

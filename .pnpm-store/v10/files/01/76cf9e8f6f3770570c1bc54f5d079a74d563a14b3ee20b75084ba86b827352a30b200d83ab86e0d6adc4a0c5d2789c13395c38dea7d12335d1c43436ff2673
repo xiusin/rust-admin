@@ -1,0 +1,42 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: !0
+}), exports.colorScheme = void 0;
+
+const data_scheme_1 = require("../common/data-scheme");
+
+exports.colorScheme = {
+    default: {
+        dataScheme: data_scheme_1.dataScheme,
+        palette: {
+            backgroundColor: "#17171a",
+            borderColor: "#333335",
+            shadowColor: "rgba(0,0,0,0.1)",
+            hoverBackgroundColor: "rgba(197,197,197,0.16)",
+            sliderRailColor: "hsla(0,0%,100%,0.12)",
+            sliderHandleColor: "#232324",
+            sliderTrackColor: "rgba(60,126,255,1)",
+            popupBackgroundColor: "#373739",
+            primaryFontColor: "hsla(0,0%,100%,0.9)",
+            secondaryFontColor: "hsla(0,0%,100%,0.7)",
+            tertiaryFontColor: "hsla(0,0%,100%,0.5)",
+            axisLabelFontColor: "hsla(0,0%,100%,0.5)",
+            disableFontColor: "hsla(0,0%,100%,0.3)",
+            axisMarkerFontColor: "#17171a",
+            axisGridColor: "#333335",
+            axisDomainColor: "rgba(72,72,73,1)",
+            dataZoomHandleStrokeColor: "rgba(120,120,122,1)",
+            dataZoomChartColor: "hsla(0,0%,100%,0.16)",
+            playerControllerColor: "rgba(60,126,255,1)",
+            axisMarkerBackgroundColor: "hsla(0,0%,100%,0.9)",
+            markLabelBackgroundColor: "#333335",
+            markLineStrokeColor: "hsla(0,0%,100%,0.7)",
+            dangerColor: "rgba(247,105,101,1)",
+            warningColor: "rgba(255,150,38,1)",
+            successColor: "rgba(39,195,70,1)",
+            infoColor: "rgba(60,126,255,1)"
+        }
+    }
+};
+//# sourceMappingURL=color-scheme.js.map

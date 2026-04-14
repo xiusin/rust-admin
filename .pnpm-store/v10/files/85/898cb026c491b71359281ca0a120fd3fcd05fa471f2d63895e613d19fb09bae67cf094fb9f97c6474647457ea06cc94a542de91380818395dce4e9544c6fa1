@@ -1,0 +1,26 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: !0
+}), exports.VChartArcoThemeHelper = void 0;
+
+const vchart_theme_utils_1 = require("@visactor/vchart-theme-utils"), light_1 = require("./light"), dark_1 = require("./dark"), token_map_1 = require("./common/token-map");
+
+class VChartArcoThemeHelper extends vchart_theme_utils_1.VChartExtendThemeHelper {
+    constructor(options) {
+        super(options), this.themeModeAttribute = VChartArcoThemeHelper.themeModeAttribute, 
+        this.themeNamePrefix = VChartArcoThemeHelper.themeNamePrefix, this.baseTheme = {
+            light: light_1.arcoDesignLight,
+            dark: dark_1.arcoDesignDark
+        };
+        const {prefix: prefix} = options;
+        this.tokenMap = {
+            dataScheme: (0, token_map_1.getDataSchemeTokenMap)(prefix),
+            palette: (0, token_map_1.getPaletteTokenMap)(prefix)
+        };
+    }
+}
+
+exports.VChartArcoThemeHelper = VChartArcoThemeHelper, VChartArcoThemeHelper.themeModeAttribute = "arco-theme", 
+VChartArcoThemeHelper.themeNamePrefix = "arcoDesign";
+//# sourceMappingURL=theme-helper.js.map

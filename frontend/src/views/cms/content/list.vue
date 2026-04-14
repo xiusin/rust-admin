@@ -1,99 +1,170 @@
 <template>
-  <div class="snow-page">
-    <div class="snow-inner">
-      <ContentFilter v-model="searchForm" :model-id="modelId" :categories="categories" @search="search" @reset="reset" />
+  <div class="content-list-page">
+    <div class="page-wrapper">
+      <div class="page-header">
+        <ContentFilter v-model="searchForm" :model-id="modelId" :categories="categories" @search="search" @reset="reset" />
+      </div>
 
-      <a-divider :margin="0" />
-
-      <a-row :gutter="16" style="margin: 16px 0">
-        <a-col :span="12">
+      <div class="page-toolbar">
+        <div class="toolbar-left">
           <a-space size="medium">
-            <a-button type="primary" size="small" @click="onAdd">
+            <a-button type="primary" size="middle" @click="onAdd">
               <template #icon><icon-plus /></template>
-              新增
+              新增内容
             </a-button>
-            <a-button type="primary" status="success" size="small" :disabled="selectedIds.length === 0" @click="onBatchPublish">
-              <template #icon><icon-upload /></template>
-              发布
-            </a-button>
-            <a-button type="primary" status="warning" size="small" :disabled="selectedIds.length === 0" @click="onBatchOffline">
-              <template #icon><icon-download /></template>
-              下线
-            </a-button>
-            <a-button type="primary" status="danger" size="small" :disabled="selectedIds.length === 0" @click="onBatchDelete">
-              <template #icon><icon-delete /></template>
-              删除
-            </a-button>
+            <div v-if="selectedIds.length > 0" class="batch-actions">
+              <a-tag color="arcoblue" : closable="false">已选 {{ selectedIds.length }} 项</a-tag>
+              <a-button status="success" size="small" @click="onBatchPublish">
+                <template #icon><icon-upload /></template>
+                批量发布
+              </a-button>
+              <a-button status="warning" size="small" @click="onBatchOffline">
+                <template #icon><icon-download /></template>
+                批量下线
+              </a-button>
+              <a-button status="danger" size="small" @click="onBatchDelete">
+                <template #icon><icon-delete /></template>
+                批量删除
+              </a-button>
+            </div>
           </a-space>
-        </a-col>
-        <a-col :span="12" style="display: flex; align-items: center; justify-content: end">
+        </div>
+        <div class="toolbar-right">
           <a-space size="medium">
-            <a-radio-group v-model="currentStatus" type="button" size="small" @change="onStatusChange">
+            <a-radio-group v-model="currentStatus" type="button" @change="onStatusChange">
               <a-radio value="all">全部</a-radio>
               <a-radio value="published">已发布</a-radio>
               <a-radio value="draft">草稿</a-radio>
               <a-radio value="pending">待审核</a-radio>
               <a-radio value="recycled">回收站</a-radio>
             </a-radio-group>
-            <a-tooltip content="刷新">
-              <div class="action-icon" @click="refresh"><icon-refresh size="18" /></div>
+            <a-tooltip content="刷新数据">
+              <a-button shape="circle" @click="refresh">
+                <icon-refresh />
+              </a-button>
             </a-tooltip>
           </a-space>
-        </a-col>
-      </a-row>
+        </div>
+      </div>
 
-      <a-table
-        row-key="id"
-        :loading="loading"
-        :bordered="{ cell: true }"
-        :scroll="{ x: '100%', y: '100%', minWidth: 1200 }"
-        :columns="columns"
-        :data="tableData"
-        :row-selection="{ type: 'checkbox', showCheckedAll: true }"
-        v-model:selectedKeys="selectedIds"
-        :pagination="pagination"
-        @page-change="handlePageChange"
-        @page-size-change="handlePageSizeChange"
-      >
-        <template #thumbnail="{ record }">
-          <a-image v-if="record.thumbnail" :src="record.thumbnail" width="60" height="40" fit="cover" />
-          <span v-else>-</span>
-        </template>
-        <template #status="{ record }">
-          <a-tag :color="getStatusColor(record.status)" size="small">
-            {{ getStatusText(record.status) }}
-          </a-tag>
-        </template>
-        <template #flags="{ record }">
-          <a-space>
-            <a-tag v-if="record.isTop" color="red" size="small">置顶</a-tag>
-            <a-tag v-if="record.isRecommend" color="orange" size="small">推荐</a-tag>
-            <a-tag v-if="record.isHot" color="arcoblue" size="small">热门</a-tag>
-          </a-space>
-        </template>
-        <template #optional="{ record }">
-          <a-space>
-            <a-button type="text" size="mini" @click="onEdit(record)">编辑</a-button>
-            <a-button type="text" size="mini" @click="onDetail(record)">详情</a-button>
-            <a-dropdown trigger="click">
-              <a-button type="text" size="mini">
-                <template #icon><icon-more /></template>
-              </a-button>
-              <template #content>
-                <a-doption v-if="record.status === 'draft'" @click="onPublish(record)"> <icon-upload /> 发布 </a-doption>
-                <a-doption v-if="record.status === 'published'" @click="onOffline(record)"> <icon-download /> 下线 </a-doption>
-                <a-doption @click="onToggleTop(record)"> <icon-to-top /> {{ record.isTop ? "取消置顶" : "置顶" }} </a-doption>
-                <a-doption @click="onToggleRecommend(record)">
-                  <icon-star /> {{ record.isRecommend ? "取消推荐" : "推荐" }}
-                </a-doption>
-                <a-doption @click="onToggleHot(record)"> <icon-fire /> {{ record.isHot ? "取消热门" : "热门" }} </a-doption>
-                <a-doption v-if="record.status === 'recycled'" @click="onRestore(record)"> <icon-undo /> 恢复 </a-doption>
-                <a-doption @click="onDelete(record)"> <icon-delete /> 删除 </a-doption>
+      <div class="table-container">
+        <a-table
+          row-key="id"
+          :loading="loading"
+          :scroll="{ x: 1400 }"
+          :columns="columns"
+          :data="tableData"
+          :row-selection="{ type: 'checkbox', showCheckedAll: true }"
+          v-model:selectedKeys="selectedIds"
+          :pagination="pagination"
+          :sticky="{ header: true }"
+          @page-change="handlePageChange"
+          @page-size-change="handlePageSizeChange"
+          row-class-name="table-row"
+        >
+          <template #thumbnail="{ record }">
+            <div class="thumbnail-cell">
+              <a-image v-if="record.thumbnail" :src="record.thumbnail" width="56" height="42" fit="cover" class="content-thumbnail" />
+              <div v-else class="thumbnail-placeholder">
+                <icon-image />
+              </div>
+            </div>
+          </template>
+          <template #status="{ record }">
+            <a-tag :color="getStatusColor(record.status)" class="status-tag">
+              <template #icon>
+                <component :is="getStatusIcon(record.status)" />
               </template>
-            </a-dropdown>
-          </a-space>
-        </template>
-      </a-table>
+              {{ getStatusText(record.status) }}
+            </a-tag>
+          </template>
+          <template #flags="{ record }">
+            <div class="flags-container">
+              <a-tag v-if="record.isTop" color="red" class="flag-tag">
+                <template #icon><icon-to-top /></template>
+                置顶
+              </a-tag>
+              <a-tag v-if="record.isRecommend" color="orange" class="flag-tag">
+                <template #icon><icon-star /></template>
+                推荐
+              </a-tag>
+              <a-tag v-if="record.isHot" color="arcoblue" class="flag-tag">
+                <template #icon><icon-fire /></template>
+                热门
+              </a-tag>
+            </div>
+          </template>
+          <template #stats="{ record }">
+            <div class="stats-cell">
+              <div class="stat-item">
+                <icon-eye />
+                <span>{{ record.viewCount || 0 }}</span>
+              </div>
+              <div class="stat-item">
+                <icon-heart-fill />
+                <span>{{ record.likeCount || 0 }}</span>
+              </div>
+              <div class="stat-item">
+                <icon-chat-round />
+                <span>{{ record.commentCount || 0 }}</span>
+              </div>
+            </div>
+          </template>
+          <template #time="{ record }">
+            <div class="time-cell">
+              <div class="time-item">
+                <span class="time-label">发布：</span>
+                <span class="time-value">{{ record.publishTime || '-' }}</span>
+              </div>
+              <div class="time-item">
+                <span class="time-label">创建：</span>
+                <span class="time-value">{{ record.createdAt || '-' }}</span>
+              </div>
+            </div>
+          </template>
+          <template #optional="{ record }">
+            <div class="action-cell">
+              <a-button type="text" size="small" @click="onEdit(record)">
+                <template #icon><icon-edit /></template>
+                编辑
+              </a-button>
+              <a-button type="text" size="small" @click="onDetail(record)">
+                <template #icon><icon-eye /></template>
+                详情
+              </a-button>
+              <a-dropdown trigger="click" trigger-props={{ hideOnClick: true }}>
+                <a-button type="text" size="small">
+                  <template #icon><icon-more /></template>
+                  更多
+                </a-button>
+                <template #content>
+                  <a-doption v-if="record.status === 'draft'" @click="onPublish(record)">
+                    <icon-upload /> 发布
+                  </a-doption>
+                  <a-doption v-if="record.status === 'published'" @click="onOffline(record)">
+                    <icon-download /> 下线
+                  </a-doption>
+                  <a-doption @click="onToggleTop(record)">
+                    <icon-to-top /> {{ record.isTop ? '取消置顶' : '置顶' }}
+                  </a-doption>
+                  <a-doption @click="onToggleRecommend(record)">
+                    <icon-star /> {{ record.isRecommend ? '取消推荐' : '推荐' }}
+                  </a-doption>
+                  <a-doption @click="onToggleHot(record)">
+                    <icon-fire /> {{ record.isHot ? '取消热门' : '热门' }}
+                  </a-doption>
+                  <a-doption v-if="record.status === 'recycled'" @click="onRestore(record)">
+                    <icon-undo /> 恢复
+                  </a-doption>
+                  <a-doption @click="onDelete(record)" class="danger-option">
+                    <icon-delete /> 删除
+                  </a-doption>
+                </template>
+              </a-dropdown>
+            </div>
+          </template>
+        </a-table>
+      </div>
     </div>
   </div>
 </template>
@@ -130,25 +201,23 @@ const searchForm = reactive({
 
 const pagination = reactive({
   current: 1,
-  pageSize: 20,
+  pageSize: 15,
   showPageSize: true,
   showTotal: true,
-  total: 0
+  total: 0,
+  pageSizeOptions: [10, 15, 20, 30, 50]
 });
 
 const columns = computed(() => [
-  { title: "缩略图", dataIndex: "thumbnail", slotName: "thumbnail", width: 80 },
-  { title: "标题", dataIndex: "title", width: 200, ellipsis: true, tooltip: true },
-  { title: "分类", dataIndex: "categoryName", width: 100 },
-  { title: "状态", dataIndex: "status", slotName: "status", width: 80, align: "center" },
-  { title: "标记", slotName: "flags", width: 150 },
-  { title: "浏览", dataIndex: "viewCount", width: 80, align: "center" },
-  { title: "点赞", dataIndex: "likeCount", width: 80, align: "center" },
-  { title: "评论", dataIndex: "commentCount", width: 80, align: "center" },
-  { title: "排序", dataIndex: "sort", width: 80, align: "center" },
-  { title: "发布时间", dataIndex: "publishTime", width: 160 },
-  { title: "创建时间", dataIndex: "createdAt", width: 160 },
-  { title: "操作", slotName: "optional", width: 160, fixed: "right", align: "center" }
+  { title: "缩略图", dataIndex: "thumbnail", slotName: "thumbnail", width: 90, fixed: "left" },
+  { title: "标题", dataIndex: "title", width: 220, ellipsis: true, tooltip: true },
+  { title: "分类", dataIndex: "categoryName", width: 110 },
+  { title: "状态", dataIndex: "status", slotName: "status", width: 100, align: "center" },
+  { title: "属性标记", slotName: "flags", width: 160 },
+  { title: "数据统计", slotName: "stats", width: 140, align: "center" },
+  { title: "排序", dataIndex: "sort", width: 70, align: "center" },
+  { title: "时间", slotName: "time", width: 180 },
+  { title: "操作", slotName: "optional", width: 200, fixed: "right", align: "center" }
 ]);
 
 const getStatusColor = (status: ContentStatus) => {
@@ -161,6 +230,18 @@ const getStatusColor = (status: ContentStatus) => {
     recycled: "gray"
   };
   return colors[status] || "gray";
+};
+
+const getStatusIcon = (status: ContentStatus) => {
+  const icons: Record<ContentStatus, string> = {
+    draft: "icon-edit",
+    pending: "icon-clock-circle",
+    published: "icon-check-circle-fill",
+    offline: "icon-pause-circle-fill",
+    rejected: "icon-close-circle-fill",
+    recycled: "icon-delete"
+  };
+  return icons[status] || "icon-file";
 };
 
 const getStatusText = (status: ContentStatus) => {
@@ -422,17 +503,168 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.action-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.2s;
-  &:hover {
-    background-color: var(--color-fill-2);
+.content-list-page {
+  height: 100%;
+  background: var(--color-bg-1);
+
+  .page-wrapper {
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
+
+  .page-header {
+    background: var(--color-bg-2);
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid var(--color-border-1);
+  }
+
+  .page-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--color-bg-2);
+    border-radius: 8px;
+    border: 1px solid var(--color-border-1);
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+
+      .batch-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-left: 12px;
+        border-left: 1px solid var(--color-border-1);
+      }
+    }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .table-container {
+    flex: 1;
+    background: var(--color-bg-2);
+    border-radius: 8px;
+    border: 1px solid var(--color-border-1);
+    overflow: hidden;
+
+    :deep(.arco-table) {
+      border-radius: 0;
+      border: none;
+    }
+
+    :deep(.arco-table-th) {
+      background: var(--color-bg-3);
+    }
+
+    .table-row {
+      transition: background-color 0.2s;
+
+      &:hover {
+        background: var(--color-bg-3);
+      }
+    }
+  }
+
+  .thumbnail-cell {
+    display: flex;
+    justify-content: center;
+    padding: 4px 0;
+
+    .content-thumbnail {
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    .thumbnail-placeholder {
+      width: 56px;
+      height: 42px;
+      background: var(--color-bg-3);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-3);
+      font-size: 18px;
+    }
+  }
+
+  .status-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 500;
+  }
+
+  .flags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+
+    .flag-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+  }
+
+  .stats-cell {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+
+    .stat-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--color-text-2);
+      font-size: 13px;
+
+      svg {
+        color: var(--color-text-3);
+      }
+    }
+  }
+
+  .time-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+
+    .time-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      .time-label {
+        color: var(--color-text-3);
+      }
+
+      .time-value {
+        color: var(--color-text-2);
+      }
+    }
+  }
+
+  .action-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+}
+
+:deep(.danger-option .arco-dropdown-option-content) {
+  color: var(--status-danger-color) !important;
 }
 </style>

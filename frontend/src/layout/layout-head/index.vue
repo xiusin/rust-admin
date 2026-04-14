@@ -103,12 +103,12 @@ const selectedMenu = computed(() => {
   display: flex;
   align-items: center;
   width: 100%;
-  height: 60px;
+  height: 40px;
   padding: 0 $padding;
   overflow: hidden;
   border-bottom: $border-1 solid $color-border-2;
   .header-logo {
-    max-width: 180px;
+    max-width: 120px;
   }
   .layout-head-menu {
     display: flex;

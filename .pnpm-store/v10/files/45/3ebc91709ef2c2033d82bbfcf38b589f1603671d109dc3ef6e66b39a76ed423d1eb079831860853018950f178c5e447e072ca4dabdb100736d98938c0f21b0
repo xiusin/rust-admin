@@ -1,0 +1,12 @@
+import { colorScheme } from "./color-scheme";
+
+import { token } from "../common/token";
+
+export const arcoDesignDark = {
+    name: "arcoDesignDark",
+    description: "Arco Design - dark",
+    type: "dark",
+    token: token,
+    colorScheme: colorScheme
+};
+//# sourceMappingURL=index.js.map

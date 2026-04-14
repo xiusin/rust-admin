@@ -1,0 +1,342 @@
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@visactor/vchart')) :
+    typeof define === 'function' && define.amd ? define(['exports', '@visactor/vchart'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["vchart-arco-theme"] = {}, global.vchart));
+})(this, (function (exports, vchart) { 'use strict';
+
+    const getTokenValue = (token, defaultValue, chartContainer) => {
+      const value = token && getComputedStyle(null != chartContainer ? chartContainer : document.body).getPropertyValue(token) || defaultValue;
+      return value && !isNaN(value[0]) ? `rgba(${value})` : value;
+    };
+
+    const observeAttribute = (element, attribute, callback) => {
+      new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+          mutation.attributeName === attribute && callback(mutation);
+        });
+      }).observe(element, {
+        attributes: !0
+      });
+    };
+
+    const generateDataScheme = (mode, tokenMap, baseDataScheme, chartContainer) => {
+      var _a;
+      return null !== (_a = null == tokenMap ? void 0 : tokenMap.map((item, i) => {
+        const {
+          scheme: scheme
+        } = baseDataScheme[i];
+        return Object.assign(Object.assign({}, item), {
+          scheme: item.scheme.map((token, j) => getTokenValue("object" == typeof token ? token[mode] : token, null == scheme ? void 0 : scheme[j], chartContainer))
+        });
+      })) && void 0 !== _a ? _a : baseDataScheme;
+    };
+    const generatePalette = (mode, tokenMap, basePalette, chartContainer) => {
+      if (tokenMap) {
+        const newPalette = {};
+        return Object.keys(tokenMap).forEach(key => {
+          const token = "object" == typeof tokenMap[key] ? tokenMap[key][mode] : tokenMap[key];
+          newPalette[key] = getTokenValue(token, basePalette[key], chartContainer);
+        }), newPalette;
+      }
+      return basePalette;
+    };
+
+    class VChartExtendThemeHelper {
+      getCurrentMode() {
+        return document.body.hasAttribute(this.themeModeAttribute) && "dark" === document.body.getAttribute(this.themeModeAttribute) ? "dark" : "light";
+      }
+      generateThemeName(option) {
+        var _a;
+        const mode = null !== (_a = null == option ? void 0 : option.mode) && void 0 !== _a ? _a : this.getCurrentMode();
+        return `${this.themeNamePrefix}${mode[0].toUpperCase()}${mode.slice(1)}`;
+      }
+      generateTheme(option, chartContainer) {
+        var _a;
+        const mode = null !== (_a = null == option ? void 0 : option.mode) && void 0 !== _a ? _a : this.getCurrentMode(),
+          baseTheme = this.baseTheme[mode],
+          {
+            dataScheme: dataScheme,
+            palette: palette
+          } = baseTheme.colorScheme.default,
+          colorScheme = {
+            default: {
+              dataScheme: generateDataScheme(mode, this.tokenMap.dataScheme, dataScheme, chartContainer),
+              palette: generatePalette(mode, this.tokenMap.palette, palette, chartContainer)
+            }
+          };
+        return Object.assign(Object.assign({}, baseTheme), {
+          colorScheme: colorScheme
+        });
+      }
+      constructor(options) {
+        var _a;
+        this.options = options, this.themeManager = null !== (_a = options.themeManager) && void 0 !== _a ? _a : vchart.ThemeManager;
+      }
+      init() {
+        var _a;
+        const {
+          defaultMode: defaultMode,
+          isWatchingMode = !0
+        } = null !== (_a = this.options) && void 0 !== _a ? _a : {};
+        this.switchVChartTheme(!1, {
+          mode: defaultMode
+        }), isWatchingMode && observeAttribute(document.body, this.themeModeAttribute, () => this.switchVChartTheme());
+      }
+      switchVChartTheme(force, option, theme) {
+        const themeName = this.generateThemeName(option);
+        if (force || this.themeManager.getCurrentTheme() !== themeName) {
+          if (force && this.themeManager.removeTheme(themeName), !this.themeManager.themeExist(themeName)) {
+            const newTheme = null != theme ? theme : this.generateTheme(option);
+            this.themeManager.registerTheme(themeName, newTheme);
+          }
+          this.themeManager.setCurrentTheme(themeName);
+        }
+      }
+    }
+
+    const dataScheme = [
+        {
+            maxDomainLength: 10,
+            scheme: [
+                '#4080FF',
+                '#55C5FD',
+                '#FF7D00',
+                '#4CD263',
+                '#A871E3',
+                '#F7BA1E',
+                '#9FDB1D',
+                '#F979B7',
+                '#0FC6C2',
+                '#E865DF'
+            ]
+        },
+        {
+            scheme: [
+                '#4080FF',
+                '#BEDAFF',
+                '#55C5FD',
+                '#9CDCFC',
+                '#FF7D00',
+                '#FFCF8B',
+                '#4CD263',
+                '#AFF0B5',
+                '#A871E3',
+                '#DDBEF6',
+                '#F7BA1E',
+                '#FADC6D',
+                '#9FDB1D',
+                '#C9E968',
+                '#F979B7',
+                '#FB9DC7',
+                '#0FC6C2',
+                '#86E8DD',
+                '#E865DF',
+                '#F7BAEF'
+            ]
+        }
+    ];
+
+    const colorScheme$1 = {
+        default: {
+            dataScheme,
+            palette: {
+                backgroundColor: 'rgba(255,255,255,1)',
+                borderColor: 'rgba(229,230,235,1)',
+                shadowColor: 'rgba(0,0,0,0.1)',
+                hoverBackgroundColor: 'rgba(229,230,235,1)',
+                sliderRailColor: 'rgba(229,230,235,1)',
+                sliderHandleColor: 'rgba(255,255,255,1)',
+                sliderTrackColor: 'rgba(22,93,255,1)',
+                popupBackgroundColor: 'rgba(255,255,255,1)',
+                primaryFontColor: 'rgba(29,33,41,1)',
+                secondaryFontColor: 'rgba(78,89,105,1)',
+                tertiaryFontColor: 'rgba(134,144,156,1)',
+                axisLabelFontColor: 'rgba(134,144,156,1)',
+                disableFontColor: 'rgba(201,205,212,1)',
+                axisMarkerFontColor: 'rgba(255,255,255,1)',
+                axisGridColor: 'rgba(229,230,235,1)',
+                axisDomainColor: 'rgba(229,230,235,1)',
+                dataZoomHandleStrokeColor: 'rgba(169,174,184,1)',
+                dataZoomChartColor: 'rgba(201,205,212,1)',
+                playerControllerColor: 'rgba(22,93,255,1)',
+                axisMarkerBackgroundColor: 'rgba(29,33,41,1)',
+                markLabelBackgroundColor: 'rgba(229,230,235,1)',
+                markLineStrokeColor: 'rgba(78,89,105,1)',
+                dangerColor: 'rgba(245,63,63,1)',
+                warningColor: 'rgba(255,125,0,1)',
+                successColor: 'rgba(0,180,42,1)',
+                infoColor: 'rgba(22,93,255,1)'
+            }
+        }
+    };
+
+    const token = {
+        fontFamily: 'Inter,-apple-system,BlinkMacSystemFont,PingFang SC,Hiragino Sans GB,noto sans,Microsoft YaHei,Helvetica Neue,Helvetica,Arial,sans-serif'
+    };
+
+    const arcoDesignLight = {
+        name: 'arcoDesignLight',
+        description: 'Arco Design - light',
+        type: 'light',
+        token,
+        colorScheme: colorScheme$1
+    };
+
+    const colorScheme = {
+        default: {
+            dataScheme,
+            palette: {
+                backgroundColor: '#17171a',
+                borderColor: '#333335',
+                shadowColor: 'rgba(0,0,0,0.1)',
+                hoverBackgroundColor: 'rgba(197,197,197,0.16)',
+                sliderRailColor: 'hsla(0,0%,100%,0.12)',
+                sliderHandleColor: '#232324',
+                sliderTrackColor: 'rgba(60,126,255,1)',
+                popupBackgroundColor: '#373739',
+                primaryFontColor: 'hsla(0,0%,100%,0.9)',
+                secondaryFontColor: 'hsla(0,0%,100%,0.7)',
+                tertiaryFontColor: 'hsla(0,0%,100%,0.5)',
+                axisLabelFontColor: 'hsla(0,0%,100%,0.5)',
+                disableFontColor: 'hsla(0,0%,100%,0.3)',
+                axisMarkerFontColor: '#17171a',
+                axisGridColor: '#333335',
+                axisDomainColor: 'rgba(72,72,73,1)',
+                dataZoomHandleStrokeColor: 'rgba(120,120,122,1)',
+                dataZoomChartColor: 'hsla(0,0%,100%,0.16)',
+                playerControllerColor: 'rgba(60,126,255,1)',
+                axisMarkerBackgroundColor: 'hsla(0,0%,100%,0.9)',
+                markLabelBackgroundColor: '#333335',
+                markLineStrokeColor: 'hsla(0,0%,100%,0.7)',
+                dangerColor: 'rgba(247,105,101,1)',
+                warningColor: 'rgba(255,150,38,1)',
+                successColor: 'rgba(39,195,70,1)',
+                infoColor: 'rgba(60,126,255,1)'
+            }
+        }
+    };
+
+    const arcoDesignDark = {
+        name: 'arcoDesignDark',
+        description: 'Arco Design - dark',
+        type: 'dark',
+        token,
+        colorScheme
+    };
+
+    const getPaletteTokenMap = (prefix) => {
+        const prefixStr = prefix ? `${prefix}${prefix[prefix.length - 1] === '-' ? '' : '-'}` : '';
+        return {
+            backgroundColor: `--${prefixStr}color-bg-1`,
+            borderColor: `--${prefixStr}color-border`,
+            hoverBackgroundColor: `--${prefixStr}color-secondary-hover`,
+            sliderRailColor: `--${prefixStr}color-fill-3`,
+            sliderHandleColor: `--${prefixStr}color-bg-2`,
+            sliderTrackColor: '--primary-6',
+            popupBackgroundColor: `--${prefixStr}color-bg-popup`,
+            primaryFontColor: `--${prefixStr}color-text-1`,
+            secondaryFontColor: `--${prefixStr}color-text-2`,
+            tertiaryFontColor: `--${prefixStr}color-text-3`,
+            axisLabelFontColor: `--${prefixStr}color-text-3`,
+            disableFontColor: `--${prefixStr}color-text-4`,
+            axisMarkerFontColor: `--${prefixStr}color-bg-1`,
+            axisGridColor: `--${prefixStr}color-border`,
+            axisDomainColor: `--${prefixStr}color-neutral-3`,
+            dataZoomHandlerStrokeColor: `--${prefixStr}color-neutral-5`,
+            dataZoomChartColor: `--${prefixStr}color-fill-4`,
+            playerControllerColor: '--primary-6',
+            axisMarkerBackgroundColor: `--${prefixStr}color-text-1`,
+            markLabelBackgroundColor: `--${prefixStr}color-border`,
+            markLineStrokeColor: `--${prefixStr}color-text-2`,
+            dangerColor: '--danger-6',
+            warningColor: '--warning-6',
+            successColor: '--success-6',
+            infoColor: '--arcoblue-6'
+        };
+    };
+    const getDataSchemeTokenMap = (prefix) => {
+        const prefixStr = prefix ? `${prefix}${prefix[prefix.length - 1] === '-' ? '' : '-'}` : '';
+        return [
+            {
+                maxDomainLength: 10,
+                scheme: [
+                    `--${prefixStr}color-data-1`,
+                    `--${prefixStr}color-data-3`,
+                    `--${prefixStr}color-data-5`,
+                    `--${prefixStr}color-data-7`,
+                    `--${prefixStr}color-data-9`,
+                    `--${prefixStr}color-data-11`,
+                    `--${prefixStr}color-data-13`,
+                    `--${prefixStr}color-data-15`,
+                    `--${prefixStr}color-data-17`,
+                    `--${prefixStr}color-data-19`
+                ]
+            },
+            {
+                scheme: [
+                    `--${prefixStr}color-data-1`,
+                    `--${prefixStr}color-data-2`,
+                    `--${prefixStr}color-data-3`,
+                    `--${prefixStr}color-data-4`,
+                    `--${prefixStr}color-data-5`,
+                    `--${prefixStr}color-data-6`,
+                    `--${prefixStr}color-data-7`,
+                    `--${prefixStr}color-data-8`,
+                    `--${prefixStr}color-data-9`,
+                    `--${prefixStr}color-data-10`,
+                    `--${prefixStr}color-data-11`,
+                    `--${prefixStr}color-data-12`,
+                    `--${prefixStr}color-data-13`,
+                    `--${prefixStr}color-data-14`,
+                    `--${prefixStr}color-data-15`,
+                    `--${prefixStr}color-data-16`,
+                    `--${prefixStr}color-data-17`,
+                    `--${prefixStr}color-data-18`,
+                    `--${prefixStr}color-data-19`,
+                    `--${prefixStr}color-data-20`
+                ]
+            }
+        ];
+    };
+
+    class VChartArcoThemeHelper extends VChartExtendThemeHelper {
+        constructor(options) {
+            super(options);
+            this.themeModeAttribute = VChartArcoThemeHelper.themeModeAttribute;
+            this.themeNamePrefix = VChartArcoThemeHelper.themeNamePrefix;
+            this.baseTheme = {
+                light: arcoDesignLight,
+                dark: arcoDesignDark
+            };
+            const { prefix } = options;
+            this.tokenMap = {
+                dataScheme: getDataSchemeTokenMap(prefix),
+                palette: getPaletteTokenMap(prefix)
+            };
+        }
+    }
+    VChartArcoThemeHelper.themeModeAttribute = 'arco-theme';
+    VChartArcoThemeHelper.themeNamePrefix = 'arcoDesign';
+
+    const allThemeMap = new Map([
+        [arcoDesignLight.name, arcoDesignLight],
+        [arcoDesignDark.name, arcoDesignDark]
+    ]);
+
+    const initVChartArcoTheme = (options) => {
+        const helper = new VChartArcoThemeHelper(options !== null && options !== void 0 ? options : {});
+        helper.init();
+        return helper;
+    };
+
+    exports.VChartArcoThemeHelper = VChartArcoThemeHelper;
+    exports.allThemeMap = allThemeMap;
+    exports.arcoDesignDark = arcoDesignDark;
+    exports.arcoDesignLight = arcoDesignLight;
+    exports.dataScheme = dataScheme;
+    exports.getDataSchemeTokenMap = getDataSchemeTokenMap;
+    exports.getPaletteTokenMap = getPaletteTokenMap;
+    exports.initVChartArcoTheme = initVChartArcoTheme;
+    exports.token = token;
+
+}));

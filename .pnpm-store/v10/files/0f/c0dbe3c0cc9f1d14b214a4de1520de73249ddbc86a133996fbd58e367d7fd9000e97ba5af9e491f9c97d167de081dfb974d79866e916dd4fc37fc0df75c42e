@@ -1,0 +1,3 @@
+import type { DataSchemeTokenMap, PaletteTokenMap } from '@visactor/vchart-theme-utils';
+export declare const getPaletteTokenMap: (prefix?: string) => PaletteTokenMap;
+export declare const getDataSchemeTokenMap: (prefix?: string) => DataSchemeTokenMap;

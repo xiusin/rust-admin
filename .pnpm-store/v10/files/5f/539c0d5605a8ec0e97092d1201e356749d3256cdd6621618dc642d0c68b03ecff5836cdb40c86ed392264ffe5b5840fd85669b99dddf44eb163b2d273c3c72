@@ -1,0 +1,4 @@
+import type { IInitThemeOption } from '@visactor/vchart-theme-utils';
+export interface IInitVChartArcoThemeOption extends IInitThemeOption {
+    prefix?: string;
+}

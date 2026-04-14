@@ -1,0 +1,10 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: !0
+}), exports.allThemeMap = void 0;
+
+const light_1 = require("./light"), dark_1 = require("./dark");
+
+exports.allThemeMap = new Map([ [ light_1.arcoDesignLight.name, light_1.arcoDesignLight ], [ dark_1.arcoDesignDark.name, dark_1.arcoDesignDark ] ]);
+//# sourceMappingURL=theme-map.js.map

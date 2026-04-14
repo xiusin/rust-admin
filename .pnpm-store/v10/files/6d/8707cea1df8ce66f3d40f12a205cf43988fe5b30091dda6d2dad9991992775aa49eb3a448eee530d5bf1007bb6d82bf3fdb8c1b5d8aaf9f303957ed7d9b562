@@ -1,0 +1,25 @@
+import { VChartExtendThemeHelper } from "@visactor/vchart-theme-utils";
+
+import { arcoDesignLight } from "./light";
+
+import { arcoDesignDark } from "./dark";
+
+import { getDataSchemeTokenMap, getPaletteTokenMap } from "./common/token-map";
+
+export class VChartArcoThemeHelper extends VChartExtendThemeHelper {
+    constructor(options) {
+        super(options), this.themeModeAttribute = VChartArcoThemeHelper.themeModeAttribute, 
+        this.themeNamePrefix = VChartArcoThemeHelper.themeNamePrefix, this.baseTheme = {
+            light: arcoDesignLight,
+            dark: arcoDesignDark
+        };
+        const {prefix: prefix} = options;
+        this.tokenMap = {
+            dataScheme: getDataSchemeTokenMap(prefix),
+            palette: getPaletteTokenMap(prefix)
+        };
+    }
+}
+
+VChartArcoThemeHelper.themeModeAttribute = "arco-theme", VChartArcoThemeHelper.themeNamePrefix = "arcoDesign";
+//# sourceMappingURL=theme-helper.js.map
