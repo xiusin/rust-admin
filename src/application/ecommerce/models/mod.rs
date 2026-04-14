@@ -1,4 +1,6 @@
 pub mod default_impl;
+pub mod normalization;
+pub mod wholesale;
 
 use std::error::Error;
 use std::fmt;
