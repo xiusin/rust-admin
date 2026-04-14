@@ -1,4 +1,4 @@
-use crate::application::ecommerce::models::{EcommerceError, OrderStatus, AfterSaleType, AfterSaleStatus, AfterSaleAction, Product, Order, AfterSale, Promotion};
+use crate::application::ecommerce::models::{EcommerceError, OrderStatus, AfterSaleType, AfterSaleStatus, AfterSaleAction, Product, Order, AfterSale, Promotion, TaobaoKeProduct, PromotionLink, CommissionRecord, ShippingTimeoutAlert};
 use serde_json::Value;
 
 // 归一化处理模块
@@ -97,6 +97,47 @@ impl NormalizationService {
             "wechat" => self.map_wechat_error(error_code, error_msg),
             "xianyu" => self.map_xianyu_error(error_code, error_msg),
             _ => EcommerceError::ApiError(format!("{}: {}", error_code, error_msg)),
+        }
+    }
+
+    // 淘宝客商品数据转换
+    pub fn normalize_taobao_ke_product(&self, platform: &str, data: Value) -> Result<TaobaoKeProduct, EcommerceError> {
+        match platform {
+            "taobao" => self.normalize_taobao_taobao_ke_product(data),
+            _ => Err(EcommerceError::ValidationError(format!("Unsupported platform: {}", platform))),
+        }
+    }
+
+    // 推广链接数据转换
+    pub fn normalize_promotion_link(&self, platform: &str, data: Value) -> Result<PromotionLink, EcommerceError> {
+        match platform {
+            "taobao" => self.normalize_taobao_promotion_link(data),
+            "pdd" => self.normalize_pdd_promotion_link(data),
+            "douyin" => self.normalize_douyin_promotion_link(data),
+            _ => Err(EcommerceError::ValidationError(format!("Unsupported platform: {}", platform))),
+        }
+    }
+
+    // 佣金记录数据转换
+    pub fn normalize_commission_record(&self, platform: &str, data: Value) -> Result<CommissionRecord, EcommerceError> {
+        match platform {
+            "taobao" => self.normalize_taobao_commission_record(data),
+            "pdd" => self.normalize_pdd_commission_record(data),
+            "douyin" => self.normalize_douyin_commission_record(data),
+            _ => Err(EcommerceError::ValidationError(format!("Unsupported platform: {}", platform))),
+        }
+    }
+
+    // 发货超时预警数据转换
+    pub fn normalize_shipping_alert(&self, platform: &str, data: Value) -> Result<ShippingTimeoutAlert, EcommerceError> {
+        match platform {
+            "taobao" => self.normalize_taobao_shipping_alert(data),
+            "pdd" => self.normalize_pdd_shipping_alert(data),
+            "douyin" => self.normalize_douyin_shipping_alert(data),
+            "amazon" => self.normalize_amazon_shipping_alert(data),
+            "wechat" => self.normalize_wechat_shipping_alert(data),
+            "xianyu" => self.normalize_xianyu_shipping_alert(data),
+            _ => Err(EcommerceError::ValidationError(format!("Unsupported platform: {}", platform))),
         }
     }
 
@@ -1115,6 +1156,324 @@ impl NormalizationService {
             status: status.to_string(),
             created_at: data["created"].as_str().unwrap_or_default().to_string(),
             updated_at: data["modified"].as_str().unwrap_or_default().to_string(),
+        })
+    }
+
+    // 淘宝淘宝客商品数据转换
+    fn normalize_taobao_taobao_ke_product(&self, data: Value) -> Result<TaobaoKeProduct, EcommerceError> {
+        let product_id = data["num_iid"].as_str().unwrap_or_default().to_string();
+        let name = data["title"].as_str().unwrap_or_default().to_string();
+        let description = data["desc"].as_str().unwrap_or_default().to_string();
+        let price = data["price"].as_f64().unwrap_or(0.0);
+        let commission_rate = data["commission_rate"].as_f64().unwrap_or(0.0) / 100.0; // 淘宝客佣金率单位是百分比
+        let commission_amount = data["commission_amount"].as_f64().unwrap_or(0.0) / 100.0; // 淘宝客佣金金额单位是分
+        let sales_volume = data["volume"].as_i64().unwrap_or(0) as i32;
+        
+        let images: Vec<String> = data["pict_url"].as_str().map(|s| vec![s.to_string()]).unwrap_or(vec![]);
+        let coupon_info = data["coupon_info"].as_str().map(|s| s.to_string());
+        let start_time = data["start_time"].as_str().unwrap_or_default().to_string();
+        let end_time = data["end_time"].as_str().unwrap_or_default().to_string();
+        let status = if data["status"].as_str().unwrap_or("") == "1" { "active" } else { "inactive" };
+        
+        Ok(TaobaoKeProduct {
+            id: format!("taobao_ke_{}", product_id),
+            platform_product_id: product_id,
+            name,
+            description,
+            price,
+            commission_rate,
+            commission_amount,
+            sales_volume,
+            images,
+            coupon_info,
+            start_time,
+            end_time,
+            status: status.to_string(),
+        })
+    }
+
+    // 淘宝推广链接数据转换
+    fn normalize_taobao_promotion_link(&self, data: Value) -> Result<PromotionLink, EcommerceError> {
+        let link_id = data["link_id"].as_str().unwrap_or_default().to_string();
+        let original_link = data["original_link"].as_str().unwrap_or_default().to_string();
+        let converted_link = data["click_url"].as_str().unwrap_or_default().to_string();
+        let commission_rate = data["commission_rate"].as_f64().unwrap_or(0.0) / 100.0;
+        let created_at = data["create_time"].as_str().unwrap_or_default().to_string();
+        let expires_at = data["expire_time"].as_str().map(|s| s.to_string());
+        let status = if data["status"].as_str().unwrap_or("") == "1" { "active" } else { "inactive" };
+        
+        Ok(PromotionLink {
+            id: format!("taobao_link_{}", link_id),
+            platform: "taobao".to_string(),
+            original_link,
+            converted_link,
+            commission_rate,
+            created_at,
+            expires_at,
+            status: status.to_string(),
+        })
+    }
+
+    // 拼多多推广链接数据转换
+    fn normalize_pdd_promotion_link(&self, data: Value) -> Result<PromotionLink, EcommerceError> {
+        let link_id = data["link_id"].as_str().unwrap_or_default().to_string();
+        let original_link = data["original_link"].as_str().unwrap_or_default().to_string();
+        let converted_link = data["promotion_url"].as_str().unwrap_or_default().to_string();
+        let commission_rate = data["commission_rate"].as_f64().unwrap_or(0.0) / 100.0;
+        let created_at = data["create_time"].as_str().unwrap_or_default().to_string();
+        let expires_at = data["expire_time"].as_str().map(|s| s.to_string());
+        let status = if data["status"].as_i64().unwrap_or(0) == 1 { "active" } else { "inactive" };
+        
+        Ok(PromotionLink {
+            id: format!("pdd_link_{}", link_id),
+            platform: "pdd".to_string(),
+            original_link,
+            converted_link,
+            commission_rate,
+            created_at,
+            expires_at,
+            status: status.to_string(),
+        })
+    }
+
+    // 抖音推广链接数据转换
+    fn normalize_douyin_promotion_link(&self, data: Value) -> Result<PromotionLink, EcommerceError> {
+        let link_id = data["link_id"].as_str().unwrap_or_default().to_string();
+        let original_link = data["original_link"].as_str().unwrap_or_default().to_string();
+        let converted_link = data["promotion_link"].as_str().unwrap_or_default().to_string();
+        let commission_rate = data["commission_rate"].as_f64().unwrap_or(0.0) / 100.0;
+        let created_at = data["create_time"].as_str().unwrap_or_default().to_string();
+        let expires_at = data["expire_time"].as_str().map(|s| s.to_string());
+        let status = if data["status"].as_i64().unwrap_or(0) == 1 { "active" } else { "inactive" };
+        
+        Ok(PromotionLink {
+            id: format!("douyin_link_{}", link_id),
+            platform: "douyin".to_string(),
+            original_link,
+            converted_link,
+            commission_rate,
+            created_at,
+            expires_at,
+            status: status.to_string(),
+        })
+    }
+
+    // 淘宝佣金记录数据转换
+    fn normalize_taobao_commission_record(&self, data: Value) -> Result<CommissionRecord, EcommerceError> {
+        let record_id = data["record_id"].as_str().unwrap_or_default().to_string();
+        let order_id = data["trade_id"].as_str().unwrap_or_default().to_string();
+        let promotion_link_id = data["relation_id"].as_str().unwrap_or_default().to_string();
+        let amount = data["alipay_total_price"].as_f64().unwrap_or(0.0);
+        let commission_rate = data["commission_rate"].as_f64().unwrap_or(0.0) / 100.0;
+        let commission_amount = data["commission"].as_f64().unwrap_or(0.0) / 100.0;
+        let status = match data["status"].as_str().unwrap_or("") {
+            "1" => "pending",
+            "2" => "settled",
+            "3" => "refunded",
+            _ => "unknown",
+        };
+        let created_at = data["create_time"].as_str().unwrap_or_default().to_string();
+        let settled_at = data["settle_time"].as_str().map(|s| s.to_string());
+        
+        Ok(CommissionRecord {
+            id: format!("taobao_commission_{}", record_id),
+            order_id,
+            promotion_link_id,
+            platform: "taobao".to_string(),
+            amount,
+            commission_rate,
+            commission_amount,
+            status: status.to_string(),
+            created_at,
+            settled_at,
+        })
+    }
+
+    // 拼多多佣金记录数据转换
+    fn normalize_pdd_commission_record(&self, data: Value) -> Result<CommissionRecord, EcommerceError> {
+        let record_id = data["record_id"].as_str().unwrap_or_default().to_string();
+        let order_id = data["order_sn"].as_str().unwrap_or_default().to_string();
+        let promotion_link_id = data["link_id"].as_str().unwrap_or_default().to_string();
+        let amount = data["order_amount"].as_f64().unwrap_or(0.0) / 100.0;
+        let commission_rate = data["commission_rate"].as_f64().unwrap_or(0.0) / 100.0;
+        let commission_amount = data["commission_amount"].as_f64().unwrap_or(0.0) / 100.0;
+        let status = match data["status"].as_i64().unwrap_or(0) {
+            1 => "pending",
+            2 => "settled",
+            3 => "refunded",
+            _ => "unknown",
+        };
+        let created_at = data["create_time"].as_str().unwrap_or_default().to_string();
+        let settled_at = data["settle_time"].as_str().map(|s| s.to_string());
+        
+        Ok(CommissionRecord {
+            id: format!("pdd_commission_{}", record_id),
+            order_id,
+            promotion_link_id,
+            platform: "pdd".to_string(),
+            amount,
+            commission_rate,
+            commission_amount,
+            status: status.to_string(),
+            created_at,
+            settled_at,
+        })
+    }
+
+    // 抖音佣金记录数据转换
+    fn normalize_douyin_commission_record(&self, data: Value) -> Result<CommissionRecord, EcommerceError> {
+        let record_id = data["record_id"].as_str().unwrap_or_default().to_string();
+        let order_id = data["order_id"].as_str().unwrap_or_default().to_string();
+        let promotion_link_id = data["link_id"].as_str().unwrap_or_default().to_string();
+        let amount = data["order_amount"].as_f64().unwrap_or(0.0);
+        let commission_rate = data["commission_rate"].as_f64().unwrap_or(0.0) / 100.0;
+        let commission_amount = data["commission_amount"].as_f64().unwrap_or(0.0);
+        let status = match data["status"].as_i64().unwrap_or(0) {
+            1 => "pending",
+            2 => "settled",
+            3 => "refunded",
+            _ => "unknown",
+        };
+        let created_at = data["create_time"].as_str().unwrap_or_default().to_string();
+        let settled_at = data["settle_time"].as_str().map(|s| s.to_string());
+        
+        Ok(CommissionRecord {
+            id: format!("douyin_commission_{}", record_id),
+            order_id,
+            promotion_link_id,
+            platform: "douyin".to_string(),
+            amount,
+            commission_rate,
+            commission_amount,
+            status: status.to_string(),
+            created_at,
+            settled_at,
+        })
+    }
+
+    // 淘宝发货超时预警数据转换
+    fn normalize_taobao_shipping_alert(&self, data: Value) -> Result<ShippingTimeoutAlert, EcommerceError> {
+        let order_id = data["trade_id"].as_str().unwrap_or_default().to_string();
+        let platform_order_id = order_id.clone();
+        let order_status = self.map_taobao_order_status(data["status"].as_str().unwrap_or(""))?;
+        let created_at = data["created"].as_str().unwrap_or_default().to_string();
+        let expected_shipping_time = data["expected_shipping_time"].as_str().unwrap_or_default().to_string();
+        let alert_time = data["alert_time"].as_str().unwrap_or_default().to_string();
+        let alert_level = data["alert_level"].as_str().unwrap_or("medium").to_string();
+        
+        Ok(ShippingTimeoutAlert {
+            order_id: format!("taobao_{}", order_id),
+            platform_order_id,
+            order_status,
+            created_at,
+            expected_shipping_time,
+            alert_time,
+            alert_level,
+        })
+    }
+
+    // 拼多多发货超时预警数据转换
+    fn normalize_pdd_shipping_alert(&self, data: Value) -> Result<ShippingTimeoutAlert, EcommerceError> {
+        let order_id = data["order_sn"].as_str().unwrap_or_default().to_string();
+        let platform_order_id = order_id.clone();
+        let order_status = self.map_pdd_order_status(data["order_status"].as_i64().unwrap_or(0).to_string().as_str())?;
+        let created_at = data["create_time"].as_str().unwrap_or_default().to_string();
+        let expected_shipping_time = data["expected_shipping_time"].as_str().unwrap_or_default().to_string();
+        let alert_time = data["alert_time"].as_str().unwrap_or_default().to_string();
+        let alert_level = data["alert_level"].as_str().unwrap_or("medium").to_string();
+        
+        Ok(ShippingTimeoutAlert {
+            order_id: format!("pdd_{}", order_id),
+            platform_order_id,
+            order_status,
+            created_at,
+            expected_shipping_time,
+            alert_time,
+            alert_level,
+        })
+    }
+
+    // 抖音发货超时预警数据转换
+    fn normalize_douyin_shipping_alert(&self, data: Value) -> Result<ShippingTimeoutAlert, EcommerceError> {
+        let order_id = data["order_id"].as_str().unwrap_or_default().to_string();
+        let platform_order_id = order_id.clone();
+        let order_status = self.map_douyin_order_status(data["order_status"].as_i64().unwrap_or(0).to_string().as_str())?;
+        let created_at = data["create_time"].as_str().unwrap_or_default().to_string();
+        let expected_shipping_time = data["expected_shipping_time"].as_str().unwrap_or_default().to_string();
+        let alert_time = data["alert_time"].as_str().unwrap_or_default().to_string();
+        let alert_level = data["alert_level"].as_str().unwrap_or("medium").to_string();
+        
+        Ok(ShippingTimeoutAlert {
+            order_id: format!("douyin_{}", order_id),
+            platform_order_id,
+            order_status,
+            created_at,
+            expected_shipping_time,
+            alert_time,
+            alert_level,
+        })
+    }
+
+    // 亚马逊发货超时预警数据转换
+    fn normalize_amazon_shipping_alert(&self, data: Value) -> Result<ShippingTimeoutAlert, EcommerceError> {
+        let order_id = data["OrderId"].as_str().unwrap_or_default().to_string();
+        let platform_order_id = order_id.clone();
+        let order_status = self.map_amazon_order_status(data["OrderStatus"].as_str().unwrap_or(""))?;
+        let created_at = data["PurchaseDate"].as_str().unwrap_or_default().to_string();
+        let expected_shipping_time = data["ExpectedShipDate"].as_str().unwrap_or_default().to_string();
+        let alert_time = data["AlertTime"].as_str().unwrap_or_default().to_string();
+        let alert_level = data["AlertLevel"].as_str().unwrap_or("medium").to_string();
+        
+        Ok(ShippingTimeoutAlert {
+            order_id: format!("amazon_{}", order_id),
+            platform_order_id,
+            order_status,
+            created_at,
+            expected_shipping_time,
+            alert_time,
+            alert_level,
+        })
+    }
+
+    // 微信发货超时预警数据转换
+    fn normalize_wechat_shipping_alert(&self, data: Value) -> Result<ShippingTimeoutAlert, EcommerceError> {
+        let order_id = data["order_id"].as_str().unwrap_or_default().to_string();
+        let platform_order_id = order_id.clone();
+        let order_status = self.map_wechat_order_status(data["order_status"].as_i64().unwrap_or(0).to_string().as_str())?;
+        let created_at = data["create_time"].as_str().unwrap_or_default().to_string();
+        let expected_shipping_time = data["expected_shipping_time"].as_str().unwrap_or_default().to_string();
+        let alert_time = data["alert_time"].as_str().unwrap_or_default().to_string();
+        let alert_level = data["alert_level"].as_str().unwrap_or("medium").to_string();
+        
+        Ok(ShippingTimeoutAlert {
+            order_id: format!("wechat_{}", order_id),
+            platform_order_id,
+            order_status,
+            created_at,
+            expected_shipping_time,
+            alert_time,
+            alert_level,
+        })
+    }
+
+    // 闲鱼发货超时预警数据转换
+    fn normalize_xianyu_shipping_alert(&self, data: Value) -> Result<ShippingTimeoutAlert, EcommerceError> {
+        let order_id = data["trade_id"].as_str().unwrap_or_default().to_string();
+        let platform_order_id = order_id.clone();
+        let order_status = self.map_xianyu_order_status(data["status"].as_str().unwrap_or(""))?;
+        let created_at = data["created"].as_str().unwrap_or_default().to_string();
+        let expected_shipping_time = data["expected_shipping_time"].as_str().unwrap_or_default().to_string();
+        let alert_time = data["alert_time"].as_str().unwrap_or_default().to_string();
+        let alert_level = data["alert_level"].as_str().unwrap_or("medium").to_string();
+        
+        Ok(ShippingTimeoutAlert {
+            order_id: format!("xianyu_{}", order_id),
+            platform_order_id,
+            order_status,
+            created_at,
+            expected_shipping_time,
+            alert_time,
+            alert_level,
         })
     }
 
