@@ -1,8 +1,16 @@
 <template>
   <div :class="asideDark ? 'aside dark' : 'aside'">
     <Logo />
-    <a-layout-sider :collapsed="collapsed" breakpoint="xl" class="layout_side" :width="220">
-      <a-scrollbar style="height: 100%; overflow: auto" outer-class="scrollbar"><Menu :route-tree="routeTree" /></a-scrollbar>
+    <a-layout-sider 
+      :collapsed="collapsed" 
+      breakpoint="xl" 
+      class="layout_side" 
+      :width="180"
+      :collapsed-width="48"
+    >
+      <a-scrollbar class="menu-scrollbar">
+        <Menu :route-tree="routeTree" />
+      </a-scrollbar>
     </a-layout-sider>
   </div>
 </template>
@@ -24,52 +32,116 @@ const { routeTree } = storeToRefs(routerStore);
   display: flex;
   flex-direction: column;
   height: 100vh;
+  background: $color-bg-white;
+  transition: background $transition-normal;
 }
+
 .dark {
-  background: #232324;
+  background: linear-gradient(180deg, #1d2333 0%, #0f1419 100%);
 }
+
 .layout_side {
   flex: 1;
   overflow: hidden;
-  .scrollbar {
-    height: 100%;
+  transition: all $transition-normal;
+}
+
+.menu-scrollbar {
+  height: 100%;
+  padding: $spacing-sm 0;
+}
+
+// 优化滚动条样式
+:deep(.arco-scrollbar-thumb-direction-vertical .arco-scrollbar-thumb-bar) {
+  width: 6px;
+  border-radius: $radius-full;
+  background: $color-fill-3;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: $color-fill-4;
   }
 }
 
-// 修改左侧滚动条宽度
-:deep(.arco-scrollbar-thumb-direction-vertical .arco-scrollbar-thumb-bar) {
-  width: 4px;
-  margin-left: 8px;
+// 优化侧边栏样式
+:deep(.arco-layout-sider) {
+  background: transparent !important;
+  border-right: 1px solid $color-border-1;
+  box-shadow: $shadow-xs;
+  transition: all $transition-normal;
 }
 
-// 去掉右侧阴影并替换为边线
-:deep(.arco-layout-sider-light) {
-  border-right: $border-1 solid $color-border-2;
-  box-shadow: unset;
+:deep(.arco-layout-sider-dark) {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-// 解决折叠菜单的icon不居中问题
+// 优化菜单样式
+:deep(.arco-menu) {
+  background: transparent !important;
+  padding: $spacing-sm;
+}
+
+:deep(.arco-menu-vertical {
+    .arco-menu-item,
+    .arco-menu-pop-header,
+    .arco-menu-inline-header {
+      height: 32px;
+      line-height: 32px;
+      margin: $spacing-xs 0;
+      border-radius: $radius-sm;
+      transition: all $transition-fast;
+
+      &:hover {
+        background: rgba($color-primary, 0.06);
+      }
+    }
+
+  .arco-menu-item-selected {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%) !important;
+    color: $color-text-white !important;
+    box-shadow: 0 4px 12px rgba($color-primary, 0.3);
+
+    .arco-menu-icon {
+      color: $color-text-white !important;
+    }
+
+    &:hover {
+      background: linear-gradient(135deg, $color-primary-dark 0%, $color-primary-8 100%) !important;
+    }
+  }
+}
+
+// 暗色模式菜单优化
+:deep(.arco-menu-dark) {
+  .arco-menu-item,
+  .arco-menu-pop-header,
+  .arco-menu-inline-header {
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  .arco-menu-item-selected {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%) !important;
+    box-shadow: 0 4px 12px rgba($color-primary, 0.4);
+  }
+}
+
+// 折叠菜单优化
 :deep(.arco-menu-vertical.arco-menu-collapsed) {
-  // 消除icon的自带padding值，并且让元素居中
   .arco-menu-has-icon {
     justify-content: center;
     padding: 0;
   }
 
-  // 消除icon的自带margin-right值，并且设置icon的padding值以保留icon空隙
   .arco-menu-icon {
-    padding: 10px 0;
+    padding: 12px 0;
     margin-right: 0;
+    font-size: 20px;
   }
 
-  // 消除title占位
   .arco-menu-title {
     display: none;
   }
-}
-
-// 去掉sider背景
-.arco-layout-sider {
-  background: unset;
 }
 </style>

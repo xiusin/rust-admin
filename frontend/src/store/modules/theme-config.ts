@@ -46,6 +46,18 @@ const themeConfig = () => {
   const asideDark = ref<boolean>(false);
   // 页面过渡方式
   const transitionPage = ref<string>("fadeInOut");
+  // 可用的页面过渡方式列表
+  const availableTransitions = ref<string[]>([
+    "fadeInOut",
+    "slideLeftRight",
+    "slideUpDown",
+    "zoomInOut",
+    "rotateInOut",
+    "cardInOut",
+    "fadeOut",
+    "flipInOut",
+    "bounceInOut"
+  ]);
   // 主题色
   const themeColor = ref<string>("#165DFF");
   // 调色盘
@@ -100,6 +112,7 @@ const themeConfig = () => {
     grayMode,
     asideDark,
     transitionPage,
+    availableTransitions,
     themeColor,
     presetColors,
     setCollapsed,
