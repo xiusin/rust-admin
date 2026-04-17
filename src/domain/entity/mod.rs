@@ -124,3 +124,4 @@ pub mod ppt_template_rating;
 pub mod ppt_template_collection;
 pub mod ppt_template_tag;
 pub mod ppt_template_tag_relation;
+pub mod ecommerce;
