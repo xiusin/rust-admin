@@ -4,9 +4,11 @@ pub mod wholesale;
 
 use std::error::Error;
 use std::fmt;
+use serde::{Serialize, Deserialize};
+use async_trait::async_trait;
 
 // 电商平台错误定义
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum EcommerceError {
     ApiError(String),
     NetworkError(String),
@@ -32,6 +34,7 @@ impl fmt::Display for EcommerceError {
 impl Error for EcommerceError {}
 
 // 平台类型
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum PlatformType {
     Taobao,
     Pdd,
@@ -55,6 +58,7 @@ impl PlatformType {
 }
 
 // 订单状态
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum OrderStatus {
     PendingPayment,
     Paid,
@@ -66,6 +70,7 @@ pub enum OrderStatus {
 }
 
 // 售后类型
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum AfterSaleType {
     Refund,
     Return,
@@ -73,6 +78,7 @@ pub enum AfterSaleType {
 }
 
 // 售后状态
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum AfterSaleStatus {
     Pending,
     Processing,
@@ -82,6 +88,7 @@ pub enum AfterSaleStatus {
 }
 
 // 售后操作
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum AfterSaleAction {
     Approve,
     Reject,
@@ -90,7 +97,7 @@ pub enum AfterSaleAction {
 }
 
 // 商品结构体
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Product {
     pub id: String,
     pub platform_product_id: String,
@@ -106,7 +113,7 @@ pub struct Product {
 }
 
 // SKU结构体
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Sku {
     pub id: String,
     pub sku_id: String,
@@ -116,7 +123,7 @@ pub struct Sku {
 }
 
 // 订单结构体
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Order {
     pub id: String,
     pub platform_order_id: String,
@@ -130,7 +137,7 @@ pub struct Order {
 }
 
 // 买家信息
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BuyerInfo {
     pub buyer_id: String,
     pub buyer_name: String,
@@ -138,7 +145,7 @@ pub struct BuyerInfo {
 }
 
 // 物流信息
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ShippingInfo {
     pub receiver_name: String,
     pub receiver_phone: String,
@@ -148,7 +155,7 @@ pub struct ShippingInfo {
 }
 
 // 订单项
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OrderItem {
     pub id: String,
     pub product_id: String,
@@ -160,7 +167,7 @@ pub struct OrderItem {
 }
 
 // 售后结构体
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AfterSale {
     pub id: String,
     pub platform_after_sale_id: String,
@@ -175,7 +182,7 @@ pub struct AfterSale {
 }
 
 // 推广活动结构体
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Promotion {
     pub id: String,
     pub platform_promotion_id: String,
@@ -189,7 +196,7 @@ pub struct Promotion {
 }
 
 // 推广效果结构体
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PromotionEffect {
     pub promotion_id: String,
     pub click_count: i32,
@@ -200,7 +207,7 @@ pub struct PromotionEffect {
 }
 
 // 发货超时预警结构体
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ShippingTimeoutAlert {
     pub order_id: String,
     pub platform_order_id: String,
@@ -212,7 +219,7 @@ pub struct ShippingTimeoutAlert {
 }
 
 // 淘宝客商品结构体
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TaobaoKeProduct {
     pub id: String,
     pub platform_product_id: String,
@@ -230,7 +237,7 @@ pub struct TaobaoKeProduct {
 }
 
 // 推广链接结构体
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PromotionLink {
     pub id: String,
     pub platform: String,
@@ -243,7 +250,7 @@ pub struct PromotionLink {
 }
 
 // 佣金记录结构体
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CommissionRecord {
     pub id: String,
     pub order_id: String,
@@ -258,7 +265,7 @@ pub struct CommissionRecord {
 }
 
 // 获取商品参数
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetProductsParams {
     pub page: i32,
     pub page_size: i32,
@@ -267,7 +274,7 @@ pub struct GetProductsParams {
 }
 
 // 创建商品参数
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CreateProductParams {
     pub name: String,
     pub description: String,
@@ -279,7 +286,7 @@ pub struct CreateProductParams {
 }
 
 // 创建SKU参数
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CreateSkuParams {
     pub attributes: Vec<String>,
     pub price: f64,
@@ -287,7 +294,7 @@ pub struct CreateSkuParams {
 }
 
 // 更新商品参数
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct UpdateProductParams {
     pub name: Option<String>,
     pub description: Option<String>,
@@ -298,7 +305,7 @@ pub struct UpdateProductParams {
 }
 
 // 获取订单参数
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetOrdersParams {
     pub page: i32,
     pub page_size: i32,
@@ -308,7 +315,7 @@ pub struct GetOrdersParams {
 }
 
 // 获取售后参数
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetAfterSalesParams {
     pub page: i32,
     pub page_size: i32,
@@ -318,7 +325,7 @@ pub struct GetAfterSalesParams {
 }
 
 // 获取推广活动参数
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GetPromotionsParams {
     pub page: i32,
     pub page_size: i32,
@@ -326,12 +333,13 @@ pub struct GetPromotionsParams {
 }
 
 // 平台接口
-pub trait EcommercePlatform {
+#[async_trait]
+pub trait EcommercePlatform: Send + Sync {
     // 获取平台名称
     fn platform_name(&self) -> &str;
     
     // 测试连接
-    fn test_connection(&self) -> Result<(), EcommerceError>;
+    async fn test_connection(&self) -> Result<(), EcommerceError>;
     
     // 商品相关操作
     fn product_service(&self) -> Box<dyn ProductService>;
@@ -359,64 +367,68 @@ pub trait EcommercePlatform {
 }
 
 // 商品服务接口
-pub trait ProductService {
+#[async_trait]
+pub trait ProductService: Send + Sync {
     // 获取商品列表
-    fn get_products(&self, params: GetProductsParams) -> Result<Vec<Product>, EcommerceError>;
+    async fn get_products(&self, params: GetProductsParams) -> Result<Vec<Product>, EcommerceError>;
     
     // 获取商品详情
-    fn get_product(&self, product_id: &str) -> Result<Product, EcommerceError>;
+    async fn get_product(&self, product_id: &str) -> Result<Product, EcommerceError>;
     
     // 创建商品
-    fn create_product(&self, product: CreateProductParams) -> Result<Product, EcommerceError>;
+    async fn create_product(&self, product: CreateProductParams) -> Result<Product, EcommerceError>;
     
     // 更新商品
-    fn update_product(&self, product_id: &str, product: UpdateProductParams) -> Result<Product, EcommerceError>;
+    async fn update_product(&self, product_id: &str, product: UpdateProductParams) -> Result<Product, EcommerceError>;
     
     // 下架商品
-    fn offline_product(&self, product_id: &str) -> Result<(), EcommerceError>;
+    async fn offline_product(&self, product_id: &str) -> Result<(), EcommerceError>;
 }
 
 // 订单服务接口
-pub trait OrderService {
+#[async_trait]
+pub trait OrderService: Send + Sync {
     // 获取订单列表
-    fn get_orders(&self, params: GetOrdersParams) -> Result<Vec<Order>, EcommerceError>;
+    async fn get_orders(&self, params: GetOrdersParams) -> Result<Vec<Order>, EcommerceError>;
     
     // 获取订单详情
-    fn get_order(&self, order_id: &str) -> Result<Order, EcommerceError>;
+    async fn get_order(&self, order_id: &str) -> Result<Order, EcommerceError>;
     
     // 更新订单状态
-    fn update_order_status(&self, order_id: &str, status: OrderStatus) -> Result<Order, EcommerceError>;
+    async fn update_order_status(&self, order_id: &str, status: OrderStatus) -> Result<Order, EcommerceError>;
     
     // 发货
-    fn ship_order(&self, order_id: &str, shipping_info: ShippingInfo) -> Result<Order, EcommerceError>;
+    async fn ship_order(&self, order_id: &str, shipping_info: ShippingInfo) -> Result<Order, EcommerceError>;
 }
 
 // 售后服务接口
-pub trait AfterSaleService {
+#[async_trait]
+pub trait AfterSaleService: Send + Sync {
     // 获取售后列表
-    fn get_after_sales(&self, params: GetAfterSalesParams) -> Result<Vec<AfterSale>, EcommerceError>;
+    async fn get_after_sales(&self, params: GetAfterSalesParams) -> Result<Vec<AfterSale>, EcommerceError>;
     
     // 获取售后详情
-    fn get_after_sale(&self, after_sale_id: &str) -> Result<AfterSale, EcommerceError>;
+    async fn get_after_sale(&self, after_sale_id: &str) -> Result<AfterSale, EcommerceError>;
     
     // 处理售后申请
-    fn handle_after_sale(&self, after_sale_id: &str, action: AfterSaleAction) -> Result<AfterSale, EcommerceError>;
+    async fn handle_after_sale(&self, after_sale_id: &str, action: AfterSaleAction) -> Result<AfterSale, EcommerceError>;
 }
 
 // 推广服务接口
-pub trait PromotionService {
+#[async_trait]
+pub trait PromotionService: Send + Sync {
     // 创建推广活动
-    fn create_promotion(&self, promotion: CreatePromotionParams) -> Result<Promotion, EcommerceError>;
+    async fn create_promotion(&self, promotion: CreatePromotionParams) -> Result<Promotion, EcommerceError>;
     
     // 获取推广活动列表
-    fn get_promotions(&self, params: GetPromotionsParams) -> Result<Vec<Promotion>, EcommerceError>;
+    async fn get_promotions(&self, params: GetPromotionsParams) -> Result<Vec<Promotion>, EcommerceError>;
     
     // 获取推广效果
-    fn get_promotion_effect(&self, promotion_id: &str) -> Result<PromotionEffect, EcommerceError>;
+    async fn get_promotion_effect(&self, promotion_id: &str) -> Result<PromotionEffect, EcommerceError>;
 }
 
 // 创建推广活动参数
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CreatePromotionParams {
     pub name: String,
     pub promotion_type: String,
@@ -427,55 +439,59 @@ pub struct CreatePromotionParams {
 }
 
 // 库存服务接口
-pub trait InventoryService {
+#[async_trait]
+pub trait InventoryService: Send + Sync {
     // 更新库存
-    fn update_inventory(&self, product_id: &str, sku_id: Option<&str>, quantity: i32) -> Result<(), EcommerceError>;
+    async fn update_inventory(&self, product_id: &str, sku_id: Option<&str>, quantity: i32) -> Result<(), EcommerceError>;
     
     // 获取库存
-    fn get_inventory(&self, product_id: &str, sku_id: Option<&str>) -> Result<i32, EcommerceError>;
+    async fn get_inventory(&self, product_id: &str, sku_id: Option<&str>) -> Result<i32, EcommerceError>;
 }
 
 // 淘宝客服务接口
-pub trait TaobaoKeService {
+#[async_trait]
+pub trait TaobaoKeService: Send + Sync {
     // 获取淘宝客商品列表
-    fn get_taobao_ke_products(&self, keyword: &str, page: i32, page_size: i32) -> Result<Vec<TaobaoKeProduct>, EcommerceError>;
+    async fn get_taobao_ke_products(&self, keyword: &str, page: i32, page_size: i32) -> Result<Vec<TaobaoKeProduct>, EcommerceError>;
     
     // 获取淘宝客商品详情
-    fn get_taobao_ke_product(&self, product_id: &str) -> Result<TaobaoKeProduct, EcommerceError>;
+    async fn get_taobao_ke_product(&self, product_id: &str) -> Result<TaobaoKeProduct, EcommerceError>;
     
     // 获取佣金记录
-    fn get_commission_records(&self, start_date: &str, end_date: &str) -> Result<Vec<CommissionRecord>, EcommerceError>;
+    async fn get_commission_records(&self, start_date: &str, end_date: &str) -> Result<Vec<CommissionRecord>, EcommerceError>;
     
     // 拉取推广商品
-    fn pull_promotion_products(&self, category_id: Option<&str>, page: i32, page_size: i32) -> Result<Vec<TaobaoKeProduct>, EcommerceError>;
+    async fn pull_promotion_products(&self, category_id: Option<&str>, page: i32, page_size: i32) -> Result<Vec<TaobaoKeProduct>, EcommerceError>;
 }
 
 // 推广链接服务接口
-pub trait PromotionLinkService {
+#[async_trait]
+pub trait PromotionLinkService: Send + Sync {
     // 创建推广链接
-    fn create_promotion_link(&self, original_link: &str, platform: &str) -> Result<PromotionLink, EcommerceError>;
+    async fn create_promotion_link(&self, original_link: &str, platform: &str) -> Result<PromotionLink, EcommerceError>;
     
     // 获取推广链接列表
-    fn get_promotion_links(&self, platform: Option<&str>, status: Option<&str>) -> Result<Vec<PromotionLink>, EcommerceError>;
+    async fn get_promotion_links(&self, platform: Option<&str>, status: Option<&str>) -> Result<Vec<PromotionLink>, EcommerceError>;
     
     // 兑换推广链接
-    fn exchange_promotion_link(&self, original_link: &str) -> Result<PromotionLink, EcommerceError>;
+    async fn exchange_promotion_link(&self, original_link: &str) -> Result<PromotionLink, EcommerceError>;
     
     // 获取推广链接效果
-    fn get_promotion_link_effect(&self, link_id: &str) -> Result<PromotionEffect, EcommerceError>;
+    async fn get_promotion_link_effect(&self, link_id: &str) -> Result<PromotionEffect, EcommerceError>;
 }
 
 // 发货超时预警服务接口
-pub trait ShippingAlertService {
+#[async_trait]
+pub trait ShippingAlertService: Send + Sync {
     // 获取发货超时预警列表
-    fn get_shipping_timeout_alerts(&self, days: i32) -> Result<Vec<ShippingTimeoutAlert>, EcommerceError>;
+    async fn get_shipping_timeout_alerts(&self, days: i32) -> Result<Vec<ShippingTimeoutAlert>, EcommerceError>;
     
     // 处理发货超时预警
-    fn handle_shipping_alert(&self, alert_id: &str, action: &str) -> Result<(), EcommerceError>;
+    async fn handle_shipping_alert(&self, alert_id: &str, action: &str) -> Result<(), EcommerceError>;
     
     // 生成发货超时预警
-    fn generate_shipping_alerts(&self) -> Result<Vec<ShippingTimeoutAlert>, EcommerceError>;
+    async fn generate_shipping_alerts(&self) -> Result<Vec<ShippingTimeoutAlert>, EcommerceError>;
     
     // 配置发货超时规则
-    fn configure_shipping_rules(&self, max_days: i32, alert_levels: Vec<(i32, String)>) -> Result<(), EcommerceError>;
+    async fn configure_shipping_rules(&self, max_days: i32, alert_levels: Vec<(i32, String)>) -> Result<(), EcommerceError>;
 }
