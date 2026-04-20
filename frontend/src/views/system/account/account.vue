@@ -10,7 +10,7 @@
               </template>
             </a-input>
             <div class="tree-box">
-              <a-tree ref="treeRef" :field-names="fieldNames" :data="treeData" show-line @select="onSelectTree"> </a-tree>
+              <a-tree ref="treeRef" :field-names="fieldNames" :data="treeData" show-line @select="onSelectTree" v-model:expanded-keys="expandedKeys"> </a-tree>
             </div>
           </div>
         </template>
@@ -426,12 +426,14 @@ const fieldNames = ref({
 });
 const treeData = ref();
 const treeRef = ref();
+const expandedKeys = ref<string[]>([]);
 const getDivision = async () => {
   let res = await getDivisionAPI();
-  treeData.value = res.data.list || res.data || [];
-  setTimeout(() => {
-    treeRef.value.expandAll();
-  }, 0);
+  const list = res.data.list || res.data || [];
+  treeData.value = list;
+  if (list.length > 0) {
+    expandedKeys.value = list.map((item: any) => item.dept_id);
+  }
 };
 const onSelectTree = (selectedKeys: any) => {
   currentDeptId.value = selectedKeys.length > 0 ? selectedKeys[0] : null;

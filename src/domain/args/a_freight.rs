@@ -32,3 +32,23 @@ pub struct FreightTemplateListArgs {
     pub name: Option<String>,
     pub calculation_type: Option<String>,
 }
+
+#[derive(Debug, Deserialize, Serialize, Clone, Validate)]
+pub struct UpdateFreightTemplateArgs {
+    pub id: i64,
+    #[validate(length(min = 1, max = 100, message = "模板名称长度必须为1-100"))]
+    pub name: String,
+    #[validate(length(min = 1, message = "计算类型不能为空"))]
+    pub calculation_type: String,
+    pub first_weight: Option<f64>,
+    pub first_price: Option<f64>,
+    pub additional_weight: Option<f64>,
+    pub additional_price: Option<f64>,
+    pub region_rules: Option<String>,
+    pub free_shipping_rules: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, Validate)]
+pub struct DeleteFreightTemplateArgs {
+    pub id: i64,
+}

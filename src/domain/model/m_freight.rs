@@ -56,6 +56,19 @@ pub struct CreateFreightTemplateParams {
     pub free_shipping_rules: Vec<FreeShippingRule>,
 }
 
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct UpdateFreightTemplateParams {
+    pub id: i64,
+    pub name: String,
+    pub calculation_type: CalculationType,
+    pub first_weight: Decimal,
+    pub first_price: Decimal,
+    pub additional_weight: Decimal,
+    pub additional_price: Decimal,
+    pub region_rules: Vec<RegionRule>,
+    pub free_shipping_rules: Vec<FreeShippingRule>,
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct RegionRule {
     pub province: String,
