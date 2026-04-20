@@ -15,6 +15,44 @@ use serde::Serialize;
 
 const CARD_CHARSET: &[u8] = b"ABCDEFGHJKMNPQRSTUVWXYZ23456789";
 
+use crate::domain::entity::{p_plugin, p_plan};
+
+pub async fn preview_card(card_no: &str, card_pwd: &str) -> Result<serde_json::Value, Error> {
+    let db = DB().await;
+    
+    let card = CardEntity::find()
+        .filter(p_card::Column::CardNo.eq(card_no))
+        .filter(p_card::Column::CardPwd.eq(card_pwd))
+        .one(db)
+        .await?
+        .ok_or_else(|| Error::not_found("无效的卡密或密码错误"))?;
+
+    if card.status != 0 {
+        return Err(Error::bad_request("卡密已被使用或作废"));
+    }
+
+    let plugin = PluginEntity::find_by_id(card.plugin_id)
+        .one(db)
+        .await?
+        .ok_or_else(|| Error::not_found("关联的插件不存在"))?;
+
+    let plan = PlanEntity::find_by_id(card.plan_id)
+        .one(db)
+        .await?
+        .ok_or_else(|| Error::not_found("关联的套餐不存在"))?;
+
+    Ok(serde_json::json!({
+        "pluginId": plugin.id,
+        "pluginName": plugin.name,
+        "pluginVersion": plugin.version,
+        "planId": plan.id,
+        "planName": plan.name,
+        "price": plan.price,
+        "periodDays": plan.period_days,
+        "features": plan.features.unwrap_or(serde_json::json!([]))
+    }))
+}
+
 pub async fn generate_batch(plugin_id: i64, plan_id: i64, count: i32, price: f64, expire_days: i32, creator_id: i64) -> Result<i64, Error> {
     let db = DB().await;
 
