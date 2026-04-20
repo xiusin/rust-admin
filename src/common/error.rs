@@ -98,9 +98,8 @@ impl_error_from!(
     std::num::ParseIntError,
     std::num::ParseFloatError,
     std::str::Utf8Error,
-    bb8_redis::redis::RedisError, 
-    bb8_redis::bb8::RunError<bb8_redis::redis::RedisError>,
-    zip::result::ZipError
+    bb8_redis::redis::RedisError,
+    bb8_redis::bb8::RunError<bb8_redis::redis::RedisError>
 );
 
 // 保留泛型PoisonError转换（因为它有泛型参数）
