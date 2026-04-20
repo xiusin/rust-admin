@@ -841,3 +841,58 @@ pub async fn cancel_subscription(Path(id): Path<i64>) -> impl IntoResponse {
     let result = subscription_service::cancel(id).await;
     ApiResponse::from_result(result)
 }
+
+#[derive(serde::Deserialize)]
+pub struct ChartParams {
+    pub r#type: String,
+    pub plugin_id: Option<i64>,
+    pub start_date: Option<String>,
+    pub end_date: Option<String>,
+}
+
+pub async fn developer_chart(Query(params): Query<ChartParams>) -> impl IntoResponse {
+    // Return dummy data for chart
+    let json_data = serde_json::json!({
+        "revenue": [
+            {"day": "1日", "value": 1200},
+            {"day": "5日", "value": 1500}
+        ],
+        "orders": [
+            {"day": "1日", "value": 12},
+            {"day": "5日", "value": 15}
+        ],
+        "downloads": [
+            {"day": "1日", "value": 45},
+            {"day": "5日", "value": 52}
+        ]
+    });
+    ApiResponse::success(json_data)
+}
+
+pub async fn developer_ranking(Query(params): Query<ChartParams>) -> impl IntoResponse {
+    let json_data = serde_json::json!([
+        { "id": 1, "name": "智能优惠券", "revenue": 45600, "orders": 156 },
+        { "id": 2, "name": "限时秒杀", "revenue": 32100, "orders": 98 }
+    ]);
+    ApiResponse::success(json_data)
+}
+
+#[derive(serde::Deserialize)]
+pub struct PreviewCardParams {
+    pub card_no: String,
+    pub card_pwd: String,
+}
+
+pub async fn preview_card(Json(params): Json<PreviewCardParams>) -> impl IntoResponse {
+    let json_data = serde_json::json!({
+        "pluginId": 1,
+        "pluginName": "智能优惠券",
+        "pluginVersion": "2.1.0",
+        "planId": 2,
+        "planName": "专业版",
+        "price": 299,
+        "periodDays": 30,
+        "features": ["多种优惠券类型", "无限优惠券模板"]
+    });
+    ApiResponse::success(json_data)
+}

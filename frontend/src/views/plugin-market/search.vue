@@ -270,9 +270,7 @@ const goToDetail = (id: number) => {
 const loadCategoryList = async () => {
   try {
     const res = await category.tree();
-    if (res.code === 200) {
-      categoryList.value = res.data || [];
-    }
+    categoryList.value = res.data || [];
   } catch (error) {
     console.error(error);
   }
@@ -296,10 +294,8 @@ const loadSearchResults = async () => {
       verifyLevel: verifyLevel.value || undefined,
       sortType: sortType.value || undefined
     });
-    if (res.code === 200) {
-      searchResults.value = res.data?.list || [];
-      pagination.total = res.data?.total || 0;
-    }
+    searchResults.value = res.data?.list || [];
+    pagination.total = res.data?.total || 0;
   } catch (error) {
     console.error(error);
   } finally {

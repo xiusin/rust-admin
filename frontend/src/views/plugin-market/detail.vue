@@ -563,15 +563,13 @@ const loadPluginDetail = async () => {
     const id = Number(route.query.id);
     if (!id) return;
     const res = await market.detail(id);
-    if (res.code === 200) {
-      pluginDetail.value = res.data;
-      if (res.data.plans?.length) {
-        planList.value = res.data.plans.map((p: Plan, index: number) => ({
-          ...p,
-          recommended: index === 1
-        }));
-        selectedPlanId.value = res.data.plans[1]?.id || res.data.plans[0]?.id;
-      }
+    pluginDetail.value = res.data;
+    if (res.data?.plans?.length) {
+      planList.value = res.data.plans.map((p: Plan, index: number) => ({
+        ...p,
+        recommended: index === 1
+      }));
+      selectedPlanId.value = res.data.plans[1]?.id || res.data.plans[0]?.id;
     }
   } catch (error) {
     console.error(error);
@@ -583,14 +581,12 @@ const loadPlanList = async () => {
     const id = Number(route.query.id);
     if (!id) return;
     const res = await plan.list(id);
-    if (res.code === 200) {
-      planList.value = (res.data || []).map((p: Plan, index: number) => ({
-        ...p,
-        recommended: index === 1
-      }));
-      if (planList.value.length) {
-        selectedPlanId.value = planList.value[1]?.id || planList.value[0]?.id;
-      }
+    planList.value = (res.data || []).map((p: Plan, index: number) => ({
+      ...p,
+      recommended: index === 1
+    }));
+    if (planList.value.length) {
+      selectedPlanId.value = planList.value[1]?.id || planList.value[0]?.id;
     }
   } catch (error) {
     console.error(error);
@@ -602,13 +598,10 @@ const loadReviewList = async () => {
     const id = Number(route.query.id);
     if (!id) return;
     const res = await review.list(id);
-    if (res.code === 200) {
-      reviewList.value = res.data?.list || [];
-    }
+    reviewList.value = res.data?.list || [];
+    
     const statsRes = await review.stats(id);
-    if (statsRes.code === 200) {
-      reviewStats.value = statsRes.data;
-    }
+    reviewStats.value = statsRes.data;
   } catch (error) {
     console.error(error);
   }

@@ -120,10 +120,8 @@ const loadData = async () => {
       page_num: pagination.value.current,
       page_size: pagination.value.pageSize
     });
-    if (res.code === 200 || res.message === "success") {
-      freightList.value = res.data.list || [];
-      pagination.value.total = res.data.total || 0;
-    }
+    freightList.value = res.data?.list || [];
+    pagination.value.total = res.data?.total || 0;
   } catch (error) {
     console.error(error);
   } finally {

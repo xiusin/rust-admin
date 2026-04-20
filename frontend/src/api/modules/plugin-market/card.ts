@@ -7,6 +7,7 @@ export const card = {
     axios.get(`/plugin/card/export/${batchId}`, {
       responseType: "blob"
     }),
+  preview: (data: { cardNo: string; cardPwd: string }) => axios.post("/plugin/card/preview", data),
   redeem: (data: { cardNo: string; cardPwd: string }) => axios.post("/plugin/card/redeem", data),
   freeze: (data: { cardId: number }) => axios.post("/plugin/card/freeze", data),
   unfreeze: (data: { cardId: number }) => axios.post("/plugin/card/unfreeze", data)

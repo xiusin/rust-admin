@@ -136,16 +136,7 @@ const errorMessage = ref("");
 const successModalVisible = ref(false);
 const orderInfo = ref<OrderInfo | null>(null);
 
-const mockPreviewInfo: PreviewInfo = {
-  pluginId: 1,
-  pluginName: "智能优惠券",
-  pluginVersion: "2.1.0",
-  planId: 2,
-  planName: "专业版",
-  price: 299,
-  periodDays: 30,
-  features: ["多种优惠券类型", "无限优惠券模板", "API调用（10000次/日）", "优先客服支持"]
-};
+
 
 const handlePreview = async () => {
   try {
@@ -165,7 +156,8 @@ const handlePreview = async () => {
   previewInfo.value = null;
 
   try {
-    previewInfo.value = mockPreviewInfo;
+    const res = await card.preview({ cardNo: form.cardNo, cardPwd: form.cardPwd });
+    previewInfo.value = res.data;
   } catch (error: any) {
     errorMessage.value = error?.message || "获取插件信息失败，请检查卡号密码";
     Message.error("预览失败");

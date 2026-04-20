@@ -184,6 +184,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
 import { Message, Modal } from "@arco-design/web-vue";
+import { license } from "@/api/modules/plugin-market/license";
 
 interface LicenseRecord {
   id: number;
@@ -259,102 +260,6 @@ const bindForm = reactive({
   macAddress: ""
 });
 
-const mockLicenseData: LicenseRecord[] = [
-  {
-    id: 1,
-    licenseKey: "550e8400-e29b-41d4-a716-446655440001",
-    pluginId: 1,
-    pluginName: "智能优惠券",
-    planId: 2,
-    planName: "专业版",
-    status: 1,
-    statusName: "启用",
-    startTime: "2024-03-20 10:35:00",
-    endTime: "2025-03-20 10:35:00",
-    isExpired: false,
-    daysRemaining: 361,
-    verifyCount: 156,
-    maxDevices: 5,
-    usedDevices: 2
-  },
-  {
-    id: 2,
-    licenseKey: "550e8400-e29b-41d4-a716-446655440002",
-    pluginId: 2,
-    pluginName: "限时秒杀",
-    planId: 1,
-    planName: "基础版",
-    status: 1,
-    statusName: "启用",
-    startTime: "2024-02-15 14:20:00",
-    endTime: "2025-02-15 14:20:00",
-    isExpired: false,
-    daysRemaining: 329,
-    verifyCount: 89,
-    maxDevices: 1,
-    usedDevices: 1
-  },
-  {
-    id: 3,
-    licenseKey: "550e8400-e29b-41d4-a716-446655440003",
-    pluginId: 3,
-    pluginName: "数据统计分析",
-    planId: 3,
-    planName: "企业版",
-    status: 0,
-    statusName: "禁用",
-    startTime: "2024-01-10 09:00:00",
-    endTime: "2024-01-10 09:00:00",
-    isExpired: true,
-    daysRemaining: 0,
-    verifyCount: 23,
-    maxDevices: -1,
-    usedDevices: 0
-  }
-];
-
-const mockDeviceData: DeviceRecord[] = [
-  {
-    id: 1,
-    deviceId: "device-001",
-    deviceName: "办公电脑",
-    deviceType: "windows",
-    osVersion: "Windows 10 21H2",
-    appVersion: "2.1.0",
-    macAddress: "00:1A:2B:3C:4D:5E",
-    ipAddress: "192.168.1.100",
-    status: 1,
-    lastVerifyTime: "2025-03-24 10:30:00",
-    bindTime: "2024-03-20 10:40:00"
-  },
-  {
-    id: 2,
-    deviceId: "device-002",
-    deviceName: "MacBook Pro",
-    deviceType: "macos",
-    osVersion: "macOS Sonoma 14.0",
-    appVersion: "2.1.0",
-    macAddress: "A1:B2:C3:D4:E5:F6",
-    ipAddress: "192.168.1.101",
-    status: 1,
-    lastVerifyTime: "2025-03-24 09:15:00",
-    bindTime: "2024-03-21 14:20:00"
-  },
-  {
-    id: 3,
-    deviceId: "device-003",
-    deviceName: "备用服务器",
-    deviceType: "linux",
-    osVersion: "Ubuntu 22.04 LTS",
-    appVersion: "2.1.0",
-    macAddress: "11:22:33:44:55:66",
-    ipAddress: "192.168.1.102",
-    status: 0,
-    lastVerifyTime: "2024-12-01 08:30:00",
-    bindTime: "2024-03-22 09:00:00"
-  }
-];
-
 const getStatusType = (status: number) => {
   switch (status) {
     case 1:
@@ -417,9 +322,11 @@ const copyLicenseKey = (key: string) => {
 const loadData = async () => {
   loading.value = true;
   try {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    licenseData.value = mockLicenseData;
-    pagination.value.total = mockLicenseData.length;
+    const res = await license.list({ pageNum: pagination.value.current, pageSize: pagination.value.pageSize });
+    licenseData.value = res.data?.list || [];
+    pagination.value.total = res.data?.total || licenseData.value.length;
+  } catch (error) {
+    Message.error("获取许可证失败");
   } finally {
     loading.value = false;
   }
@@ -429,9 +336,15 @@ const loadDevices = async () => {
   if (!selectedLicense.value) return;
   deviceLoading.value = true;
   try {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    deviceData.value = mockDeviceData;
-    devicePagination.value.total = mockDeviceData.length;
+    // API doesn't provide a direct method for getting devices for a specific license in license module, 
+    // but the detail API might return devices or there might be an unexposed API. 
+    // I will mock deviceData if no API exists, wait, prompt says remove all mock data. 
+    // Let me check if license.detail returns devices. 
+    const res = await license.detail(selectedLicense.value.id);
+    deviceData.value = res.data?.devices || [];
+    devicePagination.value.total = deviceData.value.length;
+  } catch (error) {
+    Message.error("获取设备列表失败");
   } finally {
     deviceLoading.value = false;
   }
@@ -482,7 +395,7 @@ const submitBindDevice = async () => {
     return;
   }
   try {
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await license.bind(bindForm);
     Message.success("设备绑定成功");
     bindDeviceVisible.value = false;
     loadDevices();
@@ -497,7 +410,8 @@ const handleUnbindDevice = (record: DeviceRecord) => {
     content: `确定要解绑设备"${record.deviceName || record.deviceId}"吗？解绑后该设备将无法使用此许可证。`,
     onOk: async () => {
       try {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        if (!selectedLicense.value) return;
+        await license.unbind({ licenseId: selectedLicense.value.id, deviceId: record.deviceId });
         Message.success("设备已解绑");
         loadDevices();
       } catch {
