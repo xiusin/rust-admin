@@ -22,6 +22,7 @@
       :bordered="schema.bordered"
       :size="schema.size || 'medium'"
       :scroll="scrollConfig"
+      :virtual-list-props="virtualListProps"
       @page-change="handlePageChange"
       @page-size-change="handlePageSizeChange"
       @sorter-change="handleSortChange"
@@ -214,9 +215,22 @@ const rowSelection = computed(() => {
 });
 
 const scrollConfig = computed(() => {
+  const config: Record<string, any> = {};
   const hasFixed = props.schema.columns.some(col => col.fixed);
   if (hasFixed) {
-    return { x: 1200 };
+    config.x = 1200;
+  }
+  if (tableData.value.length > 50) {
+    config.y = 400;
+  }
+  return Object.keys(config).length > 0 ? config : undefined;
+});
+
+const virtualListProps = computed(() => {
+  if (tableData.value.length > 50) {
+    return {
+      height: 400
+    };
   }
   return undefined;
 });

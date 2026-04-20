@@ -221,16 +221,23 @@ async fn save_content_tags(
     tag_ids: &[i64],
     txn: &DatabaseTransaction,
 ) -> Result<()> {
+    if tag_ids.is_empty() {
+        return Ok(());
+    }
+
+    let mut models = Vec::new();
     for tag_id in tag_ids {
         let id = GID().await;
-        let model = cms_content_tag::ActiveModel {
+        models.push(cms_content_tag::ActiveModel {
             id: Set(id),
             content_id: Set(content_id),
             tag_id: Set(*tag_id),
             created_at: Set(Some(Local::now().naive_local())),
-        };
-        model.insert(txn).await?;
+        });
     }
+    
+    cms_content_tag::Entity::insert_many(models).exec(txn).await?;
+    
     Ok(())
 }
 

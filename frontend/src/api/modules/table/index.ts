@@ -1,17 +1,19 @@
 import axios from "@/api";
 
 // 获取列表数据
-export const getCommonTableListAPI = () => {
+export const getCommonTableListAPI = (params?: any) => {
   return axios({
-    url: "/mock/common-table/list",
-    method: "get"
+    url: "/sys/user/list",
+    method: "get",
+    params
   });
 };
 
 // 获取列表数据
-export const getCustomTableListAPI = () => {
+export const getCustomTableListAPI = (params?: any) => {
   return axios({
-    url: "/mock/custom-table/list",
-    method: "get"
+    url: "/sys/role/list",
+    method: "get",
+    params
   });
 };

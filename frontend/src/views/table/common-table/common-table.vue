@@ -73,6 +73,7 @@
         :pagination="pagination"
         @page-change="pageChange"
         @page-size-change="pageSizeChange"
+        :virtual-list-props="{ height: 400 }"
       >
         <template #avatar="{ record }">
           <a-avatar
@@ -137,7 +138,7 @@ const pageSizeChange = (pageSize: number) => {
 const columns = [
   {
     title: "姓名",
-    dataIndex: "name"
+    dataIndex: "nick_name"
   },
   {
     title: "头像",
@@ -147,15 +148,15 @@ const columns = [
   },
   {
     title: "手机号",
-    dataIndex: "phone"
+    dataIndex: "phonenumber"
   },
   {
     title: "Email",
     dataIndex: "email"
   },
   {
-    title: "居住地址",
-    dataIndex: "address"
+    title: "备注",
+    dataIndex: "remark"
   },
   {
     title: "用户状态",
@@ -165,7 +166,7 @@ const columns = [
   },
   {
     title: "创建时间",
-    dataIndex: "createTime"
+    dataIndex: "created_at"
   },
   {
     title: "操作",

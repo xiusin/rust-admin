@@ -171,19 +171,31 @@ async fn get_product_specs(product_id: i64, db: &DatabaseConnection) -> Result<V
         .all(db)
         .await?;
 
+    if specs.is_empty() {
+        return Ok(vec![]);
+    }
+
+    let spec_ids: Vec<i64> = specs.iter().map(|s| s.id).collect();
+
+    let values = p_spec_value::Entity::find()
+        .filter(p_spec_value::Column::SpecId.is_in(spec_ids))
+        .order_by_asc(p_spec_value::Column::Sort)
+        .all(db)
+        .await?;
+
+    let mut values_map: std::collections::HashMap<i64, Vec<p_spec_value::Model>> = std::collections::HashMap::new();
+    for v in values {
+        values_map.entry(v.spec_id).or_default().push(v);
+    }
+
     let mut result = Vec::new();
     for spec in specs {
-        let values = p_spec_value::Entity::find()
-            .filter(p_spec_value::Column::SpecId.eq(spec.id))
-            .order_by_asc(p_spec_value::Column::Sort)
-            .all(db)
-            .await?;
-
+        let spec_values = values_map.remove(&spec.id).unwrap_or_default();
         result.push(SpecItem {
             id: spec.id,
             name: spec.name,
             sort: spec.sort,
-            values: values
+            values: spec_values
                 .into_iter()
                 .map(|v| SpecValueItem {
                     id: v.id,
@@ -336,67 +348,90 @@ pub async fn add(args: ProductAddArgs, _user_id: i64) -> Result<i64> {
 }
 
 async fn save_product_groups(product_id: i64, group_ids: &[i64], db: &DatabaseConnection) -> Result<()> {
+    if group_ids.is_empty() {
+        return Ok(());
+    }
+    let mut models = Vec::new();
     for group_id in group_ids {
         let id = GID().await;
-        let model = p_product_group_relation::ActiveModel {
+        models.push(p_product_group_relation::ActiveModel {
             id: Set(id),
             product_id: Set(product_id),
             group_id: Set(*group_id),
             created_at: Set(Some(Local::now().naive_local())),
-        };
-        model.insert(db).await?;
+        });
     }
+    p_product_group_relation::Entity::insert_many(models).exec(db).await?;
     Ok(())
 }
 
 async fn save_product_categories(product_id: i64, category_ids: &[i64], db: &DatabaseConnection) -> Result<()> {
+    if category_ids.is_empty() {
+        return Ok(());
+    }
+    let mut models = Vec::new();
     for category_id in category_ids {
         let id = GID().await;
-        let model = p_product_category::ActiveModel {
+        models.push(p_product_category::ActiveModel {
             id: Set(id),
             product_id: Set(product_id),
             category_id: Set(*category_id),
             created_at: Set(Some(Local::now().naive_local())),
-        };
-        model.insert(db).await?;
+        });
     }
+    p_product_category::Entity::insert_many(models).exec(db).await?;
     Ok(())
 }
 
 async fn save_product_specs(product_id: i64, specs: &[SpecArgs], db: &DatabaseConnection) -> Result<()> {
+    if specs.is_empty() {
+        return Ok(());
+    }
+    let mut spec_models = Vec::new();
+    let mut value_models = Vec::new();
+
     for spec in specs {
         let spec_id = GID().await;
-        let spec_model = p_spec::ActiveModel {
+        spec_models.push(p_spec::ActiveModel {
             id: Set(spec_id),
             product_id: Set(product_id),
             name: Set(spec.name.clone()),
             sort: Set(spec.sort.unwrap_or(0)),
             created_at: Set(Some(Local::now().naive_local())),
-        };
-        spec_model.insert(db).await?;
+        });
 
         for value in &spec.values {
-                let value_id = GID().await;
-                let value_model = p_spec_value::ActiveModel {
-                    id: Set(value_id),
-                    spec_id: Set(spec_id),
-                    product_id: Set(product_id),
-                    value: Set(value.value.clone()),
-                    image: Set(value.image.clone()),
-                    color_code: Set(value.color_code.clone()),
-                    sort: Set(value.sort.unwrap_or(0)),
-                    created_at: Set(Some(Local::now().naive_local())),
-                };
-                value_model.insert(db).await?;
-            }
+            let value_id = GID().await;
+            value_models.push(p_spec_value::ActiveModel {
+                id: Set(value_id),
+                spec_id: Set(spec_id),
+                product_id: Set(product_id),
+                value: Set(value.value.clone()),
+                image: Set(value.image.clone()),
+                color_code: Set(value.color_code.clone()),
+                sort: Set(value.sort.unwrap_or(0)),
+                created_at: Set(Some(Local::now().naive_local())),
+            });
+        }
+    }
+
+    if !spec_models.is_empty() {
+        p_spec::Entity::insert_many(spec_models).exec(db).await?;
+    }
+    if !value_models.is_empty() {
+        p_spec_value::Entity::insert_many(value_models).exec(db).await?;
     }
     Ok(())
 }
 
 async fn save_product_skus(product_id: i64, skus: &[SkuAddArgs], db: &DatabaseConnection) -> Result<()> {
+    if skus.is_empty() {
+        return Ok(());
+    }
+    let mut models = Vec::new();
     for sku in skus {
         let id = GID().await;
-        let model = p_sku::ActiveModel {
+        models.push(p_sku::ActiveModel {
             id: Set(id),
             product_id: Set(product_id),
             sku_code: Set(sku.sku_code.clone().unwrap_or_else(|| format!("SKU-{}", id))),
@@ -414,25 +449,29 @@ async fn save_product_skus(product_id: i64, skus: &[SkuAddArgs], db: &DatabaseCo
             created_at: Set(Some(Local::now().naive_local())),
             updated_at: Set(Some(Local::now().naive_local())),
             deleted_at: Set(None),
-        };
-        model.insert(db).await?;
+        });
     }
+    p_sku::Entity::insert_many(models).exec(db).await?;
     Ok(())
 }
 
 async fn save_product_attributes(product_id: i64, attributes: &[ProductAttributeArgs], db: &DatabaseConnection) -> Result<()> {
+    if attributes.is_empty() {
+        return Ok(());
+    }
+    let mut models = Vec::new();
     for attr in attributes {
         let id = GID().await;
-        let model = p_product_attribute::ActiveModel {
+        models.push(p_product_attribute::ActiveModel {
             id: Set(id),
             product_id: Set(product_id),
             attribute_id: Set(attr.attribute_id.unwrap_or(0)),
             attribute_name: Set(attr.attribute_name.clone()),
             attribute_value: Set(attr.attribute_value.clone()),
             created_at: Set(Some(Local::now().naive_local())),
-        };
-        model.insert(db).await?;
+        });
     }
+    p_product_attribute::Entity::insert_many(models).exec(db).await?;
     Ok(())
 }
 
@@ -502,15 +541,15 @@ pub async fn delete(args: ProductDeleteArgs) -> Result<()> {
     let db = DB().await;
     let now = Local::now().naive_local();
 
-    for id in args.ids {
-        let item = p_product::Entity::find_by_id(id).one(db).await?;
-
-        if let Some(item) = item {
-            let mut model: p_product::ActiveModel = item.into();
-            model.deleted_at = Set(Some(now));
-            model.update(db).await?;
-        }
+    if args.ids.is_empty() {
+        return Ok(());
     }
+
+    p_product::Entity::update_many()
+        .col_expr(p_product::Column::DeletedAt, Expr::value(now))
+        .filter(p_product::Column::Id.is_in(args.ids))
+        .exec(db)
+        .await?;
 
     Ok(())
 }
@@ -554,16 +593,16 @@ pub async fn batch_update_status(ids: Vec<i64>, status: i32) -> Result<()> {
     let db = DB().await;
     let now = Local::now().naive_local();
 
-    for id in ids {
-        let item = p_product::Entity::find_by_id(id).one(db).await?;
-
-        if let Some(item) = item {
-            let mut model: p_product::ActiveModel = item.into();
-            model.status = Set(status);
-            model.updated_at = Set(Some(now));
-            model.update(db).await?;
-        }
+    if ids.is_empty() {
+        return Ok(());
     }
+
+    p_product::Entity::update_many()
+        .col_expr(p_product::Column::Status, Expr::value(status))
+        .col_expr(p_product::Column::UpdatedAt, Expr::value(now))
+        .filter(p_product::Column::Id.is_in(ids))
+        .exec(db)
+        .await?;
 
     Ok(())
 }
@@ -648,17 +687,16 @@ pub async fn batch_delete(args: ProductBatchDeleteArgs) -> Result<()> {
     let db = DB().await;
     let now = Local::now().naive_local();
 
-    for id in &args.ids {
-        let item = p_product::Entity::find_by_id(*id)
-            .filter(p_product::Column::DeletedAt.is_null())
-            .one(db)
-            .await?;
-        if let Some(item) = item {
-            let mut model: p_product::ActiveModel = item.into();
-            model.deleted_at = Set(Some(now));
-            model.update(db).await?;
-        }
+    if args.ids.is_empty() {
+        return Ok(());
     }
+
+    p_product::Entity::update_many()
+        .col_expr(p_product::Column::DeletedAt, Expr::value(now))
+        .filter(p_product::Column::Id.is_in(args.ids.clone()))
+        .filter(p_product::Column::DeletedAt.is_null())
+        .exec(db)
+        .await?;
 
     Ok(())
 }
@@ -829,17 +867,16 @@ pub async fn sku_delete(args: SkuDeleteArgs) -> Result<()> {
     let db = DB().await;
     let now = Local::now().naive_local();
 
-    for id in &args.ids {
-        let sku = p_sku::Entity::find_by_id(*id)
-            .filter(p_sku::Column::DeletedAt.is_null())
-            .one(db)
-            .await?;
-        if let Some(sku) = sku {
-            let mut model: p_sku::ActiveModel = sku.into();
-            model.deleted_at = Set(Some(now));
-            model.update(db).await?;
-        }
+    if args.ids.is_empty() {
+        return Ok(());
     }
+
+    p_sku::Entity::update_many()
+        .col_expr(p_sku::Column::DeletedAt, Expr::value(now))
+        .filter(p_sku::Column::Id.is_in(args.ids.clone()))
+        .filter(p_sku::Column::DeletedAt.is_null())
+        .exec(db)
+        .await?;
 
     Ok(())
 }

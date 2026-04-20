@@ -72,7 +72,12 @@
                   </a-button>
                 </div>
                 <div class="code-body">
-                  <pre><code>{{ currentFile?.content }}</code></pre>
+                  <a-skeleton v-if="previewing" :animation="true" class="code-skeleton">
+                    <a-space direction="vertical" :style="{ width: '100%' }" size="large">
+                      <a-skeleton-line :rows="15" :line-height="20" :line-spacing="8" />
+                    </a-space>
+                  </a-skeleton>
+                  <pre v-else :key="currentFile?.filePath" class="typing-code"><code>{{ currentFile?.content }}</code></pre>
                 </div>
               </div>
             </a-col>
@@ -272,15 +277,32 @@ const handleDownload = () => {
         padding: 12px;
         background: var(--color-bg-1);
         border-radius: 4px;
+        position: relative;
 
-        pre {
+        .code-skeleton {
+          padding: 12px;
+        }
+
+        .typing-code {
           margin: 0;
           font-size: 12px;
           line-height: 1.6;
+          animation: typing-fade-in 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+          
+          code {
+            font-family: "Fira Code", monospace;
+          }
         }
 
-        code {
-          font-family: "Fira Code", monospace;
+        @keyframes typing-fade-in {
+          0% {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
       }
     }

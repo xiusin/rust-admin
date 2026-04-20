@@ -44,3 +44,57 @@
   align-items: center;
   justify-content: center;
 }
+
+// ============ 全局按钮交互优化 ============
+.arco-btn {
+  transition: all 0.3s cubic-bezier(0.34, 0.69, 0.1, 1) !important;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.15);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  &:not(.is-disabled):not(.arco-btn-text):not(.arco-btn-outline):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(var(--primary-6), 0.2);
+  }
+
+  &.arco-btn-outline:not(.is-disabled):hover {
+    background-color: var(--color-fill-2);
+    border-color: rgb(var(--primary-5));
+  }
+
+  &.arco-btn-text:not(.is-disabled):hover {
+    background-color: var(--color-fill-2);
+  }
+
+  &:not(.is-disabled):active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: none;
+  }
+}
+
+// ============ 全局 Loading 状态样式统一 ============
+.arco-spin {
+  .arco-spin-icon {
+    animation: arco-spin-rotate 1s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
+    color: rgb(var(--primary-6));
+
+    svg {
+      filter: drop-shadow(0 0 4px rgba(var(--primary-6), 0.3));
+    }
+  }
+  
+  .arco-spin-mask {
+    background-color: rgba(var(--color-bg-1), 0.7);
+    backdrop-filter: blur(4px);
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}

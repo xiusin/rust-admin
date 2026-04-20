@@ -3,23 +3,24 @@ import axios from "@/api";
 // 获取在线用户
 export const getOnlineuserAPI = () => {
   return axios({
-    url: "/mock/monitor/getOnlineuser",
+    url: "/sys/useronline/list",
     method: "get"
   });
 };
 
 // 获取定时任务
-export const getCrontabAPI = () => {
+export const getCrontabAPI = (params?: any) => {
   return axios({
-    url: "/mock/monitor/getCrontab",
-    method: "get"
+    url: "/sys/job/list",
+    method: "get",
+    params
   });
 };
 
 // 获取定时任务日志
 export const getCrontabLogsAPI = (params: any) => {
   return axios({
-    url: "/mock/monitor/getCrontabLogs",
+    url: "/sys/jobinfo/list",
     method: "get",
     params
   });
