@@ -1,7 +1,6 @@
 use fs_err as fs;
 
 use crate::common::{error::Result, tera};
-use crate::infrastructure::ai::config::AIConfig;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use serde_variant::to_variant_name;
@@ -22,8 +21,6 @@ pub struct AppConfig {
     pub mailer: Option<Mailer>,
     pub snowgenera: SnowGenerator,
     pub system: System,
-    #[serde(default)]
-    pub ai: Option<AIConfig>,
 }
 
 impl AppConfig {
