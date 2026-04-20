@@ -106,3 +106,4 @@ pub mod cms_tag;
 pub mod cms_form_config;
 pub mod cms_table_config;
 pub mod cms_code_gen;
+pub mod ecommerce;

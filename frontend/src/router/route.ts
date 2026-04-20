@@ -206,6 +206,80 @@ export const staticRoutes = [
             }
           }
         ]
+      },
+      {
+        path: "/ecommerce",
+        name: "ecommerce",
+        redirect: "/ecommerce/dashboard",
+        meta: {
+          title: "电商平台",
+          icon: "icon-shopping"
+        },
+        children: [
+          {
+            path: "/ecommerce/dashboard",
+            name: "ecommerce-dashboard",
+            component: () => import("@/views/ecommerce/dashboard.vue"),
+            meta: {
+              title: "电商仪表板",
+              icon: "icon-dashboard"
+            }
+          },
+          {
+            path: "/ecommerce/platforms",
+            name: "ecommerce-platforms",
+            redirect: "/ecommerce/platforms/list",
+            meta: {
+              title: "平台管理",
+              icon: "icon-earth"
+            }
+          },
+          {
+            path: "/ecommerce/platforms/list",
+            name: "ecommerce-platforms-list",
+            component: () => import("@/views/ecommerce/platforms/list.vue"),
+            meta: {
+              title: "平台列表",
+              hide: true
+            }
+          },
+          {
+            path: "/ecommerce/platforms/create",
+            name: "ecommerce-platforms-create",
+            component: () => import("@/views/ecommerce/platforms/create.vue"),
+            meta: {
+              title: "新增平台",
+              hide: true
+            }
+          },
+          {
+            path: "/ecommerce/platforms/edit/:id",
+            name: "ecommerce-platforms-edit",
+            component: () => import("@/views/ecommerce/platforms/edit.vue"),
+            meta: {
+              title: "编辑平台",
+              hide: true
+            }
+          },
+          {
+            path: "/ecommerce/orders",
+            name: "ecommerce-orders",
+            component: () => import("@/views/ecommerce/orders/list.vue"),
+            meta: {
+              title: "订单管理",
+              icon: "icon-data-queries"
+            }
+          },
+          {
+            path: "/ecommerce/products",
+            name: "ecommerce-products",
+            component: () => import("@/views/ecommerce/products/list.vue"),
+            meta: {
+              title: "商品管理",
+              icon: "icon-goods"
+            }
+          }
+        ]
       }
     ]
   }
