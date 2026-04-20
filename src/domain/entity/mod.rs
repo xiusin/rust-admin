@@ -106,22 +106,4 @@ pub mod cms_tag;
 pub mod cms_form_config;
 pub mod cms_table_config;
 pub mod cms_code_gen;
-
-// PPT Entities
-pub mod ppt_project;
-pub mod ppt_page;
-pub mod page_element;
-pub mod style_template;
-pub mod ai_generation_log;
-pub mod ppt_subscription_plan;
-pub mod ppt_user_subscription;
-pub mod ppt_payment_order;
-pub mod ppt_credit_record;
-pub mod ppt_api_key;
-pub mod ppt_api_usage_log;
-pub mod ppt_template_market;
-pub mod ppt_template_rating;
-pub mod ppt_template_collection;
-pub mod ppt_template_tag;
-pub mod ppt_template_tag_relation;
 pub mod ecommerce;
