@@ -7,7 +7,6 @@ pub mod product;
 pub mod sys;
 pub mod test;
 pub mod web_path;
-pub mod ppt;
 use crate::core::{ROUTE_REGISTRY};
 use crate::worker::invokefunction::{InvokeFunctionMsg, InvokeFunctionWorker};
 use crate::worker::AppWorker;
@@ -29,7 +28,6 @@ impl WebApi {
         webpath = webpath.merge(plugin_market::router::router_plugin_market());
         webpath = webpath.merge(cms::router_cms());
         webpath = webpath.merge(ecommerce::router_ecommerce());
-        webpath = webpath.merge(ppt::router_ppt());
 
         webpath = webpath.final_to_path();
         let expand_path = webpath.get_last_level_paths();
