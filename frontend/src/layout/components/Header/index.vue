@@ -17,6 +17,10 @@ import HeaderRight from "@/layout/components/Header/components/header-right/inde
   align-items: center;
   height: 40px;
   padding: 0 $padding;
+  background: $color-bg-1;
   border-bottom: $border-1 solid $color-border-2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+  transition: all 0.3s ease;
 }
 </style>

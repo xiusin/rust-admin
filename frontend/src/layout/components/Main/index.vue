@@ -55,11 +55,26 @@ watch(watermarkConfig, newv => {
   display: flex;
   flex-direction: column;
   height: 100%;
+  background: $color-bg-1;
+  padding: 16px;
+  overflow: auto;
 }
 
 // 修改左侧滚动条宽度-主要针对main窗口内的滚动条
 :deep(.arco-scrollbar-thumb-direction-vertical .arco-scrollbar-thumb-bar) {
-  width: 4px;
+  width: 6px;
   margin-left: 8px;
+  border-radius: 3px;
+  background: $color-border-3;
+  transition: background 0.3s ease;
+  &:hover {
+    background: $color-primary;
+  }
 }
+
+// 优化路由内容区域
+:deep(.arco-layout-content) {
+  background: $color-bg-1;
+}
+
 </style>

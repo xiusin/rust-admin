@@ -29,9 +29,11 @@ const { isPc } = useDevicesSize();
 <style lang="scss" scoped>
 .layout {
   height: 100vh;
+  background: $color-bg-2;
 }
 .layout-right {
   display: grid;
   grid-template-rows: auto 1fr auto;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.05);
 }
 </style>

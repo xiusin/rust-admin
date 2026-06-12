@@ -1,10 +1,10 @@
 <template>
   <div :class="asideDark ? 'aside dark' : 'aside'">
     <Logo />
-    <a-layout-sider 
-      :collapsed="collapsed" 
-      breakpoint="xl" 
-      class="layout_side" 
+    <a-layout-sider
+      :collapsed="collapsed"
+      breakpoint="xl"
+      class="layout_side"
       :width="180"
       :collapsed-width="48"
     >
@@ -32,12 +32,15 @@ const { routeTree } = storeToRefs(routerStore);
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: $color-bg-white;
-  transition: background $transition-normal;
+  background: $color-bg-1;
+  border-right: $border-1 solid $color-border-2;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
 }
 
 .dark {
-  background: linear-gradient(180deg, #1d2333 0%, #0f1419 100%);
+  background: #1f1f23;
+  border-right: $border-1 solid #333;
 }
 
 .layout_side {
@@ -53,48 +56,43 @@ const { routeTree } = storeToRefs(routerStore);
 
 // 优化滚动条样式
 :deep(.arco-scrollbar-thumb-direction-vertical .arco-scrollbar-thumb-bar) {
-  width: 6px;
-  border-radius: $radius-full;
-  background: $color-fill-3;
-  transition: background $transition-fast;
-
+  width: 4px;
+  margin-left: 8px;
+  border-radius: 2px;
+  background: $color-border-3;
+  transition: background 0.3s ease;
   &:hover {
-    background: $color-fill-4;
+    background: $color-primary;
   }
 }
 
-// 优化侧边栏样式
-:deep(.arco-layout-sider) {
-  background: transparent !important;
-  border-right: 1px solid $color-border-1;
-  box-shadow: $shadow-xs;
-  transition: all $transition-normal;
-}
-
-:deep(.arco-layout-sider-dark) {
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-}
-
 // 优化菜单样式
-:deep(.arco-menu) {
-  background: transparent !important;
-  padding: $spacing-sm;
-}
-
-:deep(.arco-menu-vertical {
-    .arco-menu-item,
-    .arco-menu-pop-header,
-    .arco-menu-inline-header {
-      height: 32px;
-      line-height: 32px;
-      margin: $spacing-xs 0;
-      border-radius: $radius-sm;
-      transition: all $transition-fast;
-
-      &:hover {
-        background: rgba($color-primary, 0.06);
-      }
+:deep(.arco-menu-vertical) {
+  background: transparent;
+  .arco-menu-item {
+    margin: 4px 8px;
+    border-radius: $radius-box-2;
+    transition: all 0.2s ease;
+    &:hover {
+      background: $color-fill-2;
+      transform: translateX(4px);
     }
+    &.arco-menu-item-active {
+      background: rgba(var(--primary-6), 0.1);
+      color: $color-primary;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(var(--primary-6), 0.2);
+    }
+  }
+  .arco-menu-inline-header {
+    margin: 8px 8px 4px;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: $color-text-3;
+  }
+}
 
   .arco-menu-item-selected {
     background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%) !important;
@@ -143,5 +141,18 @@ const { routeTree } = storeToRefs(routerStore);
   .arco-menu-title {
     display: none;
   }
+  .arco-menu-item {
+    margin: 4px 0;
+    &:hover {
+      transform: none;
+      background: $color-fill-2;
+    }
+  }
+}
+
+// 优化sider背景
+.arco-layout-sider {
+  background: transparent;
+  transition: width 0.3s ease;
 }
 </style>

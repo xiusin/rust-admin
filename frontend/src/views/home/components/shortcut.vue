@@ -2,12 +2,11 @@
   <div class="shortcut-box">
     <div class="box-title">
       <div>常用功能</div>
-      <div>
+      <div class="customize">
         <span><icon-edit /></span>
         <span class="margin-left-text">自定义</span>
       </div>
     </div>
-    <a-divider :margin="16" />
     <a-row>
       <a-col
         :xs="24"
@@ -16,10 +15,12 @@
         :xl="4"
         v-for="(item, index) in shortcut"
         :key="item.id"
-        class="card-middling row-center card-box"
+        class="card-box"
         :class="'animated-fade-up-' + index"
       >
-        <s-svg-icon :name="item.svg" :size="40" />
+        <div class="shortcut-icon">
+          <s-svg-icon :name="item.svg" :size="32" />
+        </div>
         <div class="shortcut-card-label">{{ item.name }}</div>
       </a-col>
     </a-row>
@@ -63,32 +64,95 @@ const shortcut = ref([
 
 <style lang="scss" scoped>
 .shortcut-box {
-  .card-box {
-    margin-bottom: $padding;
-    .shortcut-card-label {
-      width: 100px;
-      margin-left: 20px;
-      font-size: $font-size-body-3;
-      color: $color-text-2;
-    }
+  background: $color-bg-1;
+  border-radius: $radius-box-3;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   }
-  .card-middling {
-    width: 200px;
-  }
-  .row-center {
+  .box-title {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    font-size: $font-size-title-1;
+    font-weight: 600;
+    color: $color-text-1;
+    margin-bottom: 16px;
+    .customize {
+      display: flex;
+      align-items: center;
+      color: $color-primary;
+      font-size: $font-size-body-1;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      &:hover {
+        opacity: 0.8;
+        transform: translateY(-1px);
+      }
+    }
+  }
+  .card-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
+    padding: 24px 16px;
+    background: $color-bg-white;
+    border-radius: $radius-box-2;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid $color-border-2;
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      border-color: $color-primary;
+    }
+    .shortcut-icon {
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(var(--primary-6), 0.1);
+      border-radius: $radius-box-2;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
+      &:hover {
+        background: rgba(var(--primary-6), 0.2);
+        transform: scale(1.05);
+      }
+    }
+    .shortcut-card-label {
+      font-size: $font-size-body-2;
+      font-weight: 500;
+      color: $color-text-1;
+      text-align: center;
+    }
   }
 }
 .margin-left-text {
   margin-left: $margin-text;
 }
-.box-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: $font-size-body-3;
-  color: $color-text-1;
+
+// 动画效果
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
+.animated-fade-up-0 { animation: fadeUp 0.3s ease 0.1s both; }
+.animated-fade-up-1 { animation: fadeUp 0.3s ease 0.2s both; }
+.animated-fade-up-2 { animation: fadeUp 0.3s ease 0.3s both; }
+.animated-fade-up-3 { animation: fadeUp 0.3s ease 0.4s both; }
+.animated-fade-up-4 { animation: fadeUp 0.3s ease 0.5s both; }
+.animated-fade-up-5 { animation: fadeUp 0.3s ease 0.6s both; }
 </style>
