@@ -169,3 +169,55 @@ pub async fn list_templates(
 
     Ok((items, total))
 }
+
+pub async fn update_template(params: UpdateFreightTemplateParams) -> Result<()> {
+    let db = DB_WRITE().await;
+    let now = chrono::Local::now().naive_local();
+
+    let template = CFreightTemplate::find_by_id(params.id)
+        .one(db)
+        .await
+        .map_err(|e| Error::internal_error(format!("Database error: {}", e)))?
+        .ok_or_else(|| Error::not_found("运费模板不存在"))?;
+
+    let region_rules_json = serde_json::to_value(&params.region_rules).unwrap_or_default();
+    let free_shipping_rules_json = serde_json::to_value(&params.free_shipping_rules).unwrap_or_default();
+
+    let calc_type = match params.calculation_type {
+        CalculationType::ByWeight => "by_weight",
+        CalculationType::ByDistance => "by_distance",
+    };
+
+    let mut active_model: c_freight_template::ActiveModel = template.into();
+    active_model.name = Set(params.name);
+    active_model.calculation_type = Set(calc_type.to_string());
+    active_model.first_weight = Set(Some(params.first_weight));
+    active_model.first_price = Set(Some(params.first_price));
+    active_model.additional_weight = Set(Some(params.additional_weight));
+    active_model.additional_price = Set(Some(params.additional_price));
+    active_model.region_rules = Set(region_rules_json);
+    active_model.free_shipping_rules = Set(free_shipping_rules_json);
+    active_model.updated_at = Set(Some(now));
+
+    active_model
+        .update(db)
+        .await
+        .map_err(|e| Error::internal_error(format!("Update error: {}", e)))?;
+
+    Ok(())
+}
+
+pub async fn delete_template(id: i64) -> Result<()> {
+    let db = DB_WRITE().await;
+
+    let result = CFreightTemplate::delete_by_id(id)
+        .exec(db)
+        .await
+        .map_err(|e| Error::internal_error(format!("Delete error: {}", e)))?;
+
+    if result.rows_affected == 0 {
+        return Err(Error::not_found("运费模板不存在"));
+    }
+
+    Ok(())
+}

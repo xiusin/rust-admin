@@ -1,4 +1,4 @@
-use axum::routing::{get, post};
+use axum::routing::{get, post, put, delete};
 use crate::api::web_path::{WebPath, WebPathType};
 use crate::application::consumer::freight_service;
 use crate::common::error::Error;
@@ -79,9 +79,50 @@ pub async fn list_templates(
     })))
 }
 
+pub async fn update_template(
+    Json(args): Json<UpdateFreightTemplateArgs>,
+) -> Result<Json<ApiResponse<()>>, Error> {
+    args.validate()?;
+
+    let region_rules: Vec<RegionRule> = args.region_rules
+        .and_then(|r| serde_json::from_str(&r).ok())
+        .unwrap_or_default();
+    let free_shipping_rules: Vec<FreeShippingRule> = args.free_shipping_rules
+        .and_then(|r| serde_json::from_str(&r).ok())
+        .unwrap_or_default();
+
+    freight_service::update_template(UpdateFreightTemplateParams {
+        id: args.id,
+        name: args.name,
+        calculation_type: match args.calculation_type.as_str() {
+            "by_distance" => CalculationType::ByDistance,
+            _ => CalculationType::ByWeight,
+        },
+        first_weight: Decimal::try_from(args.first_weight.unwrap_or(0.0)).unwrap_or(Decimal::ZERO),
+        first_price: Decimal::try_from(args.first_price.unwrap_or(0.0)).unwrap_or(Decimal::ZERO),
+        additional_weight: Decimal::try_from(args.additional_weight.unwrap_or(0.0)).unwrap_or(Decimal::ZERO),
+        additional_price: Decimal::try_from(args.additional_price.unwrap_or(0.0)).unwrap_or(Decimal::ZERO),
+        region_rules,
+        free_shipping_rules,
+    })
+    .await?;
+
+    Ok(Json(ApiResponse::success(())))
+}
+
+pub async fn delete_template(
+    Query(args): Query<DeleteFreightTemplateArgs>,
+) -> Result<Json<ApiResponse<()>>, Error> {
+    args.validate()?;
+    freight_service::delete_template(args.id).await?;
+    Ok(Json(ApiResponse::success(())))
+}
+
 pub fn freight_api() -> WebPath {
     WebPath::new()
         .route("/calculate", WebPathType::Post, Some("计算运费"), post(calculate))
         .route("/template", WebPathType::Post, Some("创建运费模板"), post(create_template))
+        .route("/template", WebPathType::Put, Some("修改运费模板"), put(update_template))
+        .route("/template", WebPathType::Delete, Some("删除运费模板"), delete(delete_template))
         .route("/templates", WebPathType::Get, Some("运费模板列表"), get(list_templates))
 }

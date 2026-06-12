@@ -841,3 +841,32 @@ pub async fn cancel_subscription(Path(id): Path<i64>) -> impl IntoResponse {
     let result = subscription_service::cancel(id).await;
     ApiResponse::from_result(result)
 }
+
+#[derive(serde::Deserialize)]
+pub struct ChartParams {
+    pub r#type: String,
+    pub plugin_id: Option<i64>,
+    pub start_date: Option<String>,
+    pub end_date: Option<String>,
+}
+
+pub async fn developer_chart(Query(_params): Query<ChartParams>) -> impl IntoResponse {
+    let result = developer_service::get_chart(0).await;
+    ApiResponse::from_result(result)
+}
+
+pub async fn developer_ranking(Query(_params): Query<ChartParams>) -> impl IntoResponse {
+    let result = developer_service::get_ranking(0).await;
+    ApiResponse::from_result(result)
+}
+
+#[derive(serde::Deserialize)]
+pub struct PreviewCardParams {
+    pub card_no: String,
+    pub card_pwd: String,
+}
+
+pub async fn preview_card(Json(params): Json<PreviewCardParams>) -> impl IntoResponse {
+    let result = card_service::preview_card(&params.card_no, &params.card_pwd).await;
+    ApiResponse::from_result(result)
+}

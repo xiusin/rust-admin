@@ -46,6 +46,13 @@ fn remove_prefix(s: &str) -> &str {
         s
     }
 }
+pub async fn upload_file_api(multipart: Multipart) -> impl IntoResponse {
+    match upload_file(multipart).await {
+        Ok(url) => ApiResponse::ok(url),
+        Err(e) => ApiResponse::bad_request(e.to_string()),
+    }
+}
+
 pub async fn upload_file(mut multipart: Multipart) -> Result<String> {
     if let Some(field) = multipart.next_field().await? {
         let server_config = APPCOFIG.server.clone();

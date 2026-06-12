@@ -271,9 +271,7 @@ const goToDetail = (id: number) => {
 const loadCategories = async () => {
   try {
     const res = await category.tree();
-    if (res.code === 200) {
-      categories.value = res.data || [];
-    }
+    categories.value = res.data || [];
   } catch (error) {
     console.error(error);
   }
@@ -282,9 +280,7 @@ const loadCategories = async () => {
 const loadRecommendList = async () => {
   try {
     const res = await market.recommend(8);
-    if (res.code === 200) {
-      recommendList.value = res.data?.list || [];
-    }
+    recommendList.value = res.data?.list || [];
   } catch (error) {
     console.error(error);
   }
@@ -293,9 +289,7 @@ const loadRecommendList = async () => {
 const loadHotList = async () => {
   try {
     const res = await market.hot(8);
-    if (res.code === 200) {
-      hotList.value = res.data?.list || [];
-    }
+    hotList.value = res.data?.list || [];
   } catch (error) {
     console.error(error);
   }

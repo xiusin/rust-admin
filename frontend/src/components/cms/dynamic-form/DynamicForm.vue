@@ -55,8 +55,10 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, watch, onMounted, defineAsyncComponent } from "vue";
 import { Form } from "@arco-design/web-vue";
-import FormField from "./FormField.vue";
+
+const FormField = defineAsyncComponent(() => import("./FormField.vue"));
 
 interface FormFieldSchema {
   id: string;

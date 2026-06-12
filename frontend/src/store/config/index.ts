@@ -5,10 +5,10 @@
  * @param {Array<string>} paths 需要持久化的字段
  * @return {*}
  */
-const persistedstateConfig = (key: string, paths?: Array<string>) => {
+const persistedstateConfig = (key: string, paths?: Array<string>, storage: Storage = localStorage) => {
   return {
     key,
-    storage: localStorage, // 存储方式，使用localStorage，也可以使用sessionStorage
+    storage, // 存储方式，使用localStorage，也可以使用sessionStorage
     paths
   };
 };

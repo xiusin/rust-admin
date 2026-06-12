@@ -162,6 +162,8 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
 import { Message } from "@arco-design/web-vue";
+import { subscription } from "@/api/modules/plugin-market/license";
+import { plan } from "@/api/modules/plugin-market/market";
 
 interface SubscriptionRecord {
   id: number;
@@ -214,148 +216,21 @@ const upgradeForm = reactive({
   planId: 0
 });
 
-const mockData: SubscriptionRecord[] = [
-  {
-    id: 1,
-    pluginId: 1,
-    pluginName: "智能优惠券",
-    pluginCover: "https://picsum.photos/200/150?random=1",
-    pluginVersion: "2.1.0",
-    planId: 2,
-    planName: "专业版",
-    planSort: 2,
-    startTime: "2024-03-20 10:35:00",
-    expireTime: "2025-03-25 10:35:00",
-    isExpired: false,
-    daysRemaining: 361,
-    status: 1,
-    statusName: "有效"
-  },
-  {
-    id: 2,
-    pluginId: 2,
-    pluginName: "限时秒杀",
-    pluginCover: "https://picsum.photos/200/150?random=2",
-    pluginVersion: "1.5.0",
-    planId: 1,
-    planName: "基础版",
-    planSort: 1,
-    startTime: "2024-02-15 14:20:00",
-    expireTime: "2024-03-15 14:20:00",
-    isExpired: true,
-    daysRemaining: 0,
-    status: 0,
-    statusName: "已过期"
-  },
-  {
-    id: 3,
-    pluginId: 3,
-    pluginName: "数据统计分析",
-    pluginCover: "https://picsum.photos/200/150?random=5",
-    pluginVersion: "2.0.0",
-    planId: 3,
-    planName: "企业版",
-    planSort: 3,
-    startTime: "2024-01-10 09:00:00",
-    expireTime: "2025-01-10 09:00:00",
-    isExpired: false,
-    daysRemaining: 293,
-    status: 1,
-    statusName: "有效"
-  },
-  {
-    id: 4,
-    pluginId: 4,
-    pluginName: "AI智能客服",
-    pluginCover: "https://picsum.photos/200/150?random=6",
-    pluginVersion: "1.0.0",
-    planId: 2,
-    planName: "高级版",
-    planSort: 2,
-    startTime: "2023-12-01 08:30:00",
-    expireTime: "2024-12-01 08:30:00",
-    isExpired: true,
-    daysRemaining: 0,
-    status: 0,
-    statusName: "已过期"
-  }
-];
-
-const mockPlans: PlanItem[] = [
-  {
-    id: 1,
-    pluginId: 1,
-    name: "基础版",
-    description: "适合个人开发者或小型店铺使用",
-    periodType: 0,
-    periodTypeName: "月付",
-    periodDays: 30,
-    price: 99,
-    originalPrice: 99,
-    features: [
-      { code: "basic", name: "基础功能", included: true },
-      { code: "template", name: "5个优惠券模板", included: true }
-    ],
-    maxDevices: 1,
-    sort: 1,
-    status: 1
-  },
-  {
-    id: 2,
-    pluginId: 1,
-    name: "专业版",
-    description: "适合中型商家使用",
-    periodType: 0,
-    periodTypeName: "月付",
-    periodDays: 30,
-    price: 299,
-    originalPrice: 399,
-    features: [
-      { code: "basic", name: "基础功能", included: true },
-      { code: "template", name: "无限优惠券模板", included: true },
-      { code: "api", name: "API调用", included: true }
-    ],
-    maxDevices: 5,
-    sort: 2,
-    status: 1
-  },
-  {
-    id: 3,
-    pluginId: 1,
-    name: "企业版",
-    description: "适合大型企业使用",
-    periodType: 0,
-    periodTypeName: "月付",
-    periodDays: 30,
-    price: 799,
-    originalPrice: 999,
-    features: [
-      { code: "basic", name: "基础功能", included: true },
-      { code: "template", name: "无限优惠券模板", included: true },
-      { code: "api", name: "无限API调用", included: true },
-      { code: "priority", name: "专属客服", included: true }
-    ],
-    maxDevices: -1,
-    sort: 3,
-    status: 1
-  }
-];
-
-const filterData = (tab: string) => {
-  if (tab === "all") {
-    tableData.value = mockData;
-  } else if (tab === "active") {
-    tableData.value = mockData.filter(item => !item.isExpired);
-  } else {
-    tableData.value = mockData.filter(item => item.isExpired);
-  }
-};
-
 const loadData = async () => {
   loading.value = true;
   try {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    filterData(activeTab.value);
+    const res = await subscription.list({ pageNum: pagination.value.current, pageSize: pagination.value.pageSize });
+    const data = res.data?.list || [];
+    if (activeTab.value === "all") {
+      tableData.value = data;
+    } else if (activeTab.value === "active") {
+      tableData.value = data.filter((item: SubscriptionRecord) => !item.isExpired);
+    } else {
+      tableData.value = data.filter((item: SubscriptionRecord) => item.isExpired);
+    }
+    pagination.value.total = res.data?.total || data.length;
+  } catch (error) {
+    Message.error("获取数据失败");
   } finally {
     loading.value = false;
   }
@@ -388,7 +263,7 @@ const submitRenew = async () => {
     return;
   }
   try {
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await subscription.renew({ subscriptionId: currentRecord.value.id, extendDays: renewForm.extendDays });
     Message.success("续费成功");
     renewVisible.value = false;
     loadData();
@@ -397,12 +272,17 @@ const submitRenew = async () => {
   }
 };
 
-const handleUpgrade = (record: SubscriptionRecord) => {
+const handleUpgrade = async (record: SubscriptionRecord) => {
   currentRecord.value = record;
-  upgradePlans.value = mockPlans;
-  upgradeForm.planId = record.planId;
-  upgradeVisible.value = true;
-  detailVisible.value = false;
+  try {
+    const res = await plan.list(record.pluginId);
+    upgradePlans.value = res.data || [];
+    upgradeForm.planId = record.planId;
+    upgradeVisible.value = true;
+    detailVisible.value = false;
+  } catch {
+    Message.error("获取方案失败");
+  }
 };
 
 const submitUpgrade = async () => {
@@ -410,14 +290,7 @@ const submitUpgrade = async () => {
     Message.warning("请选择要升级的方案");
     return;
   }
-  try {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    Message.success("升级成功");
-    upgradeVisible.value = false;
-    loadData();
-  } catch {
-    Message.error("升级失败，请重试");
-  }
+  Message.warning("升级功能开发中");
 };
 
 onMounted(() => {

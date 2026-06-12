@@ -71,8 +71,8 @@ export const freightApi = {
     return res.data;
   },
 
-  updateTemplate: async (id: number, params: Partial<CreateTemplateParams>) => {
-    const res = await axios.put(`/freight/template/${id}`, params);
+  updateTemplate: async (params: CreateTemplateParams & { id: number }) => {
+    const res = await axios.put("/freight/template", params);
     if (res.data.message !== "success") {
       Message.error(res.data.message);
     }
@@ -80,7 +80,7 @@ export const freightApi = {
   },
 
   deleteTemplate: async (id: number) => {
-    const res = await axios.delete(`/freight/template/${id}`);
+    const res = await axios.delete("/freight/template", { params: { id } });
     if (res.data.message !== "success") {
       Message.error(res.data.message);
     }

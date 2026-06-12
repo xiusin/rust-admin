@@ -140,19 +140,17 @@
         :pagination="pagination"
         @page-change="pageChange"
         @page-size-change="pageSizeChange"
+        :virtual-list-props="{ height: 400 }"
       >
         <template #content="{ record }">
           <a-space>
-            <s-svg-icon :name="'word'" :size="18" v-if="record.content == '图文'" />
-            <s-svg-icon :name="'video'" :size="18" v-if="record.content == '视频'" />
-            <s-svg-icon :name="'mp3'" :size="18" v-if="record.content == '音频'" />
-            <span>{{ record.content }}</span>
+            <span>{{ record.role_key }}</span>
           </a-space>
         </template>
         <template #status="{ record }">
           <a-space>
-            <a-badge status="success" text="已上线" v-if="record.status == 1" />
-            <a-badge status="processing" text="已下线" v-else />
+            <a-badge status="success" text="启用" v-if="record.status == '0'" />
+            <a-badge status="processing" text="停用" v-else />
           </a-space>
         </template>
         <template #optional>
@@ -202,34 +200,29 @@ const pageSizeChange = (pageSize: number) => {
 const columnsShow = ref<Columns[]>([]);
 const columns = ref<Columns[]>([
   {
-    title: "集合编号",
-    dataIndex: "serial",
+    title: "角色编号",
+    dataIndex: "role_id",
     checked: true
   },
   {
-    title: "集合名称",
-    dataIndex: "name",
+    title: "角色名称",
+    dataIndex: "role_name",
     checked: true
   },
   {
-    title: "内容载体",
-    dataIndex: "content",
+    title: "角色权限字符串",
+    dataIndex: "role_key",
     checked: true,
     slotName: "content"
   },
   {
-    title: "筛选方式",
-    dataIndex: "searchType",
-    checked: true
-  },
-  {
-    title: "内容量",
-    dataIndex: "contentSize",
+    title: "显示顺序",
+    dataIndex: "role_sort",
     checked: true
   },
   {
     title: "创建时间",
-    dataIndex: "createTime",
+    dataIndex: "created_at",
     checked: true
   },
   {

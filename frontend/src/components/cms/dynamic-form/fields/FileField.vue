@@ -7,7 +7,7 @@
     :limit="limit"
     :disabled="disabled"
     :auto-upload="autoUpload"
-    :action="action"
+    :custom-request="customRequest"
     :headers="headers"
     :data="data"
     draggable
@@ -28,6 +28,8 @@
 
 <script setup lang="ts">
 import { Message } from "@arco-design/web-vue";
+import type { RequestOption } from "@arco-design/web-vue/es/upload/interfaces";
+import axios from "@/api";
 
 interface UploadFile {
   uid: string;
@@ -61,7 +63,7 @@ const props = withDefaults(defineProps<Props>(), {
   limit: 1,
   listType: "text",
   autoUpload: true,
-  action: "/api/upload"
+  action: "/api/sys/upload"
 });
 
 const emit = defineEmits<{
@@ -91,11 +93,50 @@ watch(
   { immediate: true }
 );
 
+const customRequest = (option: RequestOption) => {
+  const { onProgress, onError, onSuccess, fileItem, name } = option;
+  const formData = new FormData();
+  if (fileItem.file) {
+    formData.append((name || "file") as string, fileItem.file as File);
+  }
+  if (props.data) {
+    Object.keys(props.data).forEach(key => {
+      formData.append(key, String(props.data![key]));
+    });
+  }
+
+  const controller = new AbortController();
+
+  axios
+    .post(props.action, formData, {
+      headers: props.headers || {},
+      signal: controller.signal,
+      onUploadProgress: (progressEvent) => {
+        if (progressEvent.total) {
+          let percent = progressEvent.loaded / progressEvent.total;
+          onProgress(percent, progressEvent as any);
+        }
+      }
+    })
+    .then(res => {
+      onSuccess(res);
+    })
+    .catch(err => {
+      onError(err);
+    });
+
+  return {
+    abort() {
+      controller.abort();
+    }
+  };
+};
+
 const handleSuccess = (response: any) => {
-  if (response.code === 0 || response.success) {
-    const url = response.data?.url || response.url;
+  if (response.code === 0 || response.code === 200 || response.success) {
+    const url = response.data?.url || response.data || response.url;
     if (props.multiple) {
-      const urls = fileList.value.filter(f => f.status === "done" && f.url).map(f => f.url);
+      const urls = fileList.value.filter(f => f.status === "done" && f.url).map(f => f.url as string);
       emit("update:modelValue", urls);
     } else {
       emit("update:modelValue", url);

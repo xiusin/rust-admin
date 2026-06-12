@@ -87,6 +87,7 @@
         :scroll="{ x: '100%', y: '100%', minWidth: 800 }"
         :columns="columnsShow"
         :data="tableData"
+        v-model:expanded-keys="expandedKeys"
       >
         <template #dept_name="{ record }">
           {{ record.dept_name }}
@@ -355,17 +356,19 @@ const reset = () => {
 const loading = ref(false);
 const tableRef = ref();
 const tableData = ref();
+const expandedKeys = ref<string[]>([]);
 const getDivision = async () => {
   loading.value = true;
   const params: any = {};
   if (form.value.name) params.dept_name = form.value.name;
   if (form.value.status) params.status = form.value.status;
   let res = await getDivisionAPI(params);
-  tableData.value = res.data.list || [];
+  const list = res.data.list || [];
+  tableData.value = list;
+  if (list.length > 0) {
+    expandedKeys.value = list.map((item: any) => item.dept_id);
+  }
   loading.value = false;
-  setTimeout(() => {
-    tableRef.value.expandAll();
-  }, 0);
 };
 
 onMounted(() => {

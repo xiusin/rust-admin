@@ -7,6 +7,7 @@ pub mod product;
 pub mod sys;
 pub mod test;
 pub mod web_path;
+pub mod monitor;
 use crate::core::{ROUTE_REGISTRY};
 use crate::worker::invokefunction::{InvokeFunctionMsg, InvokeFunctionWorker};
 use crate::worker::AppWorker;
@@ -54,5 +55,6 @@ impl WebApi {
         Router::new()
             .merge(sys::white_sys())
             .merge(test::white_test())
+            .merge(monitor::white_monitor())
     }
 }

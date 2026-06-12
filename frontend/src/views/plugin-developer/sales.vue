@@ -151,6 +151,7 @@ import { ref, reactive, onMounted, computed, watch } from "vue";
 import { useRoute } from "vue-router";
 import { default as VChart } from "@visactor/vchart";
 import { developer } from "@/api/modules/plugin-market/market";
+import { order } from "@/api/modules/plugin-market/order";
 import { Message } from "@arco-design/web-vue";
 
 interface OrderItem {
@@ -213,195 +214,49 @@ const columns = [
 ];
 
 const statsData = reactive({
-  totalRevenue: 125600,
-  totalOrders: 856,
-  totalDownloads: 2560,
-  conversionRate: 33.4
+  totalRevenue: 0,
+  totalOrders: 0,
+  totalDownloads: 0,
+  conversionRate: 0
 });
 
-const pluginRanking = ref([
-  { id: 1, name: "智能优惠券", revenue: 45600, orders: 156 },
-  { id: 2, name: "限时秒杀", revenue: 32100, orders: 98 },
-  { id: 3, name: "AI智能客服", revenue: 28900, orders: 45 },
-  { id: 4, name: "短信通知", revenue: 12300, orders: 56 },
-  { id: 5, name: "数据统计分析", revenue: 6800, orders: 23 }
-]);
+const pluginRanking = ref([]);
 
-const orderList = ref<OrderItem[]>([
-  {
-    id: 1,
-    orderNo: "PLM202603201030000001",
-    pluginId: 1,
-    pluginName: "智能优惠券",
-    pluginCover: "https://picsum.photos/200/150?random=1",
-    planName: "专业版",
-    amount: 299,
-    status: 1,
-    statusName: "已支付",
-    paymentMethod: 0,
-    paymentMethodName: "微信支付",
-    createdAt: "2024-03-20 10:30:00"
-  },
-  {
-    id: 2,
-    orderNo: "PLM202603191520000002",
-    pluginId: 3,
-    pluginName: "AI智能客服",
-    pluginCover: "https://picsum.photos/200/150?random=6",
-    planName: "企业版",
-    amount: 799,
-    status: 1,
-    statusName: "已支付",
-    paymentMethod: 1,
-    paymentMethodName: "支付宝",
-    createdAt: "2024-03-19 15:20:00"
-  },
-  {
-    id: 3,
-    orderNo: "PLM202603181030000003",
-    pluginId: 2,
-    pluginName: "限时秒杀",
-    pluginCover: "https://picsum.photos/200/150?random=2",
-    planName: "基础版",
-    amount: 99,
-    status: 1,
-    statusName: "已支付",
-    paymentMethod: 0,
-    paymentMethodName: "微信支付",
-    createdAt: "2024-03-18 10:30:00"
-  },
-  {
-    id: 4,
-    orderNo: "PLM202603171520000004",
-    pluginId: 1,
-    pluginName: "智能优惠券",
-    pluginCover: "https://picsum.photos/200/150?random=1",
-    planName: "企业版",
-    amount: 599,
-    status: 0,
-    statusName: "待支付",
-    paymentMethod: 0,
-    paymentMethodName: "微信支付",
-    createdAt: "2024-03-17 15:20:00"
-  },
-  {
-    id: 5,
-    orderNo: "PLM202603161030000005",
-    pluginId: 4,
-    pluginName: "短信通知",
-    pluginCover: "https://picsum.photos/200/150?random=4",
-    planName: "专业版",
-    amount: 399,
-    status: 1,
-    statusName: "已支付",
-    paymentMethod: 1,
-    paymentMethodName: "支付宝",
-    createdAt: "2024-03-16 10:30:00"
+const orderList = ref<OrderItem[]>([]);
+
+const chartData = ref({
+  revenue: [],
+  orders: [],
+  downloads: []
+});
+
+const getChartData = async () => {
+  try {
+    const res = await developer.chart({
+      type: dateRangeType.value,
+      pluginId: selectedPluginId.value || undefined,
+      startDate: customDateRange.start,
+      endDate: customDateRange.end
+    });
+    if (res.data) {
+      chartData.value = res.data;
+    }
+  } catch (error) {
+    console.error(error);
   }
-]);
+  return chartData.value;
+};
 
-const mockChartData = {
-  week: {
-    revenue: [
-      { day: "周一", value: 1200 },
-      { day: "周二", value: 1500 },
-      { day: "周三", value: 1800 },
-      { day: "周四", value: 2100 },
-      { day: "周五", value: 2400 },
-      { day: "周六", value: 2800 },
-      { day: "周日", value: 3200 }
-    ],
-    orders: [
-      { day: "周一", value: 12 },
-      { day: "周二", value: 15 },
-      { day: "周三", value: 18 },
-      { day: "周四", value: 21 },
-      { day: "周五", value: 24 },
-      { day: "周六", value: 28 },
-      { day: "周日", value: 32 }
-    ],
-    downloads: [
-      { day: "周一", value: 45 },
-      { day: "周二", value: 52 },
-      { day: "周三", value: 61 },
-      { day: "周四", value: 73 },
-      { day: "周五", value: 82 },
-      { day: "周六", value: 95 },
-      { day: "周日", value: 110 }
-    ]
-  },
-  month: {
-    revenue: [
-      { day: "1日", value: 1200 },
-      { day: "5日", value: 1500 },
-      { day: "10日", value: 1800 },
-      { day: "15日", value: 2100 },
-      { day: "20日", value: 2400 },
-      { day: "25日", value: 2800 },
-      { day: "30日", value: 3200 }
-    ],
-    orders: [
-      { day: "1日", value: 12 },
-      { day: "5日", value: 15 },
-      { day: "10日", value: 18 },
-      { day: "15日", value: 21 },
-      { day: "20日", value: 24 },
-      { day: "25日", value: 28 },
-      { day: "30日", value: 32 }
-    ],
-    downloads: [
-      { day: "1日", value: 45 },
-      { day: "5日", value: 52 },
-      { day: "10日", value: 61 },
-      { day: "15日", value: 73 },
-      { day: "20日", value: 82 },
-      { day: "25日", value: 95 },
-      { day: "30日", value: 110 }
-    ]
-  },
-  year: {
-    revenue: [
-      { month: "1月", value: 12000 },
-      { month: "2月", value: 15000 },
-      { month: "3月", value: 18000 },
-      { month: "4月", value: 21000 },
-      { month: "5月", value: 24000 },
-      { month: "6月", value: 28000 },
-      { month: "7月", value: 32000 },
-      { month: "8月", value: 35000 },
-      { month: "9月", value: 38000 },
-      { month: "10月", value: 42000 },
-      { month: "11月", value: 45000 },
-      { month: "12月", value: 48000 }
-    ],
-    orders: [
-      { month: "1月", value: 120 },
-      { month: "2月", value: 150 },
-      { month: "3月", value: 180 },
-      { month: "4月", value: 210 },
-      { month: "5月", value: 240 },
-      { month: "6月", value: 280 },
-      { month: "7月", value: 320 },
-      { month: "8月", value: 350 },
-      { month: "9月", value: 380 },
-      { month: "10月", value: 420 },
-      { month: "11月", value: 450 },
-      { month: "12月", value: 480 }
-    ],
-    downloads: [
-      { month: "1月", value: 450 },
-      { month: "2月", value: 520 },
-      { month: "3月", value: 610 },
-      { month: "4月", value: 730 },
-      { month: "5月", value: 820 },
-      { month: "6月", value: 950 },
-      { month: "7月", value: 1100 },
-      { month: "8月", value: 1200 },
-      { month: "9月", value: 1350 },
-      { month: "10月", value: 1500 },
-      { month: "11月", value: 1680 },
-      { month: "12月", value: 1850 }
-    ]
+const fetchRanking = async () => {
+  try {
+    const res = await developer.ranking({
+      type: dateRangeType.value,
+      startDate: customDateRange.start,
+      endDate: customDateRange.end
+    });
+    pluginRanking.value = res.data || [];
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -410,15 +265,9 @@ const getOrderStatusColor = (status: number) => {
   return colors[status] || "default";
 };
 
-const getChartData = () => {
-  if (dateRangeType.value === "year") return mockChartData.year;
-  if (dateRangeType.value === "week") return mockChartData.week;
-  return mockChartData.month;
-};
-
-const initRevenueChart = () => {
+const initRevenueChart = async () => {
   if (!revenueChartRef.value) return;
-  const data = getChartData();
+  const data = chartData.value;
   const xField = dateRangeType.value === "year" ? "month" : "day";
   const spec = {
     type: "line",
@@ -434,9 +283,9 @@ const initRevenueChart = () => {
   vchart.renderSync();
 };
 
-const initOrderChart = () => {
+const initOrderChart = async () => {
   if (!orderChartRef.value) return;
-  const data = getChartData();
+  const data = chartData.value;
   const xField = dateRangeType.value === "year" ? "month" : "day";
   const spec = {
     type: "bar",
@@ -450,9 +299,9 @@ const initOrderChart = () => {
   vchart.renderSync();
 };
 
-const initDownloadChart = () => {
+const initDownloadChart = async () => {
   if (!downloadChartRef.value) return;
-  const data = getChartData();
+  const data = chartData.value;
   const xField = dateRangeType.value === "year" ? "month" : "day";
   const spec = {
     type: "area",
@@ -467,16 +316,27 @@ const initDownloadChart = () => {
   vchart.renderSync();
 };
 
-const initCharts = () => {
+const initCharts = async () => {
+  await getChartData();
+  if (revenueChartRef.value) revenueChartRef.value.innerHTML = '';
+  if (orderChartRef.value) orderChartRef.value.innerHTML = '';
+  if (downloadChartRef.value) downloadChartRef.value.innerHTML = '';
   initRevenueChart();
   initOrderChart();
   initDownloadChart();
+  fetchRanking();
+  fetchOrderList();
 };
 
 const fetchStats = async () => {
   try {
     const res = await developer.stats();
-    Object.assign(statsData, res.data || {});
+    if (res.data) {
+      statsData.totalRevenue = res.data.totalRevenue || 0;
+      statsData.totalOrders = res.data.totalOrders || 0;
+      statsData.totalDownloads = res.data.totalDownloads || 0;
+      statsData.conversionRate = res.data.conversionRate || 0;
+    }
   } catch (error) {
     console.error(error);
   }
@@ -485,7 +345,13 @@ const fetchStats = async () => {
 const fetchOrderList = async () => {
   loading.value = true;
   try {
-    pagination.total = orderList.value.length;
+    const res = await order.list({
+      pageNum: pagination.current,
+      pageSize: pagination.pageSize,
+      pluginId: selectedPluginId.value || undefined
+    });
+    orderList.value = res.data?.list || [];
+    pagination.total = res.data?.total || 0;
   } catch (error) {
     console.error(error);
   } finally {
@@ -495,10 +361,12 @@ const fetchOrderList = async () => {
 
 const handlePageChange = (page: number) => {
   pagination.current = page;
+  fetchOrderList();
 };
 
 const handlePageSizeChange = (pageSize: number) => {
   pagination.pageSize = pageSize;
+  fetchOrderList();
 };
 
 const onSelectDateRange = () => {

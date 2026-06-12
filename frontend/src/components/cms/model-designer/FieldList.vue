@@ -8,7 +8,16 @@
       </a-empty>
     </div>
 
-    <draggable v-else v-model="localFields" item-key="id" handle=".drag-handle" animation="200" @end="handleDragEnd">
+    <draggable
+      v-else
+      v-model="localFields"
+      item-key="id"
+      handle=".drag-handle"
+      animation="300"
+      ghost-class="ghost-item"
+      drag-class="drag-item"
+      @end="handleDragEnd"
+    >
       <template #item="{ element, index }">
         <div class="field-item" :class="{ 'is-required': element.required }">
           <div class="drag-handle">
@@ -139,11 +148,17 @@ const getFieldTypeColor = (type: string) => {
     padding: 12px;
     margin-bottom: 8px;
     background: var(--color-fill-1);
+    border: 1px solid transparent;
     border-radius: 4px;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.34, 0.69, 0.1, 1);
+    position: relative;
+    overflow: hidden;
 
     &:hover {
       background: var(--color-fill-2);
+      border-color: var(--color-border-3);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      transform: translateY(-2px);
 
       .field-actions {
         opacity: 1;
@@ -198,6 +213,22 @@ const getFieldTypeColor = (type: string) => {
       opacity: 0;
       transition: opacity 0.2s;
     }
+  }
+
+  .ghost-item {
+    opacity: 0.5;
+    background: var(--color-fill-2) !important;
+    border: 1px dashed rgb(var(--primary-6)) !important;
+    box-shadow: inset 0 0 8px rgba(var(--primary-6), 0.1);
+    transform: scale(0.98);
+  }
+
+  .drag-item {
+    background: var(--color-bg-2) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+    cursor: grabbing !important;
+    border-color: transparent !important;
+    z-index: 10;
   }
 }
 </style>

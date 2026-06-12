@@ -241,9 +241,7 @@ const totalPluginCount = computed(() => {
 const loadCategories = async () => {
   try {
     const res = await category.tree();
-    if (res.code === 200) {
-      categoryList.value = res.data || [];
-    }
+    categoryList.value = res.data || [];
   } catch (error) {
     console.error(error);
   }
@@ -258,10 +256,8 @@ const loadPluginList = async () => {
       priceType: priceType.value || undefined,
       sortType: sortType.value || undefined
     });
-    if (res.code === 200) {
-      pluginList.value = res.data?.list || [];
-      pagination.total = res.data?.total || 0;
-    }
+    pluginList.value = res.data?.list || [];
+    pagination.total = res.data?.total || 0;
   } catch (error) {
     console.error(error);
   }

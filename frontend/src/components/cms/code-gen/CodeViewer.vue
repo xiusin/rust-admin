@@ -22,7 +22,7 @@
       <div class="line-numbers">
         <span v-for="line in lineCount" :key="line" class="line-number">{{ line }}</span>
       </div>
-      <pre class="code-content"><code :class="`language-${language}`">{{ code }}</code></pre>
+      <pre :key="filename" class="code-content"><code :class="`language-${language}`">{{ code }}</code></pre>
     </div>
 
     <div class="viewer-footer">
@@ -142,9 +142,21 @@ const handleSelectAll = () => {
       line-height: 1.6;
       color: #d4d4d4;
       white-space: pre;
+      animation: typing-fade-in 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 
       code {
         display: block;
+      }
+    }
+
+    @keyframes typing-fade-in {
+      0% {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
   }

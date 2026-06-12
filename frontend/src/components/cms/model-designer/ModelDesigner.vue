@@ -47,11 +47,13 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch, defineAsyncComponent } from "vue";
 import { Message } from "@arco-design/web-vue";
-import ModelForm from "./ModelForm.vue";
-import ModelConfig from "./ModelConfig.vue";
-import FieldList from "./FieldList.vue";
-import FieldEditor from "./FieldEditor.vue";
+
+const ModelForm = defineAsyncComponent(() => import("./ModelForm.vue"));
+const ModelConfig = defineAsyncComponent(() => import("./ModelConfig.vue"));
+const FieldList = defineAsyncComponent(() => import("./FieldList.vue"));
+const FieldEditor = defineAsyncComponent(() => import("./FieldEditor.vue"));
 
 interface ModelField {
   id: string;

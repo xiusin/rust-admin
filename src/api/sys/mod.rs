@@ -10,6 +10,7 @@ pub mod role;
 pub mod server;
 pub mod setting;
 pub mod user;
+pub mod upload;
 
 pub use auth::white_sys;
 pub use dashboard::sys_dashboard;
@@ -23,6 +24,7 @@ pub use role::{sys_role, sys_role_api};
 pub use server::sys_server_info;
 pub use setting::sys_setting;
 pub use user::sys_user;
+pub use upload::sys_upload;
 
 use super::web_path::WebPath;
 
@@ -46,6 +48,7 @@ pub fn router_sys() -> WebPath {
             .nest("/dashboard", sys_dashboard())
             .nest("/setting", sys_setting())
             .nest("/operationlog", sys_operation_log())
-            .nest("/cache", sys_cache()),
+            .nest("/cache", sys_cache())
+            .nest("/upload", sys_upload()),
     )
 }

@@ -1,18 +1,18 @@
 import axios from "axios";
-import axiosMock from "axios";
 import router from "@/router";
 import { Message } from "@arco-design/web-vue";
-import { getToken, removeToken } from "./token";
+import { getToken, setToken, removeToken } from "./token";
 
 // 防止重复跳转登录页的标志
 let isRedirectingToLogin = false;
 
+// 是否正在刷新 token
+let isRefreshing = false;
+// 等待刷新 token 的请求队列
+let requests: any[] = [];
+
 const service = axios.create({
   baseURL: "/api"
-});
-
-const mockService = axiosMock.create({
-  baseURL: ""
 });
 
 // 跳转到登录页的统一处理
@@ -46,15 +46,6 @@ service.interceptors.request.use(
   }
 );
 
-mockService.interceptors.request.use(
-  function (config: any) {
-    return config;
-  },
-  function (error: any) {
-    return Promise.reject(error);
-  }
-);
-
 service.interceptors.response.use(
   function (response: any) {
     if (response.status != 200) {
@@ -70,8 +61,7 @@ service.interceptors.response.use(
     }
 
     if (res.code == 401) {
-      redirectToLogin();
-      return Promise.reject(res);
+      return handleUnauthorized(response.config, res);
     } else if (res.code == 404) {
       Message.error("请求连接超时");
       return Promise.reject(res);
@@ -85,8 +75,7 @@ service.interceptors.response.use(
   function (error: any) {
     // 处理HTTP状态码401
     if (error.response && error.response.status === 401) {
-      redirectToLogin();
-      return Promise.reject(error);
+      return handleUnauthorized(error.config, error);
     }
 
     // 其他错误直接返回
@@ -94,14 +83,52 @@ service.interceptors.response.use(
   }
 );
 
-mockService.interceptors.response.use(
-  function (response: any) {
-    return Promise.resolve(response.data);
-  },
-  function (error: any) {
+// 处理 401 状态，尝试刷新 Token
+async function handleUnauthorized(config: any, error: any) {
+  // 如果是刷新 token 接口本身返回 401，直接跳转登录
+  if (config.url.includes("/sys/user/refersh_token") || config.url.includes("/sys/auth/login")) {
+    redirectToLogin();
     return Promise.reject(error);
   }
-);
 
-export { service as axios, mockService as axiosMock };
+  if (!isRefreshing) {
+    isRefreshing = true;
+    try {
+      // 调用刷新 token 接口
+      const res = await axios.put("/api/sys/user/refersh_token", null, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`
+        }
+      });
+      const newToken = res.data?.data?.token || res.data?.token || res.data?.data;
+      if (newToken) {
+        setToken(newToken);
+        // 执行队列中的请求
+        requests.forEach(cb => cb(newToken));
+        requests = [];
+        // 重试当前请求
+        config.headers.Authorization = `Bearer ${newToken}`;
+        return service(config);
+      } else {
+        throw new Error("刷新 Token 失败");
+      }
+    } catch (e) {
+      requests = [];
+      redirectToLogin();
+      return Promise.reject(e);
+    } finally {
+      isRefreshing = false;
+    }
+  } else {
+    // 正在刷新 token，将请求加入队列
+    return new Promise(resolve => {
+      requests.push((newToken: string) => {
+        config.headers.Authorization = `Bearer ${newToken}`;
+        resolve(service(config));
+      });
+    });
+  }
+}
+
+export { service as axios };
 export default service;

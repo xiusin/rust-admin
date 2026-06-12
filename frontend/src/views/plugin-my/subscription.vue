@@ -217,6 +217,8 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
 import { Message } from "@arco-design/web-vue";
+import { subscription } from "@/api/modules/plugin-market/license";
+import { plan } from "@/api/modules/plugin-market/market";
 
 interface SubscriptionRecord {
   id: number;
@@ -290,141 +292,6 @@ const columns = [
   { title: "操作", slotName: "optional", width: 160, fixed: "right" }
 ];
 
-const mockData: SubscriptionRecord[] = [
-  {
-    id: 1,
-    pluginId: 1,
-    pluginName: "智能优惠券",
-    planId: 2,
-    planName: "专业版",
-    planSort: 2,
-    startTime: "2024-03-20 10:35:00",
-    expireTime: "2025-03-25 10:35:00",
-    isExpired: false,
-    daysRemaining: 361,
-    autoRenew: true,
-    status: 1,
-    statusName: "有效",
-    maxDevices: 5,
-    usedDevices: 2,
-    nextRenewalAmount: 299
-  },
-  {
-    id: 2,
-    pluginId: 2,
-    pluginName: "限时秒杀",
-    planId: 1,
-    planName: "基础版",
-    planSort: 1,
-    startTime: "2024-02-15 14:20:00",
-    expireTime: "2024-03-15 14:20:00",
-    isExpired: true,
-    daysRemaining: 0,
-    autoRenew: false,
-    status: 0,
-    statusName: "已过期",
-    maxDevices: 1,
-    usedDevices: 0,
-    nextRenewalAmount: 0
-  },
-  {
-    id: 3,
-    pluginId: 3,
-    pluginName: "数据统计分析",
-    planId: 3,
-    planName: "企业版",
-    planSort: 3,
-    startTime: "2024-01-10 09:00:00",
-    expireTime: "2025-01-10 09:00:00",
-    isExpired: false,
-    daysRemaining: 293,
-    autoRenew: true,
-    status: 1,
-    statusName: "有效",
-    maxDevices: -1,
-    usedDevices: 3,
-    nextRenewalAmount: 799
-  },
-  {
-    id: 4,
-    pluginId: 4,
-    pluginName: "AI智能客服",
-    planId: 2,
-    planName: "高级版",
-    planSort: 2,
-    startTime: "2023-12-01 08:30:00",
-    expireTime: "2024-12-01 08:30:00",
-    isExpired: false,
-    daysRemaining: 3,
-    autoRenew: false,
-    status: 1,
-    statusName: "有效",
-    maxDevices: 5,
-    usedDevices: 1,
-    nextRenewalAmount: 0
-  }
-];
-
-const mockPlans: PlanItem[] = [
-  {
-    id: 1,
-    pluginId: 1,
-    name: "基础版",
-    description: "适合个人开发者或小型店铺使用",
-    periodType: 0,
-    periodTypeName: "月付",
-    periodDays: 30,
-    price: 99,
-    originalPrice: 99,
-    features: [
-      { code: "basic", name: "基础功能", included: true },
-      { code: "template", name: "5个优惠券模板", included: true }
-    ],
-    maxDevices: 1,
-    sort: 1,
-    status: 1
-  },
-  {
-    id: 2,
-    pluginId: 1,
-    name: "专业版",
-    description: "适合中型商家使用",
-    periodType: 0,
-    periodTypeName: "月付",
-    periodDays: 30,
-    price: 299,
-    originalPrice: 399,
-    features: [
-      { code: "basic", name: "基础功能", included: true },
-      { code: "template", name: "无限优惠券模板", included: true },
-      { code: "api", name: "API调用", included: true }
-    ],
-    maxDevices: 5,
-    sort: 2,
-    status: 1
-  },
-  {
-    id: 3,
-    pluginId: 1,
-    name: "企业版",
-    description: "适合大型企业使用",
-    periodType: 0,
-    periodTypeName: "月付",
-    periodDays: 30,
-    price: 799,
-    originalPrice: 999,
-    features: [
-      { code: "basic", name: "基础功能", included: true },
-      { code: "template", name: "无限优惠券模板", included: true },
-      { code: "api", name: "无限API调用", included: true },
-      { code: "priority", name: "专属客服", included: true }
-    ],
-    maxDevices: -1,
-    sort: 3,
-    status: 1
-  }
-];
-
 const getStatusType = (status: number) => {
   switch (status) {
     case 1:
@@ -439,9 +306,11 @@ const getStatusType = (status: number) => {
 const loadData = async () => {
   loading.value = true;
   try {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    tableData.value = mockData;
-    pagination.value.total = mockData.length;
+    const res = await subscription.list({ pageNum: pagination.value.current, pageSize: pagination.value.pageSize });
+    tableData.value = res.data?.list || [];
+    pagination.value.total = res.data?.total || tableData.value.length;
+  } catch (error) {
+    Message.error("获取数据失败");
   } finally {
     loading.value = false;
   }
@@ -479,7 +348,7 @@ const submitRenew = async () => {
     return;
   }
   try {
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await subscription.renew({ subscriptionId: currentRecord.value.id, extendDays: renewForm.extendDays });
     Message.success("续费成功");
     renewVisible.value = false;
     loadData();
@@ -488,22 +357,32 @@ const submitRenew = async () => {
   }
 };
 
-const handleUpgrade = (record: SubscriptionRecord) => {
+const handleUpgrade = async (record: SubscriptionRecord) => {
   currentRecord.value = record;
-  changePlans.value = mockPlans;
-  upgradeType.value = "upgrade";
-  changeForm.planId = record.planId;
-  upgradeVisible.value = true;
-  detailVisible.value = false;
+  try {
+    const res = await plan.list(record.pluginId);
+    changePlans.value = res.data || [];
+    upgradeType.value = "upgrade";
+    changeForm.planId = record.planId;
+    upgradeVisible.value = true;
+    detailVisible.value = false;
+  } catch {
+    Message.error("获取方案失败");
+  }
 };
 
-const handleDowngrade = (record: SubscriptionRecord) => {
+const handleDowngrade = async (record: SubscriptionRecord) => {
   currentRecord.value = record;
-  changePlans.value = mockPlans;
-  upgradeType.value = "downgrade";
-  changeForm.planId = record.planId;
-  upgradeVisible.value = true;
-  detailVisible.value = false;
+  try {
+    const res = await plan.list(record.pluginId);
+    changePlans.value = res.data || [];
+    upgradeType.value = "downgrade";
+    changeForm.planId = record.planId;
+    upgradeVisible.value = true;
+    detailVisible.value = false;
+  } catch {
+    Message.error("获取方案失败");
+  }
 };
 
 const handleChangeTypeChange = () => {
@@ -515,14 +394,7 @@ const submitChangePlan = async () => {
     Message.warning(`请选择要${upgradeType.value === "upgrade" ? "升级" : "降级"}的方案`);
     return;
   }
-  try {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    Message.success(`${upgradeType.value === "upgrade" ? "升级" : "降级"}成功`);
-    upgradeVisible.value = false;
-    loadData();
-  } catch {
-    Message.error(`${upgradeType.value === "upgrade" ? "升级" : "降级"}失败，请重试`);
-  }
+  Message.warning("方案变更功能开发中");
 };
 
 const handleCancelAutoRenew = (record: SubscriptionRecord) => {
@@ -530,8 +402,14 @@ const handleCancelAutoRenew = (record: SubscriptionRecord) => {
   Message.success(`${record.pluginName} 自动续费已取消`);
 };
 
-const handleCancel = () => {
-  Message.warning("取消订阅功能开发中");
+const handleCancel = async (record: SubscriptionRecord) => {
+  try {
+    await subscription.cancel(record.id);
+    Message.success("取消订阅成功");
+    loadData();
+  } catch {
+    Message.error("取消订阅失败");
+  }
 };
 
 onMounted(() => {

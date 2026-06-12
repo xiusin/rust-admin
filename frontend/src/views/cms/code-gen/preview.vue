@@ -46,7 +46,12 @@
                 </a-button>
               </div>
               <div class="code-body">
-                <pre><code :class="`language-${currentFile?.language}`">{{ currentFile?.content }}</code></pre>
+                <a-skeleton v-if="loading" :animation="true" class="code-skeleton">
+                  <a-space direction="vertical" :style="{ width: '100%' }" size="large">
+                    <a-skeleton-line :rows="15" :line-height="20" :line-spacing="8" />
+                  </a-space>
+                </a-skeleton>
+                <pre v-else class="typing-code"><code :class="`language-${currentFile?.language}`">{{ currentFile?.content }}</code></pre>
               </div>
             </div>
           </a-col>
@@ -117,19 +122,24 @@ const downloadZip = async () => {
   }
 };
 
-const loadData = async () => {
-  if (!modelId.value) return;
-  try {
-    fileTree.value = await codeGenApi.getFileTree(modelId.value);
-    generatedFiles.value = await codeGenApi.preview(modelId.value);
-    if (generatedFiles.value.length > 0) {
-      currentFile.value = generatedFiles.value[0];
-      selectedFile.value = [currentFile.value.filePath];
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
+const loading = ref(false);
+
+    const loadData = async () => {
+      if (!modelId.value) return;
+      loading.value = true;
+      try {
+        fileTree.value = await codeGenApi.getFileTree(modelId.value);
+        generatedFiles.value = await codeGenApi.preview(modelId.value);
+        if (generatedFiles.value.length > 0) {
+          currentFile.value = generatedFiles.value[0];
+          selectedFile.value = [currentFile.value.filePath];
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        loading.value = false;
+      }
+    };
 
 onMounted(() => {
   loadData();
@@ -206,14 +216,31 @@ onMounted(() => {
         overflow: auto;
         padding: 12px;
         background: var(--color-bg-1);
+        position: relative;
 
-        pre {
+        .code-skeleton {
+          padding: 12px;
+        }
+
+        .typing-code {
           margin: 0;
           font-size: 13px;
           line-height: 1.6;
-
+          animation: typing-fade-in 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+          
           code {
             font-family: "Fira Code", monospace;
+          }
+        }
+
+        @keyframes typing-fade-in {
+          0% {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
           }
         }
       }
