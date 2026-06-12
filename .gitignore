@@ -16,3 +16,4 @@ node_modules
 dump.rdb
 qiluo_admin
 .DS_Store
+.pnpm-store
